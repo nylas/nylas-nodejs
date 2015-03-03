@@ -2,7 +2,7 @@
   "name": "nilas",
   "version": "1.0.0",
   "description": "A NodeJS wrapper for the Nilas REST API for Email, Contacts and Calendar",
-  "main": "index.js",
+  "main": "lib/nilas.js",
   "scripts": {
     "test": "jasmine-node --coffee spec"
   },
@@ -17,11 +17,12 @@
   "dependencies": {
     "async": "0.9.0",
     "bluebird": "^2.9.13",
-    "jasmine-node": "^1.14.5",
     "request": "^2.53.0",
     "underscore": "^1.7.0"
   },
   "devDependencies": {
+    "grunt-jasmine-node": "^0.2.1",
+    "grunt-jasmine-node-coffee": "^0.1.4",
     "jasmine-node": "^1.14.5"
   }
 }
