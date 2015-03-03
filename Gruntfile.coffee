@@ -1,10 +1,14 @@
 module.exports = (grunt) ->
   grunt.initConfig
     coffee:
-      compile:
-        files:
-          'lib/nilas.js': ['*.coffee', 'models/*.coffee']
-
+      glob_to_multiple:
+        expand: true,
+        flatten: false,
+        cwd: '',
+        src: ['*.coffee', 'models/*.coffee'],
+        dest: 'lib/',
+        ext: '.js'
+      
     jasmine_node:
       coffee: 'true'
       extensions: 'coffee'

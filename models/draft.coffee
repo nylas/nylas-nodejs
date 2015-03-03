@@ -24,7 +24,7 @@ class Draft extends Message
       callback(err) if callback
       Promise.reject(err)
 
-  send: ->
+  send: (callback = null) ->
     if @id
       body =
         'draft_id': @id
