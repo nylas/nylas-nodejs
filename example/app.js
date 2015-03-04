@@ -15,8 +15,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // setup the Nilas API
-require('coffee-script/register');
-global.Nilas = require('../nilas').config({
+global.Nilas = require('nilas').config({
     appId: '<app id here>',
     appSecret: '<app secret here>'
 });
