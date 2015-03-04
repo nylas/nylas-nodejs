@@ -16,6 +16,7 @@ describe "Draft", ->
   beforeEach ->
     @connection = new NilasConnection('123')
     @draft = new Draft(@connection, 'test-namespace-id')
+    Promise.onPossiblyUnhandledRejection (e, promise) ->
 
   describe "save", ->
     it "should do a POST request if the draft has no id", ->
