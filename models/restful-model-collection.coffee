@@ -40,7 +40,7 @@ class RestfulModelCollection
       Promise.reject(err)
 
   first: (params = {}, callback = null) ->
-    @getModelCollection(params).then (items) ->
+    @getModelCollection(params, 0, 1).then (items) ->
       callback(null, items[0]) if callback
       Promise.resolve(items[0])
     .catch (err) ->
@@ -54,8 +54,7 @@ class RestfulModelCollection
     if not id
       err = new Error("find() must be called with an item id")
       callback(err) if callback
-      Promise.reject(err)
-      return
+      return Promise.reject(err)
 
     @getModel(id).then (model) ->
       callback(null, model) if callback
@@ -86,7 +85,7 @@ class RestfulModelCollection
           callback(null, accumulated) if callback
           resolve(accumulated)
 
-  delete: (itemOrId, callback) ->
+  delete: (itemOrId, callback = null) ->
     id = if itemOrId?.id? then itemOrId.id else itemOrId
     @connection.request("DELETE", "#{@path()}/#{id}").then ->
       callback(null) if callback

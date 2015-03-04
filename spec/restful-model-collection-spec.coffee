@@ -127,92 +127,251 @@ describe "RestfulModelCollection", ->
             expect(callbackError).toBe(@error)
             done()
 
+  describe "first", ->
+    describe "when the request is successful", ->
+      beforeEach ->
+        @item = { id: '123' }
+        @items = [@item]
+        spyOn(@collection, 'getModelCollection').andCallFake =>
+          Promise.resolve(@items)
 
-  first: (params = {}, callback = null) ->
-    @getModelCollection(params).then (items) ->
-      callback(null, items[0]) if callback
-      Promise.resolve(items[0])
-    .catch (err) ->
-      callback(err) if callback
-      Promise.reject(err)
+      it "should fetch one item with the provided params", ->
+        @collection.first({from: 'ben@nilas.com'})
+        expect(@collection.getModelCollection).toHaveBeenCalledWith({from: 'ben@nilas.com'}, 0, 1)
 
-  list: (params = {}, callback = null) ->
-    @range(params, 0, Infinity, callback)
+      it "should resolve with the first item", ->
+        testUntil (done) =>
+          @collection.first({from: 'ben@nilas.com'}).then (item) =>
+            expect(item).toBe(@item)
+            done()
 
-  find: (id, callback = null) ->
-    if not id
-      err = new Error("find() must be called with an item id")
-      callback(err) if callback
-      Promise.reject(err)
-      return
+      it "should call the optional callback with the first item", ->
+        testUntil (done) =>
+          @collection.first {from: 'ben@nilas.com'}, (err, item) =>
+            expect(item).toBe(@item)
+            done()
 
-    @getModel(id).then (model) ->
-      callback(null, model) if callback
-      Promise.resolve(model)
-    .catch (err) ->
-      callback(err) if callback
-      Promise.reject(err)
+      it "should not throw an exception when no items are returned", ->
+        @items = []
+        testUntil (done) =>
+          @collection.first({from: 'ben@nilas.com'}).then (item) =>
+            expect(item).toBe(undefined)
+            done()
 
-  range: (params = {}, offset = 0, limit = 100, callback = null) ->
-    new Promise (resolve, reject) =>
-      accumulated = []
-      finished = false
+    describe "when the request fails", ->
+      beforeEach ->
+        @error = new Error("Network error")
+        spyOn(@collection, 'getModelCollection').andCallFake =>
+          Promise.reject(@error)
 
-      async.until ->
-        finished
-      , (chunkCallback) =>
-        chunkOffset = offset + accumulated.length
-        chunkLimit = Math.min(REQUEST_CHUNK_SIZE, limit - accumulated.length)
-        @getModelCollection(params, chunkOffset, chunkLimit).then (models) ->
-          accumulated = accumulated.concat(models)
-          finished = models.length < REQUEST_CHUNK_SIZE or accumulated.length >= limit
-          chunkCallback()
-      , (err) ->
-        if err
-          callback(err) if callback
-          reject(err)
-        else
-          callback(null, accumulated) if callback
-          resolve(accumulated)
+      it "should reject with any underlying error", ->
+        testUntil (done) =>
+          @collection.first({from: 'ben@nilas.com'}).catch (err) =>
+            expect(err).toBe(@error)
+            done()
 
-  delete: (itemOrId, callback) ->
-    id = if itemOrId?.id? then itemOrId.id else itemOrId
-    @connection.request("DELETE", "#{@path()}/#{id}").then ->
-      callback(null) if callback
-      Promise.resolve()
-    .catch (err) ->
-      callback(err) if callback
-      Promise.reject(err)
+      it "should call the optional callback with the underlying error", ->
+        testUntil (done) =>
+          @collection.first {from: 'ben@nilas.com'}, (err, item) =>
+            expect(err).toBe(@error)
+            done()
 
-  build: (args) ->
-    model = new @modelClass(@connection, @namespaceId)
-    model[key] = val for key, val of args
-    model
+  describe "list", ->
+    it "should call range() with an inifite range", ->
+      spyOn(@collection, 'range')
 
-  path: ->
-    if @namespaceId
-      "/n/#{@namespaceId}/#{@modelClass.collectionName}"
-    else
-      "/#{@modelClass.collectionName}"
+      params = {from: 'ben@nilas.com'}
+      callback = () ->
+      @collection.list(params, callback)
+      expect(@collection.range).toHaveBeenCalledWith(params, 0, Infinity, callback)
 
-  # Internal
+  describe "find", ->
+    it "should reject with an error if an id is not provided", ->
+      testUntil (done) =>
+        @collection.find().catch(done)
 
-  getModel: (id) ->
-    @connection.request
-      method: 'GET'
-      path: "#{@path()}/#{id}"
-    .then (json) =>
-      model = new @modelClass(@connection, @namespaceId, json)
-      Promise.resolve(model)
+    it "should make an API request for the individual model", ->
+      spyOn(@connection, 'request').andCallFake => Promise.resolve({})
+      testUntil (done) =>
+        @collection.find('123')
+        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/n/test-namespace-id/threads/123' })
+        done()
 
-  getModelCollection: (params, offset, limit) ->
-    @connection.request
-      method: 'GET'
-      path: @path()
-      qs: _.extend {}, params, {offset, limit}
-    .then (jsonArray) =>
-      models = jsonArray.map (json) =>
-        new @modelClass(@connection, @namespaceId, json)
-      Promise.resolve(models)
+    describe "when the request succeeds", ->
+      beforeEach ->
+        @item = { id: '123' }
+        spyOn(@connection, 'request').andCallFake =>
+          Promise.resolve(@item)
 
-  
+      it "should resolve with the item", ->
+        testUntil (done) =>
+          @collection.find('123').then (item) =>
+            expect(item instanceof Thread).toBe(true)
+            expect(item.id).toBe('123')
+            done()
+
+      it "should call the optional callback with the first item", ->
+        testUntil (done) =>
+          @collection.find '123', (err, item) =>
+            expect(item instanceof Thread).toBe(true)
+            expect(item.id).toBe('123')
+            done()
+
+    describe "when the request fails", ->
+      beforeEach ->
+        @error = new Error("Network error")
+        spyOn(@connection, 'request').andCallFake =>
+          Promise.reject(@error)
+
+      it "should reject with any underlying error", ->
+        testUntil (done) =>
+          @collection.find('123').catch (err) =>
+            expect(err).toBe(@error)
+            done()
+
+      it "should call the optional callback with the underlying error", ->
+        testUntil (done) =>
+          @collection.find '123', (err, item) =>
+            expect(err).toBe(@error)
+            done()
+
+  describe "range", ->
+    beforeEach ->
+      threadsResponses = []
+      for x in [0..3]
+        response = []
+        count = if x < 3 then 99 else 12
+        for i in [0..count]
+          response.push({
+            id: '123',
+            namespace_id: 'test-namespace-id',
+            subject: 'A'
+          })
+        threadsResponses.push(response)
+
+      spyOn(@collection, 'getModelCollection').andCallFake (params, offset, limit) ->
+        Promise.resolve(threadsResponses[offset / 100])
+
+    it "should fetch once if fewer than one page of models are requested", ->
+      params = {from: 'ben@nilas.com'}
+      threads = [{
+        id: '123'
+        namespace_id: 'test-namespace-id'
+        subject: 'A'
+      }]
+      @collection.range(params, 0, 50)
+      expect(@collection.getModelCollection).toHaveBeenCalledWith(params, 0, 50)
+
+    it "should fetch repeatedly until the requested number of models have been returned", ->
+      params = {from: 'ben@nilas.com'}
+      threads = [{
+        id: '123'
+        namespace_id: 'test-namespace-id'
+        subject: 'A'
+      }]
+      runs ->
+        @collection.range(params, 0, 300)
+      waitsFor ->
+        @collection.getModelCollection.callCount == 3
+      runs ->
+        expect(@collection.getModelCollection.calls[0].args).toEqual([ { from : 'ben@nilas.com' }, 0, 100 ])
+        expect(@collection.getModelCollection.calls[1].args).toEqual([ { from : 'ben@nilas.com' }, 100, 100 ])
+        expect(@collection.getModelCollection.calls[2].args).toEqual([ { from : 'ben@nilas.com' }, 200, 100 ])
+
+    it "should stop fetching if fewer than requested models are returned", ->
+      params = {from: 'ben@nilas.com'}
+      runs ->
+        @collection.range(params, 0, 10000)
+      waitsFor ->
+        @collection.getModelCollection.callCount == 4
+      runs ->
+        expect(@collection.getModelCollection.calls[0].args).toEqual([ { from : 'ben@nilas.com' }, 0, 100 ])
+        expect(@collection.getModelCollection.calls[1].args).toEqual([ { from : 'ben@nilas.com' }, 100, 100 ])
+        expect(@collection.getModelCollection.calls[2].args).toEqual([ { from : 'ben@nilas.com' }, 200, 100 ])
+        expect(@collection.getModelCollection.calls[3].args).toEqual([ { from : 'ben@nilas.com' }, 300, 100 ])
+
+    it "should call the callback with all of the loaded models", ->
+      params = {from: 'ben@nilas.com'}
+      testUntil (done) =>
+        @collection.range params, 0, 10000, (err, models) ->
+          expect(models.length).toBe(313)
+          done()
+
+    it "should resolve with the loaded models", ->
+      params = {from: 'ben@nilas.com'}
+      testUntil (done) =>
+        @collection.range(params, 0, 10000).then (models) ->
+          expect(models.length).toBe(313)
+          done()
+
+  describe "delete", ->
+    beforeEach ->
+      @item = new Thread(@connection, 'test-namespace-id', id: '123')
+
+    it "should accept a model object as the first parameter", ->
+      spyOn(@connection, 'request').andCallFake ->
+        Promise.resolve()
+      @collection.delete(@item)
+      expect(@connection.request).toHaveBeenCalledWith('DELETE', '/n/test-namespace-id/threads/123')
+
+    it "should accept a model id as the first parameter", ->
+      spyOn(@connection, 'request').andCallFake ->
+        Promise.resolve()
+      @collection.delete(@item.id)
+      expect(@connection.request).toHaveBeenCalledWith('DELETE', '/n/test-namespace-id/threads/123')
+
+    describe "when the api request is successful", ->
+      beforeEach ->
+        spyOn(@connection, 'request').andCallFake ->
+          Promise.resolve()
+
+      it "should resolve", ->
+        testUntil (done) =>
+          @collection.delete(@item.id).then ->
+            done()
+
+      it "should call it's callback with no error", ->
+        testUntil (done) =>
+          @collection.delete @item.id, (err) =>
+            expect(err).toBe(null)
+            done()
+
+    describe "when the api request fails", ->
+      beforeEach ->
+        @error = new Error("Network error")
+        spyOn(@connection, 'request').andCallFake =>
+          Promise.reject(@error)
+
+      it "should reject", ->
+        testUntil (done) =>
+          @collection.delete(@item.id).catch (err) =>
+            expect(err).toBe(@error)
+            done()
+
+      it "should call it's callback with the error", ->
+        testUntil (done) =>
+          @collection.delete @item.id, (err) =>
+            expect(err).toBe(@error)
+            done()
+
+  describe "build", ->
+    it "should return a new instance of the model class", ->
+      expect(@collection.build() instanceof Thread).toBe(true)
+
+    it "should initialize the new instance with the connection", ->
+      expect(@collection.build().connection).toBe(@connection)
+
+    it "should initialize the new instance with the same namespaceId", ->
+      expect(@collection.build().namespaceId).toBe(@collection.namespaceId)
+
+    it "should set other attributes provided to the build method", ->
+      expect(@collection.build(subject: '123').subject).toEqual('123')
+
+  describe "path", ->
+    it "should return the modelClass' collectionName with the namespace prefix", ->
+      expect(@collection.path()).toEqual('/n/test-namespace-id/threads')
+
+    it "should return the modelClass' collectionname alone if no namespaceId is set", ->
+      @collection.namespaceId = undefined
+      expect(@collection.path()).toEqual('/threads')
+
