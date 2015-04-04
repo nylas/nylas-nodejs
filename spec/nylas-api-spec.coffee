@@ -1,5 +1,5 @@
-Nilas = require '../nilas'
-NilasConnection = require '../nilas-connection'
+Nylas = require '../nylas'
+NylasConnection = require '../nylas-connection'
 Promise = require 'bluebird'
 request = require 'request'
 
@@ -10,12 +10,12 @@ testUntil = (fn) ->
       finished = true
   waitsFor -> finished
 
-describe "Nilas", ->
+describe "Nylas", ->
   beforeEach ->
-    Nilas.appId = undefined
-    Nilas.appSecret = undefined
-    Nilas.apiServer = 'https://api.nilas.com'
-    Nilas.authServer = 'https://www.nilas.com'
+    Nylas.appId = undefined
+    Nylas.appSecret = undefined
+    Nylas.apiServer = 'https://api.nylas.com'
+    Nylas.authServer = 'https://www.nylas.com'
     Promise.onPossiblyUnhandledRejection (e, promise) ->
 
   describe "config", ->
@@ -23,84 +23,84 @@ describe "Nilas", ->
       newConfig = 
         appId: 'newId'
         appSecret: 'newSecret'
-        apiServer: 'https://api-staging.nilas.com/'
-        authServer: 'https://www-staging.nilas.com/'
+        apiServer: 'https://api-staging.nylas.com/'
+        authServer: 'https://www-staging.nylas.com/'
 
-      Nilas.config(newConfig)
-      expect(Nilas.appId).toBe(newConfig.appId)
-      expect(Nilas.appSecret).toBe(newConfig.appSecret)
-      expect(Nilas.apiServer).toBe(newConfig.apiServer)
-      expect(Nilas.authServer).toBe(newConfig.authServer)
+      Nylas.config(newConfig)
+      expect(Nylas.appId).toBe(newConfig.appId)
+      expect(Nylas.appSecret).toBe(newConfig.appSecret)
+      expect(Nylas.apiServer).toBe(newConfig.apiServer)
+      expect(Nylas.authServer).toBe(newConfig.authServer)
 
     it "should not override existing values unless new values are provided", ->
       newConfig = 
         appId: 'newId'
         appSecret: 'newSecret'
 
-      Nilas.config(newConfig)
-      expect(Nilas.appId).toBe(newConfig.appId)
-      expect(Nilas.appSecret).toBe(newConfig.appSecret)
-      expect(Nilas.apiServer).toBe('https://api.nilas.com')
-      expect(Nilas.authServer).toBe('https://www.nilas.com')
+      Nylas.config(newConfig)
+      expect(Nylas.appId).toBe(newConfig.appId)
+      expect(Nylas.appSecret).toBe(newConfig.appSecret)
+      expect(Nylas.apiServer).toBe('https://api.nylas.com')
+      expect(Nylas.authServer).toBe('https://www.nylas.com')
 
     it "should throw an exception if the server options do not contain ://", ->
       newConfig = 
         appId: 'newId'
         appSecret: 'newSecret'
-        apiServer: 'dontknowwhatImdoing.nilas.com'
+        apiServer: 'dontknowwhatImdoing.nylas.com'
 
-      expect( -> Nilas.config(newConfig)).toThrow()
+      expect( -> Nylas.config(newConfig)).toThrow()
 
   describe "with", ->
     it "should throw an exception if an access token is not provided", ->
-      expect( -> Nilas.with()).toThrow()
+      expect( -> Nylas.with()).toThrow()
 
     it "should throw an exception if the app id and secret have not been configured", ->
-      expect( -> Nilas.with('test-access-token')).toThrow()
+      expect( -> Nylas.with('test-access-token')).toThrow()
 
-    it "should return an NilasConnection for making requests with the access token", ->
-      Nilas.config
+    it "should return an NylasConnection for making requests with the access token", ->
+      Nylas.config
         appId: 'newId'
         appSecret: 'newSecret'
 
-      conn = Nilas.with('test-access-token')
-      expect(conn instanceof NilasConnection).toEqual(true)
+      conn = Nylas.with('test-access-token')
+      expect(conn instanceof NylasConnection).toEqual(true)
 
   describe "exchangeCodeForToken", ->
     beforeEach ->
-      Nilas.config
+      Nylas.config
         appId: 'newId'
         appSecret: 'newSecret'
 
     it "should throw an exception if no code is provided", ->
-      expect( -> Nilas.exchangeCodeForToken()).toThrow()
+      expect( -> Nylas.exchangeCodeForToken()).toThrow()
 
     it "should throw an exception if the app id and secret have not been configured", ->
-      Nilas.appId = undefined
-      Nilas.appSecret = undefined
-      expect( -> Nilas.exchangeCodeForToken('code-from-server')).toThrow()
+      Nylas.appId = undefined
+      Nylas.appSecret = undefined
+      expect( -> Nylas.exchangeCodeForToken('code-from-server')).toThrow()
 
     it "should return a promise", ->
-      p = Nilas.exchangeCodeForToken('code-from-server')
+      p = Nylas.exchangeCodeForToken('code-from-server')
       expect(p instanceof Promise).toBe(true)
 
     it "should make a request to /oauth/token with the correct grant_type and client params", ->
       spyOn(request, 'Request').andCallFake (options) ->
-        expect(options.url).toEqual('https://www.nilas.com/oauth/token')
+        expect(options.url).toEqual('https://www.nylas.com/oauth/token')
         expect(options.qs).toEqual({
           "client_id":"newId",
           "client_secret":"newSecret",
           "grant_type":"authorization_code",
           "code":"code-from-server"
         })
-      Nilas.exchangeCodeForToken('code-from-server')
+      Nylas.exchangeCodeForToken('code-from-server')
 
     it "should resolve with the returned access_token", ->
       spyOn(request, 'Request').andCallFake (options) ->
         options.callback(null, null, {access_token: '12345'})
 
       testUntil (done) ->
-        p = Nilas.exchangeCodeForToken('code-from-server').then (accessToken) ->
+        p = Nylas.exchangeCodeForToken('code-from-server').then (accessToken) ->
           expect(accessToken).toEqual('12345')
           done()
 
@@ -110,7 +110,7 @@ describe "Nilas", ->
         options.callback(error, null, null)
 
       testUntil (done) ->
-        p = Nilas.exchangeCodeForToken('code-from-server').catch (returnedError) ->
+        p = Nylas.exchangeCodeForToken('code-from-server').catch (returnedError) ->
           expect(returnedError).toBe(error)
           done()
 
@@ -119,7 +119,7 @@ describe "Nilas", ->
         spyOn(request, 'Request').andCallFake (options) ->
           options.callback(null, null, {access_token: '12345'})
         testUntil (done) ->
-          Nilas.exchangeCodeForToken 'code-from-server', (returnedError, accessToken) ->
+          Nylas.exchangeCodeForToken 'code-from-server', (returnedError, accessToken) ->
             expect(accessToken).toBe('12345')
             done()
 
@@ -129,40 +129,40 @@ describe "Nilas", ->
           options.callback(error, null, null)
 
         testUntil (done) ->
-          Nilas.exchangeCodeForToken 'code-from-server', (returnedError, accessToken) ->
+          Nylas.exchangeCodeForToken 'code-from-server', (returnedError, accessToken) ->
             expect(returnedError).toBe(error)
             done()
 
   describe "urlForAuthentication", ->
     beforeEach ->
-      Nilas.config
+      Nylas.config
         appId: 'newId'
         appSecret: 'newSecret'
 
     it "should require a redirectURI", ->
-      expect( -> Nilas.urlForAuthentication()).toThrow()
+      expect( -> Nylas.urlForAuthentication()).toThrow()
 
     it "should throw an exception if the app id and secret have not been configured", ->
-      Nilas.appId = undefined
+      Nylas.appId = undefined
       options =
         redirectURI: 'https://localhost/callback'
-      expect( -> Nilas.urlForAuthentication(options)).toThrow()
+      expect( -> Nylas.urlForAuthentication(options)).toThrow()
 
     it "should generate the correct authentication URL", ->
       options =
         redirectURI: 'https://localhost/callback'
-      expect(Nilas.urlForAuthentication(options)).toEqual('https://www.nilas.com/oauth/authorize?client_id=newId&trial=false&response_type=code&scope=email&login_hint=&redirect_uri=https://localhost/callback')
+      expect(Nylas.urlForAuthentication(options)).toEqual('https://www.nylas.com/oauth/authorize?client_id=newId&trial=false&response_type=code&scope=email&login_hint=&redirect_uri=https://localhost/callback')
 
     it "should use a login hint when provided in the options", ->
       options =
-        loginHint: 'ben@nilas.com'
+        loginHint: 'ben@nylas.com'
         redirectURI: 'https://localhost/callback'
-      expect(Nilas.urlForAuthentication(options)).toEqual('https://www.nilas.com/oauth/authorize?client_id=newId&trial=false&response_type=code&scope=email&login_hint=ben@nilas.com&redirect_uri=https://localhost/callback')
+      expect(Nylas.urlForAuthentication(options)).toEqual('https://www.nylas.com/oauth/authorize?client_id=newId&trial=false&response_type=code&scope=email&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback')
 
     it "should use trial = true when provided in the options", ->
       options =
-        loginHint: 'ben@nilas.com'
+        loginHint: 'ben@nylas.com'
         redirectURI: 'https://localhost/callback'
         trial: true
-      expect(Nilas.urlForAuthentication(options)).toEqual('https://www.nilas.com/oauth/authorize?client_id=newId&trial=true&response_type=code&scope=email&login_hint=ben@nilas.com&redirect_uri=https://localhost/callback')
+      expect(Nylas.urlForAuthentication(options)).toEqual('https://www.nylas.com/oauth/authorize?client_id=newId&trial=true&response_type=code&scope=email&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback')
 

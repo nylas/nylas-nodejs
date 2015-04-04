@@ -8,7 +8,7 @@ module.exports =
 class RestfulModelCollection
 
   constructor: (@modelClass, @connection, @namespaceId) ->
-    throw new Error("Connection object not provided") unless @connection instanceof require '../nilas-connection'
+    throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
     throw new Error("Model class not provided") unless @modelClass
     @
 

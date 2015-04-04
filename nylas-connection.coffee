@@ -3,7 +3,7 @@ request = require 'request'
 Promise = require 'bluebird'
 
 module.exports =
-class NilasConnection
+class NylasConnection
 
   constructor: (@accessToken) ->
     Namespace = require './models/namespace'
@@ -16,9 +16,9 @@ class NilasConnection
     @accounts = new ManagementModelCollection(Account, @, null)
 
   request: (options={}) ->
-    Nilas = require './nilas'
+    Nylas = require './nylas'
     options.method ?= 'GET'
-    options.url ?= "#{Nilas.apiServer}#{options.path}" if options.path
+    options.url ?= "#{Nylas.apiServer}#{options.path}" if options.path
     options.body ?= {} unless options.formData
     options.json ?= true
 

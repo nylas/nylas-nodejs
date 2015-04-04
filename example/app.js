@@ -14,9 +14,9 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-// setup the Nilas API
-global.Nilas = require('nilas').config({
-    appId: '<app id here>',
+// setup the Nylas API
+global.Nylas = require('nylas').config({
+    appId: 'c96gge1jo29pl2rebcb7utsbp',
     appSecret: '<app secret here>'
 });
 

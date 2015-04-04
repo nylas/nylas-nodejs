@@ -1,5 +1,5 @@
-Nilas = require '../nilas'
-NilasConnection = require '../nilas-connection'
+Nylas = require '../nylas'
+NylasConnection = require '../nylas-connection'
 Draft = require '../models/draft'
 Promise = require 'bluebird'
 request = require 'request'
@@ -14,7 +14,7 @@ testUntil = (fn) ->
 
 describe "Draft", ->
   beforeEach ->
-    @connection = new NilasConnection('123')
+    @connection = new NylasConnection('123')
     @draft = new Draft(@connection, 'test-namespace-id')
     Promise.onPossiblyUnhandledRejection (e, promise) ->
 

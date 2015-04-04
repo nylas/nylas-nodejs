@@ -9,13 +9,13 @@ router.get('/', function(req, res, next) {
     res.render('index', {
         title: 'Welcome',
         message: 'Link your email to get started.',
-        url: Nilas.urlForAuthentication(options)
+        url: Nylas.urlForAuthentication(options)
     });
 });
 
 router.get('/oauth/callback', function (req, res, next) {
     if (req.query.code) {
-        Nilas.exchangeCodeForToken(req.query.code).then(function(token) {
+        Nylas.exchangeCodeForToken(req.query.code).then(function(token) {
             res.redirect("/threads/top?token="+token);
         });
 

@@ -1,13 +1,13 @@
 _ = require 'underscore'
 request = require 'request'
 Promise = require 'bluebird'
-NilasConnection = require './nilas-connection'
+NylasConnection = require './nylas-connection'
 
-class Nilas
+class Nylas
   @appId: null
   @appSecret: null
-  @apiServer: 'https://api.nilas.com'
-  @authServer: 'https://www.nilas.com'
+  @apiServer: 'https://api.nylas.com'
+  @authServer: 'https://www.nylas.com'
 
   @config: ({appId, appSecret, apiServer, authServer} = {}) ->
     throw new Error("Please specify a fully qualified URL for the API Server.") if apiServer?.indexOf('://') == -1
@@ -22,7 +22,7 @@ class Nilas
   @with: (accessToken) ->
     throw new Error("with() cannot be called until you provide an appId and secret via config()") unless @appId and @appSecret
     throw new Error("with() must be called with an access token") unless accessToken?
-    new NilasConnection(accessToken)
+    new NylasConnection(accessToken)
 
   @exchangeCodeForToken: (code, callback) ->
     throw new Error("exchangeCodeForToken() cannot be called until you provide an appId and secret via config()") unless @appId and @appSecret
@@ -54,4 +54,4 @@ class Nilas
     options.trial ?= false
     "#{@authServer}/oauth/authorize?client_id=#{@appId}&trial=#{options.trial}&response_type=code&scope=email&login_hint=#{options.loginHint}&redirect_uri=#{options.redirectURI}"
 
-module.exports = Nilas
+module.exports = Nylas

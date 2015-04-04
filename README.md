@@ -1,10 +1,10 @@
-Nilas Node.js Bindings
+Nylas Node.js Bindings
 ======================
 
 Installation
 ------------
 ```
-npm install nilas
+npm install nylas
 ```
 
 Example Express App
@@ -18,16 +18,16 @@ npm install
 DEBUG=example:* ./bin/www
 ```
 
-Note that you'll need to replace the Nilas App ID and Secret in `app.js` with your application's credentials.
+Note that you'll need to replace the Nylas App ID and Secret in `app.js` with your application's credentials.
 
 
 API Overview
 ------------
 
-Every resource is accessed via an instance of `Nilas`. Before making any requests, be sure to call `config` and initialize the `Nilas` with your `App ID` and `App Secret`.
+Every resource is accessed via an instance of `Nylas`. Before making any requests, be sure to call `config` and initialize the `Nylas` with your `App ID` and `App Secret`.
 
 ```javascript
-var Nilas = require('nilas').config({
+var Nylas = require('nylas').config({
     appId: 'c96gge1jo29pl2rebcb7utsbp',
     appSecret: 'l2rebcb7utsbpc96gge1jo29p'
 });
@@ -36,7 +36,7 @@ var Nilas = require('nilas').config({
 Every resource method accepts an optional callback as the last argument:
 
 ```javascript
-Nilas.with(accessToken).namespaces.list({}, function(namespaces){
+Nylas.with(accessToken).namespaces.list({}, function(namespaces){
 	console.log(namespaces.length);
 });
 ```
@@ -45,19 +45,19 @@ Nilas.with(accessToken).namespaces.list({}, function(namespaces){
 Additionally, every resource method returns a promise, so you don't have to use callbacks if the rest of your code is promise-friendly:
 
 ```javascript
-Nilas.with(accessToken).namespaces.list({}).then(function(namespaces){
+Nylas.with(accessToken).namespaces.list({}).then(function(namespaces){
 	console.log(namespaces.length);
 });
 ```
 
 Authentication
 -----
-The Nilas REST API uses server-side (three-legged) OAuth, and the Node.js bindings provide convenience methods that simplifiy the OAuth process. For more information about authenticating users with Nilas, visit the [Developer Documentation](https://www.nilas.com/docs/knowledgebase#authentication)
+The Nylas REST API uses server-side (three-legged) OAuth, and the Node.js bindings provide convenience methods that simplifiy the OAuth process. For more information about authenticating users with Nylas, visit the [Developer Documentation](https://www.nylas.com/docs/knowledgebase#authentication)
 
-Step 1: Redirect the user to Nilas:
+Step 1: Redirect the user to Nylas:
 
 ```javascript
-var Nilas = require('nilas').config({
+var Nylas = require('nylas').config({
     appId: 'c96gge1jo29pl2rebcb7utsbp',
     appSecret: 'l2rebcb7utsbpc96gge1jo29p'
 });
@@ -67,7 +67,7 @@ router.get('/connect', function(req, res, next) {
         redirectURI: 'http://localhost:3000/oauth/callback',
         trial: false
     }
-    res.redirect(Nilas.urlForAuthentication(options));
+    res.redirect(Nylas.urlForAuthentication(options));
 });
 ```
 
@@ -76,7 +76,7 @@ Step 2: Handle the Authentication Response:
 ```javascript
 router.get('/oauth/callback', function (req, res, next) {
     if (req.query.code) {
-        Nilas.exchangeCodeForToken(req.query.code).then(function(token) {
+        Nylas.exchangeCodeForToken(req.query.code).then(function(token) {
         	// save the token to the current session, save it to the user model, etc.
         });
 
@@ -94,13 +94,13 @@ router.get('/oauth/callback', function (req, res, next) {
 
 Fetching Namespaces
 -------
-In the Nilas API, every access token provides access to one or more namespaces, which represent email accounts. Currently, authenticating a user with their email account gives you an access token for just that one namespace.
+In the Nylas API, every access token provides access to one or more namespaces, which represent email accounts. Currently, authenticating a user with their email account gives you an access token for just that one namespace.
 
 To fetch the namespace for a given access token:
 
 ```javascript
-Nilas.with(accessToken).namespaces.first({}).then(function(namespace){
-    console.log(namespace.emailAddress); // ben@nilas.com
+Nylas.with(accessToken).namespaces.first({}).then(function(namespace){
+    console.log(namespace.emailAddress); // ben@nylas.com
     console.log(namespace.provider); //gmail
 });
 ```
@@ -109,14 +109,14 @@ Fetching Threads, Messages, etc.
 -----
 
 Threads, messages, and other resources belong to a namespace. Once you've obtained a namespace, you can query these collections in several ways. All of the query methods
-take filter parameters. Available filters can be found in the [API Documentation](https://nilas.com/docs/api#filters)
+take filter parameters. Available filters can be found in the [API Documentation](https://nylas.com/docs/api#filters)
 
 
 ```javascript
 
 // Find the first thread matching the filter criteria
 
-namespace.threads.first({from: 'ben@nilas.com'}).then(function(thread) {
+namespace.threads.first({from: 'ben@nylas.com'}).then(function(thread) {
    console.log(thread.subject);
    console.log(thread.snippet);
 }) 
@@ -124,7 +124,7 @@ namespace.threads.first({from: 'ben@nilas.com'}).then(function(thread) {
 // Count threads with the inbox tag
 
 namespace.threads.count({tag: 'inbox'}).then(function(count) {
-   console.log('There are ' + count + 'threads in your Nilas.');
+   console.log('There are ' + count + 'threads in your Nylas.');
 })
 
 // Fetch a single thread
@@ -169,7 +169,7 @@ Creating and Sending Drafts
 ```javascript
 var draft = namespace.drafts.build({
     subject: 'My New Draft',
-    to: [{email: 'ben@nilas.com'}]
+    to: [{email: 'ben@nylas.com'}]
 });
 
 // Sending the Draft
@@ -199,9 +199,9 @@ namespace.drafts.find(savedId).then(draft) {
 Contributing 
 ----
 
-We'd love your help making the Nilas Node.js bindings better. Join the Google Group for project updates and feature discussion. We also hang out in #nilas on irc.freenode.net, or you can email support@nilas.com.
+We'd love your help making the Nylas Node.js bindings better. Join the Google Group for project updates and feature discussion. We also hang out in #nylas on irc.freenode.net, or you can email support@nylas.com.
 
-Please sign the [Contributor License Agreement](https://www.nilas.com/cla.html) before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
+Please sign the [Contributor License Agreement](https://www.nylas.com/cla.html) before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 
 Tests can be run with:
 

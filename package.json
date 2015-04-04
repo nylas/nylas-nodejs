@@ -1,8 +1,8 @@
 {
-  "name": "nilas",
+  "name": "nylas",
   "version": "1.0.0",
-  "description": "A NodeJS wrapper for the Nilas REST API for Email, Contacts and Calendar",
-  "main": "lib/nilas.js",
+  "description": "A NodeJS wrapper for the Nylas REST API for Email, Contacts and Calendar",
+  "main": "lib/nylas.js",
   "scripts": {
     "test": "jasmine-node --coffee spec"
   },
@@ -10,9 +10,10 @@
     "email",
     "contacts",
     "calendar",
-    "nilas"
+    "nilas",
+    "nylas"
   ],
-  "author": "Ben Gotow <ben@nilas.com> (https://nilas.com/)",
+  "author": "Ben Gotow <ben@nylas.com> (https://nylas.com/)",
   "license": "MIT",
   "dependencies": {
     "async": "0.9.0",

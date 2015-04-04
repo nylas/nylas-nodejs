@@ -16,7 +16,7 @@ class RestfulModel
       jsonKey: 'namespace_id'
 
   constructor: (@connection, @namespaceId = null, json = null) ->
-    throw new Error("Connection object not provided") unless @connection instanceof require '../nilas-connection'
+    throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
     @fromJSON(json) if json
     @
 

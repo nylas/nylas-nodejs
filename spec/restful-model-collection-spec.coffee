@@ -1,5 +1,5 @@
-Nilas = require '../nilas'
-NilasConnection = require '../nilas-connection'
+Nylas = require '../nylas'
+NylasConnection = require '../nylas-connection'
 RestfulModelCollection = require '../models/restful-model-collection'
 Thread = require '../models/thread'
 Promise = require 'bluebird'
@@ -14,10 +14,10 @@ testUntil = (fn) ->
 
 describe "RestfulModelCollection", ->
   beforeEach ->
-    Nilas.config
+    Nylas.config
       appId: '123'
       appSecret: '123'
-    @connection = new NilasConnection('test-access-token')
+    @connection = new NylasConnection('test-access-token')
     @collection = new RestfulModelCollection(Thread, @connection, 'test-namespace-id')
 
   describe "constructor", ->
@@ -45,7 +45,7 @@ describe "RestfulModelCollection", ->
         Promise.resolve(threadsResponses[offset / 100])
 
     it "should fetch models with the given params", ->
-      params = {from: 'ben@nilas.com'}
+      params = {from: 'ben@nylas.com'}
       threads = [{
         id: '123'
         namespace_id: 'test-namespace-id'
@@ -55,19 +55,19 @@ describe "RestfulModelCollection", ->
       expect(@collection.getModelCollection).toHaveBeenCalledWith(params, 0, 100)
 
     it "should fetch repeatedly until fewer than requested models are returned", ->
-      params = {from: 'ben@nilas.com'}
+      params = {from: 'ben@nylas.com'}
       runs ->
         @collection.forEach(params, (->), (->))
       waitsFor ->
         @collection.getModelCollection.callCount == 4
       runs ->
-        expect(@collection.getModelCollection.calls[0].args).toEqual([ { from : 'ben@nilas.com' }, 0, 100 ])
-        expect(@collection.getModelCollection.calls[1].args).toEqual([ { from : 'ben@nilas.com' }, 100, 100 ])
-        expect(@collection.getModelCollection.calls[2].args).toEqual([ { from : 'ben@nilas.com' }, 200, 100 ])
-        expect(@collection.getModelCollection.calls[3].args).toEqual([ { from : 'ben@nilas.com' }, 300, 100 ])
+        expect(@collection.getModelCollection.calls[0].args).toEqual([ { from : 'ben@nylas.com' }, 0, 100 ])
+        expect(@collection.getModelCollection.calls[1].args).toEqual([ { from : 'ben@nylas.com' }, 100, 100 ])
+        expect(@collection.getModelCollection.calls[2].args).toEqual([ { from : 'ben@nylas.com' }, 200, 100 ])
+        expect(@collection.getModelCollection.calls[3].args).toEqual([ { from : 'ben@nylas.com' }, 300, 100 ])
 
     it "should call eachCallback with each model fetched", ->
-      params = {from: 'ben@nilas.com'}
+      params = {from: 'ben@nylas.com'}
       eachCallCount = 0
       runs ->
         @collection.forEach(params, (-> eachCallCount += 1), (->))
@@ -77,7 +77,7 @@ describe "RestfulModelCollection", ->
         expect(eachCallCount).toBe(313)
 
     it "should call completeCallback when finished", ->
-      params = {from: 'ben@nilas.com'}
+      params = {from: 'ben@nylas.com'}
       doneCallCount = 0
       runs ->
         @collection.forEach(params, (-> ), (-> doneCallCount += 1))
@@ -89,8 +89,8 @@ describe "RestfulModelCollection", ->
   describe "count", ->
     it "should make a request with the provided params and view=count", ->
       spyOn(@connection, 'request').andCallFake -> Promise.resolve({})
-      @collection.count({from: 'ben@nilas.com'})
-      expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/n/test-namespace-id/threads', qs : { view : 'count', from : 'ben@nilas.com' } })
+      @collection.count({from: 'ben@nylas.com'})
+      expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/n/test-namespace-id/threads', qs : { view : 'count', from : 'ben@nylas.com' } })
 
     describe "when the request is successful", ->
       beforeEach ->
@@ -99,13 +99,13 @@ describe "RestfulModelCollection", ->
 
       it "should resolve with the count", ->
         testUntil (done) =>
-          @collection.count({from: 'ben@nilas.com'}).then (count) ->
+          @collection.count({from: 'ben@nylas.com'}).then (count) ->
             expect(count).toBe(1023)
             done()
 
       it "should call the optional callback with the count", ->
         testUntil (done) =>
-          @collection.count {from: 'ben@nilas.com'}, (callbackError, count) ->
+          @collection.count {from: 'ben@nylas.com'}, (callbackError, count) ->
             expect(count).toBe(1023)
             done()
 
@@ -117,13 +117,13 @@ describe "RestfulModelCollection", ->
 
       it "should reject with any error", ->
         testUntil (done) =>
-          @collection.count({from: 'ben@nilas.com'}).catch (rejectError) =>
+          @collection.count({from: 'ben@nylas.com'}).catch (rejectError) =>
             expect(rejectError).toBe(@error)
             done()
 
       it "should call the optional callback with any error", ->
         testUntil (done) =>
-          @collection.count {from: 'ben@nilas.com'}, (callbackError, count) =>
+          @collection.count {from: 'ben@nylas.com'}, (callbackError, count) =>
             expect(callbackError).toBe(@error)
             done()
 
@@ -136,25 +136,25 @@ describe "RestfulModelCollection", ->
           Promise.resolve(@items)
 
       it "should fetch one item with the provided params", ->
-        @collection.first({from: 'ben@nilas.com'})
-        expect(@collection.getModelCollection).toHaveBeenCalledWith({from: 'ben@nilas.com'}, 0, 1)
+        @collection.first({from: 'ben@nylas.com'})
+        expect(@collection.getModelCollection).toHaveBeenCalledWith({from: 'ben@nylas.com'}, 0, 1)
 
       it "should resolve with the first item", ->
         testUntil (done) =>
-          @collection.first({from: 'ben@nilas.com'}).then (item) =>
+          @collection.first({from: 'ben@nylas.com'}).then (item) =>
             expect(item).toBe(@item)
             done()
 
       it "should call the optional callback with the first item", ->
         testUntil (done) =>
-          @collection.first {from: 'ben@nilas.com'}, (err, item) =>
+          @collection.first {from: 'ben@nylas.com'}, (err, item) =>
             expect(item).toBe(@item)
             done()
 
       it "should not throw an exception when no items are returned", ->
         @items = []
         testUntil (done) =>
-          @collection.first({from: 'ben@nilas.com'}).then (item) =>
+          @collection.first({from: 'ben@nylas.com'}).then (item) =>
             expect(item).toBe(undefined)
             done()
 
@@ -166,13 +166,13 @@ describe "RestfulModelCollection", ->
 
       it "should reject with any underlying error", ->
         testUntil (done) =>
-          @collection.first({from: 'ben@nilas.com'}).catch (err) =>
+          @collection.first({from: 'ben@nylas.com'}).catch (err) =>
             expect(err).toBe(@error)
             done()
 
       it "should call the optional callback with the underlying error", ->
         testUntil (done) =>
-          @collection.first {from: 'ben@nilas.com'}, (err, item) =>
+          @collection.first {from: 'ben@nylas.com'}, (err, item) =>
             expect(err).toBe(@error)
             done()
 
@@ -180,7 +180,7 @@ describe "RestfulModelCollection", ->
     it "should call range() with an inifite range", ->
       spyOn(@collection, 'range')
 
-      params = {from: 'ben@nilas.com'}
+      params = {from: 'ben@nylas.com'}
       callback = () ->
       @collection.list(params, callback)
       expect(@collection.range).toHaveBeenCalledWith(params, 0, Infinity, callback)
@@ -253,7 +253,7 @@ describe "RestfulModelCollection", ->
         Promise.resolve(threadsResponses[offset / 100])
 
     it "should fetch once if fewer than one page of models are requested", ->
-      params = {from: 'ben@nilas.com'}
+      params = {from: 'ben@nylas.com'}
       threads = [{
         id: '123'
         namespace_id: 'test-namespace-id'
@@ -263,7 +263,7 @@ describe "RestfulModelCollection", ->
       expect(@collection.getModelCollection).toHaveBeenCalledWith(params, 0, 50)
 
     it "should fetch repeatedly until the requested number of models have been returned", ->
-      params = {from: 'ben@nilas.com'}
+      params = {from: 'ben@nylas.com'}
       threads = [{
         id: '123'
         namespace_id: 'test-namespace-id'
@@ -274,31 +274,31 @@ describe "RestfulModelCollection", ->
       waitsFor ->
         @collection.getModelCollection.callCount == 3
       runs ->
-        expect(@collection.getModelCollection.calls[0].args).toEqual([ { from : 'ben@nilas.com' }, 0, 100 ])
-        expect(@collection.getModelCollection.calls[1].args).toEqual([ { from : 'ben@nilas.com' }, 100, 100 ])
-        expect(@collection.getModelCollection.calls[2].args).toEqual([ { from : 'ben@nilas.com' }, 200, 100 ])
+        expect(@collection.getModelCollection.calls[0].args).toEqual([ { from : 'ben@nylas.com' }, 0, 100 ])
+        expect(@collection.getModelCollection.calls[1].args).toEqual([ { from : 'ben@nylas.com' }, 100, 100 ])
+        expect(@collection.getModelCollection.calls[2].args).toEqual([ { from : 'ben@nylas.com' }, 200, 100 ])
 
     it "should stop fetching if fewer than requested models are returned", ->
-      params = {from: 'ben@nilas.com'}
+      params = {from: 'ben@nylas.com'}
       runs ->
         @collection.range(params, 0, 10000)
       waitsFor ->
         @collection.getModelCollection.callCount == 4
       runs ->
-        expect(@collection.getModelCollection.calls[0].args).toEqual([ { from : 'ben@nilas.com' }, 0, 100 ])
-        expect(@collection.getModelCollection.calls[1].args).toEqual([ { from : 'ben@nilas.com' }, 100, 100 ])
-        expect(@collection.getModelCollection.calls[2].args).toEqual([ { from : 'ben@nilas.com' }, 200, 100 ])
-        expect(@collection.getModelCollection.calls[3].args).toEqual([ { from : 'ben@nilas.com' }, 300, 100 ])
+        expect(@collection.getModelCollection.calls[0].args).toEqual([ { from : 'ben@nylas.com' }, 0, 100 ])
+        expect(@collection.getModelCollection.calls[1].args).toEqual([ { from : 'ben@nylas.com' }, 100, 100 ])
+        expect(@collection.getModelCollection.calls[2].args).toEqual([ { from : 'ben@nylas.com' }, 200, 100 ])
+        expect(@collection.getModelCollection.calls[3].args).toEqual([ { from : 'ben@nylas.com' }, 300, 100 ])
 
     it "should call the callback with all of the loaded models", ->
-      params = {from: 'ben@nilas.com'}
+      params = {from: 'ben@nylas.com'}
       testUntil (done) =>
         @collection.range params, 0, 10000, (err, models) ->
           expect(models.length).toBe(313)
           done()
 
     it "should resolve with the loaded models", ->
-      params = {from: 'ben@nilas.com'}
+      params = {from: 'ben@nylas.com'}
       testUntil (done) =>
         @collection.range(params, 0, 10000).then (models) ->
           expect(models.length).toBe(313)

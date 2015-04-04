@@ -1,5 +1,5 @@
-Nilas = require '../nilas'
-NilasConnection = require '../nilas-connection'
+Nylas = require '../nylas'
+NylasConnection = require '../nylas-connection'
 RestfulModel = require '../models/restful-model'
 Attributes = require '../models/attributes'
 Promise = require 'bluebird'
@@ -22,7 +22,7 @@ class RestfulSubclassAttributes extends RestfulModel
 
 describe "RestfulModel", ->
   beforeEach ->
-    @connection = new NilasConnection('token')
+    @connection = new NylasConnection('token')
 
   it "should throw an exception unless constructed with a connection", ->
     expect( => new RestfulModel()).toThrow()
