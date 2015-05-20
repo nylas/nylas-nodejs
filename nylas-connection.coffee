@@ -8,10 +8,10 @@ class NylasConnection
   constructor: (@accessToken) ->
     Namespace = require './models/namespace'
     RestfulModelCollection = require './models/restful-model-collection'
-    
+
     Account = require './models/account'
     ManagementModelCollection = require './models/management-model-collection'
-    
+
     @namespaces = new RestfulModelCollection(Namespace, @, null)
     @accounts = new ManagementModelCollection(Account, @, null)
 
@@ -23,12 +23,10 @@ class NylasConnection
     options.json ?= true
 
     if @accessToken
-      options.auth = 
+      options.auth =
         'user': @accessToken,
         'pass': '',
         'sendImmediately': true
-
-    console.log(JSON.stringify(options))
 
     new Promise (resolve, reject) ->
       request options, (error, response, body) ->
@@ -41,4 +39,3 @@ class NylasConnection
             resolve(body)
           catch error
             reject(error)
-
