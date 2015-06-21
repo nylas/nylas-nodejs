@@ -87,7 +87,10 @@ class RestfulModelCollection
 
   delete: (itemOrId, callback = null) ->
     id = if itemOrId?.id? then itemOrId.id else itemOrId
-    @connection.request("DELETE", "#{@path()}/#{id}").then ->
+    @connection.request
+      method: 'DELETE'
+      path: "#{@path()}/#{id}"
+    .then ->
       callback(null) if callback
       Promise.resolve()
     .catch (err) ->
@@ -125,4 +128,3 @@ class RestfulModelCollection
         new @modelClass(@connection, @namespaceId, json)
       Promise.resolve(models)
 
-  

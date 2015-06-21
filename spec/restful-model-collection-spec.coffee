@@ -312,13 +312,13 @@ describe "RestfulModelCollection", ->
       spyOn(@connection, 'request').andCallFake ->
         Promise.resolve()
       @collection.delete(@item)
-      expect(@connection.request).toHaveBeenCalledWith('DELETE', '/n/test-namespace-id/threads/123')
+      expect(@connection.request).toHaveBeenCalledWith({ method: 'DELETE', path: '/n/test-namespace-id/threads/123' })
 
     it "should accept a model id as the first parameter", ->
       spyOn(@connection, 'request').andCallFake ->
         Promise.resolve()
       @collection.delete(@item.id)
-      expect(@connection.request).toHaveBeenCalledWith('DELETE', '/n/test-namespace-id/threads/123')
+      expect(@connection.request).toHaveBeenCalledWith({ method: 'DELETE', path: '/n/test-namespace-id/threads/123' })
 
     describe "when the api request is successful", ->
       beforeEach ->
