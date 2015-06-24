@@ -8,6 +8,7 @@ File = require './file'
 Calendar = require './calendar'
 Event = require './event'
 Tag = require './tag'
+Delta = require './delta'
 
 Attributes = require './attributes'
 _ = require 'underscore'
@@ -39,6 +40,7 @@ class Namespace extends RestfulModel
     @calendars = new RestfulModelCollection(Calendar, @connection, @id)
     @events = new RestfulModelCollection(Event, @connection, @id)
     @tags = new RestfulModelCollection(Tag, @connection, @id)
+    @delta = new Delta(@connection, @id)
     @
 
   me: ->
