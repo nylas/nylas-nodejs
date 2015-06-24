@@ -67,7 +67,7 @@ class RestfulModelCollection
       callback(err) if callback
       Promise.reject(err)
 
-  find: (id, callback = null) ->
+  expand: (id, callback = null) ->
     if not id
       err = new Error("find() must be called with an item id")
       callback(err) if callback
