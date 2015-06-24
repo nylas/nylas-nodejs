@@ -122,6 +122,14 @@ nylas.threads.find('c96gge1jo29pl2rebcb7utsbp').then(function(thread) {
    console.log('Thread not found! Error: ' + err.toString());
 });
 
+// Expand a single thread
+
+namespace.threads.expand('c96gge1jo29pl2rebcb7utsbp').then(function(thread) {
+   console.log(thread.messages);
+}).catch(function(err) {
+   console.log('Thread not found! Error: ' + err.toString());
+});
+
 // Fetch a single thread (using optional callback instead of promise)
 
 nylas.threads.find('c96gge1jo29pl2rebcb7utsbp', function(err, thread) {
