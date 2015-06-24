@@ -63,6 +63,19 @@ class RestfulModelCollection
       callback(err) if callback
       Promise.reject(err)
 
+  find: (id, callback = null) ->
+    if not id
+      err = new Error("find() must be called with an item id")
+      callback(err) if callback
+      return Promise.reject(err)
+
+    @getModel(id, {view: 'expanded'}).then (model) ->
+      callback(null, model) if callback
+      Promise.resolve(model)
+    .catch (err) ->
+      callback(err) if callback
+      Promise.reject(err)
+
   range: (params = {}, offset = 0, limit = 100, callback = null) ->
     new Promise (resolve, reject) =>
       accumulated = []
@@ -110,10 +123,11 @@ class RestfulModelCollection
 
   # Internal
 
-  getModel: (id) ->
+  getModel: (id, params) ->
     @connection.request
       method: 'GET'
       path: "#{@path()}/#{id}"
+      qs: _.extend {}, params
     .then (json) =>
       model = new @modelClass(@connection, @namespaceId, json)
       Promise.resolve(model)
