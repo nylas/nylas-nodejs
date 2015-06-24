@@ -64,7 +64,18 @@ class DeltaStream extends EventEmitter
       path: path
     @request = request(reqOpts)
       .on 'response', (response) =>
-        @emit('response', response)  # Successfully established connection
+        unless response.statusCode == 200
+          response.on 'data', (data) =>
+            err = data
+            try
+              err = JSON.parse(err)
+            catch e
+              # Do nothing, keep err as string.
+            console.error 'Nylas DeltaStream connection error:', err
+            @emit('error', err)
+          return
+        # Successfully established connection
+        @emit('response', response)
         timeoutId = undefined
         response
           .on 'data', (data) =>
@@ -80,7 +91,8 @@ class DeltaStream extends EventEmitter
           .pipe(JSONStream.parse()).on 'data', (obj) =>
             @cursor = obj.cursor if obj.cursor
             @emit('delta', obj)
-      .on 'error', (err) ->
+      .on 'error', (err) =>
+        console.error 'Nylas DeltaStream error:', err
         @emit('error', err)
 
   _restartConnection: () ->
