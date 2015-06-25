@@ -1,3 +1,4 @@
+backoff = require 'backoff'
 {EventEmitter} = require 'events'
 JSONStream = require 'JSONStream'
 Promise = require 'bluebird'
@@ -41,10 +42,23 @@ Emits the following events:
 - `error` when an error occurs in the connection
 ###
 class DeltaStream extends EventEmitter
+  # Max number of times to retry a connection if we receive no data heartbeats
+  # from the Nylas server.
+  @MAX_RESTART_RETRIES = 5
+
   # @param {string} cursor Nylas delta API cursor
   # @param {Array<string>} excludeTypes object types to not return deltas for
   constructor: (@connection, @namespaceId, @cursor, @excludeTypes = []) ->
     throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
+    @restartBackoff = backoff.exponential
+      randomisationFactor: 0.5
+      initialDelay: 2000
+      maxDelay: 30000
+    @restartBackoff.failAfter DeltaStream.MAX_RESTART_RETRIES
+    @restartBackoff
+      .on 'backoff', @_restartConnection.bind(@)
+      .on 'fail', () =>
+        @emit('error', "Nylas DeltaStream failed to reconnect after #{DeltaStream.MAX_RESTART_RETRIES} retries.")
     return @
 
   close: () ->
@@ -52,6 +66,7 @@ class DeltaStream extends EventEmitter
     delete @request
 
   open: () ->
+    @close()
     path = "/n/#{@namespaceId}/delta/streaming"
     queryObj =
       cursor: @cursor
@@ -71,31 +86,35 @@ class DeltaStream extends EventEmitter
               err = JSON.parse(err)
             catch e
               # Do nothing, keep err as string.
-            console.error 'Nylas DeltaStream connection error:', err
-            @emit('error', err)
+            @_onError(err)
           return
         # Successfully established connection
         @emit('response', response)
-        timeoutId = undefined
+        @_onDataReceived()
         response
-          .on 'data', (data) =>
-            # Nylas sends a newline heartbeat in the raw data stream once per second.
-            # Automatically restart the connection if we haven't gotten any data in
-            # STREAMING_TIMEOUT_MS. The connection will restart with the last
-            # received cursor.
-            clearTimeout(timeoutId)
-            # TODO(ericyhwang): Handle errors on reconnection and exponentially back off.
-            timeoutId = setTimeout @_restartConnection.bind(@), STREAMING_TIMEOUT_MS
+          .on 'data', @_onDataReceived.bind(@)
           # Each data block received may not be a complete JSON object. Pipe through
           # JSONStream.parse(), which handles converting data blocks to JSON objects.
           .pipe(JSONStream.parse()).on 'data', (obj) =>
             @cursor = obj.cursor if obj.cursor
             @emit('delta', obj)
-      .on 'error', (err) =>
-        console.error 'Nylas DeltaStream error:', err
-        @emit('error', err)
+      .on 'error', @_onError.bind(@)
 
-  _restartConnection: () ->
-    console.log 'Restarting Nylas DeltaStream connection', @
+  _onDataReceived: (data) ->
+    # Nylas sends a newline heartbeat in the raw data stream once per second.
+    # Automatically restart the connection if we haven't gotten any data in
+    # STREAMING_TIMEOUT_MS. The connection will restart with the last
+    # received cursor.∂
+    clearTimeout(@timeoutId)
+    @restartBackoff.reset()
+    @timeoutId = setTimeout @restartBackoff.backoff, STREAMING_TIMEOUT_MS
+
+  _onError: (err) ->
+    console.error 'Nylas DeltaStream error:', err
+    @restartBackoff.reset()
+    @emit('error', err)
+
+  _restartConnection: (n) ->
+    console.log "Restarting Nylas DeltaStream connection (attempt #{n + 1})", @
     @close()
     @open()
