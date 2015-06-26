@@ -29,7 +29,7 @@ module.exports = class Delta
         Promise.reject(err)
 
   startStream: (cursor, excludeTypes = []) ->
-    return _startStream(request, cursor, excludeTypes)
+    return @_startStream(request, cursor, excludeTypes)
 
   _startStream: (createRequest, cursor, excludeTypes = []) ->
     stream = new DeltaStream(createRequest, @connection, @namespaceId, cursor, excludeTypes)
