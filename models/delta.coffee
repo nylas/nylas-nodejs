@@ -29,7 +29,10 @@ module.exports = class Delta
         Promise.reject(err)
 
   startStream: (cursor, excludeTypes = []) ->
-    stream = new DeltaStream(@connection, @namespaceId, cursor, excludeTypes)
+    return _startStream(request, cursor, excludeTypes)
+
+  _startStream: (createRequest, cursor, excludeTypes = []) ->
+    stream = new DeltaStream(createRequest, @connection, @namespaceId, cursor, excludeTypes)
     stream.open()
     return stream
 
@@ -46,14 +49,16 @@ class DeltaStream extends EventEmitter
   # from the Nylas server.
   @MAX_RESTART_RETRIES = 5
 
+  # @param {function} createRequest function to create a request; only present for testability
   # @param {string} cursor Nylas delta API cursor
   # @param {Array<string>} excludeTypes object types to not return deltas for
-  constructor: (@connection, @namespaceId, @cursor, @excludeTypes = []) ->
+  constructor: (@createRequest, @connection, @namespaceId, @cursor, @excludeTypes = []) ->
     throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
     @restartBackoff = backoff.exponential
       randomisationFactor: 0.5
-      initialDelay: 2000
+      initialDelay: 250
       maxDelay: 30000
+      factor: 4
     @restartBackoff.failAfter DeltaStream.MAX_RESTART_RETRIES
     @restartBackoff
       .on 'backoff', @_restartConnection.bind(@)
@@ -70,14 +75,14 @@ class DeltaStream extends EventEmitter
     path = "/n/#{@namespaceId}/delta/streaming"
     queryObj =
       cursor: @cursor
-    queryObj.exclude_types = @excludeTypes.join(',') if @excludeTypes
+    queryObj.exclude_types = @excludeTypes.join(',') if @excludeTypes?.length > 0
     queryStr = querystring.stringify(queryObj)
     path += '?' + queryStr
 
     reqOpts = @connection.requestOptions
       method: 'GET'
       path: path
-    @request = request(reqOpts)
+    @request = @createRequest(reqOpts)
       .on 'response', (response) =>
         unless response.statusCode == 200
           response.on 'data', (data) =>
@@ -104,10 +109,10 @@ class DeltaStream extends EventEmitter
     # Nylas sends a newline heartbeat in the raw data stream once per second.
     # Automatically restart the connection if we haven't gotten any data in
     # STREAMING_TIMEOUT_MS. The connection will restart with the last
-    # received cursor.∂
+    # received cursor.
     clearTimeout(@timeoutId)
     @restartBackoff.reset()
-    @timeoutId = setTimeout @restartBackoff.backoff, STREAMING_TIMEOUT_MS
+    @timeoutId = setTimeout @restartBackoff.backoff.bind(@restartBackoff), STREAMING_TIMEOUT_MS
 
   _onError: (err) ->
     console.error 'Nylas DeltaStream error:', err
