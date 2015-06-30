@@ -196,6 +196,40 @@ namespace.drafts.find(savedId).then(draft) {
 
 ```
 
+Using the Delta Streaming API
+------
+
+```javascript
+var DELTA_EXCLUDE_TYPES = ['contact', 'calendar', 'event', 'file', 'tag'];
+var timestampMs = Date.now();
+
+namespace.deltas.generateCursor(timestampMs, function(cursor) {
+
+  // Save inital cursor.
+  persistCursor(cursor);
+
+  // Start the stream and add event handlers.
+  var stream = namespace.deltas.startStream(cursor, DELTA_EXCLUDE_TYPES);
+
+  stream.on('delta', function(delta) {
+    // Handle the new delta here.
+    console.log('Received delta:', delta);
+    // Save new cursor so this delta doesn't need to be re-fetched for future streams.
+    persistCursor(delta.cursor);
+
+  }).on('error', function(err) {
+    // Handle errors here, such as by restarting the stream at the last cursor.
+    console.error('Delta streaming error:', err);
+
+  });
+
+  // Closing the stream explicitly, if needed
+  stopButton.addEventListener('click', function() {
+    stream.close();
+  });
+})
+```
+
 Contributing 
 ----
 
