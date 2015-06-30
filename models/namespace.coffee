@@ -40,7 +40,7 @@ class Namespace extends RestfulModel
     @calendars = new RestfulModelCollection(Calendar, @connection, @id)
     @events = new RestfulModelCollection(Event, @connection, @id)
     @tags = new RestfulModelCollection(Tag, @connection, @id)
-    @delta = new Delta(@connection, @id)
+    @deltas = new Delta(@connection, @id)
     @
 
   me: ->
