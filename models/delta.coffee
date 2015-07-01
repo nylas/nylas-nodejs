@@ -5,7 +5,7 @@ Promise = require 'bluebird'
 querystring = require 'querystring'
 request = require 'request'
 
-STREAMING_TIMEOUT_MS = 2000
+STREAMING_TIMEOUT_MS = 5000
 
 module.exports = class Delta
   constructor: (@connection, @namespaceId) ->
