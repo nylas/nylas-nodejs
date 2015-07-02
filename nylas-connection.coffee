@@ -1,4 +1,5 @@
 _ = require 'underscore'
+clone = require 'clone'
 request = require 'request'
 Promise = require 'bluebird'
 
@@ -15,7 +16,8 @@ class NylasConnection
     @namespaces = new RestfulModelCollection(Namespace, @, null)
     @accounts = new ManagementModelCollection(Account, @, null)
 
-  request: (options={}) ->
+  requestOptions: (options={}) ->
+    options = clone(options)
     Nylas = require './nylas'
     options.method ?= 'GET'
     options.url ?= "#{Nylas.apiServer}#{options.path}" if options.path
@@ -27,6 +29,10 @@ class NylasConnection
         'user': @accessToken,
         'pass': '',
         'sendImmediately': true
+    return options
+
+  request: (options={}) ->
+    options = @requestOptions(options)
 
     new Promise (resolve, reject) ->
       request options, (error, response, body) ->

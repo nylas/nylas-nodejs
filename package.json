@@ -17,7 +17,10 @@
   "license": "MIT",
   "dependencies": {
     "async": "0.9.0",
+    "backoff": "2.4.1",
     "bluebird": "^2.9.13",
+    "clone": "1.0.1",
+    "JSONStream": "1.0.4",
     "request": "^2.53.0",
     "underscore": "^1.7.0"
   },
