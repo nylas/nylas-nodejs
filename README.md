@@ -203,7 +203,7 @@ Using the Delta Streaming API
 var DELTA_EXCLUDE_TYPES = ['contact', 'calendar', 'event', 'file', 'tag'];
 var timestampMs = Date.now();
 
-namespace.deltas.generateCursor(timestampMs, function(cursor) {
+namespace.deltas.generateCursor(timestampMs, function(error, cursor) {
 
   // Save inital cursor.
   persistCursor(cursor);
