@@ -36,7 +36,7 @@ var Nylas = require('nylas').config({
 Every resource method accepts an optional callback as the last argument:
 
 ```javascript
-Nylas.with(accessToken).namespaces.list({}, function(namespaces){
+Nylas.with(accessToken).namespaces.list({}, function(err, namespaces){
 	console.log(namespaces.length);
 });
 ```
@@ -149,7 +149,7 @@ namespace.threads.find('c96gge1jo29pl2rebcb7utsbp', function(err, thread) {
 // as necessary and calls the provided block as threads are received. Calls the final
 // block upon an error, or when processing is finished.
 
-namespace.threads.forEach({tag: 'unread', from: 'no-reply@sentry.com'}, function(thread) {
+namespace.threads.forEach({tag: 'unread', from: 'no-reply@sentry.com'}, function(err, thread) {
    console.log(thread.subject);
 }, function (err) {
    console.log('finished iterating through threads');
