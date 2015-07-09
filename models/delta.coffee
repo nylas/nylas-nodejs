@@ -67,6 +67,9 @@ class DeltaStream extends EventEmitter
     return @
 
   close: () ->
+    clearTimeout(@timeoutId)
+    delete @timeoutId
+    @restartBackoff.reset()
     @request.abort() if @request
     delete @request
 
