@@ -42,10 +42,15 @@ class Event extends RestfulModel
       modelKey: 'participants'
       itemClass: Participant
 
-  save: (callback = null) ->
+  save: (params = {}, callback = null) ->
+    if _.isFunction(params)
+      callback = params
+      params = {}
+
     @connection.request
       method: if @id then 'PUT' else 'POST'
       body: @toJSON()
+      qs: params
       path: if @id then "/n/#{@namespaceId}/events/#{@id}" else "/n/#{@namespaceId}/events"
     .then (json) =>
       @fromJSON(json)
