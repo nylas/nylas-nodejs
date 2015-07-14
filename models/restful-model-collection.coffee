@@ -85,10 +85,14 @@ class RestfulModelCollection
           callback(null, accumulated) if callback
           resolve(accumulated)
 
-  delete: (itemOrId, callback = null) ->
+  delete: (itemOrId, params = {}, callback = null) ->
     id = if itemOrId?.id? then itemOrId.id else itemOrId
+    if _.isFunction(params)
+      callback = params
+      params = {}
     @connection.request
       method: 'DELETE'
+      qs: params
       path: "#{@path()}/#{id}"
     .then ->
       callback(null) if callback
