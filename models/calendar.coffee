@@ -2,7 +2,7 @@ RestfulModel = require './restful-model'
 Attributes = require './attributes'
 _ = require 'underscore'
 
-module.exports = 
+module.exports =
 class Calendar extends RestfulModel
 
   @collectionName: 'calendars'
@@ -12,3 +12,6 @@ class Calendar extends RestfulModel
       modelKey: 'name'
     'description': Attributes.String
       modelKey: 'description'
+    'readOnly': Attributes.Boolean
+      modelKey: 'readOnly'
+      jsonKey: 'read_only'
