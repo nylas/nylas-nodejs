@@ -16,6 +16,10 @@ describe 'Delta', ->
     @connection = new NylasConnection('123')
     @delta = new Delta(@connection, 'test-namespace-id')
     jasmine.Clock.useMock()
+    # Work around clearTimeout not being correctly mocked in Jasmine:
+    # https://github.com/mhevery/jasmine-node/issues/276
+    spyOn(global, 'clearTimeout').andCallFake () ->
+      return jasmine.Clock.installed.clearTimeout.apply(@, arguments)
 
   describe 'startStream (delta streaming)', ->
     createRequest = (requestOpts) ->
@@ -43,9 +47,17 @@ describe 'Delta', ->
       expect(request.origOpts.method).toBe('GET')
       expect(request.origOpts.path).toBe('/n/test-namespace-id/delta/streaming?cursor=deltacursor0')
 
+      response = createResponse(200)
+      request.emit('response', response)
+
       expect(request.abort.calls.length).toEqual(0)
       stream.close()
       expect(request.abort.calls.length).toEqual(1)
+      expect(stream.request).toEqual(undefined)
+
+      # Make sure the stream doesn't auto-restart if explicitly closed.
+      jasmine.Clock.tick(5500)
+      expect(stream.request).toEqual(undefined)
 
     it 'stream response parsing', ->
       stream = @delta._startStream(createRequest, 'deltacursor0')
@@ -128,7 +140,7 @@ describe 'Delta', ->
       expect(request.abort.calls.length).toEqual(0)
 
       # If the timeout has elapsed since the last data received, the stream is restarted.
-      jasmine.Clock.tick(1000)
+      jasmine.Clock.tick(4000)
       # The old request should have been aborted, and a new request created.
       expect(request.abort.calls.length).toEqual(1)
       expect(stream.request).not.toBe(request)
