@@ -42,8 +42,11 @@ describe "Draft", ->
           subject : '',
           draft : undefined,
           version : undefined,
+          folder : undefined,
+          labels: [ ],
           file_ids : [  ]
         },
+        qs : { }
         path : '/n/test-namespace-id/drafts'
       })
 
@@ -70,8 +73,11 @@ describe "Draft", ->
           subject : '',
           draft : undefined,
           version : undefined,
+          folder : undefined,
+          labels: [ ],
           file_ids : [  ]
         },
+        qs : { }
         path : '/n/test-namespace-id/drafts/id-1234'
       })
 
@@ -98,7 +104,7 @@ describe "Draft", ->
             expect(draft.id).toBe('id-1234')
             expect(draft.version).toBe(1)
             done()
-    
+
     describe "when the request fails", ->
       beforeEach ->
         @error = new Error("Network error")
@@ -158,9 +164,11 @@ describe "Draft", ->
           subject : 'Test Subject',
           draft : undefined,
           version : undefined,
+          folder : undefined,
+          labels: [ ],
           file_ids : [  ]
         },
-        path : '/n/test-namespace-id/send' 
+        path : '/n/test-namespace-id/send'
       })
 
     describe "when the request succeeds", ->

@@ -42,18 +42,8 @@ class Event extends RestfulModel
       modelKey: 'participants'
       itemClass: Participant
 
-  save: (callback = null) ->
-    @connection.request
-      method: if @id then 'PUT' else 'POST'
-      body: @toJSON()
-      path: if @id then "/n/#{@namespaceId}/events/#{@id}" else "/n/#{@namespaceId}/events"
-    .then (json) =>
-      @fromJSON(json)
-      callback(null, @) if callback
-      Promise.resolve(@)
-    .catch (err) ->
-      callback(err) if callback
-      Promise.reject(err)
+  save: (params = {}, callback = null) ->
+    @._save(params, callback)
 
   fromJSON: (json) ->
     super(json)

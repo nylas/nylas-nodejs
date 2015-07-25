@@ -4,6 +4,8 @@ Tag = require './tag'
 RestfulModel = require './restful-model'
 Contact = require './contact'
 Attributes = require './attributes'
+Label = require('./folder').Label
+Folder = require('./folder').Folder
 
 module.exports =
 class Thread extends RestfulModel
@@ -22,6 +24,10 @@ class Thread extends RestfulModel
       queryable: true
       modelKey: 'unread'
 
+    'starred': Attributes.Boolean
+      queryable: true
+      modelKey: 'starred'
+
     'tags': Attributes.Collection
       queryable: true
       modelKey: 'tags'
@@ -36,10 +42,32 @@ class Thread extends RestfulModel
       modelKey: 'lastMessageTimestamp'
       jsonKey: 'last_message_timestamp'
 
+    'labels': Attributes.Collection
+      modelKey: 'labels'
+      itemClass: Label
+
+    'folder': Attributes.Object
+      modelKey: 'folder'
+      itemClass: Folder
+
   fromJSON: (json) =>
     super(json)
     @unread = @isUnread()
     @
+
+  dumpPayload: ->
+    json = {}
+    if @labels?
+      json['labels'] = (label.id for label in @labels)
+    else if @folder?
+      json['folder'] = @folder.id
+
+    json['starred'] = @starred
+    json['unread'] = @unread
+    json
+
+  save: (params = {}, callback = null) =>
+    this._save(params, callback)
 
   tagIds: =>
     _.map @tags, (tag) -> tag.id
@@ -71,4 +99,3 @@ class Thread extends RestfulModel
     @addRemoveTags(['inbox'], ['archive'])
 
   addRemoveTags: (tagIdsToAdd, tagIdsToRemove) ->
-

@@ -4,6 +4,8 @@ File = require './file'
 RestfulModel = require './restful-model'
 Contact = require './contact'
 Attributes = require './attributes'
+Label = require('./folder').Label
+Folder = require('./folder').Folder
 
 module.exports =
 class Message extends RestfulModel
@@ -39,6 +41,10 @@ class Message extends RestfulModel
       modelKey: 'files'
       itemClass: File
 
+    'starred': Attributes.Boolean
+      queryable: true
+      modelKey: 'starred'
+
     'unread': Attributes.Boolean
       queryable: true
       modelKey: 'unread'
@@ -63,6 +69,14 @@ class Message extends RestfulModel
       modelKey: 'version'
       queryable: true
 
+    'folder': Attributes.Object
+      modelKey: 'folder'
+      itemClass: Folder
+
+    'labels': Attributes.Collection
+      modelKey: 'labels'
+      itemClass: Label
+
   constructor: ->
     super
     @body ||= ""
@@ -71,12 +85,6 @@ class Message extends RestfulModel
     @cc ||= []
     @bcc ||= []
     @
-
-  toJSON: ->
-    json = super
-    json.file_ids = @fileIds()
-    json.object = 'draft' if @draft
-    json
 
   fromJSON: (json={}) ->
     super (json)
@@ -90,6 +98,7 @@ class Message extends RestfulModel
 
     for file in (@files ? [])
       file.namespaceId = @namespaceId
+
     return @
 
   # We calculate the list of participants instead of grabbing it from
@@ -106,3 +115,21 @@ class Message extends RestfulModel
   fileIds: ->
     _.map @files, (file) -> file.id
 
+  dumpPayload: ->
+    # It's possible to update most of the fields of a draft.
+    if @.constructor.name == 'Draft'
+      return super
+
+    # Messages are more limited, though.
+    json = {}
+    if @labels?
+      json['labels'] = (label.id for label in @labels)
+    else if @folder?
+      json['folder'] = @folder.id
+
+    json['starred'] = @starred
+    json['unread'] = @unread
+    json
+
+  save: (params = {}, callback = null) =>
+    this._save(params, callback)

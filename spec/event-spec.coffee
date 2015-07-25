@@ -39,6 +39,7 @@ describe "Event", ->
           _end : undefined,
           participants : [  ]
         },
+        qs: {},
         path : '/n/test-namespace-id/events'
       })
 
@@ -63,6 +64,7 @@ describe "Event", ->
           _end : undefined,
           participants : [  ]
         },
+        qs: {},
         path : '/n/test-namespace-id/events/id-1234'
       })
 

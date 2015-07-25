@@ -9,6 +9,8 @@ Calendar = require './calendar'
 Event = require './event'
 Tag = require './tag'
 Delta = require './delta'
+Label = require('./folder').Label
+Folder = require('./folder').Folder
 
 Attributes = require './attributes'
 _ = require 'underscore'
@@ -41,6 +43,8 @@ class Namespace extends RestfulModel
     @events = new RestfulModelCollection(Event, @connection, @id)
     @tags = new RestfulModelCollection(Tag, @connection, @id)
     @deltas = new Delta(@connection, @id)
+    @labels = new RestfulModelCollection(Label, @connection, @id)
+    @folders = new RestfulModelCollection(Folder, @connection, @id)
     @
 
   me: ->
@@ -49,3 +53,7 @@ class Namespace extends RestfulModel
       namespaceId: @id
       name: @name
       email: @emailAddress
+
+
+  folder: ->
+    return new Folder(@connection, @id)

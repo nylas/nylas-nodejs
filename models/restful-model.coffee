@@ -1,5 +1,6 @@
 Attributes = require './attributes'
 Promise = require 'bluebird'
+_ = require 'underscore'
 
 module.exports =
 class RestfulModel
@@ -37,5 +38,31 @@ class RestfulModel
     json['object'] = @constructor.name.toLowerCase()
     json
 
+  # dumpPayload is used by save(). It returns a JSON dict containing only the
+  # fields the API allows updating. Subclasses should override this method.
+  dumpPayload: ->
+    @toJSON()
+
   toString: ->
     JSON.stringify(@toJSON())
+
+  # Not every model needs to have a save function, but those who
+  # do shouldn't have to reimplement the same boilerplate.
+  # They should instead define a save() function which calls _save.
+  _save: (params = {}, callback = null) ->
+    if _.isFunction(params)
+      callback = params
+      params = {}
+
+    @connection.request
+      method: if @id then 'PUT' else 'POST'
+      body: @dumpPayload()
+      qs: params
+      path: if @id then "/n/#{@namespaceId}/#{@constructor.collectionName}/#{@id}" else "/n/#{@namespaceId}/#{@constructor.collectionName}"
+    .then (json) =>
+      @fromJSON(json)
+      callback(null, @) if callback
+      Promise.resolve(@)
+    .catch (err) ->
+      callback(err) if callback
+      Promise.reject(err)

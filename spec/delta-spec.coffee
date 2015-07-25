@@ -128,7 +128,7 @@ describe 'Delta', ->
       expect(request.abort.calls.length).toEqual(0)
 
       # If the timeout has elapsed since the last data received, the stream is restarted.
-      jasmine.Clock.tick(1000)
+      jasmine.Clock.tick(2000)
       # The old request should have been aborted, and a new request created.
       expect(request.abort.calls.length).toEqual(1)
       expect(stream.request).not.toBe(request)

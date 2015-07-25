@@ -163,6 +163,49 @@ namespace.threads.list({tag: 'inbox'}).then(function(threads) {
 
 ```
 
+Folders and labels
+-----
+
+The new folders and labels API replaces the now deprecated Tags API. It allows you to apply Gmail labels to whole threads or individual messages and, for providers other than Gmail, to move threads and messages between folders.
+
+```javascript
+
+// List the labels for this account
+namespace.labels.list({}).then(function(labels) {
+   console.log(label.displayName);
+   console.log(label.id);
+})
+
+// The same, with folders.
+namespace.folders.list({}).then(function(folders) {
+   console.log(folder.displayName);
+   console.log(folder.id);
+})
+
+// Create a folder
+fld = ns.folders.build({ displayName: 'Reminders'});
+fld.save();
+
+// Add the 'Junk Email' label to a thread.
+var label = undefined;
+namespace.labels.list({}).then(function(labels) {
+    for(var i = 0; i < labels.length; i++) {
+        label = labels[i];
+        if (label.displayName == 'Junk Email') {
+            break;
+        }
+    }
+
+    ns.threads.list({}, function(err, threads) {
+        var thread = threads[0];
+        thread.labels.push(label);
+        thread.save();
+})
+
+// Note that Folders and Labels are absolutely identical from the standpoint of the SDK.
+// The only difference is that a message can have many labels but only a single folder.
+```
+
 Creating and Sending Drafts
 ------
 

@@ -66,7 +66,7 @@ module.exports = {
   Collection: -> new AttributeCollection(arguments...)
   Boolean: -> new AttributeBoolean(arguments...)
   Object: -> new Attribute(arguments...)
-  
+
   AttributeNumber: AttributeNumber
   AttributeString: AttributeString
   AttributeDateTime: AttributeDateTime

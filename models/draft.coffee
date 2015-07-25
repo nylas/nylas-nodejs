@@ -11,18 +11,14 @@ class Draft extends Message
 
   @collectionName: 'drafts'
 
-  save: (callback = null) ->
-    @connection.request
-      method: if @id then 'PUT' else 'POST'
-      body: @toJSON()
-      path: if @id then "/n/#{@namespaceId}/drafts/#{@id}" else "/n/#{@namespaceId}/drafts"
-    .then (json) =>
-      @fromJSON(json)
-      callback(null, @) if callback
-      Promise.resolve(@)
-    .catch (err) ->
-      callback(err) if callback
-      Promise.reject(err)
+  toJSON: ->
+    json = super
+    json.file_ids = @fileIds()
+    json.object = 'draft' if @draft
+    json
+
+  save: (params = {}, callback = null) =>
+    this._save(params, callback)
 
   send: (callback = null) ->
     if @id
