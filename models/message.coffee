@@ -115,7 +115,7 @@ class Message extends RestfulModel
   fileIds: ->
     _.map @files, (file) -> file.id
 
-  dumpPayload: ->
+  saveRequestBody: ->
     # It's possible to update most of the fields of a draft.
     if @.constructor.name == 'Draft'
       return super

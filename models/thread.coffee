@@ -55,7 +55,7 @@ class Thread extends RestfulModel
     @unread = @isUnread()
     @
 
-  dumpPayload: ->
+  saveRequestBody: ->
     json = {}
     if @labels?
       json['labels'] = (label.id for label in @labels)

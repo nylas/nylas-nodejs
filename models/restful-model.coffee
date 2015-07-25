@@ -38,9 +38,9 @@ class RestfulModel
     json['object'] = @constructor.name.toLowerCase()
     json
 
-  # dumpPayload is used by save(). It returns a JSON dict containing only the
+  # saveRequestBody is used by save(). It returns a JSON dict containing only the
   # fields the API allows updating. Subclasses should override this method.
-  dumpPayload: ->
+  saveRequestBody: ->
     @toJSON()
 
   toString: ->
@@ -56,7 +56,7 @@ class RestfulModel
 
     @connection.request
       method: if @id then 'PUT' else 'POST'
-      body: @dumpPayload()
+      body: @saveRequestBody()
       qs: params
       path: if @id then "/n/#{@namespaceId}/#{@constructor.collectionName}/#{@id}" else "/n/#{@namespaceId}/#{@constructor.collectionName}"
     .then (json) =>

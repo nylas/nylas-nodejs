@@ -16,7 +16,7 @@ class Label extends RestfulModel
       modelKey: 'name'
       jsonKey: 'name'
 
-  dumpPayload: ->
+  saveRequestBody: ->
     json = {}
     json['display_name'] = @displayName
     json['name'] = @name
