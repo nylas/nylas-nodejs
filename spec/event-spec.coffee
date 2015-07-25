@@ -39,6 +39,7 @@ describe "Event", ->
           _end : undefined,
           participants : [  ]
         },
+        qs : {},
         path : '/n/test-namespace-id/events'
       })
 
