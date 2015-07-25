@@ -36,7 +36,7 @@ var Nylas = require('nylas').config({
 Every resource method accepts an optional callback as the last argument:
 
 ```javascript
-Nylas.with(accessToken).namespaces.list({}, function(namespaces){
+Nylas.with(accessToken).namespaces.list({}, function(err, namespaces){
 	console.log(namespaces.length);
 });
 ```
@@ -149,7 +149,7 @@ namespace.threads.find('c96gge1jo29pl2rebcb7utsbp', function(err, thread) {
 // as necessary and calls the provided block as threads are received. Calls the final
 // block upon an error, or when processing is finished.
 
-namespace.threads.forEach({tag: 'unread', from: 'no-reply@sentry.com'}, function(thread) {
+namespace.threads.forEach({tag: 'unread', from: 'no-reply@sentry.com'}, function(err, thread) {
    console.log(thread.subject);
 }, function (err) {
    console.log('finished iterating through threads');
@@ -271,6 +271,34 @@ namespace.deltas.generateCursor(timestampMs, function(error, cursor) {
     stream.close();
   });
 })
+```
+
+Interacting with Events
+----
+
+```javascript
+
+// Create an event and send an invite.
+// The Nylas API supports sending invites/updates to the event's participants.
+// To do this we need to set the 'notify_participants' parameter to true.
+var ev = namespace.events.build({
+    title: 'Out of time',
+    calendarId: 'c4y597l3adg8mskfqxxns8hsj',
+    when: {'start_time': 1437500000, 'end_time': 1437501600},
+    participants: [{email: 'karim@nylas.com', name: "Karim Hamidou"}]
+});
+
+ev.save({'sendNotifications': true}, function(err, event) {
+    console.log('Sent an invite to the participants');
+});
+
+// RSVP to an invite. Note that you can only RSVP to invites found in the
+// "Emailed events" calendar.
+ns.events.find('30xunbe3033d44kip9bnau5ph').then(function(ev) {
+    ev.rsvp('maybe', 'I may attend this event').then(function(ev) {
+        console.log('RSVP sent!');
+    });
+});
 ```
 
 Contributing 

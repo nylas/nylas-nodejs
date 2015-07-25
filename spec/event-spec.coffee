@@ -39,7 +39,6 @@ describe "Event", ->
           _end : undefined,
           participants : [  ]
         },
-        qs: {},
         path : '/n/test-namespace-id/events'
       })
 
@@ -64,8 +63,33 @@ describe "Event", ->
           _end : undefined,
           participants : [  ]
         },
-        qs: {},
+        qs : {},
         path : '/n/test-namespace-id/events/id-1234'
+      })
+
+    it "should include params in the request if they were passed in", ->
+      spyOn(@connection, 'request').andCallFake -> Promise.resolve()
+      @event.save({ notify_participants: true })
+
+      expect(@connection.request).toHaveBeenCalledWith({
+        method : 'POST',
+        body : {
+          object : 'event',
+          namespace_id : 'test-namespace-id',
+          calendar_id : undefined,
+          busy : undefined,
+          title : undefined,
+          description : undefined,
+          location : undefined,
+          when : undefined,
+          _start : undefined,
+          _end : undefined,
+          participants : [  ]
+        },
+        qs : {
+          notify_participants : true
+        },
+        path : '/n/test-namespace-id/events'
       })
 
     describe "when the request succeeds", ->
@@ -111,3 +135,18 @@ describe "Event", ->
             expect(err).toBe(@error)
             expect(event).toBe(undefined)
             done()
+
+  describe "rsvp", ->
+    it "should do a POST request to the RSVP endpoint", ->
+      spyOn(@connection, 'request').andCallFake -> Promise.resolve()
+      @event.id = 'public_id'
+      @event.rsvp('yes', 'I will come.')
+      expect(@connection.request).toHaveBeenCalledWith({
+        method : 'POST',
+        body : {
+          event_id : 'public_id',
+          status : 'yes',
+          comment : 'I will come.'
+        },
+        path : '/n/test-namespace-id/send-rsvp'
+      })
