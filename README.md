@@ -304,7 +304,7 @@ ns.events.find('30xunbe3033d44kip9bnau5ph').then(function(ev) {
 Contributing 
 ----
 
-We'd love your help making the Nylas Node.js bindings better. Join the Google Group for project updates and feature discussion. We also hang out in #nylas on irc.freenode.net, or you can email support@nylas.com.
+We'd love your help making the Nylas Node.js bindings better. Join the Google Group for project updates and feature discussion. We also hang out on the [Nylas community Slack channel](http://nylas-slack-invite.heroku.com/), or you can email support@nylas.com.
 
 Please sign the [Contributor License Agreement](https://www.nylas.com/cla.html) before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 
