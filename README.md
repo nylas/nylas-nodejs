@@ -240,10 +240,9 @@ Interacting with Events
 // To do this we need to set the 'notify_participants' parameter to true.
 var ev = namespace.events.build({
     title: 'Out of time',
-    calendar_id
     calendarId: 'c4y597l3adg8mskfqxxns8hsj',
     when: {'start_time': 1437500000, 'end_time': 1437501600},
-    participants: [{email: 'karim@nylas.com'}]
+    participants: [{email: 'karim@nylas.com', name: "Karim Hamidou"}]
 });
 
 ev.save({'sendNotifications': true}, function(err, event) {
