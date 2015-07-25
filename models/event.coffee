@@ -71,3 +71,16 @@ class Event extends RestfulModel
       @end = @when.end_time || new Date(@when.end_date).getTime()/1000.0+(60*60*24-1) || @when.time
       delete @when.object
     @
+
+  rsvp: (status, comment, callback) ->
+    @connection.request
+      method: 'POST'
+      body: { 'event_id': @id, 'status': status, 'comment': comment }
+      path: "/n/#{@namespaceId}/send-rsvp"
+    .then (json) =>
+      @fromJSON(json)
+      callback(null, @) if callback
+      Promise.resolve(@)
+    .catch (err) ->
+      callback(err) if callback
+      Promise.reject(err)

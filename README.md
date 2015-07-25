@@ -230,6 +230,35 @@ namespace.deltas.generateCursor(timestampMs, function(error, cursor) {
 })
 ```
 
+Interacting with Events
+----
+
+```javascript
+
+// Create an event and send an invite.
+// The Nylas API supports sending invites/updates to the event's participants.
+// To do this we need to set the 'notify_participants' parameter to true.
+var ev = namespace.events.build({
+    title: 'Out of time',
+    calendar_id
+    calendarId: 'c4y597l3adg8mskfqxxns8hsj',
+    when: {'start_time': 1437500000, 'end_time': 1437501600},
+    participants: [{email: 'karim@nylas.com'}]
+});
+
+ev.save({'sendNotifications': true}, function(err, event) {
+    console.log('Sent an invite to the participants');
+});
+
+// RSVP to an invite. Note that you can only RSVP to invites found in the
+// "Emailed events" calendar.
+ns.events.find('30xunbe3033d44kip9bnau5ph').then(function(ev) {
+    ev.rsvp('maybe', 'I may attend this event').then(function(ev) {
+        console.log('RSVP sent!');
+    });
+});
+```
+
 Contributing 
 ----
 

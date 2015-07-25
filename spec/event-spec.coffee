@@ -136,3 +136,18 @@ describe "Event", ->
             expect(err).toBe(@error)
             expect(event).toBe(undefined)
             done()
+
+  describe "rsvp", ->
+    it "should do a POST request to the RSVP endpoint", ->
+      spyOn(@connection, 'request').andCallFake -> Promise.resolve()
+      @event.id = 'public_id'
+      @event.rsvp('yes', 'I will come.')
+      expect(@connection.request).toHaveBeenCalledWith({
+        method : 'POST',
+        body : {
+          event_id : 'public_id',
+          status : 'yes',
+          comment : 'I will come.'
+        },
+        path : '/n/test-namespace-id/send-rsvp'
+      })
