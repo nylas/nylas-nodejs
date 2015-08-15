@@ -194,7 +194,57 @@ describe "RestfulModelCollection", ->
       spyOn(@connection, 'request').andCallFake => Promise.resolve({})
       testUntil (done) =>
         @collection.find('123')
-        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/n/test-namespace-id/threads/123' })
+        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/n/test-namespace-id/threads/123', qs: {} })
+        done()
+
+    describe "when the request succeeds", ->
+      beforeEach ->
+        @item = { id: '123' }
+        spyOn(@connection, 'request').andCallFake =>
+          Promise.resolve(@item)
+
+      it "should resolve with the item", ->
+        testUntil (done) =>
+          @collection.find('123').then (item) =>
+            expect(item instanceof Thread).toBe(true)
+            expect(item.id).toBe('123')
+            done()
+
+      it "should call the optional callback with the first item", ->
+        testUntil (done) =>
+          @collection.find '123', (err, item) =>
+            expect(item instanceof Thread).toBe(true)
+            expect(item.id).toBe('123')
+            done()
+
+    describe "when the request fails", ->
+      beforeEach ->
+        @error = new Error("Network error")
+        spyOn(@connection, 'request').andCallFake =>
+          Promise.reject(@error)
+
+      it "should reject with any underlying error", ->
+        testUntil (done) =>
+          @collection.find('123').catch (err) =>
+            expect(err).toBe(@error)
+            done()
+
+      it "should call the optional callback with the underlying error", ->
+        testUntil (done) =>
+          @collection.find '123', (err, item) =>
+            expect(err).toBe(@error)
+            done()
+
+  describe "expand", ->
+    it "should reject with an error if an id is not provided", ->
+      testUntil (done) =>
+        @collection.find().catch(done)
+
+    it "should make an API request for the individual model", ->
+      spyOn(@connection, 'request').andCallFake => Promise.resolve({})
+      testUntil (done) =>
+        @collection.expand('123')
+        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/n/test-namespace-id/threads/123', qs:{'view':'expanded'}})
         done()
 
     describe "when the request succeeds", ->
