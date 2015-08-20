@@ -5,6 +5,7 @@ Promise = require 'bluebird'
 RestfulModel = require './models/restful-model'
 RestfulModelCollection = require './models/restful-model-collection'
 Account = require './models/account'
+APIAccount = require './models/api_account'
 ManagementModelCollection = require './models/management-model-collection'
 Thread = require './models/thread'
 Contact = require './models/contact'
@@ -37,6 +38,8 @@ class NylasConnection
     @deltas = new Delta(@)
     @labels = new RestfulModelCollection(Label, @)
     @folders = new RestfulModelCollection(Folder, @)
+    @opensource =
+        'accounts': new RestfulModelCollection(APIAccount, @)
     @
 
   requestOptions: (options={}) ->

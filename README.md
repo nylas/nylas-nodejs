@@ -294,6 +294,36 @@ nylas.events.find('30xunbe3033d44kip9bnau5ph').then(function(ev) {
 });
 ```
 
+Open source API
+----
+
+The [Nylas Sync Engine](http://github.com/nylas/sync-engine) is open source, and you can also use the Node SDK with the open source API. Since the open source API provides no authentication or security, connecting to it is simple.
+
+```javascript
+/* This example shows how to fetch messages from the first account
+   using a version of the Nylas sync engine running locally.
+*/
+
+Nylas = require('nylas').config({
+    appId: 'appId---doesnt matter when running locally',
+    appSecret: 'appSecret---same',
+    apiServer: 'http://localhost:5555'
+});
+
+/* The open source version of the engine requires us to "auth" to it by
+   passing the account id as an auth token. Get the account id of the
+   first account.
+*/
+Nylas.with(null).opensource.accounts.first({}, function(err, account) {
+    var nylas = Nylas.with(account.id).messages.list({limit: 20}, function(err, messages) {
+        for(var i = 0; i < messages.length; i++) {
+            console.log(messages[i].subject);
+        }
+    });
+});
+```
+
+
 Contributing
 ----
 

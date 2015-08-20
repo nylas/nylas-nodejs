@@ -21,7 +21,6 @@ class Nylas
 
   @with: (accessToken) ->
     throw new Error("with() cannot be called until you provide an appId and secret via config()") unless @appId and @appSecret
-    throw new Error("with() must be called with an access token") unless accessToken?
     new NylasConnection(accessToken)
 
   @exchangeCodeForToken: (code, callback) ->
