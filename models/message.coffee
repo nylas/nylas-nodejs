@@ -96,9 +96,6 @@ class Message extends RestfulModel
     if json.object?
       @draft = (json.object is 'draft')
 
-    for file in (@files ? [])
-      file.namespaceId = @namespaceId
-
     return @
 
   # We calculate the list of participants instead of grabbing it from

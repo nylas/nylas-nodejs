@@ -42,8 +42,17 @@ class Event extends RestfulModel
       modelKey: 'participants'
       itemClass: Participant
 
-  save: (params = {}, callback = null) ->
-    @._save(params, callback)
+  saveRequestBody: ->
+    dct = @toJSON()
+    if @start? and @end?
+        dct['when'] = {start_time: @start.toString(), end_time: @end.toString()}
+    delete dct['_start']
+    delete dct['_end']
+    console.log(dct);
+    dct
+
+  save: (params = {}, callback = null) =>
+    this._save(params, callback)
 
   fromJSON: (json) ->
     super(json)
@@ -61,7 +70,7 @@ class Event extends RestfulModel
     @connection.request
       method: 'POST'
       body: { 'event_id': @id, 'status': status, 'comment': comment }
-      path: "/n/#{@namespaceId}/send-rsvp"
+      path: "/send-rsvp"
     .then (json) =>
       @fromJSON(json)
       callback(null, @) if callback

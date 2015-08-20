@@ -12,11 +12,10 @@ class RestfulModel
     'object': Attributes.String
       modelKey: 'object'
 
-    'namespaceId': Attributes.String
-      modelKey: 'namespaceId'
-      jsonKey: 'namespace_id'
+    'accountId': Attributes.String
+      modelKey: 'account_id'
 
-  constructor: (@connection, @namespaceId = null, json = null) ->
+  constructor: (@connection, json = null) ->
     throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
     @fromJSON(json) if json
     @
@@ -58,7 +57,7 @@ class RestfulModel
       method: if @id then 'PUT' else 'POST'
       body: @saveRequestBody()
       qs: params
-      path: if @id then "/n/#{@namespaceId}/#{@constructor.collectionName}/#{@id}" else "/n/#{@namespaceId}/#{@constructor.collectionName}"
+      path: if @id then "/#{@constructor.collectionName}/#{@id}" else "/#{@constructor.collectionName}"
     .then (json) =>
       @fromJSON(json)
       callback(null, @) if callback

@@ -55,7 +55,7 @@ class AttributeCollection extends Attribute
     return [] unless json && json instanceof Array
     objs = []
     for objJSON in json
-      obj = new @itemClass(parent.connection, parent.namespaceId, objJSON)
+      obj = new @itemClass(parent.connection, objJSON)
       objs.push(obj)
     objs
 

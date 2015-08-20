@@ -31,7 +31,7 @@ class Draft extends Message
     @connection.request
       method: 'POST'
       body: body
-      path: "/n/#{@namespaceId}/send"
+      path: "/send"
     .then (json) =>
       @fromJSON(json)
       callback(null, @) if callback

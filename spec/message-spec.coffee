@@ -16,7 +16,7 @@ testUntil = (fn) ->
 describe "Message", ->
   beforeEach ->
     @connection = new NylasConnection('123')
-    @message = new Message(@connection, 'test-namespace-id')
+    @message = new Message(@connection)
     @message.id = "4333"
     @message.starred = true
     @message.unread = false
@@ -24,7 +24,7 @@ describe "Message", ->
 
   describe "save", ->
     it "should do a PUT request with labels if labels is defined. Additional arguments should be ignored.", ->
-      label = new Label(@connection, 'test-namespace-id')
+      label = new Label(@connection)
       label.id = 'label_id'
       @message.labels = [label]
       @message.randomArgument = true
@@ -38,11 +38,11 @@ describe "Message", ->
           unread: false
         },
         qs : {}
-        path : '/n/test-namespace-id/messages/4333'
+        path : '/messages/4333'
       })
 
     it "should do a PUT with folder if folder is defined", ->
-      label = new Label(@connection, 'test-namespace-id')
+      label = new Label(@connection)
       label.id = 'label_id'
       @message.folder = label
       spyOn(@connection, 'request').andCallFake -> Promise.resolve()
@@ -55,5 +55,5 @@ describe "Message", ->
           unread: false
         },
         qs : {}
-        path : '/n/test-namespace-id/messages/4333'
+        path : '/messages/4333'
       })

@@ -7,7 +7,7 @@ REQUEST_CHUNK_SIZE = 100
 module.exports =
 class RestfulModelCollection
 
-  constructor: (@modelClass, @connection, @namespaceId) ->
+  constructor: (@modelClass, @connection) ->
     throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
     throw new Error("Model class not provided") unless @modelClass
     @
@@ -102,15 +102,12 @@ class RestfulModelCollection
       Promise.reject(err)
 
   build: (args) ->
-    model = new @modelClass(@connection, @namespaceId)
+    model = new @modelClass(@connection)
     model[key] = val for key, val of args
     model
 
   path: ->
-    if @namespaceId
-      "/n/#{@namespaceId}/#{@modelClass.collectionName}"
-    else
-      "/#{@modelClass.collectionName}"
+    "/#{@modelClass.collectionName}"
 
   # Internal
 
@@ -119,7 +116,7 @@ class RestfulModelCollection
       method: 'GET'
       path: "#{@path()}/#{id}"
     .then (json) =>
-      model = new @modelClass(@connection, @namespaceId, json)
+      model = new @modelClass(@connection, json)
       Promise.resolve(model)
 
   getModelCollection: (params, offset, limit) ->
@@ -129,6 +126,6 @@ class RestfulModelCollection
       qs: _.extend {}, params, {offset, limit}
     .then (jsonArray) =>
       models = jsonArray.map (json) =>
-        new @modelClass(@connection, @namespaceId, json)
+        new @modelClass(@connection, json)
       Promise.resolve(models)
 

@@ -28,25 +28,24 @@ describe "RestfulModel", ->
     expect( => new RestfulModel()).toThrow()
     expect( => new RestfulModel(@connection)).not.toThrow()
 
-  it "should accept a namespace id and other JSON properties", ->
-    model = new RestfulModel(@connection, 'namespace-id', {object: 'thread', id: '123'})
-    expect(model.namespaceId).toBe('namespace-id')
+  it "should accept JSON properties", ->
+    model = new RestfulModel(@connection, {object: 'thread', id: '123'})
     expect(model.object).toBe('thread')
     expect(model.id).toBe('123')
 
   describe "attributes", ->
     it "should return the attributes attached to the class", ->
-      model = new RestfulModel(@connection, 'namespace-id', {object: 'thread', id: '123'})
+      model = new RestfulModel(@connection, {object: 'thread', id: '123'})
       expect(model.attributes()).toBe(model.constructor.attributes)
 
   describe "isEqual", ->
     beforeEach ->
-      @model1 = new RestfulModel(@connection, 'namespace-id', {object: 'thread', id: 'A'})
-      @model2 = new RestfulModel(@connection, 'namespace-id', {object: 'thread', id: 'A'})
-      @model3 = new RestfulModel(@connection, 'namespace-id', {object: 'thread', id: 'B'})
-      @model4 = new RestfulSubclassA(@connection, 'namespace-id', {object: 'thread', id: 'B'})
-      @model5 = new RestfulSubclassB(@connection, 'namespace-id', {object: 'thread', id: 'C'})
-      @model6 = new RestfulSubclassB(@connection, 'namespace-id', {object: 'thread', id: 'C'})
+      @model1 = new RestfulModel(@connection, {object: 'thread', id: 'A'})
+      @model2 = new RestfulModel(@connection, {object: 'thread', id: 'A'})
+      @model3 = new RestfulModel(@connection, {object: 'thread', id: 'B'})
+      @model4 = new RestfulSubclassA(@connection, {object: 'thread', id: 'B'})
+      @model5 = new RestfulSubclassB(@connection, {object: 'thread', id: 'C'})
+      @model6 = new RestfulSubclassB(@connection, {object: 'thread', id: 'C'})
 
     it "should return true if the objects are of the same class and have the same id", ->
       expect(@model1.isEqual(@model2)).toBe(true)
@@ -60,18 +59,18 @@ describe "RestfulModel", ->
     beforeEach ->
       @json =
         'id': '1234'
-        'namespace_id': '1234'
+        'account_id': '1234'
         'test_number': 4
         'test_boolean': true
         'daysOld': 4
-      @m = new RestfulSubclassAttributes(@connection, 'namespace-id')
+      @m = new RestfulSubclassAttributes(@connection)
 
     it "should assign attribute values by calling through to attribute fromJSON functions", ->
-      spyOn(RestfulSubclassAttributes.attributes.namespaceId, 'fromJSON').andCallFake (json) ->
+      spyOn(RestfulSubclassAttributes.attributes.testNumber, 'fromJSON').andCallFake (json) ->
         'inflated value!'
       @m.fromJSON(@json)
-      expect(RestfulSubclassAttributes.attributes.namespaceId.fromJSON.callCount).toBe(1)
-      expect(@m.namespaceId).toBe('inflated value!')
+      expect(RestfulSubclassAttributes.attributes.testNumber.fromJSON.callCount).toBe(1)
+      expect(@m.testNumber).toBe('inflated value!')
 
     it "should not touch attributes that are missing in the json", ->
       @m.fromJSON(@json)
@@ -125,21 +124,21 @@ describe "RestfulModel", ->
 
   describe "toJSON", ->
     beforeEach ->
-      @model = new RestfulModel(@connection, 'ACD', {
+      @model = new RestfulModel(@connection, {
         id: "1234",
-        namespace_id: "ACD"
+        account_id: "ACD"
       })
 
     it "should return a JSON object and call attribute toJSON functions to map values", ->
-      spyOn(RestfulModel.attributes.namespaceId, 'toJSON').andCallFake (json) ->
+      spyOn(RestfulModel.attributes.accountId, 'toJSON').andCallFake (json) ->
         'inflated value!'
 
       json = @model.toJSON()
       expect(json instanceof Object).toBe(true)
       expect(json.id).toBe('1234')
-      expect(json.namespace_id).toBe('inflated value!')
+      expect(json.account_id).toBe('inflated value!')
 
     it "should surface any exception one of the attribute toJSON functions raises", ->
-      spyOn(RestfulModel.attributes.namespaceId, 'toJSON').andCallFake (json) ->
+      spyOn(RestfulModel.attributes.accountId, 'toJSON').andCallFake (json) ->
         throw new Error("Can't convert value into JSON format")
       expect(-> @model.toJSON()).toThrow()

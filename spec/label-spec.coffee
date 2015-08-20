@@ -16,7 +16,7 @@ testUntil = (fn) ->
 describe "Label", ->
   beforeEach ->
     @connection = new NylasConnection('123')
-    @label = new Label(@connection, 'test-namespace-id')
+    @label = new Label(@connection)
     @label.displayName = 'Label name'
     @label.name = 'Longer label name'
     Promise.onPossiblyUnhandledRejection (e, promise) ->
@@ -32,7 +32,7 @@ describe "Label", ->
           name: 'Longer label name'
         },
         qs : {}
-        path : '/n/test-namespace-id/labels'
+        path : '/labels'
       })
 
     it "should do a PUT if id is defined", ->
@@ -46,5 +46,5 @@ describe "Label", ->
           name: 'Longer label name'
         },
         qs : {}
-        path : '/n/test-namespace-id/labels/label_id'
+        path : '/labels/label_id'
       })

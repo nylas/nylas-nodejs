@@ -15,7 +15,7 @@ testUntil = (fn) ->
 describe "Draft", ->
   beforeEach ->
     @connection = new NylasConnection('123')
-    @draft = new Draft(@connection, 'test-namespace-id')
+    @draft = new Draft(@connection)
     Promise.onPossiblyUnhandledRejection (e, promise) ->
 
   describe "save", ->
@@ -28,7 +28,7 @@ describe "Draft", ->
         body : {
           id : undefined,
           object : 'draft',
-          namespace_id : 'test-namespace-id',
+          account_id : undefined,
           to : [  ],
           cc : [  ],
           bcc : [  ],
@@ -47,7 +47,7 @@ describe "Draft", ->
           file_ids : [  ]
         },
         qs : { }
-        path : '/n/test-namespace-id/drafts'
+        path : '/drafts'
       })
 
     it "should do a PUT request if the draft has an id", ->
@@ -59,7 +59,7 @@ describe "Draft", ->
         body : {
           id : 'id-1234',
           object : 'draft',
-          namespace_id : 'test-namespace-id',
+          account_id : undefined,
           to : [  ],
           cc : [  ],
           bcc : [  ],
@@ -78,7 +78,7 @@ describe "Draft", ->
           file_ids : [  ]
         },
         qs : { }
-        path : '/n/test-namespace-id/drafts/id-1234'
+        path : '/drafts/id-1234'
       })
 
     describe "when the request succeeds", ->
@@ -137,7 +137,7 @@ describe "Draft", ->
           draft_id : 'id-1234',
           version : 2
         },
-        path : '/n/test-namespace-id/send'
+        path : '/send'
       })
 
     it "should send the draft JSON if the draft has no id", ->
@@ -150,7 +150,7 @@ describe "Draft", ->
         body : {
           id : undefined,
           object : 'draft',
-          namespace_id : 'test-namespace-id',
+          account_id : undefined,
           to : [  ],
           cc : [  ],
           bcc : [  ],
@@ -168,7 +168,7 @@ describe "Draft", ->
           labels: [ ],
           file_ids : [  ]
         },
-        path : '/n/test-namespace-id/send'
+        path : '/send'
       })
 
     describe "when the request succeeds", ->

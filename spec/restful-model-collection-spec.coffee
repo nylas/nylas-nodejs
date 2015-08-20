@@ -18,7 +18,7 @@ describe "RestfulModelCollection", ->
       appId: '123'
       appSecret: '123'
     @connection = new NylasConnection('test-access-token')
-    @collection = new RestfulModelCollection(Thread, @connection, 'test-namespace-id')
+    @collection = new RestfulModelCollection(Thread, @connection)
 
   describe "constructor", ->
     it "should require an inbox connection object", ->
@@ -36,7 +36,7 @@ describe "RestfulModelCollection", ->
         for i in [0..count]
           response.push({
             id: '123',
-            namespace_id: 'test-namespace-id',
+            account_id: undefined,
             subject: 'A'
           })
         threadsResponses.push(response)
@@ -48,7 +48,7 @@ describe "RestfulModelCollection", ->
       params = {from: 'ben@nylas.com'}
       threads = [{
         id: '123'
-        namespace_id: 'test-namespace-id'
+        account_id: undefined
         subject: 'A'
       }]
       @collection.forEach(params, (->), (->))
@@ -90,7 +90,7 @@ describe "RestfulModelCollection", ->
     it "should make a request with the provided params and view=count", ->
       spyOn(@connection, 'request').andCallFake -> Promise.resolve({})
       @collection.count({from: 'ben@nylas.com'})
-      expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/n/test-namespace-id/threads', qs : { view : 'count', from : 'ben@nylas.com' } })
+      expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/threads', qs : { view : 'count', from : 'ben@nylas.com' } })
 
     describe "when the request is successful", ->
       beforeEach ->
@@ -194,7 +194,7 @@ describe "RestfulModelCollection", ->
       spyOn(@connection, 'request').andCallFake => Promise.resolve({})
       testUntil (done) =>
         @collection.find('123')
-        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/n/test-namespace-id/threads/123' })
+        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/threads/123' })
         done()
 
     describe "when the request succeeds", ->
@@ -244,7 +244,7 @@ describe "RestfulModelCollection", ->
         for i in [0..count]
           response.push({
             id: '123',
-            namespace_id: 'test-namespace-id',
+            account_id: undefined,
             subject: 'A'
           })
         threadsResponses.push(response)
@@ -256,7 +256,7 @@ describe "RestfulModelCollection", ->
       params = {from: 'ben@nylas.com'}
       threads = [{
         id: '123'
-        namespace_id: 'test-namespace-id'
+        account_id: undefined
         subject: 'A'
       }]
       @collection.range(params, 0, 50)
@@ -266,7 +266,7 @@ describe "RestfulModelCollection", ->
       params = {from: 'ben@nylas.com'}
       threads = [{
         id: '123'
-        namespace_id: 'test-namespace-id'
+        account_id: undefined
         subject: 'A'
       }]
       runs ->
@@ -306,25 +306,25 @@ describe "RestfulModelCollection", ->
 
   describe "delete", ->
     beforeEach ->
-      @item = new Thread(@connection, 'test-namespace-id', id: '123')
+      @item = new Thread(@connection, id: '123')
 
     it "should accept a model object as the first parameter", ->
       spyOn(@connection, 'request').andCallFake ->
         Promise.resolve()
       @collection.delete(@item)
-      expect(@connection.request).toHaveBeenCalledWith({ method: 'DELETE', qs: { }, path: '/n/test-namespace-id/threads/123' })
+      expect(@connection.request).toHaveBeenCalledWith({ method: 'DELETE', qs: { }, path: '/threads/123' })
 
     it "should accept a model id as the first parameter", ->
       spyOn(@connection, 'request').andCallFake ->
         Promise.resolve()
       @collection.delete(@item.id)
-      expect(@connection.request).toHaveBeenCalledWith({ method: 'DELETE', qs: { }, path: '/n/test-namespace-id/threads/123' })
+      expect(@connection.request).toHaveBeenCalledWith({ method: 'DELETE', qs: { }, path: '/threads/123' })
 
     it "should include params in the request if they were passed in", ->
       spyOn(@connection, 'request').andCallFake ->
         Promise.resolve()
       @collection.delete(@item.id, { foo: 'bar' })
-      expect(@connection.request).toHaveBeenCalledWith({ method: 'DELETE', qs: { foo: 'bar' }, path: '/n/test-namespace-id/threads/123' })
+      expect(@connection.request).toHaveBeenCalledWith({ method: 'DELETE', qs: { foo: 'bar' }, path: '/threads/123' })
 
     describe "when the api request is successful", ->
       beforeEach ->
@@ -367,17 +367,9 @@ describe "RestfulModelCollection", ->
     it "should initialize the new instance with the connection", ->
       expect(@collection.build().connection).toBe(@connection)
 
-    it "should initialize the new instance with the same namespaceId", ->
-      expect(@collection.build().namespaceId).toBe(@collection.namespaceId)
-
     it "should set other attributes provided to the build method", ->
       expect(@collection.build(subject: '123').subject).toEqual('123')
 
   describe "path", ->
-    it "should return the modelClass' collectionName with the namespace prefix", ->
-      expect(@collection.path()).toEqual('/n/test-namespace-id/threads')
-
-    it "should return the modelClass' collectionname alone if no namespaceId is set", ->
-      @collection.namespaceId = undefined
+    it "should return the modelClass' collectionName with no prefix", ->
       expect(@collection.path()).toEqual('/threads')
-

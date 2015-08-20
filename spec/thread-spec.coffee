@@ -37,7 +37,7 @@ describe "Thread", ->
           unread: false
         },
         qs : {}
-        path : '/n/test-namespace-id/threads/4333'
+        path : '/threads/4333'
       })
 
     it "should do a PUT with folder if folder is defined", ->
@@ -54,5 +54,5 @@ describe "Thread", ->
           unread: false
         },
         qs : {}
-        path : '/n/test-namespace-id/threads/4333'
+        path : '/threads/4333'
       })

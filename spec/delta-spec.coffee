@@ -14,7 +14,7 @@ testUntil = (fn) ->
 describe 'Delta', ->
   beforeEach ->
     @connection = new NylasConnection('123')
-    @delta = new Delta(@connection, 'test-namespace-id')
+    @delta = new Delta(@connection)
     jasmine.Clock.useMock()
     # Work around clearTimeout not being correctly mocked in Jasmine:
     # https://github.com/mhevery/jasmine-node/issues/276
@@ -45,7 +45,7 @@ describe 'Delta', ->
       request = stream.request
 
       expect(request.origOpts.method).toBe('GET')
-      expect(request.origOpts.path).toBe('/n/test-namespace-id/delta/streaming?cursor=deltacursor0')
+      expect(request.origOpts.path).toBe('/delta/streaming?cursor=deltacursor0')
 
       response = createResponse(200)
       request.emit('response', response)
@@ -145,6 +145,6 @@ describe 'Delta', ->
       expect(request.abort.calls.length).toEqual(1)
       expect(stream.request).not.toBe(request)
       # The new request should be using the last delta cursor received prior to timeout.
-      expect(stream.request.origOpts.path).toBe('/n/test-namespace-id/delta/streaming?cursor=deltacursor1')
+      expect(stream.request.origOpts.path).toBe('/delta/streaming?cursor=deltacursor1')
 
       stream.close()

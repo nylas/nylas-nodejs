@@ -8,14 +8,14 @@ request = require 'request'
 STREAMING_TIMEOUT_MS = 5000
 
 module.exports = class Delta
-  constructor: (@connection, @namespaceId) ->
+  constructor: (@connection) ->
     throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
     @
 
   generateCursor: (timestampMs, callback = null) ->
     reqOpts =
       method: 'POST'
-      path: "/n/#{@namespaceId}/delta/generate_cursor"
+      path: "/delta/generate_cursor"
       # Nylas API takes a UNIX timestamp in seconds, not a C-like millisecond timestamp.
       body: {start: Math.floor(timestampMs / 1000)}
 
@@ -32,7 +32,7 @@ module.exports = class Delta
     return @_startStream(request, cursor, excludeTypes)
 
   _startStream: (createRequest, cursor, excludeTypes = []) ->
-    stream = new DeltaStream(createRequest, @connection, @namespaceId, cursor, excludeTypes)
+    stream = new DeltaStream(createRequest, @connection, cursor, excludeTypes)
     stream.open()
     return stream
 
@@ -52,7 +52,7 @@ class DeltaStream extends EventEmitter
   # @param {function} createRequest function to create a request; only present for testability
   # @param {string} cursor Nylas delta API cursor
   # @param {Array<string>} excludeTypes object types to not return deltas for
-  constructor: (@createRequest, @connection, @namespaceId, @cursor, @excludeTypes = []) ->
+  constructor: (@createRequest, @connection, @cursor, @excludeTypes = []) ->
     throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
     @restartBackoff = backoff.exponential
       randomisationFactor: 0.5
@@ -75,7 +75,7 @@ class DeltaStream extends EventEmitter
 
   open: () ->
     @close()
-    path = "/n/#{@namespaceId}/delta/streaming"
+    path = "/delta/streaming"
     queryObj =
       cursor: @cursor
     queryObj.exclude_types = @excludeTypes.join(',') if @excludeTypes?.length > 0

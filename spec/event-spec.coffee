@@ -15,7 +15,7 @@ testUntil = (fn) ->
 describe "Event", ->
   beforeEach ->
     @connection = new NylasConnection('123')
-    @event = new Event(@connection, 'test-namespace-id')
+    @event = new Event(@connection)
     Promise.onPossiblyUnhandledRejection (e, promise) ->
 
   describe "save", ->
@@ -28,7 +28,7 @@ describe "Event", ->
         body : {
           id : undefined,
           object : 'event',
-          namespace_id : 'test-namespace-id',
+          account_id : undefined,
           calendar_id : undefined,
           busy : undefined,
           title : undefined,
@@ -40,7 +40,7 @@ describe "Event", ->
           participants : [  ]
         },
         qs : {},
-        path : '/n/test-namespace-id/events'
+        path : '/events'
       })
 
     it "should do a PUT request if the event has an id", ->
@@ -53,7 +53,7 @@ describe "Event", ->
         body : {
           id : 'id-1234',
           object : 'event',
-          namespace_id : 'test-namespace-id',
+          account_id : undefined,
           calendar_id : undefined,
           busy : undefined,
           title : undefined,
@@ -65,7 +65,7 @@ describe "Event", ->
           participants : [  ]
         },
         qs : {},
-        path : '/n/test-namespace-id/events/id-1234'
+        path : '/events/id-1234'
       })
 
     it "should include params in the request if they were passed in", ->
@@ -76,7 +76,7 @@ describe "Event", ->
         method : 'POST',
         body : {
           object : 'event',
-          namespace_id : 'test-namespace-id',
+          account_id : undefined,
           calendar_id : undefined,
           busy : undefined,
           title : undefined,
@@ -90,7 +90,7 @@ describe "Event", ->
         qs : {
           notify_participants : true
         },
-        path : '/n/test-namespace-id/events'
+        path : '/events'
       })
 
     describe "when the request succeeds", ->
@@ -149,5 +149,5 @@ describe "Event", ->
           status : 'yes',
           comment : 'I will come.'
         },
-        path : '/n/test-namespace-id/send-rsvp'
+        path : '/send-rsvp'
       })
