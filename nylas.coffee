@@ -19,9 +19,12 @@ class Nylas
     @authServer = authServer if authServer
     @
 
+  @hostedAPI: ->
+    @appId? and @appSecret?
+
   @with: (accessToken) ->
-    throw new Error("with() cannot be called until you provide an appId and secret via config()") unless @appId and @appSecret
-    new NylasConnection(accessToken)
+    throw new Error("This function requires an access token") unless accessToken?
+    new NylasConnection(accessToken, hosted = @hostedAPI)
 
   @exchangeCodeForToken: (code, callback) ->
     throw new Error("exchangeCodeForToken() cannot be called until you provide an appId and secret via config()") unless @appId and @appSecret

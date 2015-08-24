@@ -7,8 +7,7 @@ _ = require 'underscore'
 
 describe "APIAccount", ->
   beforeEach ->
-    @connection = new NylasConnection('123')
-    @draft = new Draft(@connection)
+    @connection = new NylasConnection('123', hosted=false)
     Promise.onPossiblyUnhandledRejection (e, promise) ->
 
   describe "list", ->
@@ -23,7 +22,7 @@ describe "APIAccount", ->
             "provider": "gmail"
         }])
 
-      @connection.opensource.accounts.list {}, (err, accounts) ->
+      @connection.accounts.list {}, (err, accounts) ->
         expect(accounts.length).toEqual(1)
         expect(accounts[0].id).toEqual("1qqlrm3m82toh86nevz0o1l24")
 

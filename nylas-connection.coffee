@@ -25,8 +25,7 @@ Attributes = require './models/attributes'
 module.exports =
 class NylasConnection
 
-  constructor: (@accessToken) ->
-    @accounts = new ManagementModelCollection(Account, @, null)
+  constructor: (@accessToken, hosted = true) ->
     @threads = new RestfulModelCollection(Thread, @)
     @contacts = new RestfulModelCollection(Contact, @)
     @messages = new RestfulModelCollection(Message, @)
@@ -38,9 +37,15 @@ class NylasConnection
     @deltas = new Delta(@)
     @labels = new RestfulModelCollection(Label, @)
     @folders = new RestfulModelCollection(Folder, @)
-    @opensource =
-        'accounts': new RestfulModelCollection(APIAccount, @)
-    @
+    @usingHostedAPI = hosted
+
+    if @usingHostedAPI
+        @accounts = new ManagementModelCollection(Account, @, null)
+    else
+        @accounts = new RestfulModelCollection(APIAccount, @)
+
+  usingHostedAPI: ->
+    return
 
   requestOptions: (options={}) ->
     options = clone(options)

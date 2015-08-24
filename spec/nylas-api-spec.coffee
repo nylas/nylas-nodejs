@@ -55,9 +55,6 @@ describe "Nylas", ->
     it "should throw an exception if an access token is not provided", ->
       expect( -> Nylas.with()).toThrow()
 
-    it "should throw an exception if the app id and secret have not been configured", ->
-      expect( -> Nylas.with('test-access-token')).toThrow()
-
     it "should return an NylasConnection for making requests with the access token", ->
       Nylas.config
         appId: 'newId'

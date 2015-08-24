@@ -314,7 +314,7 @@ Nylas = require('nylas').config({
    passing the account id as an auth token. Get the account id of the
    first account.
 */
-Nylas.with(null).opensource.accounts.first({}, function(err, account) {
+Nylas.with(null).accounts.first({}, function(err, account) {
     var nylas = Nylas.with(account.id).messages.list({limit: 20}, function(err, messages) {
         for(var i = 0; i < messages.length; i++) {
             console.log(messages[i].subject);
