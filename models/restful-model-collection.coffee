@@ -48,7 +48,11 @@ class RestfulModelCollection
       Promise.reject(err)
 
   list: (params = {}, callback = null) ->
-    @range(params, 0, Infinity, callback)
+    limit = Infinity
+    if 'limit' of params
+        limit = params['limit']
+
+    @range(params, 0, limit, callback)
 
   find: (id, callback = null) ->
     if not id
