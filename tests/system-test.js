@@ -112,18 +112,31 @@ nylas.deltas.generateCursor(timestampMs, function(error, cursor) {
 
 });
 
-nylas.events.list({}).then(function(events) {
-    color_display('Creating an event');
-    ev = nylas.events.build({title: 'Test node event', start: Math.floor(Date.now() / 1000), end: Math.floor(Date.now() + 20000 / 1000)});
-    ev.save(function() {
-        nylas.events.list({}).then(function(events) {
+nylas.calendars.list({}).then(function(calendars) {
+    cal = null;
+    for(var i = 0; i < calendars.length; i++) {
+        if (calendars[i].readOnly != true) {
+            cal = calendars[i];
+            break;
+        }
+    }
 
-            for(var i = 0; i < events.length; i++) {
-                ev2 = events[i];
-                if (ev2.start == ev.start) {
-                    color_display('Found the event!');
+    nylas.events.list({}).then(function(events) {
+        ev = nylas.events.build({title: 'Test node event', start: Math.floor(Date.now() / 1000), end: Math.floor((Date.now() + 20000) / 1000)});
+        ev.calendarId = cal.id;
+        color_display('Creating an event');
+        ev.save(function() {
+            nylas.events.list({}).then(function(events) {
+
+                for(var i = 0; i < events.length; i++) {
+                    ev2 = events[i];
+                    if (ev2.start == ev.start) {
+                        color_display('Found the event!');
+                    }
                 }
-            }
+            });
         });
     });
-});
+
+})
+

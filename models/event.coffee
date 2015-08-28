@@ -48,7 +48,6 @@ class Event extends RestfulModel
         dct['when'] = {start_time: @start.toString(), end_time: @end.toString()}
     delete dct['_start']
     delete dct['_end']
-    console.log(dct);
     dct
 
   save: (params = {}, callback = null) =>
