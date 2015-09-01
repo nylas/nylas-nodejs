@@ -148,3 +148,21 @@ describe 'Delta', ->
       expect(stream.request.origOpts.path).toBe('/delta/streaming?cursor=deltacursor1')
 
       stream.close()
+
+  describe 'latestCursor', ->
+    it 'returns a cursor', ->
+      spyOn(@connection, 'request').andCallFake -> Promise.resolve({cursor: "abcdefg"})
+
+      @delta.latestCursor (err, cursor) ->
+        expect(cursor).toEqual('abcdefg');
+
+      expect(@connection.request).toHaveBeenCalledWith({
+        method : 'POST',
+        path : '/delta/latest_cursor'
+      });
+
+    it 'returns a null cursor in case of an error', ->
+      spyOn(@connection, 'request').andCallFake -> Promise.reject("Error.")
+      @delta.latestCursor (err, cursor) ->
+        expect(err).toEqual("Error.");
+        expect(cursor).toEqual(null);

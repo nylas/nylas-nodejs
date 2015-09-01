@@ -28,6 +28,20 @@ module.exports = class Delta
         callback(err) if callback
         Promise.reject(err)
 
+  latestCursor: (callback) ->
+    reqOpts =
+      method: 'POST'
+      path: "/delta/latest_cursor"
+
+    @connection.request(reqOpts)
+      .then (response) ->
+        cursor = response.cursor
+        callback(null, cursor) if callback
+        Promise.resolve(cursor)
+      .catch (err) ->
+        callback(err) if callback
+        Promise.reject(err)
+
   startStream: (cursor, excludeTypes = []) ->
     return @_startStream(request, cursor, excludeTypes)
 

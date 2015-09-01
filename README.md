@@ -234,10 +234,9 @@ Using the Delta Streaming API
 
 ```javascript
 var DELTA_EXCLUDE_TYPES = ['contact', 'calendar', 'event', 'file', 'tag'];
-var timestampMs = Date.now();
 var nylas = Nylas.with(accessToken);
 
-nylas.deltas.generateCursor(timestampMs, function(error, cursor) {
+nylas.deltas.latestCursor(function(error, cursor) {
 
   // Save inital cursor.
   persistCursor(cursor);
