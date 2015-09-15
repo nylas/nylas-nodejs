@@ -15,25 +15,22 @@ describe "Nylas", ->
     Nylas.appId = undefined
     Nylas.appSecret = undefined
     Nylas.apiServer = 'https://api.nylas.com'
-    Nylas.authServer = 'https://www.nylas.com'
     Promise.onPossiblyUnhandledRejection (e, promise) ->
 
   describe "config", ->
     it "should allow you to populate the appId, appSecret, apiServer and authServer options", ->
-      newConfig = 
+      newConfig =
         appId: 'newId'
         appSecret: 'newSecret'
         apiServer: 'https://api-staging.nylas.com/'
-        authServer: 'https://www-staging.nylas.com/'
 
       Nylas.config(newConfig)
       expect(Nylas.appId).toBe(newConfig.appId)
       expect(Nylas.appSecret).toBe(newConfig.appSecret)
       expect(Nylas.apiServer).toBe(newConfig.apiServer)
-      expect(Nylas.authServer).toBe(newConfig.authServer)
 
     it "should not override existing values unless new values are provided", ->
-      newConfig = 
+      newConfig =
         appId: 'newId'
         appSecret: 'newSecret'
 
@@ -41,10 +38,9 @@ describe "Nylas", ->
       expect(Nylas.appId).toBe(newConfig.appId)
       expect(Nylas.appSecret).toBe(newConfig.appSecret)
       expect(Nylas.apiServer).toBe('https://api.nylas.com')
-      expect(Nylas.authServer).toBe('https://www.nylas.com')
 
     it "should throw an exception if the server options do not contain ://", ->
-      newConfig = 
+      newConfig =
         appId: 'newId'
         appSecret: 'newSecret'
         apiServer: 'dontknowwhatImdoing.nylas.com'
@@ -83,7 +79,7 @@ describe "Nylas", ->
 
     it "should make a request to /oauth/token with the correct grant_type and client params", ->
       spyOn(request, 'Request').andCallFake (options) ->
-        expect(options.url).toEqual('https://www.nylas.com/oauth/token')
+        expect(options.url).toEqual('https://api.nylas.com/oauth/token')
         expect(options.qs).toEqual({
           "client_id":"newId",
           "client_secret":"newSecret",
@@ -148,18 +144,17 @@ describe "Nylas", ->
     it "should generate the correct authentication URL", ->
       options =
         redirectURI: 'https://localhost/callback'
-      expect(Nylas.urlForAuthentication(options)).toEqual('https://www.nylas.com/oauth/authorize?client_id=newId&trial=false&response_type=code&scope=email&login_hint=&redirect_uri=https://localhost/callback')
+      expect(Nylas.urlForAuthentication(options)).toEqual('https://api.nylas.com/oauth/authorize?client_id=newId&trial=false&response_type=code&scope=email&login_hint=&redirect_uri=https://localhost/callback')
 
     it "should use a login hint when provided in the options", ->
       options =
         loginHint: 'ben@nylas.com'
         redirectURI: 'https://localhost/callback'
-      expect(Nylas.urlForAuthentication(options)).toEqual('https://www.nylas.com/oauth/authorize?client_id=newId&trial=false&response_type=code&scope=email&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback')
+      expect(Nylas.urlForAuthentication(options)).toEqual('https://api.nylas.com/oauth/authorize?client_id=newId&trial=false&response_type=code&scope=email&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback')
 
     it "should use trial = true when provided in the options", ->
       options =
         loginHint: 'ben@nylas.com'
         redirectURI: 'https://localhost/callback'
         trial: true
-      expect(Nylas.urlForAuthentication(options)).toEqual('https://www.nylas.com/oauth/authorize?client_id=newId&trial=true&response_type=code&scope=email&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback')
-
+      expect(Nylas.urlForAuthentication(options)).toEqual('https://api.nylas.com/oauth/authorize?client_id=newId&trial=true&response_type=code&scope=email&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback')
