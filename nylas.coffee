@@ -7,16 +7,13 @@ class Nylas
   @appId: null
   @appSecret: null
   @apiServer: 'https://api.nylas.com'
-  @authServer: 'https://www.nylas.com'
 
-  @config: ({appId, appSecret, apiServer, authServer} = {}) ->
+  @config: ({appId, appSecret, apiServer} = {}) ->
     throw new Error("Please specify a fully qualified URL for the API Server.") if apiServer?.indexOf('://') == -1
-    throw new Error("Please specify a fully qualified URL for the Auth Server.") if authServer?.indexOf('://') == -1
 
     @appId = appId if appId
     @appSecret = appSecret if appSecret
     @apiServer = apiServer if apiServer
-    @authServer = authServer if authServer
     @
 
   @hostedAPI: ->
@@ -34,7 +31,7 @@ class Nylas
       options =
         method: 'GET'
         json: true
-        url: "#{@authServer}/oauth/token"
+        url: "#{@apiServer}/oauth/token"
         qs:
           'client_id': @appId
           'client_secret': @appSecret
@@ -54,6 +51,6 @@ class Nylas
     throw new Error("urlForAuthentication() requires options.redirectURI") unless options.redirectURI?
     options.loginHint ?= ''
     options.trial ?= false
-    "#{@authServer}/oauth/authorize?client_id=#{@appId}&trial=#{options.trial}&response_type=code&scope=email&login_hint=#{options.loginHint}&redirect_uri=#{options.redirectURI}"
+    "#{@apiServer}/oauth/authorize?client_id=#{@appId}&trial=#{options.trial}&response_type=code&scope=email&login_hint=#{options.loginHint}&redirect_uri=#{options.redirectURI}"
 
 module.exports = Nylas
