@@ -24,6 +24,10 @@ class AttributeString extends Attribute
   toJSON: (val) -> val
   fromJSON: (val, parent) -> val || ""
 
+class AttributeStringList extends Attribute
+  toJSON: (val) -> val
+  fromJSON: (val, parent) -> val || []
+
 class AttributeDateTime extends Attribute
   toJSON: (val) ->
     return null unless val
@@ -62,6 +66,7 @@ class AttributeCollection extends Attribute
 module.exports = {
   Number: -> new AttributeNumber(arguments...)
   String: -> new AttributeString(arguments...)
+  StringList: -> new AttributeStringList(arguments...)
   DateTime: -> new AttributeDateTime(arguments...)
   Collection: -> new AttributeCollection(arguments...)
   Boolean: -> new AttributeBoolean(arguments...)
@@ -69,6 +74,7 @@ module.exports = {
 
   AttributeNumber: AttributeNumber
   AttributeString: AttributeString
+  AttributeStringList: AttributeStringList
   AttributeDateTime: AttributeDateTime
   AttributeCollection: AttributeCollection
   AttributeBoolean: AttributeBoolean

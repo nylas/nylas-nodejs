@@ -1,6 +1,7 @@
 _ = require 'underscore'
 
 Tag = require './tag'
+Message = require './message'
 RestfulModel = require './restful-model'
 Contact = require './contact'
 Attributes = require './attributes'
@@ -27,6 +28,10 @@ class Thread extends RestfulModel
     'starred': Attributes.Boolean
       queryable: true
       modelKey: 'starred'
+
+    'messageIds': Attributes.StringList
+      modelKey: 'messageIds'
+      jsonKey: 'message_ids'
 
     'tags': Attributes.Collection
       queryable: true
