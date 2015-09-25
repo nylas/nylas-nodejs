@@ -52,7 +52,7 @@ Nylas.with(accessToken).threads.list({}).then(function(threads){
 
 Authentication
 -----
-The Nylas REST API uses server-side (three-legged) OAuth, and the Node.js bindings provide convenience methods that simplifiy the OAuth process. For more information about authenticating users with Nylas, visit the [Developer Documentation](https://www.nylas.com/docs/knowledgebase#authentication)
+The Nylas REST API uses server-side (three-legged) OAuth, and the Node.js bindings provide convenience methods that simplifiy the OAuth process. For more information about authenticating users with Nylas, visit the [Developer Documentation](https://nylas.com/docs/#authentication)
 
 Step 1: Redirect the user to Nylas:
 
