@@ -203,6 +203,9 @@ var nylas = Nylas.with(accessToken);
 var draft = nylas.drafts.build({
     subject: 'My New Draft',
     to: [{email: 'ben@nylas.com'}]
+    replyToMessageId: "8i4u7sid2ygvfso9gomu9rcw3" // id of the message we're replying to. When set,
+                                                  // the Nylas sending API will set specific email
+                                                  // headers to mark your message as a reply to `message_id`.
 });
 
 // Sending the Draft

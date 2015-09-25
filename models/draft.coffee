@@ -11,6 +11,11 @@ class Draft extends Message
 
   @collectionName: 'drafts'
 
+  @attributes: _.extend {}, Message.attributes,
+      'replyToMessageId': Attributes.String
+        modelKey: 'replyToMessageId'
+        jsonKey: 'reply_to_message_id'
+
   toJSON: ->
     json = super
     json.file_ids = @fileIds()
@@ -20,13 +25,16 @@ class Draft extends Message
   save: (params = {}, callback = null) =>
     this._save(params, callback)
 
+  saveRequestBody: ->
+    super
+
   send: (callback = null) ->
     if @id
       body =
         'draft_id': @id
         'version': @version
     else
-      body = @toJSON()
+      body = @saveRequestBody()
 
     @connection.request
       method: 'POST'

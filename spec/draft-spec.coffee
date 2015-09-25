@@ -194,7 +194,7 @@ describe "Draft", ->
             expect(draft.id).toBe('id-1234')
             expect(draft.threadId).toBe('new-thread-id')
             done()
- 
+
     describe "when the request fails", ->
       beforeEach ->
         @error = new Error("Network error")
