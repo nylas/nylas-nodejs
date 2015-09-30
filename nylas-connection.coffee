@@ -55,9 +55,11 @@ class NylasConnection
     options.body ?= {} unless options.formData
     options.json ?= true
 
-    if @accessToken
+    user = if options.path.substr(0,3) == '/a/' then Nylas.appSecret else @accessToken
+
+    if user
       options.auth =
-        'user': @accessToken,
+        'user': user
         'pass': '',
         'sendImmediately': true
     return options
