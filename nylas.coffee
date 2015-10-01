@@ -2,6 +2,8 @@ _ = require 'underscore'
 request = require 'request'
 Promise = require 'bluebird'
 NylasConnection = require './nylas-connection'
+ManagementAccount = require './models/management-account'
+RestfulModelCollection = require './models/restful-model-collection'
 
 class Nylas
   @appId: null
@@ -14,6 +16,10 @@ class Nylas
     @appId = appId if appId
     @appSecret = appSecret if appSecret
     @apiServer = apiServer if apiServer
+
+    if @hostedAPI()
+      conn = new NylasConnection @appSecret
+      @accounts = new RestfulModelCollection ManagementAccount, conn, @appId
     @
 
   @hostedAPI: ->
