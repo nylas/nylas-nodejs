@@ -194,6 +194,40 @@ nylas.labels.list({}).then(function(labels) {
 // The only difference is that a message can have many labels but only a single folder.
 ```
 
+Uploading files
+-----
+
+```javascript
+var nylas = Nylas.with(accessToken);
+var fs = require('fs');
+
+// Because of a bug in the library we use to issue http requests,
+// we can't pass a stream to the file upload function, which is
+// why we read the file directly.
+fs.readFile(filePath, 'utf8', function (err, data) {
+    f = nylas.files.build({
+        filename: filePath,
+        data: data,
+        contentType: 'text/plain'
+    });
+
+    f.upload(function(err, file) {
+        // Create a draft and attach the file to it.
+        var draft = nylas.drafts.build({
+            subject: 'Ice-cream',
+            to: [{email: 'helena@nylas.com'}],
+            body: 'Hey, find the file attached.',
+        });
+
+        draft.files = [file];
+
+        draft.send().then(function(draft) {
+            console.log(draft.id + ' was sent');
+        });
+    });
+});
+
+```
 Creating and Sending Drafts
 ------
 
