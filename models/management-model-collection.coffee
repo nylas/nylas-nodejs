@@ -7,5 +7,4 @@ class ManagementModelCollection extends RestfulModelCollection
     super(modelClass, connection)
 
   path: ->
-    Nylas = require '../nylas'
     "/a/#{@appId}/#{@modelClass.collectionName}"

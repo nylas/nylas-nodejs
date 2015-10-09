@@ -30,5 +30,5 @@ describe "ManagementAccount", ->
       expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
         method : 'GET',
         qs : { limit: 100, offset: 0 }
-        path : '/accounts'
+        path : '/a/abc/accounts'
       })

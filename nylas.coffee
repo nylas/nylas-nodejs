@@ -4,6 +4,7 @@ Promise = require 'bluebird'
 NylasConnection = require './nylas-connection'
 ManagementAccount = require './models/management-account'
 RestfulModelCollection = require './models/restful-model-collection'
+ManagementModelCollection = require './models/management-model-collection'
 
 class Nylas
   @appId: null
@@ -19,7 +20,7 @@ class Nylas
 
     if @hostedAPI()
       conn = new NylasConnection @appSecret
-      @accounts = new RestfulModelCollection ManagementAccount, conn, @appId
+      @accounts = new ManagementModelCollection ManagementAccount, conn, @appId
     @
 
   @hostedAPI: ->
