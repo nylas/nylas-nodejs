@@ -11,7 +11,7 @@ console.log("")
 console.log("      A P I  S E L F - T E S T")
 console.log("")
 console.log("\n\n")
-console.log("Hiya! Welcome to the Ruby SDK test program. I need your help to make sure we didn't break the SDK.")
+console.log("Hiya! Welcome to the Node SDK test program. I need your help to make sure we didn't break the SDK.")
 console.log("")
 console.log("Could you confirm that the following API functions didn't break?")
 
