@@ -19,6 +19,7 @@ describe "File", ->
     @file.data = 'Sample data'
     @file.contentType = 'text/plain'
     @file.filename = 'sample.txt'
+    @file.id = 'fileId'
     Promise.onPossiblyUnhandledRejection (e, promise) ->
 
   describe "upload", ->
@@ -77,6 +78,66 @@ describe "File", ->
       it "should call the callback with the error", ->
         testUntil (done) =>
           @file.upload (err, file) =>
+            expect(err).toBe(@error)
+            expect(file).toBe(undefined)
+            done()
+
+  describe "download", ->
+    it "should do a GET request", ->
+      spyOn(@connection, 'request').andCallFake -> Promise.resolve()
+      @file.download()
+      expect(@connection.request).toHaveBeenCalledWith({
+        path: '/files/fileId/download',
+      })
+
+
+    describe "when the request succeeds", ->
+      beforeEach ->
+        spyOn(@connection, 'request').andCallFake ->
+          response =
+            headers:
+              header1: '1'
+              header2: '2'
+            body: 'body'
+            otherField: 'other'
+          Promise.resolve(response)
+
+      it "should resolve with the file information", ->
+        testUntil (done) =>
+          @file.download().then (file) ->
+            fileInfo =
+              body: 'body'
+              header1: '1'
+              header2: '2'
+            expect(file).toEqual(fileInfo)
+            done()
+
+      it "should call the callback with the file object", ->
+        testUntil (done) =>
+          @file.download (err, file) ->
+            fileInfo =
+              body: 'body'
+              header1: '1'
+              header2: '2'
+            expect(err).toBe(null)
+            expect(file).toEqual(fileInfo)
+            done()
+
+    describe "when the request fails", ->
+      beforeEach ->
+        @error = new Error("Network error")
+        spyOn(@connection, 'request').andCallFake =>
+          Promise.reject(@error)
+
+      it "should reject with the error", ->
+        testUntil (done) =>
+          @file.download().catch (err) =>
+            expect(err).toBe(@error)
+            done()
+
+      it "should call the callback with the error", ->
+        testUntil (done) =>
+          @file.download (err, file) =>
             expect(err).toBe(@error)
             expect(file).toBe(undefined)
             done()
