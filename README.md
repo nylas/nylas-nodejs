@@ -80,7 +80,7 @@ router.get('/oauth/callback', function (req, res, next) {
         	// save the token to the current session, save it to the user model, etc.
         });
 
-    } else if (req.query.error) {    
+    } else if (req.query.error) {
         res.render('error', {
             message: req.query.reason,
             error: {
@@ -225,6 +225,25 @@ fs.readFile(filePath, 'utf8', function (err, data) {
             console.log(draft.id + ' was sent');
         });
     });
+});
+
+```
+Downloading files
+-----
+
+```javascript
+var nylas = Nylas.with(accessToken);
+var fs = require('fs');
+
+var f = nylas.files.build({
+    id: fileId
+});
+
+f.download(function(err, file) {
+  // file contains some headers like 'content-disposition',
+  // the data are stored in 'body'
+  var filename = /filename=([^;]*)/.exec(file['content-disposition'])[1] || 'filename';
+  fs.writeFile('/tmp/' + filename, file.body);
 });
 
 ```
