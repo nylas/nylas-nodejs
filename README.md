@@ -193,7 +193,42 @@ nylas.labels.list({}).then(function(labels) {
 // Note that Folders and Labels are absolutely identical from the standpoint of the SDK.
 // The only difference is that a message can have many labels but only a single folder.
 ```
+File metadata
+-----
 
+```javascript
+var nylas = Nylas.with(accessToken);
+var fs = require('fs');
+
+// to get the metadata of a particular file
+var f = nylas.files.build({
+  id: fileId
+});
+
+f.metadata(function(err, data) {
+  // On success, data looks like:
+  //  {
+  //    "content_type": "application/msword",
+  //    "filename": "Reinstatement of Corporation.doc",
+  //    "id": "9tm2n206vdj29wrhcxfvmvo4o",
+  //    "message_ids": [
+  //        "93mtrpk4uo3wsvwcpb5yh57kp"
+  //    ],
+  //    "account_id": "6aakaxzi4j5gn6f7kbb9e0fxs",
+  //    "object": "file",
+  //    "size": 100864
+  //  }
+  console.log(data)
+});
+
+
+// for an array of file metadata, build a dummy file with no id
+f = nylas.files.build();
+f.metadata(function(err, dataArray){
+  console.log(dataArray);
+});
+
+```
 Uploading files
 -----
 

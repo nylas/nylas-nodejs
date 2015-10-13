@@ -73,3 +73,16 @@ class File extends RestfulModel
     .catch (err) ->
       callback(err) if callback
       Promise.reject(err)
+
+  metadata: (callback = null) ->
+    id = @id or ''
+
+    @connection.request
+      path: "/files/#{id}"
+
+    .then (response) ->
+      callback(null, response) if callback
+      Promise.resolve(response)
+    .catch (err) ->
+      callback(err) if callback
+      Promise.reject(err)
