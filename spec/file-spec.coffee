@@ -88,6 +88,7 @@ describe "File", ->
       @file.download()
       expect(@connection.request).toHaveBeenCalledWith({
         path: '/files/fileId/download',
+        encoding: null
       })
 
 
