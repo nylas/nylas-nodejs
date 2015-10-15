@@ -71,3 +71,24 @@ class NylasConnection
             resolve(body)
           catch error
             reject(error)
+
+  # /send endpoint used for sending messages via direct or MIME methods
+  send: (message, callback) ->
+    opts =
+      method: 'POST'
+      body: message
+      path: '/send'
+
+    if _.isString(message)
+      # raw MIME send
+      opts.headers =
+        'Content-Type': 'message/rfc822'
+
+    @request opts
+    .then (json) =>
+      msg = new Message(@, json)
+      callback(null, msg) if callback
+      Promise.resolve(msg)
+    .catch (err) ->
+      callback(err) if callback
+      Promise.reject(err)
