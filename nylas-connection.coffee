@@ -66,11 +66,14 @@ class NylasConnection
           error ?= new Error(body.message)
           reject(error)
         else
-          try
-            body = JSON.parse(body) if _.isString body
-            resolve(body)
-          catch error
-            reject(error)
+          if options.url and options.url.split('/').pop() == 'download'
+            return resolve(response)
+          else
+            try
+              body = JSON.parse(body) if _.isString body
+              resolve(body)
+            catch error
+              reject(error)
 
   # /send endpoint used for sending messages via direct or MIME methods
   send: (message, callback) ->
