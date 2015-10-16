@@ -86,6 +86,7 @@ class NylasConnection
       # raw MIME send
       opts.headers =
         'Content-Type': 'message/rfc822'
+      opts.json = false
 
     @request opts
     .then (json) =>
