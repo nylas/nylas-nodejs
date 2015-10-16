@@ -60,3 +60,4 @@ describe "NylasConnection", ->
         method: 'POST'
         path: '/send'
         body: message
+        json: false
