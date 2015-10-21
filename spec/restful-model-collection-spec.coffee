@@ -194,7 +194,7 @@ describe "RestfulModelCollection", ->
       spyOn(@connection, 'request').andCallFake => Promise.resolve({})
       testUntil (done) =>
         @collection.find('123')
-        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/n/test-namespace-id/threads/123', qs: {} })
+        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/threads/123', qs : {} })
         done()
 
     describe "when the request succeeds", ->
@@ -244,7 +244,7 @@ describe "RestfulModelCollection", ->
       spyOn(@connection, 'request').andCallFake => Promise.resolve({})
       testUntil (done) =>
         @collection.expand('123')
-        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/n/test-namespace-id/threads/123', qs:{'view':'expanded'}})
+        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/threads/123', qs : { view : 'expanded' } })
         done()
 
     describe "when the request succeeds", ->
