@@ -1,4 +1,4 @@
-Nylas Node.js Bindings
+Nylas Node.js Bindings  ![Travis build status](https://travis-ci.org/nylas/nylas-nodejs.svg?branch=master)
 ======================
 
 Installation
