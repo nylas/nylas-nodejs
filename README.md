@@ -92,6 +92,17 @@ router.get('/oauth/callback', function (req, res, next) {
 });
 ```
 
+Revoke access token
+```javascript
+Nylas.revokeToken('your_access_token_here', function(err) {
+  if (err) {
+    console.error('An error occured while revoking access token:', err);
+  } else {
+    console.log('Access token successfully revoked!');
+  }
+});
+```
+
 Fetching Threads, Messages, etc.
 -----
 

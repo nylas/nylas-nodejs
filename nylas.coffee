@@ -60,4 +60,22 @@ class Nylas
     options.trial ?= false
     "#{@apiServer}/oauth/authorize?client_id=#{@appId}&trial=#{options.trial}&response_type=code&scope=email&login_hint=#{options.loginHint}&redirect_uri=#{options.redirectURI}"
 
+  @revokeToken: (accessToken, callback) ->
+    throw new Error("Please provide the accessToken you want to revoke") if not accessToken
+    new Promise (resolve, reject) =>
+      options =
+        method: 'POST'
+        auth:
+          user: accessToken
+        url: "#{@apiServer}/oauth/revoke"
+
+      request options, (error, response) ->
+        if error
+          reject(error)
+          callback(error) if callback
+        else
+          resolve(response)
+          callback(null, response) if callback
+
+
 module.exports = Nylas
