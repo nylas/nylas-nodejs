@@ -62,7 +62,7 @@ class NylasConnection
 
     new Promise (resolve, reject) ->
       request options, (error, response, body) ->
-        if error or response.statusCode > 299
+        if error or response and response.statusCode > 299
           error ?= new Error(body.message)
           reject(error)
         else
