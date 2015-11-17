@@ -50,7 +50,7 @@ class RestfulModelCollection
   list: (params = {}, callback = null) ->
     limit = Infinity
     if 'limit' of params
-        limit = params['limit']
+      limit = params['limit']
 
     @range(params, 0, limit, callback)
 
@@ -61,6 +61,19 @@ class RestfulModelCollection
       return Promise.reject(err)
 
     @getModel(id).then (model) ->
+      callback(null, model) if callback
+      Promise.resolve(model)
+    .catch (err) ->
+      callback(err) if callback
+      Promise.reject(err)
+
+  expand: (id, callback = null) ->
+    if not id
+      err = new Error("find() must be called with an item id")
+      callback(err) if callback
+      return Promise.reject(err)
+
+    @getModel(id, {view: 'expanded'}).then (model) ->
       callback(null, model) if callback
       Promise.resolve(model)
     .catch (err) ->
@@ -115,10 +128,11 @@ class RestfulModelCollection
 
   # Internal
 
-  getModel: (id) ->
+  getModel: (id, params) ->
     @connection.request
       method: 'GET'
       path: "#{@path()}/#{id}"
+      qs: _.extend {}, params
     .then (json) =>
       model = new @modelClass(@connection, json)
       Promise.resolve(model)

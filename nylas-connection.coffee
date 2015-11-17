@@ -4,8 +4,9 @@ request = require 'request'
 Promise = require 'bluebird'
 RestfulModel = require './models/restful-model'
 RestfulModelCollection = require './models/restful-model-collection'
+RestfulModelInstance = require './models/restful-model-instance'
 Account = require './models/account'
-APIAccount = require './models/api_account'
+ManagementAccount = require './models/management-account'
 ManagementModelCollection = require './models/management-model-collection'
 Thread = require './models/thread'
 Contact = require './models/contact'
@@ -25,7 +26,7 @@ Attributes = require './models/attributes'
 module.exports =
 class NylasConnection
 
-  constructor: (@accessToken, hosted = true) ->
+  constructor: (@accessToken) ->
     @threads = new RestfulModelCollection(Thread, @)
     @contacts = new RestfulModelCollection(Contact, @)
     @messages = new RestfulModelCollection(Message, @)
@@ -37,15 +38,7 @@ class NylasConnection
     @deltas = new Delta(@)
     @labels = new RestfulModelCollection(Label, @)
     @folders = new RestfulModelCollection(Folder, @)
-    @usingHostedAPI = hosted
-
-    if @usingHostedAPI
-        @accounts = new ManagementModelCollection(Account, @, null)
-    else
-        @accounts = new RestfulModelCollection(APIAccount, @)
-
-  usingHostedAPI: ->
-    return
+    @account = new RestfulModelInstance(Account, @)
 
   requestOptions: (options={}) ->
     options = clone(options)
@@ -55,9 +48,11 @@ class NylasConnection
     options.body ?= {} unless options.formData
     options.json ?= true
 
-    if @accessToken
+    user = if options.path.substr(0,3) == '/a/' then Nylas.appSecret else @accessToken
+
+    if user
       options.auth =
-        'user': @accessToken,
+        'user': user
         'pass': '',
         'sendImmediately': true
     return options
@@ -67,12 +62,37 @@ class NylasConnection
 
     new Promise (resolve, reject) ->
       request options, (error, response, body) ->
-        if error or response.statusCode > 299
+        if error or _.isUndefined(response) or response.statusCode > 299
           error ?= new Error(body.message)
           reject(error)
         else
-          try
-            body = JSON.parse(body) if _.isString body
-            resolve(body)
-          catch error
-            reject(error)
+          if options.url and options.url.split('/').pop() == 'download'
+            return resolve(response)
+          else
+            try
+              body = JSON.parse(body) if _.isString body
+              resolve(body)
+            catch error
+              reject(error)
+
+  # /send endpoint used for sending messages via direct or MIME methods
+  send: (message, callback) ->
+    opts =
+      method: 'POST'
+      body: message
+      path: '/send'
+
+    if _.isString(message)
+      # raw MIME send
+      opts.headers =
+        'Content-Type': 'message/rfc822'
+      opts.json = false
+
+    @request opts
+    .then (json) =>
+      msg = new Message(@, json)
+      callback(null, msg) if callback
+      Promise.resolve(msg)
+    .catch (err) ->
+      callback(err) if callback
+      Promise.reject(err)

@@ -3,6 +3,7 @@ jasmine = require 'jasmine-node'
 {PassThrough} = require 'stream'
 Delta = require '../models/delta'
 NylasConnection = require '../nylas-connection'
+Promise = require 'bluebird'
 
 testUntil = (fn) ->
   finished = false

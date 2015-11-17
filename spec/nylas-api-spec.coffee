@@ -158,3 +158,42 @@ describe "Nylas", ->
         redirectURI: 'https://localhost/callback'
         trial: true
       expect(Nylas.urlForAuthentication(options)).toEqual('https://api.nylas.com/oauth/authorize?client_id=newId&trial=true&response_type=code&scope=email&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback')
+
+  describe "revokeToken", ->
+
+    it "should throw an exception if no accessToken is provided", ->
+      expect( -> Nylas.revokeToken()).toThrow()
+
+    it "should return a promise", ->
+      p = Nylas.revokeToken('access_token')
+      expect(p instanceof Promise).toBe(true)
+
+    it "should make a request to /oauth/revoke with the correct params", ->
+      spyOn(request, 'Request').andCallFake (options) ->
+        expect(options.url).toEqual('https://api.nylas.com/oauth/revoke')
+        expect(options.method).toEqual('POST')
+        expect(options.auth).toEqual({
+          "user":"access_token"
+        })
+      Nylas.revokeToken('access_token')
+
+    it "should reject with the request error", ->
+      error = new Error("network error")
+      spyOn(request, 'Request').andCallFake (options) ->
+        options.callback(error, null, null)
+
+      testUntil (done) ->
+        p = Nylas.revokeToken('access_token').catch (returnedError) ->
+          expect(returnedError).toBe(error)
+          done()
+
+    describe "when provided an optional callback", ->
+      it "should call it with the request error", ->
+        error = new Error("network error")
+        spyOn(request, 'Request').andCallFake (options) ->
+          options.callback(error, null, null)
+
+        testUntil (done) ->
+          Nylas.revokeToken 'accessToken', (returnedError, accessToken) ->
+            expect(returnedError).toBe(error)
+            done()
