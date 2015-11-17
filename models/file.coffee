@@ -58,3 +58,37 @@ class File extends RestfulModel
     .catch (err) ->
       callback(err) if callback
       Promise.reject(err)
+
+
+  download: (callback = null) =>
+    throw new Error("Please provide a File id") if not @id
+
+    @connection.request
+      path: "/files/#{@id}/download"
+      encoding: null
+      downloadRequest: true
+
+    .then (response) =>
+      file = _.extend(response.headers, body: response.body)
+      if 'content-disposition' of file
+        filename = /filename=([^;]*)/.exec(file['content-disposition'])[1] || 'filename'
+      else
+        filename = 'filename'
+      callback(null, file) if callback
+      Promise.resolve(file)
+    .catch (err) ->
+      callback(err) if callback
+      Promise.reject(err)
+
+  metadata: (callback = null) ->
+    throw new Error("Please provide a File id") if not @id
+
+    @connection.request
+      path: "/files/#{@id}"
+
+    .then (response) ->
+      callback(null, response) if callback
+      Promise.resolve(response)
+    .catch (err) ->
+      callback(err) if callback
+      Promise.reject(err)

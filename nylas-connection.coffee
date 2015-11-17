@@ -54,6 +54,7 @@ class NylasConnection
     options.url ?= "#{Nylas.apiServer}#{options.path}" if options.path
     options.body ?= {} unless options.formData
     options.json ?= true
+    options.downloadRequest ?= false
 
     if @accessToken
       options.auth =
@@ -71,8 +72,11 @@ class NylasConnection
           error ?= new Error(body.message)
           reject(error)
         else
-          try
-            body = JSON.parse(body) if _.isString body
-            resolve(body)
-          catch error
-            reject(error)
+          if options.downloadRequest
+            return resolve(response)
+          else
+            try
+              body = JSON.parse(body) if _.isString body
+              resolve(body)
+            catch error
+              reject(error)
