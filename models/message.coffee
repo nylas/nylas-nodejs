@@ -130,3 +130,23 @@ class Message extends RestfulModel
 
   save: (params = {}, callback = null) =>
     this._save(params, callback)
+
+  # raw MIME send
+  @sendRaw: (nylasConnection, message, callback = null) ->
+    opts =
+      method: 'POST'
+      body: message
+      path: '/send'
+
+    opts.headers =
+      'Content-Type': 'message/rfc822'
+    opts.json = false
+
+    nylasConnection.request opts
+    .then (json) =>
+      msg = new Message(@, json)
+      callback(null, msg) if callback
+      Promise.resolve(msg)
+    .catch (err) ->
+      callback(err) if callback
+      Promise.reject(err)
