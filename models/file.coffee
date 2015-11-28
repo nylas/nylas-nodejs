@@ -66,6 +66,8 @@ class File extends RestfulModel
     @connection.request
       path: "/files/#{@id}/download"
       encoding: null
+      json: false
+      body: ''
 
     .then (response) =>
       file = _.extend(response.headers, body: response.body)
