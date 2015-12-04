@@ -42,11 +42,11 @@ module.exports = class Delta
         callback(err) if callback
         Promise.reject(err)
 
-  startStream: (cursor, excludeTypes = []) ->
-    return @_startStream(request, cursor, excludeTypes)
+  startStream: (cursor, parameters = {}) ->
+    return @_startStream(request, cursor, parameters)
 
-  _startStream: (createRequest, cursor, excludeTypes = []) ->
-    stream = new DeltaStream(createRequest, @connection, cursor, excludeTypes)
+  _startStream: (createRequest, cursor, parameters = {}) ->
+    stream = new DeltaStream(createRequest, @connection, cursor, parameters)
     stream.open()
     return stream
 
@@ -65,8 +65,8 @@ class DeltaStream extends EventEmitter
 
   # @param {function} createRequest function to create a request; only present for testability
   # @param {string} cursor Nylas delta API cursor
-  # @param {Array<string>} excludeTypes object types to not return deltas for
-  constructor: (@createRequest, @connection, @cursor, @excludeTypes = []) ->
+  # @param {Object<string:string>} query parameters for the request (e.g., {exclude_types: ['thread']})
+  constructor: (@createRequest, @connection, @cursor, @parameters = {}) ->
     throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
     @restartBackoff = backoff.exponential
       randomisationFactor: 0.5
@@ -90,9 +90,13 @@ class DeltaStream extends EventEmitter
   open: () ->
     @close()
     path = "/delta/streaming"
+
     queryObj =
       cursor: @cursor
-    queryObj.exclude_types = @excludeTypes.join(',') if @excludeTypes?.length > 0
+    for own key, val of @parameters
+      queryObj[key] = val
+    queryObj.excludeTypes = queryObj.excludeTypes.join(',') if queryObj.excludeTypes
+    queryObj.includeTypes = queryObj.includeTypes.join(',') if queryObj.includeTypes
     queryStr = querystring.stringify(queryObj)
     path += '?' + queryStr
 
