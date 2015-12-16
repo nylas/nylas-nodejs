@@ -123,8 +123,11 @@ class DeltaStream extends EventEmitter
           # JSONStream.parse(), which handles converting data blocks to JSON objects.
           .pipe(JSONStream.parse()).on 'data', (obj) =>
             @cursor = obj.cursor if obj.cursor
-            @emit('delta', obj)
+            @_onDeltaReceived obj
       .on 'error', @_onError.bind(@)
+
+  _onDeltaReceived: (obj) ->
+    @emit('delta', obj)
 
   _onDataReceived: (data) ->
     # Nylas sends a newline heartbeat in the raw data stream once per second.
@@ -136,11 +139,13 @@ class DeltaStream extends EventEmitter
     @timeoutId = setTimeout @restartBackoff.backoff.bind(@restartBackoff), STREAMING_TIMEOUT_MS
 
   _onError: (err) ->
-    console.error 'Nylas DeltaStream error:', err
+    # console.error 'Nylas DeltaStream error:', err
     @restartBackoff.reset()
     @emit('error', err)
 
   _restartConnection: (n) ->
-    console.log "Restarting Nylas DeltaStream connection (attempt #{n + 1})", @
+    # console.log "Restarting Nylas DeltaStream connection (attempt #{n + 1})", @
     @close()
     @open()
+
+Delta.DeltaStream = DeltaStream

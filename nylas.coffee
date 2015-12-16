@@ -5,6 +5,7 @@ NylasConnection = require './nylas-connection'
 ManagementAccount = require './models/management-account'
 RestfulModelCollection = require './models/restful-model-collection'
 ManagementModelCollection = require './models/management-model-collection'
+Delta = require './models/delta'
 
 class Nylas
   @appId: null
@@ -77,5 +78,6 @@ class Nylas
           resolve(response)
           callback(null, response) if callback
 
-
+Nylas.NylasConnection = NylasConnection
+Nylas.Delta = Delta
 module.exports = Nylas
