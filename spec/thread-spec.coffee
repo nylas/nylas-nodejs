@@ -16,7 +16,7 @@ testUntil = (fn) ->
 describe "Thread", ->
   beforeEach ->
     @connection = new NylasConnection('123')
-    @thread = new Thread(@connection, 'test-namespace-id')
+    @thread = new Thread(@connection)
     @thread.id = "4333"
     @thread.starred = true
     @thread.unread = false
@@ -24,7 +24,7 @@ describe "Thread", ->
 
   describe "save", ->
     it "should do a PUT request with labels if labels is defined", ->
-      label = new Label(@connection, 'test-namespace-id')
+      label = new Label(@connection)
       label.id = 'label_id'
       @thread.labels = [label]
       spyOn(@connection, 'request').andCallFake -> Promise.resolve()
@@ -41,7 +41,7 @@ describe "Thread", ->
       })
 
     it "should do a PUT with folder if folder is defined", ->
-      label = new Label(@connection, 'test-namespace-id')
+      label = new Label(@connection)
       label.id = 'label_id'
       @thread.folder = label
       spyOn(@connection, 'request').andCallFake -> Promise.resolve()
