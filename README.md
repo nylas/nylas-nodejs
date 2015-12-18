@@ -95,7 +95,7 @@ router.get('/oauth/callback', function (req, res, next) {
 Fetching Threads, Messages, etc.
 -----
 
-The Javascript SDK exposes API resources as attributes of the `nylas` object. You can query these resources in several ways. Available filters can be found in the [API Documentation](https://nylas.com/docs/api#filters)
+The Javascript SDK exposes API resources as attributes of the `nylas` object. You can query these resources in several ways. Available filters can be found in the [API Documentation](https://www.nylas.com/docs/platform?node#filters)
 
 
 ```javascript
