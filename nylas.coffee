@@ -51,6 +51,9 @@ class Nylas
     throw new Error("urlForAuthentication() requires options.redirectURI") unless options.redirectURI?
     options.loginHint ?= ''
     options.trial ?= false
-    "#{@apiServer}/oauth/authorize?client_id=#{@appId}&trial=#{options.trial}&response_type=code&scope=email&login_hint=#{options.loginHint}&redirect_uri=#{options.redirectURI}"
+    if options.state?
+      "#{@apiServer}/oauth/authorize?client_id=#{@appId}&trial=#{options.trial}&response_type=code&scope=email&login_hint=#{options.loginHint}&redirect_uri=#{options.redirectURI}&state=#{options.state}"
+    else
+      "#{@apiServer}/oauth/authorize?client_id=#{@appId}&trial=#{options.trial}&response_type=code&scope=email&login_hint=#{options.loginHint}&redirect_uri=#{options.redirectURI}"
 
 module.exports = Nylas
