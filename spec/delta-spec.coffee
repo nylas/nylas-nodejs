@@ -56,7 +56,7 @@ describe 'Delta', ->
       expect(stream.request).toEqual(undefined)
 
       # Make sure the stream doesn't auto-restart if explicitly closed.
-      jasmine.Clock.tick(5500)
+      jasmine.Clock.tick(Delta.streamingTimeoutMs + 500)
       expect(stream.request).toEqual(undefined)
 
     it 'stream response parsing', ->
@@ -123,24 +123,24 @@ describe 'Delta', ->
       expectRequestNotAborted = (request) ->
         expect(request.abort.calls.length).toEqual(0)
 
-      # Server sends a heartbeat every second.
+      # Server sends a heartbeat every 5 seconds.
       response.write('\n')
-      jasmine.Clock.tick(1000)
+      jasmine.Clock.tick(5000)
       expect(request.abort.calls.length).toEqual(0)
       response.write('\n')
       expect(request.abort.calls.length).toEqual(0)
 
       # Actual response packets also reset the timeout.
-      jasmine.Clock.tick(1000)
+      jasmine.Clock.tick(5000)
       delta1 =
         cursor: 'deltacursor1'
       response.write(JSON.stringify(delta1))
       expect(stream.cursor).toEqual('deltacursor1')
-      jasmine.Clock.tick(1500)
+      jasmine.Clock.tick(5500)
       expect(request.abort.calls.length).toEqual(0)
 
       # If the timeout has elapsed since the last data received, the stream is restarted.
-      jasmine.Clock.tick(4000)
+      jasmine.Clock.tick(Delta.streamingTimeoutMs)
       # The old request should have been aborted, and a new request created.
       expect(request.abort.calls.length).toEqual(1)
       expect(stream.request).not.toBe(request)
