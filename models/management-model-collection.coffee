@@ -1,8 +1,10 @@
-async = require 'async'
 RestfulModelCollection = require './restful-model-collection'
 
 module.exports =
 class ManagementModelCollection extends RestfulModelCollection
 
+  constructor: (modelClass, connection, @appId) ->
+    super(modelClass, connection)
+
   path: ->
-    "/a/#{@api.appId}/accounts"
+    "/a/#{@appId}/#{@modelClass.collectionName}"

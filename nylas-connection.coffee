@@ -4,8 +4,9 @@ request = require 'request'
 Promise = require 'bluebird'
 RestfulModel = require './models/restful-model'
 RestfulModelCollection = require './models/restful-model-collection'
+RestfulModelInstance = require './models/restful-model-instance'
 Account = require './models/account'
-APIAccount = require './models/api_account'
+ManagementAccount = require './models/management-account'
 ManagementModelCollection = require './models/management-model-collection'
 Thread = require './models/thread'
 Contact = require './models/contact'
@@ -25,7 +26,7 @@ Attributes = require './models/attributes'
 module.exports =
 class NylasConnection
 
-  constructor: (@accessToken, hosted = true) ->
+  constructor: (@accessToken) ->
     @threads = new RestfulModelCollection(Thread, @)
     @contacts = new RestfulModelCollection(Contact, @)
     @messages = new RestfulModelCollection(Message, @)
@@ -37,15 +38,7 @@ class NylasConnection
     @deltas = new Delta(@)
     @labels = new RestfulModelCollection(Label, @)
     @folders = new RestfulModelCollection(Folder, @)
-    @usingHostedAPI = hosted
-
-    if @usingHostedAPI
-        @accounts = new ManagementModelCollection(Account, @, null)
-    else
-        @accounts = new RestfulModelCollection(APIAccount, @)
-
-  usingHostedAPI: ->
-    return
+    @account = new RestfulModelInstance(Account, @)
 
   requestOptions: (options={}) ->
     options = clone(options)
@@ -56,9 +49,11 @@ class NylasConnection
     options.json ?= true
     options.downloadRequest ?= false
 
-    if @accessToken
+    user = if options.path.substr(0,3) == '/a/' then Nylas.appSecret else @accessToken
+
+    if user
       options.auth =
-        'user': @accessToken,
+        'user': user
         'pass': '',
         'sendImmediately': true
     return options

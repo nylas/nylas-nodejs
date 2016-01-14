@@ -13,7 +13,8 @@ class RestfulModel
       modelKey: 'object'
 
     'accountId': Attributes.String
-      modelKey: 'account_id'
+      modelKey: 'accountId'
+      jsonKey: 'account_id'
 
   constructor: (@connection, json = null) ->
     throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'

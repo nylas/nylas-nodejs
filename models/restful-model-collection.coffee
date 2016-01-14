@@ -50,7 +50,7 @@ class RestfulModelCollection
   list: (params = {}, callback = null) ->
     limit = Infinity
     if 'limit' of params
-        limit = params['limit']
+      limit = params['limit']
 
     @range(params, 0, limit, callback)
 

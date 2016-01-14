@@ -382,6 +382,28 @@ nylas.events.find('30xunbe3033d44kip9bnau5ph').then(function(ev) {
 });
 ```
 
+Account objects
+----
+
+It's possible to get details about the account you're accessing by using the `account` method:
+
+```
+nylas.account.get().then(function(model) {
+    console.log(model);
+});
+
+```
+
+You can also access the billing status for the accounts in your app by using the `accounts` method:
+```
+Nylas.accounts.list().then(function(accounts) {
+    console.log(accounts.length);
+    for(var i = 0; i < accounts.length; i++) {
+        console.log(accounts[i].id, accounts[i].billingState, accounts[i].syncState);
+    }
+});
+```
+
 Open source API
 ----
 
@@ -402,7 +424,7 @@ Nylas = require('nylas').config({
    passing the account id as an auth token. Get the account id of the
    first account.
 */
-Nylas.with(null).accounts.first({}, function(err, account) {
+Nylas.accounts.first({}, function(err, account) {
     var nylas = Nylas.with(account.id).messages.list({limit: 20}, function(err, messages) {
         for(var i = 0; i < messages.length; i++) {
             console.log(messages[i].subject);
