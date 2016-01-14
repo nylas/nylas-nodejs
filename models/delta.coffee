@@ -5,9 +5,9 @@ Promise = require 'bluebird'
 querystring = require 'querystring'
 request = require 'request'
 
-STREAMING_TIMEOUT_MS = 5000
-
 module.exports = class Delta
+  @streamingTimeoutMs = 15000
+
   constructor: (@connection) ->
     throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
     @
@@ -123,13 +123,13 @@ class DeltaStream extends EventEmitter
       .on 'error', @_onError.bind(@)
 
   _onDataReceived: (data) ->
-    # Nylas sends a newline heartbeat in the raw data stream once per second.
+    # Nylas sends a newline heartbeat in the raw data stream once every 5 seconds.
     # Automatically restart the connection if we haven't gotten any data in
-    # STREAMING_TIMEOUT_MS. The connection will restart with the last
+    # Delta.streamingTimeoutMs. The connection will restart with the last
     # received cursor.
     clearTimeout(@timeoutId)
     @restartBackoff.reset()
-    @timeoutId = setTimeout @restartBackoff.backoff.bind(@restartBackoff), STREAMING_TIMEOUT_MS
+    @timeoutId = setTimeout @restartBackoff.backoff.bind(@restartBackoff), Delta.streamingTimeoutMs
 
   _onError: (err) ->
     console.error 'Nylas DeltaStream error:', err
@@ -137,6 +137,6 @@ class DeltaStream extends EventEmitter
     @emit('error', err)
 
   _restartConnection: (n) ->
-    console.log "Restarting Nylas DeltaStream connection (attempt #{n + 1})", @
+    console.log "Restarting Nylas DeltaStream connection (attempt #{n + 1}):", @request?.href
     @close()
     @open()
