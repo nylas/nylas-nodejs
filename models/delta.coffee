@@ -95,8 +95,8 @@ class DeltaStream extends EventEmitter
       cursor: @cursor
     for own key, val of @parameters
       queryObj[key] = val
-    queryObj.excludeTypes = queryObj.excludeTypes.join(',') if queryObj.excludeTypes
-    queryObj.includeTypes = queryObj.includeTypes.join(',') if queryObj.includeTypes
+    queryObj.exclude_types = queryObj.exclude_types.join(',') if queryObj.exclude_types
+    queryObj.include_types = queryObj.include_types.join(',') if queryObj.include_types
     queryStr = querystring.stringify(queryObj)
     path += '?' + queryStr
 
