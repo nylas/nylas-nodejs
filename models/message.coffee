@@ -65,7 +65,7 @@ class Message extends RestfulModel
       jsonKey: 'draft'
       queryable: true
 
-    'version': Attributes.String
+    'version': Attributes.Number
       modelKey: 'version'
       queryable: true
 
