@@ -1,6 +1,7 @@
 RestfulModel = require './restful-model'
 Attributes = require './attributes'
 _ = require 'underscore'
+Promise = require 'bluebird'
 
 module.exports =
 class File extends RestfulModel
