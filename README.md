@@ -387,7 +387,7 @@ Account objects
 
 It's possible to get details about the account you're accessing by using the `account` method:
 
-```
+```javascript
 var nylas = Nylas.with(accessToken);
 
 nylas.account.get().then(function(model) {
@@ -397,7 +397,7 @@ nylas.account.get().then(function(model) {
 ```
 
 You can also access the billing status for the accounts in your app by using the `accounts` method:
-```
+```javascript
 Nylas.accounts.list().then(function(accounts) {
     console.log(accounts.length);
     for(var i = 0; i < accounts.length; i++) {
