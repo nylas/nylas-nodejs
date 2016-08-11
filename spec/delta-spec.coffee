@@ -46,7 +46,8 @@ describe 'Delta', ->
       request = stream.request
 
       expect(request.origOpts.method).toBe('GET')
-      expect(request.origOpts.path).toBe('/delta/streaming?cursor=deltacursor0')
+      expect(request.origOpts.path).toBe('/delta/streaming')
+      expect(request.origOpts.qs).toEqual({cursor: 'deltacursor0'})
 
       response = createResponse(200)
       request.emit('response', response)
@@ -146,7 +147,8 @@ describe 'Delta', ->
       expect(request.abort.calls.length).toEqual(1)
       expect(stream.request).not.toBe(request)
       # The new request should be using the last delta cursor received prior to timeout.
-      expect(stream.request.origOpts.path).toBe('/delta/streaming?cursor=deltacursor1')
+      expect(stream.request.origOpts.path).toBe('/delta/streaming')
+      expect(stream.request.origOpts.qs).toEqual({cursor: 'deltacursor1'})
 
       stream.close()
 

@@ -2,7 +2,6 @@ backoff = require 'backoff'
 {EventEmitter} = require 'events'
 JSONStream = require 'JSONStream'
 Promise = require 'bluebird'
-querystring = require 'querystring'
 request = require 'request'
 
 module.exports = class Delta
@@ -42,11 +41,11 @@ module.exports = class Delta
         callback(err) if callback
         Promise.reject(err)
 
-  startStream: (cursor, excludeTypes = []) ->
-    return @_startStream(request, cursor, excludeTypes)
+  startStream: (cursor, params = {}) ->
+    return @_startStream(request, cursor, params = {})
 
-  _startStream: (createRequest, cursor, excludeTypes = []) ->
-    stream = new DeltaStream(createRequest, @connection, cursor, excludeTypes)
+  _startStream: (createRequest, cursor, params = {}) ->
+    stream = new DeltaStream(createRequest, @connection, cursor, params)
     stream.open()
     return stream
 
@@ -65,8 +64,11 @@ class DeltaStream extends EventEmitter
 
   # @param {function} createRequest function to create a request; only present for testability
   # @param {string} cursor Nylas delta API cursor
-  # @param {Array<string>} excludeTypes object types to not return deltas for
-  constructor: (@createRequest, @connection, @cursor, @excludeTypes = []) ->
+  # @param {Object} params object contianing query string params to be passed to  the request
+  # @param {Array<string>} params.excludeTypes object types to not return deltas for (e.g., {excludeTypes: ['thread']})
+  # @param {Array<string>} params.includeTypes object types to exclusively return deltas for (e.g., {includeTypes: ['thread']})
+  # @param {boolean} params.expanded boolean to specify wether to request the expanded view
+  constructor: (@createRequest, @connection, @cursor, @params = {}) ->
     throw new Error("Connection object not provided") unless @connection instanceof require '../nylas-connection'
     @restartBackoff = backoff.exponential
       randomisationFactor: 0.5
@@ -90,15 +92,19 @@ class DeltaStream extends EventEmitter
   open: () ->
     @close()
     path = "/delta/streaming"
+    excludeTypes = @params.excludeTypes ? []
+    includeTypes = @params.includeTypes ? []
+
     queryObj =
       cursor: @cursor
-    queryObj.exclude_types = @excludeTypes.join(',') if @excludeTypes?.length > 0
-    queryStr = querystring.stringify(queryObj)
-    path += '?' + queryStr
+    queryObj.exclude_types = excludeTypes.join(',') if excludeTypes.length > 0
+    queryObj.include_types = excludeTypes.join(',') if includeTypes.length > 0
 
     reqOpts = @connection.requestOptions
       method: 'GET'
       path: path
+      qs: queryObj
+
     @request = @createRequest(reqOpts)
       .on 'response', (response) =>
         unless response.statusCode == 200
