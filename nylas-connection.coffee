@@ -49,6 +49,12 @@ class NylasConnection
     options.json ?= true
     options.downloadRequest ?= false
 
+    # For convenience, If `expanded` param is provided, convert to view:
+    # 'expanded' api option
+    if options.qs?.expanded?
+      options.qs.view = 'expanded' if options.qs.expanded is true
+      delete options.qs.expanded
+
     user = if options.path.substr(0,3) == '/a/' then Nylas.appSecret else @accessToken
 
     if user
