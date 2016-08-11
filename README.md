@@ -388,6 +388,8 @@ Account objects
 It's possible to get details about the account you're accessing by using the `account` method:
 
 ```
+var nylas = Nylas.with(accessToken);
+
 nylas.account.get().then(function(model) {
     console.log(model);
 });
