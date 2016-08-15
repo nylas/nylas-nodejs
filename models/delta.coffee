@@ -1,3 +1,4 @@
+_ = require 'underscore'
 backoff = require 'backoff'
 {EventEmitter} = require 'events'
 JSONStream = require 'JSONStream'
@@ -42,7 +43,7 @@ module.exports = class Delta
         Promise.reject(err)
 
   startStream: (cursor, params = {}) ->
-    return @_startStream(request, cursor, params = {})
+    return @_startStream(request, cursor, params)
 
   _startStream: (createRequest, cursor, params = {}) ->
     stream = new DeltaStream(createRequest, @connection, cursor, params)
@@ -95,10 +96,11 @@ class DeltaStream extends EventEmitter
     excludeTypes = @params.excludeTypes ? []
     includeTypes = @params.includeTypes ? []
 
-    queryObj =
+    queryObj = _.extend({}, _.omit(@params, 'excludeTypes', 'includeTypes'), {
       cursor: @cursor
+    })
     queryObj.exclude_types = excludeTypes.join(',') if excludeTypes.length > 0
-    queryObj.include_types = excludeTypes.join(',') if includeTypes.length > 0
+    queryObj.include_types = includeTypes.join(',') if includeTypes.length > 0
 
     reqOpts = @connection.requestOptions
       method: 'GET'

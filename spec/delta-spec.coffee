@@ -61,6 +61,23 @@ describe 'Delta', ->
       jasmine.Clock.tick(Delta.streamingTimeoutMs + 500)
       expect(stream.request).toEqual(undefined)
 
+    it 'passes the correct params to the request', ->
+      stream = @delta._startStream(createRequest, 'deltacursor0', {
+        expanded: true,
+        includeTypes: ['thread', 'message'],
+        excludeTypes: ['event'],
+      })
+      request = stream.request
+
+      expect(request.origOpts.method).toBe('GET')
+      expect(request.origOpts.path).toBe('/delta/streaming')
+      expect(request.origOpts.qs).toEqual({
+        cursor: 'deltacursor0',
+        view: 'expanded',
+        include_types: 'thread,message'
+        exclude_types: 'event',
+      })
+
     it 'stream response parsing', ->
       stream = @delta._startStream(createRequest, 'deltacursor0')
       request = stream.request
