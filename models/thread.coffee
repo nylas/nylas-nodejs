@@ -55,6 +55,14 @@ class Thread extends RestfulModel
       modelKey: 'folder'
       itemClass: Folder
 
+    'messages': Attributes.Collection
+      modelKey: 'messages'
+      itemClass: Message
+
+    'drafts': Attributes.Collection
+      modelKey: 'drafts'
+      itemClass: Message
+
   fromJSON: (json) =>
     super(json)
     @unread = @isUnread()
