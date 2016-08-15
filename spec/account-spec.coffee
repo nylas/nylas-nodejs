@@ -24,4 +24,5 @@ describe "account", ->
     expect(@connection.request).toHaveBeenCalledWith({
       method : 'GET',
       path : '/account'
+      qs: {}
     })

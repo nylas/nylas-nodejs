@@ -1,6 +1,7 @@
 Nylas = require '../nylas'
 NylasConnection = require '../nylas-connection'
 Thread = require '../models/thread'
+Message = require '../models/message'
 Label = require('../models/folder').Label
 Promise = require 'bluebird'
 request = require 'request'
@@ -56,3 +57,19 @@ describe "Thread", ->
         qs : {}
         path : '/threads/4333'
       })
+
+  describe "fromJSON", ->
+    it "should populate messages and draft fields when receiving expanded thread", ->
+      m1 = {id: 'm1', object: 'message', to: [{name: 'Ben Bitdiddle', email: 'ben.bitdiddle@gmail.com'}]}
+      m2 = {id: 'm2', object: 'message', to: [{name: 'Alice', email: 'alice@gmail.com'}]}
+      draft = {id: 'm3', object: 'draft', to: [{name: 'Bob', email: 'bob@gmail.com'}]}
+
+      t = @thread.fromJSON({messages: [m1, m2], drafts: [draft]})
+      expect(t.messages).toBeDefined()
+      expect(t.messages[0] instanceof Message).toBe(true)
+      expect(t.messages[0].id).toBe('m1')
+      expect(t.messages[1] instanceof Message).toBe(true)
+      expect(t.messages[1].id).toBe('m2')
+      expect(t.drafts[0] instanceof Message).toBe(true)
+      expect(t.drafts[0].id).toBe('m3')
+      expect(t.drafts[0].draft).toBe(true)

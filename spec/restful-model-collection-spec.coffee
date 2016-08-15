@@ -194,7 +194,14 @@ describe "RestfulModelCollection", ->
       spyOn(@connection, 'request').andCallFake => Promise.resolve({})
       testUntil (done) =>
         @collection.find('123')
-        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/threads/123' })
+        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/threads/123', qs: {} })
+        done()
+
+    it "should pass any additional params to the request", ->
+      spyOn(@connection, 'request').andCallFake => Promise.resolve({})
+      testUntil (done) =>
+        @collection.find('123', null, {param: 1})
+        expect(@connection.request).toHaveBeenCalledWith({ method : 'GET', path : '/threads/123', qs: {param: 1} })
         done()
 
     describe "when the request succeeds", ->

@@ -54,13 +54,13 @@ class RestfulModelCollection
 
     @range(params, 0, limit, callback)
 
-  find: (id, callback = null) ->
+  find: (id, callback = null, params = {}) ->
     if not id
       err = new Error("find() must be called with an item id")
       callback(err) if callback
       return Promise.reject(err)
 
-    @getModel(id).then (model) ->
+    @getModel(id, params).then (model) ->
       callback(null, model) if callback
       Promise.resolve(model)
     .catch (err) ->
@@ -115,10 +115,11 @@ class RestfulModelCollection
 
   # Internal
 
-  getModel: (id) ->
+  getModel: (id, params = {}) ->
     @connection.request
       method: 'GET'
       path: "#{@path()}/#{id}"
+      qs: params
     .then (json) =>
       model = new @modelClass(@connection, json)
       Promise.resolve(model)

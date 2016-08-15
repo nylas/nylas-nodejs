@@ -11,10 +11,11 @@ class RestfulModelInstance
   path: ->
     "/#{@modelClass.endpointName}"
 
-  get: ->
+  get: (params = {}) ->
     @connection.request
       method: 'GET'
       path: @path()
+      qs: params
     .then (json) =>
       model = new @modelClass(@connection, json)
       Promise.resolve(model)
