@@ -1,0 +1,8 @@
+// Rename this file to config.js and then add your client secret
+const config = {};
+
+config.nylasClientSecret = '';
+config.host = '127.0.0.1';
+config.port = 1234;
+
+module.exports = config;
