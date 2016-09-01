@@ -9,7 +9,8 @@ router.get('/top', function (req, res, next) {
           thread: thread
 
     });
-})
+  });
+});
 
 
 module.exports = router;
