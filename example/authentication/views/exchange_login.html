@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Nylas Exchange Login</title>
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+  <![endif]-->
+  <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+  <script>
+$('.message a').click(function(){
+   $('form').animate({height: "toggle", opacity: "toggle"}, "slow");
+});
+  </script>
+</head>
+<body class='exchange'>
+<div class="login-page">
+  <div class="form">
+    <p>
+    <svg width="120px" height="120px" style="vertical-align: text-bottom" viewBox="0 0 29 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <title>Nylas Logo</title>
+            <desc>Nylas Logo</desc>
+            <defs></defs>
+            <g id="Mocks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g class="logo-mark" transform="translate(-154.000000, -86.000000)" fill="#333333">
+                    <path d="M154,99.04 L167.495845,107.52 L167.495845,101.44 L154,92.96 L154,99.04 Z M154,107.52 L167.495845,116 L167.495845,109.92 L154,101.44 L154,107.52 Z M169.504155,108.8 L179.090222,114.82336 C180.787886,115.89 183,114.67512 183,112.67616 L183,111.2 L169.504155,102.72 L169.504155,108.8 Z M169.504155,100.4 L183,108.88 L183,102.8 L169.504155,94.32 L169.504155,100.4 Z M154,90.64 L167.495845,99.12 L167.495845,93.04 L157.638898,86.84648 C156.05892,85.85368 154,86.9844 154,88.84488 L154,90.64 Z M169.504155,86 L169.504155,92.08 L183,100.56 L183,94.48 L169.504155,86 Z" id="Logo---single-color"></path>
+                </g>
+            </g>
+        <g class="logo-mark" transform="translate(-154.000000, -86.000000)" fill="#333333">
+                    <path d="M154,99.04 L167.495845,107.52 L167.495845,101.44 L154,92.96 L154,99.04 Z M154,107.52 L167.495845,116 L167.495845,109.92 L154,101.44 L154,107.52 Z M169.504155,108.8 L179.090222,114.82336 C180.787886,115.89 183,114.67512 183,112.67616 L183,111.2 L169.504155,102.72 L169.504155,108.8 Z M169.504155,100.4 L183,108.88 L183,102.8 L169.504155,94.32 L169.504155,100.4 Z M154,90.64 L167.495845,99.12 L167.495845,93.04 L157.638898,86.84648 C156.05892,85.85368 154,86.9844 154,88.84488 L154,90.64 Z M169.504155,86 L169.504155,92.08 L183,100.56 L183,94.48 L169.504155,86 Z" id="Logo---single-color"></path>
+                </g></svg>
+    </p>
+    <p>
+    Nylas Exchange Login
+    </p>
+    <form class='login-form' action="/exchange" method="POST">
+      <input type="text" name="name" placeholder="Erlich Bachman">
+      <input type="email" name="email" placeholder="erlich@aviato.com">
+      <input type="password" name="password" placeholder="password">
+      <button class='exchange-btn'>login</button>
+    </form>
+    <form class="login-form">
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

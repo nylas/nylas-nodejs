@@ -1,0 +1,10 @@
+const config = {};
+
+config.nylasClientId = '';
+config.nylasClientSecret = '';
+config.googleClientId= '';
+config.googleClientSecret = '';
+
+config.nylasApi = 'https://api.nylas.com';
+
+module.exports = config;
