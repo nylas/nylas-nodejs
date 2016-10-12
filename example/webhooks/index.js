@@ -20,8 +20,8 @@ app.use(function(req, res, next){
     });
     next();
 });
-app.use(bodyParser.json()); // support json encoded bodies
-app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(bodyParser.json({limit: '50000mb'})); // support json encoded bodies
+app.use(bodyParser.urlencoded({ limit: '50000mb', extended: true })); // support encoded bodies
 
 app.get('/webhook', function(req, res) {
   // Nylas will check to make sure your webhook is valid by making a GET
@@ -32,6 +32,7 @@ app.get('/webhook', function(req, res) {
 });
 
 app.post('/webhook', function(req, res) {
+  res.sendStatus(200);
   // Verify the request to make sure it's actually from Nylas.
   if (!verify_nylas_request(req)) {
     console.log("Failed to verify nylas");
@@ -41,6 +42,7 @@ app.post('/webhook', function(req, res) {
   // Nylas sent us a webhook notification for some kind of event, so we should
   // process it!
   let data = req.body.deltas;
+  console.log(JSON.stringify(data, null, 2));
   for (var i = 0; i < data.length; i++) {
     // Print some of the information Nylas sent us. This is where you
     // would normally process the webhook notification and do things like
@@ -48,7 +50,6 @@ app.post('/webhook', function(req, res) {
     console.log("%s at %s with id %s", data[i].type, data[i].date, data[i].object_data.id);
   }
   // Don't forget to let Nylas know that everything was pretty ok.
-  return res.status(200);
 });
 
 // Each request made by Nylas includes an X-Nylas-Signature header. The header
