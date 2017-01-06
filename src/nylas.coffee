@@ -59,7 +59,7 @@ class Nylas
           callback(null, body['access_token']) if callback
 
   @urlForAuthentication: (options = {}) ->
-    throw new Error("urlForAuthentication() cannot be called until you provide an appId and secret via config()") unless @appId and @appSecret
+    throw new Error("urlForAuthentication() cannot be called until you provide an appId via config()") unless @appId
     throw new Error("urlForAuthentication() requires options.redirectURI") unless options.redirectURI?
     options.loginHint ?= ''
     options.trial ?= false
