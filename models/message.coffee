@@ -110,7 +110,9 @@ class Message extends RestfulModel
     return _.values(participants)
 
   fileIds: ->
-    _.map @files, (file) -> file.id
+    idsFromFiles = _.map @files, (file) -> file.id
+    idsFromFileIds = @file_ids || []
+    return idsFromFileIds.concat idsFromFiles
 
   saveRequestBody: ->
     # It's possible to update most of the fields of a draft.
