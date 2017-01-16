@@ -52,9 +52,9 @@ class Message extends RestfulModel
     'snippet': Attributes.String
       modelKey: 'snippet'
 
-    'threadId': Attributes.String
+    'thread_id': Attributes.String
       queryable: true
-      modelKey: 'threadId'
+      modelKey: 'thread_id'
       jsonKey: 'thread_id'
 
     'subject': Attributes.String
