@@ -144,7 +144,7 @@ class Message extends RestfulModel
 
     nylasConnection.request opts
     .then (json) =>
-      msg = new Message(@, json)
+      msg = new Message(nylasConnection, json)
       callback(null, msg) if callback
       Promise.resolve(msg)
     .catch (err) ->
