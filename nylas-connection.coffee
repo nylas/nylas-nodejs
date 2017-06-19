@@ -65,6 +65,7 @@ class NylasConnection
       request options, (error, response, body) ->
         if error or response.statusCode > 299
           error ?= new Error(body.message)
+          logOnError(error, response, body)
           reject(error)
         else
           if options.downloadRequest
@@ -74,4 +75,16 @@ class NylasConnection
               body = JSON.parse(body) if _.isString body
               resolve(body)
             catch error
+              logOnError(error, response, body)
               reject(error)
+
+
+logOnError = (error, response, body) ->
+  console.log('nylas-connection#request error: ', JSON.stringify(error))
+
+  if response
+    console.log('nylas-connection#request response.statusCode: ', response.statusCode)
+    console.log('nylas-connection#request response.statusMessage: ', response.statusMessage)
+
+  if body
+    console.log('nylas-connection#request body', body)
