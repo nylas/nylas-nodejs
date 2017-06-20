@@ -82,6 +82,9 @@ class NylasConnection
 logOnError = (error, response, body) ->
   console.log('nylas-connection#request error: ', error.toString())
 
+  if error.code?
+    console.log('nylas-connection#request error.code: ', error.code)
+
   if error.stack
     console.log('nylas-connection#request stack: ', error.stack)
 
