@@ -22,6 +22,8 @@ Folder = require('./models/folder').Folder
 
 Attributes = require './models/attributes'
 
+PACKAGE_JSON = require './package.json'
+SDK_VERSION = PACKAGE_JSON.version
 
 module.exports =
 class NylasConnection
@@ -63,6 +65,11 @@ class NylasConnection
         'user': user
         'pass': '',
         'sendImmediately': true
+
+    options.headers ?= {}
+    options.headers['User-Agent'] ?= "Nylas Node SDK v#{SDK_VERSION}"
+
+    console.log(options)
     return options
 
   request: (options={}) ->
