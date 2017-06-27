@@ -22,7 +22,7 @@ Folder = require('./models/folder').Folder
 
 Attributes = require './models/attributes'
 
-PACKAGE_JSON = require './package.json'
+PACKAGE_JSON = require '../package.json'
 SDK_VERSION = PACKAGE_JSON.version
 
 module.exports =
