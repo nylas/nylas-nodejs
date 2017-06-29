@@ -1,5 +1,5 @@
 _ = require 'underscore'
-NylasConnection = require '../nylas-connection'
+NylasConnection = require '../src/nylas-connection'
 
 PACKAGE_JSON = require '../package.json'
 SDK_VERSION = PACKAGE_JSON.version

@@ -1,8 +1,8 @@
 {EventEmitter} = require 'events'
 jasmine = require 'jasmine-node'
 {PassThrough} = require 'stream'
-Delta = require '../models/delta'
-NylasConnection = require '../nylas-connection'
+Delta = require '../src/models/delta'
+NylasConnection = require '../src/nylas-connection'
 Promise = require 'bluebird'
 
 testUntil = (fn) ->

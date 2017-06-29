@@ -4,7 +4,7 @@ module.exports = (grunt) ->
       glob_to_multiple:
         expand: true,
         flatten: false,
-        cwd: '',
+        cwd: 'src/',
         src: ['*.coffee', 'models/*.coffee'],
         dest: 'lib/',
         ext: '.js'

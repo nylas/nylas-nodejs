@@ -1,5 +1,5 @@
-Nylas = require '../nylas'
-NylasConnection = require '../nylas-connection'
+Nylas = require '../src/nylas'
+NylasConnection = require '../src/nylas-connection'
 Promise = require 'bluebird'
 request = require 'request'
 _ = require 'underscore'

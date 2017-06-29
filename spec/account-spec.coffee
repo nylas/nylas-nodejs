@@ -1,6 +1,6 @@
-Nylas = require '../nylas'
-NylasConnection = require '../nylas-connection'
-Account = require '../models/account'
+Nylas = require '../src/nylas'
+NylasConnection = require '../src/nylas-connection'
+Account = require '../src/models/account'
 Promise = require 'bluebird'
 
 describe "account", ->
