@@ -69,7 +69,6 @@ class NylasConnection
     options.headers ?= {}
     options.headers['User-Agent'] ?= "Nylas Node SDK v#{SDK_VERSION}"
 
-    console.log(options)
     return options
 
   request: (options={}) ->
