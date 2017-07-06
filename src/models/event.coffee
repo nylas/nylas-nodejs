@@ -24,6 +24,9 @@ class Event extends RestfulModel
     'description': Attributes.String
       modelKey: 'description'
 
+    'status': Attributes.String
+      modelKey: 'status'
+
     'location': Attributes.String
       modelKey: 'location'
 
