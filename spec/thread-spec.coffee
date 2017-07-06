@@ -1,8 +1,8 @@
-Nylas = require '../nylas'
-NylasConnection = require '../nylas-connection'
-Thread = require '../models/thread'
-Message = require '../models/message'
-Label = require('../models/folder').Label
+Nylas = require '../src/nylas'
+NylasConnection = require '../src/nylas-connection'
+Thread = require '../src/models/thread'
+Message = require '../src/models/message'
+Label = require('../src/models/folder').Label
 Promise = require 'bluebird'
 request = require 'request'
 _ = require 'underscore'

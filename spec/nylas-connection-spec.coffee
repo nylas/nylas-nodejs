@@ -1,5 +1,8 @@
 _ = require 'underscore'
-NylasConnection = require '../nylas-connection'
+NylasConnection = require '../src/nylas-connection'
+
+PACKAGE_JSON = require '../package.json'
+SDK_VERSION = PACKAGE_JSON.version
 
 describe "NylasConnection", ->
   beforeEach ->
@@ -11,3 +14,4 @@ describe "NylasConnection", ->
       result = @connection.requestOptions(options)
       expect(result.qs.expanded).toBeUndefined()
       expect(result.qs.view).toEqual('expanded')
+      expect(result.headers['User-Agent']).toEqual("Nylas Node SDK v#{SDK_VERSION}")

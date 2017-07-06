@@ -1,7 +1,7 @@
-Nylas = require '../nylas'
-NylasConnection = require '../nylas-connection'
-RestfulModelCollection = require '../models/restful-model-collection'
-Thread = require '../models/thread'
+Nylas = require '../src/nylas'
+NylasConnection = require '../src/nylas-connection'
+RestfulModelCollection = require '../src/models/restful-model-collection'
+Thread = require '../src/models/thread'
 Promise = require 'bluebird'
 request = require 'request'
 
