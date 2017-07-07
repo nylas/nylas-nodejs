@@ -441,7 +441,7 @@ Contributing
 
 We'd love your help making the Nylas Node.js bindings better. Join the Google Group for project updates and feature discussion. We also hang out on the [Nylas community Slack channel](http://nylas-slack-invite.heroku.com/), or you can email support@nylas.com.
 
-Please sign the [Contributor License Agreement](https://www.nylas.com/cla.html) before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
+Please sign the [Contributor License Agreement](https://goo.gl/forms/lKbET6S6iWsGoBbz2) before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 
 Tests can be run with:
 
