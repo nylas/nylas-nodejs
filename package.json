@@ -1,6 +1,6 @@
 {
   "name": "nylas",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "A NodeJS wrapper for the Nylas REST API for Email, Contacts and Calendar",
   "main": "lib/nylas.js",
   "scripts": {
