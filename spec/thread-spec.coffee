@@ -33,7 +33,7 @@ describe "Thread", ->
       expect(@connection.request).toHaveBeenCalledWith({
         method : 'PUT',
         body : {
-          labels: ['label_id'],
+          label_ids: ['label_id'],
           starred: true
           unread: false
         },
@@ -50,7 +50,7 @@ describe "Thread", ->
       expect(@connection.request).toHaveBeenCalledWith({
         method : 'PUT',
         body : {
-          folder: 'label_id',
+          folder_id: 'label_id',
           starred: true
           unread: false
         },

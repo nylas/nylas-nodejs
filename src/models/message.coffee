@@ -120,9 +120,9 @@ class Message extends RestfulModel
     # Messages are more limited, though.
     json = {}
     if @labels?
-      json['labels'] = (label.id for label in @labels)
+      json['label_ids'] = (label.id for label in @labels)
     else if @folder?
-      json['folder'] = @folder.id
+      json['folder_id'] = @folder.id
 
     json['starred'] = @starred
     json['unread'] = @unread

@@ -47,13 +47,34 @@ class Thread extends RestfulModel
       modelKey: 'lastMessageTimestamp'
       jsonKey: 'last_message_timestamp'
 
+    'firstMessageTimestamp': Attributes.DateTime
+      queryable: true
+      modelKey: 'firstMessageTimestamp'
+      jsonKey: 'first_message_timestamp'
+
+    'lastMessageReceivedTimestamp': Attributes.DateTime
+      queryable: true
+      modelKey: 'lastMessageReceivedTimestamp'
+      jsonKey: 'last_message_received_timestamp'
+
+    'lastMessageSentTimestamp': Attributes.DateTime
+      queryable: true
+      modelKey: 'lastMessageSentTimestamp'
+      jsonKey: 'last_message_sent_timestamp'
+
+    'hasAttachments': Attributes.Boolean
+      queryable: true
+      modelKey: 'has_attachments'
+
     'labels': Attributes.Collection
       modelKey: 'labels'
       itemClass: Label
+      jsonKey: 'labels'
 
     'folder': Attributes.Object
       modelKey: 'folder'
       itemClass: Folder
+      jsonKey: 'folders'
 
     'messages': Attributes.Collection
       modelKey: 'messages'
@@ -71,9 +92,9 @@ class Thread extends RestfulModel
   saveRequestBody: ->
     json = {}
     if @labels?
-      json['labels'] = (label.id for label in @labels)
+      json['label_ids'] = (label.id for label in @labels)
     else if @folder?
-      json['folder'] = @folder.id
+      json['folder_id'] = @folder.id
 
     json['starred'] = @starred
     json['unread'] = @unread
