@@ -57,6 +57,7 @@ Emits the following events:
 - `response` when the connection is established, with one argument, a `http.IncomingMessage`
 - `delta` for each delta received
 - `error` when an error occurs in the connection
+- `info` when the connection status changes
 ###
 class DeltaStream extends EventEmitter
   # Max number of times to retry a connection if we receive no data heartbeats
@@ -141,10 +142,11 @@ class DeltaStream extends EventEmitter
 
   _onError: (err) ->
     console.error 'Nylas DeltaStream error:', err
-    @restartBackoff.reset()
     @emit('error', err)
+    @restartBackoff.reset()
 
   _restartConnection: (n) ->
     console.log "Restarting Nylas DeltaStream connection (attempt #{n + 1}):", @request?.href
+    @emit('info', "Restarting Nylas DeltaStream connection (attempt #{n + 1}): #{@request?.href}")
     @close()
     @open()
