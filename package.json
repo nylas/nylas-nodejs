@@ -4,7 +4,8 @@
   "description": "A NodeJS wrapper for the Nylas REST API for Email, Contacts and Calendar",
   "main": "lib/nylas.js",
   "scripts": {
-    "test": "jasmine-node --coffee spec"
+    "test": "jasmine-node --coffee spec",
+    "build": "coffee --compile --output lib/ src/ && echo 'Copied to lib/'"
   },
   "keywords": [
     "email",
@@ -22,15 +23,17 @@
     "bluebird": "^3.5.0",
     "clone": "1.0.1",
     "request": "^2.63.0",
+    "request-promise": "^4.2.1",
     "underscore": "^1.7.0"
   },
   "devDependencies": {
     "coffeescript": "1.12.6",
+    "grunt": "0.4.5",
+    "grunt-contrib-coffee": "0.13.0",
     "grunt-jasmine-node": "^0.2.1",
     "grunt-jasmine-node-coffee": "^0.1.4",
     "jasmine-node": "^1.14.5",
-    "grunt": "0.4.5",
-    "grunt-contrib-coffee": "0.13.0"
+    "sh": "0.0.3"
   },
   "repository": {
     "type": "git",
