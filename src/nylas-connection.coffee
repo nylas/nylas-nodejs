@@ -82,5 +82,3 @@ class NylasConnection
       else
         body = JSON.parse(body) if _.isString body
         return body
-    .catch error ->
-      throw error
