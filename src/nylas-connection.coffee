@@ -76,7 +76,7 @@ class NylasConnection
 
     promise = request options
 
-    promise.then (response, body) ->
+    return promise.then (response, body) ->
       if options.downloadRequest
         return response
       else
