@@ -33,6 +33,10 @@ class Thread extends RestfulModel
       modelKey: 'messageIds'
       jsonKey: 'message_ids'
 
+    'version': Attributes.String
+      modelKey: 'version'
+      jsonKey: 'version'
+
     'tags': Attributes.Collection
       queryable: true
       modelKey: 'tags'
