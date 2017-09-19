@@ -81,6 +81,8 @@ class RestfulModelCollection
           accumulated = accumulated.concat(models)
           finished = models.length < REQUEST_CHUNK_SIZE or accumulated.length >= limit
           chunkCallback()
+        .catch (err) ->
+          reject(err)
       , (err) ->
         if err
           callback(err) if callback
@@ -133,4 +135,3 @@ class RestfulModelCollection
       models = jsonArray.map (json) =>
         new @modelClass(@connection, json)
       Promise.resolve(models)
-
