@@ -15,6 +15,12 @@ class Event extends RestfulModel
       modelKey: 'calendarId'
       jsonKey: 'calendar_id'
 
+    'account_id': Attributes.String
+      modelKey: 'account_id'
+
+    'master_event_id': Attributes.String
+      modelKey: 'master_event_id'
+
     'busy': Attributes.Boolean
       modelKey: 'busy'
 
@@ -29,6 +35,15 @@ class Event extends RestfulModel
 
     'location': Attributes.String
       modelKey: 'location'
+
+    'recurrence': Attributes.Object
+      modelKey: 'recurrence'
+
+    'owner': Attributes.String
+      modelKey: 'owner'
+
+    'original_start_time': Attributes.Number
+      modelKey: 'original_start_time'
 
     'when': Attributes.Object
       modelKey: 'when'
