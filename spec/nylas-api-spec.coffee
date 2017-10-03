@@ -135,11 +135,17 @@ describe "Nylas", ->
     it "should require a redirectURI", ->
       expect( -> Nylas.urlForAuthentication()).toThrow()
 
-    it "should throw an exception if the app id and secret have not been configured", ->
+    it "should throw an exception if the app id has not been configured", ->
       Nylas.appId = undefined
       options =
         redirectURI: 'https://localhost/callback'
       expect( -> Nylas.urlForAuthentication(options)).toThrow()
+
+    it "should not throw an exception if the app secret has not been configured", ->
+      Nylas.appSecret = undefined
+      options =
+        redirectURI: 'https://localhost/callback'
+      expect(Nylas.urlForAuthentication(options)).toEqual('https://api.nylas.com/oauth/authorize?client_id=newId&trial=false&response_type=code&scope=email&login_hint=&redirect_uri=https://localhost/callback')
 
     it "should generate the correct authentication URL", ->
       options =
