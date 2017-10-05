@@ -141,12 +141,10 @@ class DeltaStream extends EventEmitter
     @timeoutId = setTimeout @restartBackoff.backoff.bind(@restartBackoff), Delta.streamingTimeoutMs
 
   _onError: (err) ->
-    console.error 'Nylas DeltaStream error:', err
     @emit('error', err)
     @restartBackoff.reset()
 
   _restartConnection: (n) ->
-    console.log "Restarting Nylas DeltaStream connection (attempt #{n + 1}):", @request?.href
     @emit('info', "Restarting Nylas DeltaStream connection (attempt #{n + 1}): #{@request?.href}")
     @close()
     @open()
