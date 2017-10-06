@@ -1,3 +1,14 @@
+###  3.1.1 / 2017-10-06
+
+* No longer throw an error after successful calls to Message.sendRaw
+* Add status to event model
+* Don't require secret for urlForAuthentication, allowing client-side usage
+  without leaking or faking the app secret
+* Catch rejected promises in some missing cases
+* Emit DeltaStream retry status as an event
+* Don't console.log, ever (callers should instrument desired logging)
+* Fix missing fields and typos in message and thread models
+
 ### 3.0.0 / 2016-08-14
 
 * Add support for `view=expanded` option. Now all methods on that hit the api
