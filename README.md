@@ -65,7 +65,6 @@ var Nylas = require('nylas').config({
 router.get('/connect', function(req, res, next) {
     options = {
         redirectURI: 'http://localhost:3000/oauth/callback',
-        trial: false
     }
     res.redirect(Nylas.urlForAuthentication(options));
 });
