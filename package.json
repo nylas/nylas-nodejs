@@ -1,36 +1,36 @@
 {
   "name": "nylas",
   "version": "3.1.1",
-  "description": "A NodeJS wrapper for the Nylas REST API for Email, Contacts and Calendar",
+  "description":
+    "A NodeJS wrapper for the Nylas REST API for email, contacts, and calendar.",
   "main": "lib/nylas.js",
   "scripts": {
-    "test": "jasmine-node --coffee spec"
+    "lint": "eslint ./src",
+    "prettier":
+      "prettier --single-quote --trailing-comma es5 --write \"./!(lib)/**/*.js\"",
+    "build": "babel src --presets babel-preset-es2015 --out-dir lib",
+    "prepublish": "yarn build"
   },
-  "keywords": [
-    "email",
-    "contacts",
-    "calendar",
-    "nilas",
-    "nylas"
-  ],
-  "author": "Ben Gotow <ben@nylas.com>, Karim Hamidou <karim@nylas.com> (https://nylas.com/)",
+  "keywords": ["email", "contacts", "calendar", "nilas", "nylas"],
+  "author":
+    "Ben Gotow <ben@nylas.com>, Karim Hamidou <karim@nylas.com> (https://nylas.com/)",
   "license": "MIT",
   "dependencies": {
+    "JSONStream": "1.0.4",
     "async": "0.9.0",
     "backoff": "2.4.1",
     "bluebird": "^2.9.13",
     "clone": "1.0.1",
-    "JSONStream": "1.0.4",
     "request": "^2.63.0",
     "underscore": "^1.7.0"
   },
   "devDependencies": {
-    "coffeescript": "1.12.6",
-    "grunt-jasmine-node": "^0.2.1",
-    "grunt-jasmine-node-coffee": "^0.1.4",
-    "jasmine-node": "^1.14.5",
-    "grunt": "0.4.5",
-    "grunt-contrib-coffee": "0.13.0"
+    "babel-cli": "6",
+    "babel-preset-es2015": "6",
+    "eslint": "^4.8.0",
+    "eslint-config-prettier": "^2.6.0",
+    "eslint-plugin-prettier": "^2.3.1",
+    "prettier": "^1.7.4"
   },
   "repository": {
     "type": "git",

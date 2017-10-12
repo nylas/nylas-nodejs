@@ -10,10 +10,10 @@ var threads = require('./routes/threads');
 
 credentials = require('../credentials.js');
 
-APP_ID = credentials.APP_ID
-APP_SECRET = credentials.APP_SECRET
-AUTH_TOKEN = credentials.AUTH_TOKEN
-DEST_EMAIL = credentials.DEST_EMAIL
+APP_ID = credentials.APP_ID;
+APP_SECRET = credentials.APP_SECRET;
+AUTH_TOKEN = credentials.AUTH_TOKEN;
+DEST_EMAIL = credentials.DEST_EMAIL;
 
 var app = express();
 
@@ -23,10 +23,9 @@ app.set('view engine', 'jade');
 
 // setup the Nylas API
 global.Nylas = require('nylas').config({
-    appId: APP_ID,
-    appSecret: APP_SECRET
+  appId: APP_ID,
+  appSecret: APP_SECRET,
 });
-
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -55,7 +54,7 @@ if (app.get('env') === 'development') {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
-      error: err
+      error: err,
     });
   });
 }
@@ -66,9 +65,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
-    error: {}
+    error: {},
   });
 });
-
 
 module.exports = app;

@@ -16,10 +16,9 @@ app.set('view engine', 'jade');
 
 // setup the Nylas API
 global.Nylas = require('nylas').config({
-    appId: 'c96gge1jo29pl2rebcb7utsbp',
-    appSecret: '<app secret here>'
+  appId: 'c96gge1jo29pl2rebcb7utsbp',
+  appSecret: '<app secret here>',
 });
-
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -48,7 +47,7 @@ if (app.get('env') === 'development') {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
-      error: err
+      error: err,
     });
   });
 }
@@ -59,9 +58,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
-    error: {}
+    error: {},
   });
 });
-
 
 module.exports = app;

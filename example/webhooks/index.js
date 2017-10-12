@@ -13,14 +13,14 @@ const bodyParser = require('body-parser');
 // JSON.stringify(req.body) will remove spaces and newlines, so verification
 // will fail. We must add this middleware to ensure we're computing the correct
 // signature
-app.use(function(req, res, next){
-    req.rawBody = '';
-    req.on('data', function(chunk){
-        req.rawBody += chunk;
-    });
-    next();
+app.use(function(req, res, next) {
+  req.rawBody = '';
+  req.on('data', function(chunk) {
+    req.rawBody += chunk;
+  });
+  next();
 });
-app.use(bodyParser.json({limit: '50000mb'})); // support json encoded bodies
+app.use(bodyParser.json({ limit: '50000mb' })); // support json encoded bodies
 app.use(bodyParser.urlencoded({ limit: '50000mb', extended: true })); // support encoded bodies
 
 app.get('/webhook', function(req, res) {
@@ -35,8 +35,8 @@ app.post('/webhook', function(req, res) {
   res.sendStatus(200);
   // Verify the request to make sure it's actually from Nylas.
   if (!verify_nylas_request(req)) {
-    console.log("Failed to verify nylas");
-    return res.status(401).send("X-Nylas-Signature failed verification 🚷 ");
+    console.log('Failed to verify nylas');
+    return res.status(401).send('X-Nylas-Signature failed verification 🚷 ');
   }
 
   // Nylas sent us a webhook notification for some kind of event, so we should
@@ -47,7 +47,12 @@ app.post('/webhook', function(req, res) {
     // Print some of the information Nylas sent us. This is where you
     // would normally process the webhook notification and do things like
     // fetch relevant message ids, update your database, etc.
-    console.log("%s at %s with id %s", data[i].type, data[i].date, data[i].object_data.id);
+    console.log(
+      '%s at %s with id %s',
+      data[i].type,
+      data[i].date,
+      data[i].object_data.id
+    );
   }
   // Don't forget to let Nylas know that everything was pretty ok.
 });
@@ -57,26 +62,29 @@ app.post('/webhook', function(req, res) {
 // secret as the signing key. This allows your app to verify that the
 // notification really came from Nylas.
 function verify_nylas_request(req) {
-  let digest = crypto.createHmac('sha256', config.nylasClientSecret)
-                   .update(req.rawBody)
-                   .digest('hex');
-  return digest === req.get('x-nylas-signature')
+  let digest = crypto
+    .createHmac('sha256', config.nylasClientSecret)
+    .update(req.rawBody)
+    .digest('hex');
+  return digest === req.get('x-nylas-signature');
 }
 
 var webhook_uri;
-// Setup ngrok settings to ensure everything works locally 
-request('http://localhost:4040/api/tunnels', function (error, response, body) {
+// Setup ngrok settings to ensure everything works locally
+request('http://localhost:4040/api/tunnels', function(error, response, body) {
   if (!error && response.statusCode == 200) {
-    webhook_uri = JSON.parse(body).tunnels[1].public_url + "/webhook";
-  }
-  else {
+    webhook_uri = JSON.parse(body).tunnels[1].public_url + '/webhook';
+  } else {
     throw "It looks like ngrok isn't running! Make sure you've started that first with 'ngrok http 1234'";
   }
   if (config.nylasClientSecret === '') {
-    throw "You need to add your Nylas client secret to config.js first!"
+    throw 'You need to add your Nylas client secret to config.js first!';
   }
   // Start the program
-  console.log('\n%s\n\nAdd the above url to the webhooks page at https://developer.nylas.com', webhook_uri);
+  console.log(
+    '\n%s\n\nAdd the above url to the webhooks page at https://developer.nylas.com',
+    webhook_uri
+  );
   console.log(`Server running at http://${config.host}:${config.port}/`);
   app.listen(config.port);
 });
