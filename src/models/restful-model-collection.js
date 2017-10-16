@@ -55,7 +55,7 @@ export class RestfulModelCollection {
       .request({
         method: 'GET',
         path: this.path(),
-        qs: _.extend({ view: 'count' }, params),
+        qs: _.extend({ view: 'count' }, params)
       })
       .then(function(json) {
         if (callback) {
@@ -99,7 +99,12 @@ export class RestfulModelCollection {
       limit = params['limit'];
     }
 
-    return this.range(params, 0, limit, callback);
+    let offset = 0;
+    if ('offset' in params) {
+      offset = params['offset'];
+    }
+
+    return this.range(params, offset, limit, callback);
   }
 
   find(id, callback = null, params) {
@@ -194,7 +199,7 @@ export class RestfulModelCollection {
       .request({
         method: 'DELETE',
         qs: params,
-        path: `${this.path()}/${id}`,
+        path: `${this.path()}/${id}`
       })
       .then(function() {
         if (callback) {
@@ -233,7 +238,7 @@ export class RestfulModelCollection {
       .request({
         method: 'GET',
         path: `${this.path()}/${id}`,
-        qs: params,
+        qs: params
       })
       .then(json => {
         const model = new this.modelClass(this.connection, json);
@@ -246,7 +251,7 @@ export class RestfulModelCollection {
       .request({
         method: 'GET',
         path: this.path(),
-        qs: _.extend({}, params, { offset, limit }),
+        qs: _.extend({}, params, { offset, limit })
       })
       .then(jsonArray => {
         const models = jsonArray.map(json => {
