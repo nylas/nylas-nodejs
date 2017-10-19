@@ -1,6 +1,6 @@
-const Promise = require('bluebird');
+import Promise from 'bluebird';
 
-export class RestfulModelInstance {
+export default class RestfulModelInstance {
   constructor(modelClass, connection) {
     this.modelClass = modelClass;
     this.connection = connection;

@@ -1,13 +1,14 @@
-const _ = require('underscore');
-const request = require('request');
-const Promise = require('bluebird');
-const NylasConnection = require('./nylas-connection');
-const ManagementAccount = require('./models/management-account');
-const Account = require('./models/account');
-const RestfulModelCollection = require('./models/restful-model-collection');
-const ManagementModelCollection = require('./models/management-model-collection');
+import _ from 'underscore';
+import request from 'request';
+import Promise from 'bluebird';
 
-export class Nylas {
+import NylasConnection from './nylas-connection';
+import ManagementAccount from './models/management-account';
+import Account from './models/account';
+import RestfulModelCollection from './models/restful-model-collection';
+import ManagementModelCollection from './models/management-model-collection';
+
+module.exports = class Nylas {
   constructor() {
     this.appId = null;
     this.appSecret = null;
@@ -122,4 +123,4 @@ export class Nylas {
     }
     return url;
   }
-}
+};

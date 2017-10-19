@@ -1,16 +1,12 @@
-const RestfulModel = require('./restful-model');
-const Attributes = require('./attributes');
-const _ = require('underscore');
+import _ from 'underscore';
 
-export class Tag extends RestfulModel {
-  constructor() {
-    super();
-    this.collectionName = 'tags';
+import RestfulModel from './restful-model';
+import * as Attributes from './attributes';
 
-    this.attributes = _.extend({}, RestfulModel.attributes, {
-      name: Attributes.String({
-        modelKey: 'name',
-      }),
-    });
-  }
-}
+export default class Tag extends RestfulModel {}
+Tag.collectionName = 'tags';
+Tag.attributes = _.extend({}, RestfulModel.attributes, {
+  name: Attributes.String({
+    modelKey: 'name',
+  }),
+});

@@ -1,52 +1,11 @@
-const RestfulModel = require('./restful-model');
-const Attributes = require('./attributes');
-const Participant = require('./participant');
-const Promise = require('bluebird');
-const _ = require('underscore');
+import Promise from 'bluebird';
+import _ from 'underscore';
 
-export class Event extends RestfulModel {
-  constructor(...args) {
-    super(...args);
-    this.save = this.save.bind(this);
-    this.collectionName = 'events';
-    this.attributes = _.extend({}, RestfulModel.attributes, {
-      calendarId: Attributes.String({
-        modelKey: 'calendarId',
-        jsonKey: 'calendar_id',
-      }),
-      busy: Attributes.Boolean({
-        modelKey: 'busy',
-      }),
-      title: Attributes.String({
-        modelKey: 'title',
-      }),
-      description: Attributes.String({
-        modelKey: 'description',
-      }),
-      status: Attributes.String({
-        modelKey: 'status',
-      }),
-      location: Attributes.String({
-        modelKey: 'location',
-      }),
-      when: Attributes.Object({
-        modelKey: 'when',
-      }),
-      start: Attributes.Number({
-        modelKey: 'start',
-        jsonKey: '_start',
-      }),
-      end: Attributes.Number({
-        modelKey: 'end',
-        jsonKey: '_end',
-      }),
-      participants: Attributes.Collection({
-        modelKey: 'participants',
-        itemClass: Participant,
-      }),
-    });
-  }
+import RestfulModel from './restful-model';
+import Attributes from './attributes';
+import Participant from './participant';
 
+export default class Event extends RestfulModel {
   saveRequestBody() {
     const dct = this.toJSON();
     if (this.start && this.end) {
@@ -109,3 +68,40 @@ export class Event extends RestfulModel {
       });
   }
 }
+Event.collectionName = 'events';
+Event.attributes = _.extend({}, RestfulModel.attributes, {
+  calendarId: Attributes.String({
+    modelKey: 'calendarId',
+    jsonKey: 'calendar_id',
+  }),
+  busy: Attributes.Boolean({
+    modelKey: 'busy',
+  }),
+  title: Attributes.String({
+    modelKey: 'title',
+  }),
+  description: Attributes.String({
+    modelKey: 'description',
+  }),
+  status: Attributes.String({
+    modelKey: 'status',
+  }),
+  location: Attributes.String({
+    modelKey: 'location',
+  }),
+  when: Attributes.Object({
+    modelKey: 'when',
+  }),
+  start: Attributes.Number({
+    modelKey: 'start',
+    jsonKey: '_start',
+  }),
+  end: Attributes.Number({
+    modelKey: 'end',
+    jsonKey: '_end',
+  }),
+  participants: Attributes.Collection({
+    modelKey: 'participants',
+    itemClass: Participant,
+  }),
+});

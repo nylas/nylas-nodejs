@@ -1,4 +1,3 @@
-import jasmine from 'jasmine-node';
 import Promise from 'bluebird';
 import { EventEmitter } from 'events';
 import { PassThrough } from 'stream';
@@ -6,29 +5,21 @@ import { PassThrough } from 'stream';
 import Delta from '../src/models/delta';
 import NylasConnection from '../src/nylas-connection';
 
-const testUntil = function(fn) {
-  let finished = false;
-  runs(() => fn(callback => (finished = true)));
-  waitsFor(() => finished);
-};
+describe('Delta', () => {
+  let testContext;
 
-describe('Delta', function() {
-  beforeEach(function() {
-    this.connection = new NylasConnection('123');
-    this.delta = new Delta(this.connection);
-    jasmine.Clock.useMock();
-    // Work around clearTimeout not being correctly mocked in Jasmine:
-    // https://github.com/mhevery/jasmine-node/issues/276
-    spyOn(global, 'clearTimeout').andCallFake(function() {
-      return jasmine.Clock.installed.clearTimeout.apply(this, arguments);
-    });
+  beforeEach(() => {
+    testContext = {};
+    testContext.connection = new NylasConnection('123');
+    testContext.delta = new Delta(testContext.connection);
+    jest.useFakeTimers();
   });
 
-  describe('startStream (delta streaming)', function() {
+  describe('startStream (delta streaming)', () => {
     const createRequest = function(requestOpts) {
       const request = new EventEmitter();
       request.origOpts = requestOpts;
-      request.abort = jasmine.createSpy('abort');
+      request.abort = jest.fn();
       return request;
     };
 
@@ -45,8 +36,11 @@ describe('Delta', function() {
       return deltas;
     };
 
-    it('start and close stream', function() {
-      const stream = this.delta._startStream(createRequest, 'deltacursor0');
+    test('start and close stream', async () => {
+      const stream = testContext.delta._startStream(
+        createRequest,
+        'deltacursor0'
+      );
       const { request } = stream;
 
       expect(request.origOpts.method).toBe('GET');
@@ -56,22 +50,26 @@ describe('Delta', function() {
       const response = createResponse(200);
       request.emit('response', response);
 
-      expect(request.abort.calls.length).toEqual(0);
+      expect(request.abort.mock.calls.length).toEqual(0);
       stream.close();
-      expect(request.abort.calls.length).toEqual(1);
+      expect(request.abort.mock.calls.length).toEqual(1);
       expect(stream.request).toEqual(undefined);
 
       // Make sure the stream doesn't auto-restart if explicitly closed.
-      jasmine.Clock.tick(Delta.streamingTimeoutMs + 500);
+      jest.runTimersToTime(Delta.streamingTimeoutMs + 500);
       expect(stream.request).toEqual(undefined);
     });
 
-    it('passes the correct params to the request', function() {
-      const stream = this.delta._startStream(createRequest, 'deltacursor0', {
-        expanded: true,
-        includeTypes: ['thread', 'message'],
-        excludeTypes: ['event'],
-      });
+    test('passes the correct params to the request', () => {
+      const stream = testContext.delta._startStream(
+        createRequest,
+        'deltacursor0',
+        {
+          expanded: true,
+          includeTypes: ['thread', 'message'],
+          excludeTypes: ['event'],
+        }
+      );
       const { request } = stream;
 
       expect(request.origOpts.method).toBe('GET');
@@ -84,8 +82,11 @@ describe('Delta', function() {
       });
     });
 
-    it('stream response parsing', function() {
-      const stream = this.delta._startStream(createRequest, 'deltacursor0');
+    test('stream response parsing', () => {
+      const stream = testContext.delta._startStream(
+        createRequest,
+        'deltacursor0'
+      );
       const { request } = stream;
       const deltas = observeDeltas(stream);
 
@@ -109,8 +110,11 @@ describe('Delta', function() {
       stream.close();
     });
 
-    it('stream response parsing, delta split across data packets', function() {
-      const stream = this.delta._startStream(createRequest, 'deltacursor0');
+    test('stream response parsing, delta split across data packets', () => {
+      const stream = testContext.delta._startStream(
+        createRequest,
+        'deltacursor0'
+      );
       const { request } = stream;
       const deltas = observeDeltas(stream);
 
@@ -141,8 +145,11 @@ describe('Delta', function() {
       stream.close();
     });
 
-    return it('stream timeout and auto-restart', function() {
-      const stream = this.delta._startStream(createRequest, 'deltacursor0');
+    test('stream timeout and auto-restart', () => {
+      const stream = testContext.delta._startStream(
+        createRequest,
+        'deltacursor0'
+      );
       const { request } = stream;
 
       const response = createResponse(200);
@@ -154,23 +161,23 @@ describe('Delta', function() {
 
       // Server sends a heartbeat every 5 seconds.
       response.write('\n');
-      jasmine.Clock.tick(5000);
-      expect(request.abort.calls.length).toEqual(0);
+      jest.runTimersToTime(5000);
+      expect(request.abort.mock.calls.length).toEqual(0);
       response.write('\n');
-      expect(request.abort.calls.length).toEqual(0);
+      expect(request.abort.mock.calls.length).toEqual(0);
 
       // Actual response packets also reset the timeout.
-      jasmine.Clock.tick(5000);
+      jest.runTimersToTime(5000);
       const delta1 = { cursor: 'deltacursor1' };
       response.write(JSON.stringify(delta1));
       expect(stream.cursor).toEqual('deltacursor1');
-      jasmine.Clock.tick(5500);
-      expect(request.abort.calls.length).toEqual(0);
+      jest.runTimersToTime(5500);
+      expect(request.abort.mock.calls.length).toEqual(0);
 
       // If the timeout has elapsed since the last data received, the stream is restarted.
-      jasmine.Clock.tick(Delta.streamingTimeoutMs);
+      jest.runTimersToTime(Delta.streamingTimeoutMs);
       // The old request should have been aborted, and a new request created.
-      expect(request.abort.calls.length).toEqual(1);
+      expect(request.abort.mock.calls.length).toEqual(1);
       expect(stream.request).not.toBe(request);
       // The new request should be using the last delta cursor received prior to timeout.
       expect(stream.request.origOpts.path).toBe('/delta/streaming');
@@ -180,30 +187,30 @@ describe('Delta', function() {
     });
   });
 
-  describe('latestCursor', function() {
-    it('returns a cursor', function() {
-      spyOn(this.connection, 'request').andCallFake(() =>
+  describe('latestCursor', () => {
+    test('returns a cursor', () => {
+      testContext.connection.request = jest.fn(() =>
         Promise.resolve({ cursor: 'abcdefg' })
       );
 
-      this.delta.latestCursor((err, cursor) =>
+      testContext.delta.latestCursor((err, cursor) =>
         expect(cursor).toEqual('abcdefg')
       );
 
-      expect(this.connection.request).toHaveBeenCalledWith({
+      expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'POST',
         path: '/delta/latest_cursor',
       });
     });
 
-    it('returns a null cursor in case of an error', function() {
-      spyOn(this.connection, 'request').andCallFake(() =>
-        Promise.reject('Error.')
-      );
-      this.delta.latestCursor(function(err, cursor) {
-        expect(err).toEqual('Error.');
-        expect(cursor).toEqual(null);
-      });
+    test('returns a null cursor in case of an error', () => {
+      testContext.connection.request = jest.fn(() => Promise.reject('Error.'));
+      testContext.delta
+        .latestCursor((err, cursor) => {
+          expect(err).toEqual('Error.');
+          expect(cursor).toEqual(null);
+        })
+        .catch(err => {});
     });
   });
 });

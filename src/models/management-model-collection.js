@@ -1,6 +1,6 @@
-const RestfulModelCollection = require('./restful-model-collection');
+import RestfulModelCollection from './restful-model-collection';
 
-export class ManagementModelCollection extends RestfulModelCollection {
+export default class ManagementModelCollection extends RestfulModelCollection {
   constructor(modelClass, connection, appId) {
     super(modelClass, connection);
     this.appId = appId;

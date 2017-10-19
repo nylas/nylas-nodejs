@@ -1,13 +1,12 @@
-const _ = require('underscore');
-const backoff = require('backoff');
-const { EventEmitter } = require('events');
-const JSONStream = require('JSONStream');
-const Promise = require('bluebird');
-const request = require('request');
+import _ from 'underscore';
+import backoff from 'backoff';
+import JSONStream from 'JSONStream';
+import Promise from 'bluebird';
+import request from 'request';
+import { EventEmitter } from 'events';
 
-export class Delta {
+export default class Delta {
   constructor(connection) {
-    this.streamingTimeoutMs = 15000;
     this.connection = connection;
     if (!(this.connection instanceof require('../nylas-connection'))) {
       throw new Error('Connection object not provided');
@@ -24,14 +23,14 @@ export class Delta {
 
     return this.connection
       .request(reqOpts)
-      .then(function(response) {
+      .then(response => {
         const { cursor } = response;
         if (callback) {
           callback(null, cursor);
         }
         return Promise.resolve(cursor);
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
@@ -47,16 +46,16 @@ export class Delta {
 
     return this.connection
       .request(reqOpts)
-      .then(function(response) {
+      .then(response => {
         const { cursor } = response;
         if (callback) {
           callback(null, cursor);
         }
         return Promise.resolve(cursor);
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
-          callback(err);
+          callback(err, null);
         }
         return Promise.reject(err);
       });
@@ -80,6 +79,7 @@ export class Delta {
     return stream;
   }
 }
+Delta.streamingTimeoutMs = 15000;
 
 /*
 A connection to the Nylas delta streaming API.
@@ -106,7 +106,6 @@ class DeltaStream extends EventEmitter {
       params = {};
     }
     this.params = params;
-    this.MAX_RESTART_RETRIES = 5;
     if (!(this.connection instanceof require('../nylas-connection'))) {
       throw new Error('Connection object not provided');
     }
@@ -228,3 +227,6 @@ class DeltaStream extends EventEmitter {
     return this.open();
   }
 }
+// Max number of times to retry a connection if we receive no data heartbeats
+// from the Nylas server.
+DeltaStream.MAX_RESTART_RETRIES = 5;

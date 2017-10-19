@@ -4,22 +4,16 @@ import request from 'request';
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 
-const testUntil = function(fn) {
-  let finished = false;
-  runs(() => fn(callback => (finished = true)));
-  waitsFor(() => finished);
-};
-
-describe('Nylas', function() {
-  beforeEach(function() {
+describe('Nylas', () => {
+  beforeEach(() => {
     Nylas.appId = undefined;
     Nylas.appSecret = undefined;
     Nylas.apiServer = 'https://api.nylas.com';
-    return Promise.onPossiblyUnhandledRejection(function(e, promise) {});
+    return Promise.onPossiblyUnhandledRejection((e, promise) => {});
   });
 
-  describe('config', function() {
-    it('should allow you to populate the appId, appSecret, apiServer and authServer options', function() {
+  describe('config', () => {
+    test('should allow you to populate the appId, appSecret, apiServer and authServer options', () => {
       const newConfig = {
         appId: 'newId',
         appSecret: 'newSecret',
@@ -32,7 +26,7 @@ describe('Nylas', function() {
       expect(Nylas.apiServer).toBe(newConfig.apiServer);
     });
 
-    it('should not override existing values unless new values are provided', function() {
+    test('should not override existing values unless new values are provided', () => {
       const newConfig = {
         appId: 'newId',
         appSecret: 'newSecret',
@@ -44,7 +38,7 @@ describe('Nylas', function() {
       expect(Nylas.apiServer).toBe('https://api.nylas.com');
     });
 
-    it('should throw an exception if the server options do not contain ://', function() {
+    test('should throw an exception if the server options do not contain ://', () => {
       const newConfig = {
         appId: 'newId',
         appSecret: 'newSecret',
@@ -55,11 +49,11 @@ describe('Nylas', function() {
     });
   });
 
-  describe('with', function() {
-    it('should throw an exception if an access token is not provided', () =>
+  describe('with', () => {
+    test('should throw an exception if an access token is not provided', () =>
       expect(() => Nylas.with()).toThrow());
 
-    it('should return an NylasConnection for making requests with the access token', function() {
+    test('should return an NylasConnection for making requests with the access token', () => {
       Nylas.config({
         appId: 'newId',
         appSecret: 'newSecret',
@@ -70,7 +64,7 @@ describe('Nylas', function() {
     });
   });
 
-  describe('exchangeCodeForToken', function() {
+  describe('exchangeCodeForToken', () => {
     beforeEach(() =>
       Nylas.config({
         appId: 'newId',
@@ -78,22 +72,22 @@ describe('Nylas', function() {
       })
     );
 
-    it('should throw an exception if no code is provided', () =>
+    test('should throw an exception if no code is provided', () =>
       expect(() => Nylas.exchangeCodeForToken()).toThrow());
 
-    it('should throw an exception if the app id and secret have not been configured', function() {
+    test('should throw an exception if the app id and secret have not been configured', () => {
       Nylas.appId = undefined;
       Nylas.appSecret = undefined;
       expect(() => Nylas.exchangeCodeForToken('code-from-server')).toThrow();
     });
 
-    it('should return a promise', function() {
+    test('should return a promise', () => {
       const p = Nylas.exchangeCodeForToken('code-from-server');
       expect(p instanceof Promise).toBe(true);
     });
 
-    it('should make a request to /oauth/token with the correct grant_type and client params', function() {
-      spyOn(request, 'Request').andCallFake(function(options) {
+    test('should make a request to /oauth/token with the correct grant_type and client params', () => {
+      request.Request = jest.fn(options => {
         expect(options.url).toEqual('https://api.nylas.com/oauth/token');
         expect(options.qs).toEqual({
           client_id: 'newId',
@@ -102,78 +96,62 @@ describe('Nylas', function() {
           code: 'code-from-server',
         });
       });
-      return Nylas.exchangeCodeForToken('code-from-server');
+      Nylas.exchangeCodeForToken('code-from-server');
     });
 
-    it('should resolve with the returned access_token', function() {
-      spyOn(request, 'Request').andCallFake(options =>
+    test('should resolve with the returned access_token', done => {
+      request.Request = jest.fn(options =>
         options.callback(null, null, { access_token: '12345' })
       );
 
-      testUntil(function(done) {
-        let p;
-        return (p = Nylas.exchangeCodeForToken(
-          'code-from-server'
-        ).then(function(accessToken) {
-          expect(accessToken).toEqual('12345');
-          done();
-        }));
+      Nylas.exchangeCodeForToken('code-from-server').then(accessToken => {
+        expect(accessToken).toEqual('12345');
+        done();
       });
     });
 
-    it('should reject with the request error', function() {
+    test('should reject with the request error', done => {
       const error = new Error('network error');
-      spyOn(request, 'Request').andCallFake(options =>
-        options.callback(error, null, null)
-      );
+      request.Request = jest.fn(options => options.callback(error, null, null));
 
-      testUntil(function(done) {
-        let p;
-        return (p = Nylas.exchangeCodeForToken(
-          'code-from-server'
-        ).catch(function(returnedError) {
-          expect(returnedError).toBe(error);
-          done();
-        }));
+      Nylas.exchangeCodeForToken('code-from-server').catch(returnedError => {
+        expect(returnedError).toBe(error);
+        done();
       });
     });
 
-    describe('when provided an optional callback', function() {
-      it('should call it with the returned access_token', function() {
-        spyOn(request, 'Request').andCallFake(options =>
+    describe('when provided an optional callback', () => {
+      test('should call it with the returned access_token', done => {
+        request.Request = jest.fn(options =>
           options.callback(null, null, { access_token: '12345' })
         );
-        testUntil(done =>
-          Nylas.exchangeCodeForToken('code-from-server', function(
-            returnedError,
-            accessToken
-          ) {
+        Nylas.exchangeCodeForToken(
+          'code-from-server',
+          (returnedError, accessToken) => {
             expect(accessToken).toBe('12345');
             done();
-          })
+          }
         );
       });
 
-      it('should call it with the request error', function() {
+      test('should call it with the request error', done => {
         const error = new Error('network error');
-        spyOn(request, 'Request').andCallFake(options =>
+        request.Request = jest.fn(options =>
           options.callback(error, null, null)
         );
 
-        testUntil(done =>
-          Nylas.exchangeCodeForToken('code-from-server', function(
-            returnedError,
-            accessToken
-          ) {
+        Nylas.exchangeCodeForToken(
+          'code-from-server',
+          (returnedError, accessToken) => {
             expect(returnedError).toBe(error);
             done();
-          })
+          }
         );
       });
     });
   });
 
-  describe('urlForAuthentication', function() {
+  describe('urlForAuthentication', () => {
     beforeEach(() =>
       Nylas.config({
         appId: 'newId',
@@ -181,16 +159,16 @@ describe('Nylas', function() {
       })
     );
 
-    it('should require a redirectURI', () =>
+    test('should require a redirectURI', () =>
       expect(() => Nylas.urlForAuthentication()).toThrow());
 
-    it('should throw an exception if the app id has not been configured', function() {
+    test('should throw an exception if the app id has not been configured', () => {
       Nylas.appId = undefined;
       const options = { redirectURI: 'https://localhost/callback' };
       expect(() => Nylas.urlForAuthentication(options)).toThrow();
     });
 
-    it('should not throw an exception if the app secret has not been configured', function() {
+    test('should not throw an exception if the app secret has not been configured', () => {
       Nylas.appSecret = undefined;
       const options = { redirectURI: 'https://localhost/callback' };
       expect(Nylas.urlForAuthentication(options)).toEqual(
@@ -198,14 +176,14 @@ describe('Nylas', function() {
       );
     });
 
-    it('should generate the correct authentication URL', function() {
+    test('should generate the correct authentication URL', () => {
       const options = { redirectURI: 'https://localhost/callback' };
       expect(Nylas.urlForAuthentication(options)).toEqual(
         'https://api.nylas.com/oauth/authorize?client_id=newId&trial=false&response_type=code&scope=email&login_hint=&redirect_uri=https://localhost/callback'
       );
     });
 
-    it('should use a login hint when provided in the options', function() {
+    test('should use a login hint when provided in the options', () => {
       const options = {
         loginHint: 'ben@nylas.com',
         redirectURI: 'https://localhost/callback',
@@ -215,7 +193,7 @@ describe('Nylas', function() {
       );
     });
 
-    it('should use trial = true when provided in the options', function() {
+    test('should use trial = true when provided in the options', () => {
       const options = {
         loginHint: 'ben@nylas.com',
         redirectURI: 'https://localhost/callback',

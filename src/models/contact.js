@@ -1,23 +1,9 @@
-const RestfulModel = require('./restful-model');
-const Attributes = require('./attributes');
-const _ = require('underscore');
+import _ from 'underscore';
 
-export class Contact extends RestfulModel {
-  constructor() {
-    super();
-    this.collectionName = 'contacts';
+import RestfulModel from './restful-model';
+import Attributes from './attributes';
 
-    this.attributes = _.extend({}, RestfulModel.attributes, {
-      name: Attributes.String({
-        modelKey: 'name',
-      }),
-
-      email: Attributes.String({
-        modelKey: 'email',
-      }),
-    });
-  }
-
+export default class Contact extends RestfulModel {
   toJSON() {
     const json = super.toJSON(...arguments);
     if (!json['name']) {
@@ -26,3 +12,13 @@ export class Contact extends RestfulModel {
     return json;
   }
 }
+Contact.collectionName = 'contacts';
+Contact.attributes = _.extend({}, RestfulModel.attributes, {
+  name: Attributes.String({
+    modelKey: 'name',
+  }),
+
+  email: Attributes.String({
+    modelKey: 'email',
+  }),
+});

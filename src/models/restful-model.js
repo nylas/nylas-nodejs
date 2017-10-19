@@ -1,8 +1,9 @@
-const Attributes = require('./attributes');
-const Promise = require('bluebird');
-const _ = require('underscore');
+import Promise from 'bluebird';
+import _ from 'underscore';
 
-export class RestfulModel {
+import * as Attributes from './attributes';
+
+export default class RestfulModel {
   constructor(connection, json = null) {
     this.connection = connection;
     if (!(this.connection instanceof require('../nylas-connection'))) {
@@ -11,18 +12,6 @@ export class RestfulModel {
     if (json) {
       this.fromJSON(json);
     }
-    this.attributes = {
-      id: Attributes.String({
-        modelKey: 'id',
-      }),
-      object: Attributes.String({
-        modelKey: 'object',
-      }),
-      accountId: Attributes.String({
-        modelKey: 'accountId',
-        jsonKey: 'account_id',
-      }),
-    };
   }
 
   attributes() {
@@ -36,7 +25,7 @@ export class RestfulModel {
     );
   }
 
-  fromJSON(json) {
+  fromJSON(json = {}) {
     const object = this.attributes();
     for (const key in object) {
       const attr = object[key];
@@ -79,7 +68,6 @@ export class RestfulModel {
       callback = params;
       params = {};
     }
-
     return this.connection
       .request({
         method: this.id ? 'PUT' : 'POST',
@@ -96,7 +84,7 @@ export class RestfulModel {
         }
         return Promise.resolve(this);
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
@@ -104,3 +92,15 @@ export class RestfulModel {
       });
   }
 }
+RestfulModel.attributes = {
+  id: Attributes.String({
+    modelKey: 'id',
+  }),
+  object: Attributes.String({
+    modelKey: 'object',
+  }),
+  accountId: Attributes.String({
+    modelKey: 'accountId',
+    jsonKey: 'account_id',
+  }),
+};

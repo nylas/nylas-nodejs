@@ -5,19 +5,19 @@ import _ from 'underscore';
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 
-describe('ManagementAccount', function() {
+describe('ManagementAccount', () => {
   beforeEach(() =>
     Promise.onPossiblyUnhandledRejection(function(e, promise) {})
   );
 
   describe('list', () =>
-    it('should do a GET request to get the account list', function() {
+    test('should do a GET request to get the account list', () => {
       Nylas.config({
         appId: 'abc',
         appSecret: 'xyz',
       });
 
-      spyOn(Nylas.accounts.connection, 'request').andCallFake(() =>
+      Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
           {
             account_id: '8rilmlwuo4zmpjedz8bcplclk',
@@ -30,7 +30,7 @@ describe('ManagementAccount', function() {
         ])
       );
 
-      Nylas.accounts.list({}, function(err, account) {
+      Nylas.accounts.list({}, (err, account) => {
         expect(accounts.length).toEqual(1);
         expect(accounts[0].id).toEqual('8rilmlwuo4zmpjedz8bcplclk');
       });

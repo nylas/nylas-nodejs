@@ -1,12 +1,12 @@
-const _ = require('underscore');
-const File = require('./file');
-const RestfulModel = require('./restful-model');
-const Contact = require('./contact');
-const Attributes = require('./attributes');
-const { Label } = require('./folder');
-const { Folder } = require('./folder');
+import _ from 'underscore';
 
-export class Message extends RestfulModel {
+import File from './file';
+import RestfulModel from './restful-model';
+import Contact from './contact';
+import Attributes from './attributes';
+import { Label, Folder } from './folder';
+
+export default class Message extends RestfulModel {
   constructor() {
     super(...arguments);
     this.save = this.save.bind(this);
@@ -25,74 +25,6 @@ export class Message extends RestfulModel {
     if (!this.bcc) {
       this.bcc = [];
     }
-
-    this.collectionName = 'messages';
-
-    this.attributes = _.extend({}, RestfulModel.attributes, {
-      to: Attributes.Collection({
-        modelKey: 'to',
-        itemClass: Contact,
-      }),
-      cc: Attributes.Collection({
-        modelKey: 'cc',
-        itemClass: Contact,
-      }),
-      bcc: Attributes.Collection({
-        modelKey: 'bcc',
-        itemClass: Contact,
-      }),
-      from: Attributes.Collection({
-        modelKey: 'from',
-        itemClass: Contact,
-      }),
-      date: Attributes.DateTime({
-        queryable: true,
-        modelKey: 'date',
-      }),
-      body: Attributes.String({
-        modelKey: 'body',
-      }),
-      files: Attributes.Collection({
-        modelKey: 'files',
-        itemClass: File,
-      }),
-      starred: Attributes.Boolean({
-        queryable: true,
-        modelKey: 'starred',
-      }),
-      unread: Attributes.Boolean({
-        queryable: true,
-        modelKey: 'unread',
-      }),
-      snippet: Attributes.String({
-        modelKey: 'snippet',
-      }),
-      threadId: Attributes.String({
-        queryable: true,
-        modelKey: 'threadId',
-        jsonKey: 'thread_id',
-      }),
-      subject: Attributes.String({
-        modelKey: 'subject',
-      }),
-      draft: Attributes.Boolean({
-        modelKey: 'draft',
-        jsonKey: 'draft',
-        queryable: true,
-      }),
-      version: Attributes.Number({
-        modelKey: 'version',
-        queryable: true,
-      }),
-      folder: Attributes.Object({
-        modelKey: 'folder',
-        itemClass: Folder,
-      }),
-      labels: Attributes.Collection({
-        modelKey: 'labels',
-        itemClass: Label,
-      }),
-    });
   }
 
   fromJSON(json) {
@@ -202,3 +134,69 @@ export class Message extends RestfulModel {
       });
   }
 }
+Message.collectionName = 'messages';
+Message.attributes = _.extend({}, RestfulModel.attributes, {
+  to: Attributes.Collection({
+    modelKey: 'to',
+    itemClass: Contact,
+  }),
+  cc: Attributes.Collection({
+    modelKey: 'cc',
+    itemClass: Contact,
+  }),
+  bcc: Attributes.Collection({
+    modelKey: 'bcc',
+    itemClass: Contact,
+  }),
+  from: Attributes.Collection({
+    modelKey: 'from',
+    itemClass: Contact,
+  }),
+  date: Attributes.DateTime({
+    queryable: true,
+    modelKey: 'date',
+  }),
+  body: Attributes.String({
+    modelKey: 'body',
+  }),
+  files: Attributes.Collection({
+    modelKey: 'files',
+    itemClass: File,
+  }),
+  starred: Attributes.Boolean({
+    queryable: true,
+    modelKey: 'starred',
+  }),
+  unread: Attributes.Boolean({
+    queryable: true,
+    modelKey: 'unread',
+  }),
+  snippet: Attributes.String({
+    modelKey: 'snippet',
+  }),
+  threadId: Attributes.String({
+    queryable: true,
+    modelKey: 'threadId',
+    jsonKey: 'thread_id',
+  }),
+  subject: Attributes.String({
+    modelKey: 'subject',
+  }),
+  draft: Attributes.Boolean({
+    modelKey: 'draft',
+    jsonKey: 'draft',
+    queryable: true,
+  }),
+  version: Attributes.Number({
+    modelKey: 'version',
+    queryable: true,
+  }),
+  folder: Attributes.Object({
+    modelKey: 'folder',
+    itemClass: Folder,
+  }),
+  labels: Attributes.Collection({
+    modelKey: 'labels',
+    itemClass: Label,
+  }),
+});

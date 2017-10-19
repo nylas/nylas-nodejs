@@ -1,23 +1,19 @@
-const RestfulModel = require('./restful-model');
-const Attributes = require('./attributes');
-const _ = require('underscore');
+import _ from 'underscore';
 
-export class Calendar extends RestfulModel {
-  constructor() {
-    super();
-    this.collectionName = 'calendars';
+import RestfulModel from './restful-model';
+import Attributes from './attributes';
 
-    this.attributes = _.extend({}, RestfulModel.attributes, {
-      name: Attributes.String({
-        modelKey: 'name',
-      }),
-      description: Attributes.String({
-        modelKey: 'description',
-      }),
-      readOnly: Attributes.Boolean({
-        modelKey: 'readOnly',
-        jsonKey: 'read_only',
-      }),
-    });
-  }
-}
+export default class Calendar extends RestfulModel {}
+Calendar.collectionName = 'calendars';
+Calendar.attributes = _.extend({}, RestfulModel.attributes, {
+  name: Attributes.String({
+    modelKey: 'name',
+  }),
+  description: Attributes.String({
+    modelKey: 'description',
+  }),
+  readOnly: Attributes.Boolean({
+    modelKey: 'readOnly',
+    jsonKey: 'read_only',
+  }),
+});

@@ -106,7 +106,7 @@ class AttributeCollection extends Attribute {
       return [];
     }
     const objs = [];
-    for (const objJSON of Array.from(json)) {
+    for (const objJSON of json) {
       const obj = new this.itemClass(parent.connection, objJSON);
       objs.push(obj);
     }

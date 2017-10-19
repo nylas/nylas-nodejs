@@ -1,22 +1,15 @@
-const _ = require('underscore');
-const Promise = require('bluebird');
+import _ from 'underscore';
+import Promise from 'bluebird';
 
-const File = require('./file');
-const Message = require('./message');
-const Contact = require('./contact');
-const Attributes = require('./attributes');
+import File from './file';
+import Message from './message';
+import Contact from './contact';
+import Attributes from './attributes';
 
-export class Draft extends Message {
+export default class Draft extends Message {
   constructor(...args) {
     super(...args);
     this.save = this.save.bind(this);
-    this.collectionName = 'drafts';
-    this.attributes = _.extend({}, Message.attributes, {
-      replyToMessageId: Attributes.String({
-        modelKey: 'replyToMessageId',
-        jsonKey: 'reply_to_message_id',
-      }),
-    });
   }
 
   toJSON() {
@@ -63,7 +56,7 @@ export class Draft extends Message {
         }
         return Promise.resolve(this);
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
@@ -71,3 +64,10 @@ export class Draft extends Message {
       });
   }
 }
+Draft.collectionName = 'drafts';
+Draft.attributes = _.extend({}, Message.attributes, {
+  replyToMessageId: Attributes.String({
+    modelKey: 'replyToMessageId',
+    jsonKey: 'reply_to_message_id',
+  }),
+});

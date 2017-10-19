@@ -1,26 +1,10 @@
-const RestfulModel = require('./restful-model');
-const Attributes = require('./attributes');
-const Promise = require('bluebird');
-const _ = require('underscore');
+import Promise from 'bluebird';
+import _ from 'underscore';
+
+import RestfulModel from './restful-model';
+import Attributes from './attributes';
 
 export class Label extends RestfulModel {
-  constructor() {
-    super();
-    this.collectionName = 'labels';
-
-    this.attributes = _.extend({}, RestfulModel.attributes, {
-      displayName: Attributes.String({
-        modelKey: 'displayName',
-        jsonKey: 'display_name',
-      }),
-
-      name: Attributes.String({
-        modelKey: 'name',
-        jsonKey: 'name',
-      }),
-    });
-  }
-
   saveRequestBody() {
     const json = {};
     json['display_name'] = this.displayName;
@@ -35,10 +19,18 @@ export class Label extends RestfulModel {
     return this._save(params, callback);
   }
 }
+Label.collectionName = 'labels';
+Label.attributes = _.extend({}, RestfulModel.attributes, {
+  displayName: Attributes.String({
+    modelKey: 'displayName',
+    jsonKey: 'display_name',
+  }),
 
-export class Folder extends Label {
-  constructor() {
-    super();
-    this.collectionName = 'folders';
-  }
-}
+  name: Attributes.String({
+    modelKey: 'name',
+    jsonKey: 'name',
+  }),
+});
+
+export class Folder extends Label {}
+Folder.collectionName = 'folders';

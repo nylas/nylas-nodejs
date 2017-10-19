@@ -1,37 +1,13 @@
-const RestfulModel = require('./restful-model');
-const Attributes = require('./attributes');
-const _ = require('underscore');
+import _ from 'underscore';
 
-export class File extends RestfulModel {
+import RestfulModel from './restful-model';
+import Attributes from './attributes';
+
+export default class File extends RestfulModel {
   constructor(...args) {
     super(...args);
     this.upload = this.upload.bind(this);
     this.download = this.download.bind(this);
-    this.collectionName = 'files';
-
-    this.attributes = _.extend({}, RestfulModel.attributes, {
-      filename: Attributes.String({
-        modelKey: 'filename',
-        jsonKey: 'filename',
-      }),
-      size: Attributes.Number({
-        modelKey: 'size',
-        jsonKey: 'size',
-      }),
-      contentType: Attributes.String({
-        modelKey: 'contentType',
-        jsonKey: 'content_type',
-      }),
-      messageIds: Attributes.Collection({
-        modelKey: 'messageIds',
-        jsonKey: 'message_ids',
-        itemClass: String,
-      }),
-      contentId: Attributes.String({
-        modelKey: 'contentId',
-        jsonKey: 'content_id',
-      }),
-    });
   }
 
   upload(callback = null) {
@@ -74,7 +50,7 @@ export class File extends RestfulModel {
           return Promise.reject(null);
         }
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
@@ -108,7 +84,7 @@ export class File extends RestfulModel {
         }
         return Promise.resolve(file);
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
@@ -125,13 +101,13 @@ export class File extends RestfulModel {
       .request({
         path: `/files/${this.id}`,
       })
-      .then(function(response) {
+      .then(response => {
         if (callback) {
           callback(null, response);
         }
         return Promise.resolve(response);
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
@@ -139,3 +115,27 @@ export class File extends RestfulModel {
       });
   }
 }
+File.collectionName = 'files';
+File.attributes = _.extend({}, RestfulModel.attributes, {
+  filename: Attributes.String({
+    modelKey: 'filename',
+    jsonKey: 'filename',
+  }),
+  size: Attributes.Number({
+    modelKey: 'size',
+    jsonKey: 'size',
+  }),
+  contentType: Attributes.String({
+    modelKey: 'contentType',
+    jsonKey: 'content_type',
+  }),
+  messageIds: Attributes.Collection({
+    modelKey: 'messageIds',
+    jsonKey: 'message_ids',
+    itemClass: String,
+  }),
+  contentId: Attributes.String({
+    modelKey: 'contentId',
+    jsonKey: 'content_id',
+  }),
+});

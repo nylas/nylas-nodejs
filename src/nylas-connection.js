@@ -1,31 +1,29 @@
-const _ = require('underscore');
-const clone = require('clone');
-const request = require('request');
-const Promise = require('bluebird');
-const RestfulModel = require('./models/restful-model');
-const RestfulModelCollection = require('./models/restful-model-collection');
-const RestfulModelInstance = require('./models/restful-model-instance');
-const Account = require('./models/account');
-const ManagementAccount = require('./models/management-account');
-const ManagementModelCollection = require('./models/management-model-collection');
-const Thread = require('./models/thread');
-const Contact = require('./models/contact');
-const Message = require('./models/message');
-const Draft = require('./models/draft');
-const File = require('./models/file');
-const Calendar = require('./models/calendar');
-const Event = require('./models/event');
-const Tag = require('./models/tag');
-const Delta = require('./models/delta');
-const { Label } = require('./models/folder');
-const { Folder } = require('./models/folder');
+import _ from 'underscore';
+import clone from 'clone';
+import request from 'request';
+import Promise from 'bluebird';
 
-const Attributes = require('./models/attributes');
+import RestfulModel from './models/restful-model';
+import RestfulModelCollection from './models/restful-model-collection';
+import RestfulModelInstance from './models/restful-model-instance';
+import Account from './models/account';
+import ManagementAccount from './models/management-account';
+import ManagementModelCollection from './models/management-model-collection';
+import Thread from './models/thread';
+import Contact from './models/contact';
+import Message from './models/message';
+import Draft from './models/draft';
+import File from './models/file';
+import Calendar from './models/calendar';
+import Event from './models/event';
+import Tag from './models/tag';
+import Delta from './models/delta';
+import { Label, Folder } from './models/folder';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
 
-export default class NylasConnection {
+module.exports = class NylasConnection {
   constructor(accessToken) {
     this.accessToken = accessToken;
     this.threads = new RestfulModelCollection(Thread, this);
@@ -129,4 +127,4 @@ export default class NylasConnection {
       });
     });
   }
-}
+};

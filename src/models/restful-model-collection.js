@@ -1,10 +1,10 @@
-const async = require('async');
-const _ = require('underscore');
-const Promise = require('bluebird');
+import async from 'async';
+import _ from 'underscore';
+import Promise from 'bluebird';
 
 const REQUEST_CHUNK_SIZE = 100;
 
-export class RestfulModelCollection {
+export default class RestfulModelCollection {
   constructor(modelClass, connection) {
     this.modelClass = modelClass;
     this.connection = connection;
@@ -30,7 +30,7 @@ export class RestfulModelCollection {
           params,
           offset,
           REQUEST_CHUNK_SIZE
-        ).then(function(models) {
+        ).then(models => {
           for (const model of models) {
             eachCallback(model);
           }
@@ -39,7 +39,7 @@ export class RestfulModelCollection {
           return callback();
         });
       },
-      function(err) {
+      err => {
         if (completeCallback) {
           return completeCallback();
         }
@@ -57,7 +57,7 @@ export class RestfulModelCollection {
         path: this.path(),
         qs: _.extend({ view: 'count' }, params),
       })
-      .then(function(json) {
+      .then(json => {
         if (callback) {
           callback(null, json.count);
         }
@@ -76,13 +76,13 @@ export class RestfulModelCollection {
       params = {};
     }
     return this.getModelCollection(params, 0, 1)
-      .then(function(items) {
+      .then(items => {
         if (callback) {
           callback(null, items[0]);
         }
         return Promise.resolve(items[0]);
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
@@ -115,13 +115,13 @@ export class RestfulModelCollection {
     }
 
     return this.getModel(id, params)
-      .then(function(model) {
+      .then(model => {
         if (callback) {
           callback(null, model);
         }
         return Promise.resolve(model);
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
@@ -152,7 +152,7 @@ export class RestfulModelCollection {
             limit - accumulated.length
           );
           return this.getModelCollection(params, chunkOffset, chunkLimit)
-            .then(function(models) {
+            .then(models => {
               accumulated = accumulated.concat(models);
               finished =
                 models.length < REQUEST_CHUNK_SIZE ||
@@ -161,7 +161,7 @@ export class RestfulModelCollection {
             })
             .catch(err => reject(err));
         },
-        function(err) {
+        err => {
           if (err) {
             if (callback) {
               callback(err);
@@ -196,13 +196,13 @@ export class RestfulModelCollection {
         qs: params,
         path: `${this.path()}/${id}`,
       })
-      .then(function() {
+      .then(() => {
         if (callback) {
           callback(null);
         }
         return Promise.resolve();
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
