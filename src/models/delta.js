@@ -13,31 +13,6 @@ export default class Delta {
     }
   }
 
-  generateCursor(timestampMs, callback = null) {
-    const reqOpts = {
-      method: 'POST',
-      path: '/delta/generate_cursor',
-      // Nylas API takes a UNIX timestamp in seconds, not a C-like millisecond timestamp.
-      body: { start: Math.floor(timestampMs / 1000) },
-    };
-
-    return this.connection
-      .request(reqOpts)
-      .then(response => {
-        const { cursor } = response;
-        if (callback) {
-          callback(null, cursor);
-        }
-        return Promise.resolve(cursor);
-      })
-      .catch(err => {
-        if (callback) {
-          callback(err);
-        }
-        return Promise.reject(err);
-      });
-  }
-
   latestCursor(callback) {
     const reqOpts = {
       method: 'POST',
