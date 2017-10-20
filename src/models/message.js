@@ -80,6 +80,18 @@ export default class Message extends RestfulModel {
     return _.map(this.files, file => file.id);
   }
 
+  getRaw() {
+    return this.connection
+      .request({
+        method: 'GET',
+        headers: {
+          Accept: 'message/rfc822',
+        },
+        path: `/messages/${this.id}`,
+      })
+      .catch(err => Promise.reject(err));
+  }
+
   saveRequestBody() {
     // It's possible to update most of the fields of a draft.
     if (this.constructor.name === 'Draft') {

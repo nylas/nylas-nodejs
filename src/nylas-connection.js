@@ -114,7 +114,11 @@ module.exports = class NylasConnection {
             return resolve(response);
           } else {
             try {
-              if (_.isString(body)) {
+              // Headers are case-sensitive
+              const contentTypeHeader = Object.keys(response.headers).find(
+                header => header.toLowerCase() == 'content-type'
+              );
+              if (response.headers[contentTypeHeader] == 'application/json') {
                 body = JSON.parse(body);
               }
               return resolve(body);

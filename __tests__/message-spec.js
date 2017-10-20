@@ -60,6 +60,21 @@ describe('Message', () => {
     });
   });
 
+  describe('getRaw', () =>
+    test('should support getting raw messages', () => {
+      testContext.connection.request = jest.fn(() => Promise.resolve('MIME'));
+      testContext.message.getRaw().then(rawMessage => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          headers: {
+            Accept: 'message/rfc822',
+          },
+          method: 'GET',
+          path: '/messages/4333',
+        });
+        expect(rawMessage).toBe('MIME');
+      });
+    }));
+
   describe('sendRaw', () =>
     test('should support sending with raw MIME', () => {
       const msg = `MIME-Version: 1.0 \
