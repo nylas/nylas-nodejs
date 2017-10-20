@@ -8,11 +8,10 @@ import Account from './models/account';
 import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 
-module.exports = class Nylas {
+class Nylas {
   constructor() {
     this.appId = null;
     this.appSecret = null;
-    this.apiServer = 'https://api.nylas.com';
   }
 
   static config({ appId, appSecret, apiServer }) {
@@ -123,4 +122,9 @@ module.exports = class Nylas {
     }
     return url;
   }
-};
+}
+Nylas.apiServer = 'https://api.nylas.com';
+
+// We keep the old `module.exports` syntax for now to ensure that people using
+// `require` don't have to use `.default` to use this package
+module.exports = Nylas;

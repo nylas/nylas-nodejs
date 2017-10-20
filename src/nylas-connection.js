@@ -102,8 +102,8 @@ module.exports = class NylasConnection {
     }
     options = this.requestOptions(options);
 
-    return new Promise(function(resolve, reject) {
-      return request(options, function(error, response, body) {
+    return new Promise((resolve, reject) => {
+      return request(options, (error, response, body) => {
         if (error || response.statusCode > 299) {
           if (!error) {
             error = new Error(body.message);

@@ -12,7 +12,7 @@
     "build": "babel src --presets babel-preset-env --out-dir lib",
     "prepublish": "yarn build"
   },
-  "keywords": ["email", "contacts", "calendar", "nilas", "nylas"],
+  "keywords": ["email", "contacts", "calendar", "nylas"],
   "author":
     "Ben Gotow <ben@nylas.com>, Karim Hamidou <karim@nylas.com> (https://nylas.com/)",
   "license": "MIT",
