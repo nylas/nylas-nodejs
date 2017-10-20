@@ -113,19 +113,7 @@ module.exports = class NylasConnection {
           if (options.downloadRequest) {
             return resolve(response);
           } else {
-            try {
-              // Headers are case-sensitive
-              const contentTypeHeader = Object.keys(response.headers).find(
-                header => header.toLowerCase() == 'content-type'
-              );
-              if (response.headers[contentTypeHeader] == 'application/json') {
-                body = JSON.parse(body);
-              }
-              return resolve(body);
-            } catch (error1) {
-              error = error1;
-              return reject(error);
-            }
+            return resolve(body);
           }
         }
       });
