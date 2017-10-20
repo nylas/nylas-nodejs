@@ -27,7 +27,7 @@ const GOOGLE_OAUTH_ACCESS_TOKEN_URL =
   'https://www.googleapis.com/oauth2/v4/token';
 
 function get_email_from_access_token(google_access_token) {
-  let data = {
+  const data = {
     access_token: google_access_token,
     fields: 'email',
   };
@@ -45,7 +45,7 @@ function get_email_from_access_token(google_access_token) {
 // account
 router.get('/google/oauth2callback', function(req, res, next) {
   if (!req.query.code) {
-    let data = {
+    const data = {
       response_type: 'code',
       access_type: 'offline',
       client_id: config.googleClientId,
@@ -57,13 +57,13 @@ router.get('/google/oauth2callback', function(req, res, next) {
       // your user to have to approve access each time they connect
       prompt: 'consent',
     };
-    let auth_uri = GOOGLE_OAUTH_AUTH_URL + '?' + querystring.stringify(data);
+    const auth_uri = GOOGLE_OAUTH_AUTH_URL + '?' + querystring.stringify(data);
     res.redirect(auth_uri);
   } else {
     // The user just successfully authenticated with Google and was redirected
     // back here with a Google code
-    let auth_code = req.query.code;
-    let data = {
+    const auth_code = req.query.code;
+    const data = {
       code: auth_code,
       client_id: config.googleClientId,
       client_secret: config.googleClientSecret,
@@ -72,7 +72,7 @@ router.get('/google/oauth2callback', function(req, res, next) {
     };
 
     // Using Google's authorization code we can get an access and refresh token
-    let options = {
+    const options = {
       uri: GOOGLE_OAUTH_ACCESS_TOKEN_URL,
       method: 'POST',
       form: data,
@@ -100,16 +100,16 @@ router.get('/google', function(req, res, next) {
   // The user has authorized with google at this point but we will need to
   // connect the account to Nylas
   if (!req.session.nylas_access_token) {
-    let google_access_token = req.session.google_access_token;
+    const google_access_token = req.session.google_access_token;
     get_email_from_access_token(google_access_token)
       .then(email => {
-        let google_refresh_token = req.session.google_refresh_token;
-        let google_settings = {
+        const google_refresh_token = req.session.google_refresh_token;
+        const google_settings = {
           google_client_id: config.googleClientId,
           google_client_secret: config.googleClientSecret,
           google_refresh_token: google_refresh_token,
         };
-        let data = {
+        const data = {
           client_id: config.nylasClientId,
           name: 'Your Name',
           email_address: email,
@@ -140,12 +140,12 @@ router.post('/exchange', function(req, res, next) {
   // User gave us their username and password and submitted the form. Use the
   // data now to login with Nylas
   if (!req.session.nylas_access_token) {
-    let json = req.body;
-    let exchange_settings = {
+    const json = req.body;
+    const exchange_settings = {
       username: json.email,
       password: json.password,
     };
-    let data = {
+    const data = {
       client_id: config.nylasClientId,
       name: json.name,
       email_address: json.email,
@@ -181,7 +181,7 @@ router.get('/', function(req, res, next) {
   }
 
   // Account has been setup, let's use Nylas' Node SDK to retrieve an email
-  let nylas = Nylas.with(req.session.nylas_access_token);
+  const nylas = Nylas.with(req.session.nylas_access_token);
 
   // Find the first thread matching the filter criteria
   nylas.messages.first().then(function(message) {

@@ -18,7 +18,7 @@ global.Nylas = require('nylas').config({
 function connectToNylas(data) {
   return nylasCode(data)
     .then(code => {
-      let params = {
+      const params = {
         client_id: config.nylasClientId,
         client_secret: config.nylasClientSecret,
         code: code,
@@ -42,7 +42,7 @@ function connectToNylas(data) {
 module.exports.connectToNylas = connectToNylas;
 
 function nylasCode(data) {
-  let connect_uri = config.nylasApi + '/connect/authorize';
+  const connect_uri = config.nylasApi + '/connect/authorize';
   return request
     .post({ url: connect_uri, json: data })
     .then(body => {
@@ -56,7 +56,7 @@ function nylasCode(data) {
 }
 
 function nylasToken(data) {
-  let token_uri = config.nylasApi + '/connect/token';
+  const token_uri = config.nylasApi + '/connect/token';
   return request
     .post({ url: token_uri, json: data })
     .then(body => {

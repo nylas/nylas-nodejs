@@ -16,27 +16,27 @@ describe('Delta', () => {
   });
 
   describe('startStream (delta streaming)', () => {
-    const createRequest = function(requestOpts) {
+    const createRequest = requestOpts => {
       const request = new EventEmitter();
       request.origOpts = requestOpts;
       request.abort = jest.fn();
       return request;
     };
 
-    const createResponse = function(statusCode) {
+    const createResponse = statusCode => {
       const response = new PassThrough();
       response.statusCode = statusCode;
       return response;
     };
 
     // Listens to the 'delta' event on the stream and pushes them to the returned array.
-    const observeDeltas = function(stream) {
+    const observeDeltas = stream => {
       const deltas = [];
       stream.on('delta', delta => deltas.push(delta));
       return deltas;
     };
 
-    test('start and close stream', async () => {
+    test('start and close stream', () => {
       const stream = testContext.delta._startStream(
         createRequest,
         'deltacursor0'

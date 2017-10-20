@@ -41,7 +41,7 @@ app.post('/webhook', function(req, res) {
 
   // Nylas sent us a webhook notification for some kind of event, so we should
   // process it!
-  let data = req.body.deltas;
+  const data = req.body.deltas;
   console.log(JSON.stringify(data, null, 2));
   for (var i = 0; i < data.length; i++) {
     // Print some of the information Nylas sent us. This is where you
@@ -62,7 +62,7 @@ app.post('/webhook', function(req, res) {
 // secret as the signing key. This allows your app to verify that the
 // notification really came from Nylas.
 function verify_nylas_request(req) {
-  let digest = crypto
+  const digest = crypto
     .createHmac('sha256', config.nylasClientSecret)
     .update(req.rawBody)
     .digest('hex');
