@@ -2,6 +2,9 @@ import async from 'async';
 import _ from 'underscore';
 import Promise from 'bluebird';
 
+import Message from './message';
+import Thread from './thread';
+
 const REQUEST_CHUNK_SIZE = 100;
 
 export default class RestfulModelCollection {
@@ -16,10 +19,7 @@ export default class RestfulModelCollection {
     }
   }
 
-  forEach(params, eachCallback, completeCallback = null) {
-    if (!params) {
-      params = {};
-    }
+  forEach(params = {}, eachCallback, completeCallback = null) {
     let offset = 0;
     let finished = false;
 
@@ -47,10 +47,7 @@ export default class RestfulModelCollection {
     );
   }
 
-  count(params, callback = null) {
-    if (!params) {
-      params = {};
-    }
+  count(params = {}, callback = null) {
     return this.connection
       .request({
         method: 'GET',
@@ -71,10 +68,7 @@ export default class RestfulModelCollection {
       });
   }
 
-  first(params, callback = null) {
-    if (!params) {
-      params = {};
-    }
+  first(params = {}, callback = null) {
     return this._getModelCollection(params, 0, 1)
       .then(items => {
         if (callback) {
@@ -99,13 +93,10 @@ export default class RestfulModelCollection {
       limit = params['limit'];
     }
 
-    return this.range(params, 0, limit, callback);
+    return this._range({ params, limit, callback });
   }
 
-  find(id, callback = null, params) {
-    if (!params) {
-      params = {};
-    }
+  find(id, callback = null, params = {}) {
     if (!id) {
       const err = new Error('find() must be called with an item id');
       if (callback) {
@@ -129,59 +120,33 @@ export default class RestfulModelCollection {
       });
   }
 
-  range(params, offset, limit, callback = null) {
-    if (!params) {
-      params = {};
-    }
-    if (offset == null) {
-      offset = 0;
-    }
-    if (limit == null) {
-      limit = 100;
-    }
-    return new Promise((resolve, reject) => {
-      let accumulated = [];
-      let finished = false;
-
-      return async.until(
-        () => finished,
-        chunkCallback => {
-          const chunkOffset = offset + accumulated.length;
-          const chunkLimit = Math.min(
-            REQUEST_CHUNK_SIZE,
-            limit - accumulated.length
-          );
-          return this._getModelCollection(params, chunkOffset, chunkLimit)
-            .then(models => {
-              accumulated = accumulated.concat(models);
-              finished =
-                models.length < REQUEST_CHUNK_SIZE ||
-                accumulated.length >= limit;
-              return chunkCallback();
-            })
-            .catch(err => reject(err));
-        },
-        err => {
-          if (err) {
-            if (callback) {
-              callback(err);
-            }
-            return reject(err);
-          } else {
-            if (callback) {
-              callback(null, accumulated);
-            }
-            return resolve(accumulated);
-          }
-        }
+  search(query, params = {}, callback = null) {
+    if (this.modelClass != Message && this.modelClass != Thread) {
+      const err = new Error(
+        'search() can only be called for messages and threads'
       );
-    });
+      if (callback) {
+        callback(err);
+      }
+      return Promise.reject(err);
+    }
+    if (!query) {
+      const err = new Error('search() requires a query string');
+      if (callback) {
+        callback(err);
+      }
+      return Promise.reject(err);
+    }
+
+    params.q = query;
+    const limit = params.limit || 40;
+    const offset = params.offset;
+    const path = `${this.path()}/search`;
+
+    return this._range({ params, offset, limit, path });
   }
 
-  delete(itemOrId, params, callback = null) {
-    if (params == null) {
-      params = {};
-    }
+  delete(itemOrId, params = {}, callback = null) {
     const id =
       (itemOrId != null ? itemOrId.id : undefined) != null
         ? itemOrId.id
@@ -223,14 +188,57 @@ export default class RestfulModelCollection {
     return `/${this.modelClass.collectionName}`;
   }
 
+  _range({
+    params = {},
+    offset = 0,
+    limit = 100,
+    callback = null,
+    path = null,
+  }) {
+    return new Promise((resolve, reject) => {
+      let accumulated = [];
+      let finished = false;
+
+      return async.until(
+        () => finished,
+        chunkCallback => {
+          const chunkOffset = offset + accumulated.length;
+          const chunkLimit = Math.min(
+            REQUEST_CHUNK_SIZE,
+            limit - accumulated.length
+          );
+          return this._getModelCollection(params, chunkOffset, chunkLimit, path)
+            .then(models => {
+              accumulated = accumulated.concat(models);
+              finished =
+                models.length < REQUEST_CHUNK_SIZE ||
+                accumulated.length >= limit;
+              return chunkCallback();
+            })
+            .catch(err => reject(err));
+        },
+        err => {
+          if (err) {
+            if (callback) {
+              callback(err);
+            }
+            return reject(err);
+          } else {
+            if (callback) {
+              callback(null, accumulated);
+            }
+            return resolve(accumulated);
+          }
+        }
+      );
+    });
+  }
+
   _createModel(json) {
     return new this.modelClass(this.connection, json);
   }
 
-  _getModel(id, params) {
-    if (!params) {
-      params = {};
-    }
+  _getModel(id, params = {}) {
     return this.connection
       .request({
         method: 'GET',
@@ -243,11 +251,11 @@ export default class RestfulModelCollection {
       });
   }
 
-  _getModelCollection(params, offset, limit) {
+  _getModelCollection(params, offset, limit, path = this.path()) {
     return this.connection
       .request({
         method: 'GET',
-        path: this.path(),
+        path,
         qs: _.extend({}, params, { offset, limit }),
       })
       .then(jsonArray => {

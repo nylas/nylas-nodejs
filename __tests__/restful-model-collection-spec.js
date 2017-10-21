@@ -5,6 +5,7 @@ import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import RestfulModelCollection from '../src/models/restful-model-collection';
 import Thread from '../src/models/thread';
+import Event from '../src/models/event';
 
 describe('RestfulModelCollection', () => {
   let testContext;
@@ -259,18 +260,17 @@ describe('RestfulModelCollection', () => {
   });
 
   describe('list', () =>
-    test('should call range() with an inifite range', () => {
-      testContext.collection.range = jest.fn();
+    test('should call range() with an infinite range', () => {
+      testContext.collection._range = jest.fn();
 
       const params = { from: 'ben@nylas.com' };
       const callback = () => {};
       testContext.collection.list(params, callback);
-      expect(testContext.collection.range).toHaveBeenCalledWith(
+      expect(testContext.collection._range).toHaveBeenCalledWith({
         params,
-        0,
-        Infinity,
-        callback
-      );
+        limit: Infinity,
+        callback,
+      });
     }));
 
   describe('find', () => {
@@ -349,104 +349,98 @@ describe('RestfulModelCollection', () => {
     });
   });
 
-  describe('range', () => {
-    beforeEach(() => {
-      const threadsResponses = [];
-      for (let x = 0; x <= 3; x++) {
-        const response = [];
-        const count = x < 3 ? 99 : 12;
-        for (
-          let i = 0, end = count, asc = 0 <= end;
-          asc ? i <= end : i >= end;
-          asc ? i++ : i--
-        ) {
-          response.push({
-            id: '123',
-            account_id: undefined,
-            subject: 'A',
-          });
-        }
-        threadsResponses.push(response);
-      }
+  describe('search', () => {
+    test('should reject with an error if a query is not provided', () => {
+      testContext.collection.search().catch(err => {
+        expect(err).toBeInstanceOf(Error);
+      });
+    });
 
-      testContext.collection._getModelCollection = jest.fn(
-        (params, offset, limit) =>
-          Promise.resolve(threadsResponses[offset / 100])
+    test('should reject with an error if called on any model but Message or Thread', () => {
+      testContext.collection = new RestfulModelCollection(
+        Event,
+        testContext.connection
       );
+      testContext.collection.search().catch(err => {
+        expect(err).toBeInstanceOf(Error);
+      });
     });
 
-    test('should fetch once if fewer than one page of models are requested', () => {
-      const params = { from: 'ben@nylas.com' };
-      const threads = [
-        {
-          id: '123',
-          account_id: undefined,
-          subject: 'A',
-        },
-      ];
-      testContext.collection.range(params, 0, 50);
-      expect(testContext.collection._getModelCollection).toHaveBeenCalledWith(
-        params,
-        0,
-        50
-      );
-    });
-
-    test('should fetch repeatedly until the requested number of models have been returned', () => {
-      const params = { from: 'ben@nylas.com' };
-      const threads = [
-        {
-          id: '123',
-          account_id: undefined,
-          subject: 'A',
-        },
-      ];
-      testContext.collection.range(params, 0, 300);
-      setTimeout(() => {
-        expect(
-          testContext.collection._getModelCollection.calls[0].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100]);
-        expect(
-          testContext.collection._getModelCollection.calls[1].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100]);
-        expect(
-          testContext.collection._getModelCollection.calls[2].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100]);
-      }, 5);
-    });
-
-    test('should stop fetching if fewer than requested models are returned', () => {
-      const params = { from: 'ben@nylas.com' };
-      testContext.collection.range(params, 0, 10000);
-      setTimeout(() => {
-        expect(
-          testContext.collection._getModelCollection.calls[0].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100]);
-        expect(
-          testContext.collection._getModelCollection.calls[1].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100]);
-        expect(
-          testContext.collection._getModelCollection.calls[2].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100]);
-        expect(
-          testContext.collection._getModelCollection.calls[3].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 300, 100]);
-      }, 5);
-    });
-
-    test('should call the callback with all of the loaded models', done => {
-      const params = { from: 'ben@nylas.com' };
-      testContext.collection.range(params, 0, 10000, (err, models) => {
-        expect(models.length).toBe(313);
+    test('should make an API request to search with query string', done => {
+      testContext.collection.search('blah').catch(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'GET',
+          path: '/threads/search',
+          qs: { limit: 40, offset: 0, q: 'blah' },
+        });
         done();
       });
     });
 
-    test('should resolve with the loaded models', done => {
-      const params = { from: 'ben@nylas.com' };
-      testContext.collection.range(params, 0, 10000).then(function(models) {
-        expect(models.length).toBe(313);
-        done();
+    test('should pass user-defined limit and offset to the request', done => {
+      testContext.collection
+        .search('blah', { limit: 1, offset: 1 })
+        .catch(() => {
+          expect(testContext.connection.request).toHaveBeenCalledWith({
+            method: 'GET',
+            path: '/threads/search',
+            qs: { limit: 1, offset: 1, q: 'blah' },
+          });
+          done();
+        });
+    });
+
+    describe('when the request succeeds', () => {
+      beforeEach(() => {
+        testContext.item = { subject: 'Hey, Jackie!' };
+        testContext.connection.request = jest.fn(() => {
+          return Promise.resolve([testContext.item]);
+        });
+      });
+
+      test('should resolve with the item', done => {
+        testContext.collection.search('Jackie').then(threads => {
+          expect(threads[0] instanceof Thread).toBe(true);
+          expect(threads[0].subject).toContain('Jackie');
+          done();
+        });
+      });
+
+      test('should call the optional callback with the first item', done => {
+        testContext.collection
+          .search('Jackie', {}, (err, threads) => {
+            expect(threads[0] instanceof Thread).toBe(true);
+            expect(threads[0].subject).toContain('Jackie');
+          })
+          .then(() => {
+            done();
+          });
+      });
+    });
+
+    describe('when the request fails', () => {
+      beforeEach(() => {
+        testContext.error = new Error('Network error');
+        testContext.connection.request = jest.fn(() => {
+          return Promise.reject(testContext.error);
+        });
+      });
+
+      test('should reject with any underlying error', done => {
+        testContext.collection.search('Jackie').catch(err => {
+          expect(err).toBe(testContext.error);
+          done();
+        });
+      });
+
+      test('should call the optional callback with the underlying error', done => {
+        testContext.collection
+          .search('Jackie', {}, (err, item) => {
+            expect(err).toBe(testContext.error);
+          })
+          .catch(() => {
+            done();
+          });
       });
     });
   });
@@ -546,4 +540,114 @@ describe('RestfulModelCollection', () => {
     test("should return the modelClass' collectionName with no prefix", () => {
       expect(testContext.collection.path()).toEqual('/threads');
     }));
+
+  describe('_range', () => {
+    beforeEach(() => {
+      const threadsResponses = [];
+      for (let x = 0; x <= 3; x++) {
+        const response = [];
+        const count = x < 3 ? 99 : 12;
+        for (
+          let i = 0, end = count, asc = 0 <= end;
+          asc ? i <= end : i >= end;
+          asc ? i++ : i--
+        ) {
+          response.push({
+            id: '123',
+            account_id: undefined,
+            subject: 'A',
+          });
+        }
+        threadsResponses.push(response);
+      }
+
+      testContext.collection._getModelCollection = jest.fn(
+        (params, offset, limit) =>
+          Promise.resolve(threadsResponses[offset / 100])
+      );
+    });
+
+    test('should fetch once if fewer than one page of models are requested', () => {
+      const params = { from: 'ben@nylas.com' };
+      const threads = [
+        {
+          id: '123',
+          account_id: undefined,
+          subject: 'A',
+        },
+      ];
+      testContext.collection._range({ params, offset: 0, limit: 50 });
+      expect(testContext.collection._getModelCollection).toHaveBeenCalledWith(
+        params,
+        0,
+        50,
+        null
+      );
+    });
+
+    test('should fetch repeatedly until the requested number of models have been returned', () => {
+      const params = { from: 'ben@nylas.com' };
+      const threads = [
+        {
+          id: '123',
+          account_id: undefined,
+          subject: 'A',
+        },
+      ];
+      testContext.collection._range({ params, offset: 0, limit: 300 });
+      setTimeout(() => {
+        expect(
+          testContext.collection._getModelCollection.calls[0].args
+        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100]);
+        expect(
+          testContext.collection._getModelCollection.calls[1].args
+        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100]);
+        expect(
+          testContext.collection._getModelCollection.calls[2].args
+        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100]);
+      }, 5);
+    });
+
+    test('should stop fetching if fewer than requested models are returned', () => {
+      const params = { from: 'ben@nylas.com' };
+      testContext.collection._range({ params, offset: 0, limit: 10000 });
+      setTimeout(() => {
+        expect(
+          testContext.collection._getModelCollection.calls[0].args
+        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100]);
+        expect(
+          testContext.collection._getModelCollection.calls[1].args
+        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100]);
+        expect(
+          testContext.collection._getModelCollection.calls[2].args
+        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100]);
+        expect(
+          testContext.collection._getModelCollection.calls[3].args
+        ).toEqual([{ from: 'ben@nylas.com' }, 300, 100]);
+      }, 5);
+    });
+
+    test('should call the callback with all of the loaded models', done => {
+      const params = { from: 'ben@nylas.com' };
+      testContext.collection._range({
+        params,
+        offset: 0,
+        limit: 10000,
+        callback: (err, models) => {
+          expect(models.length).toBe(313);
+          done();
+        },
+      });
+    });
+
+    test('should resolve with the loaded models', done => {
+      const params = { from: 'ben@nylas.com' };
+      testContext.collection
+        ._range({ params, offset: 0, limit: 10000 })
+        .then(function(models) {
+          expect(models.length).toBe(313);
+          done();
+        });
+    });
+  });
 });
