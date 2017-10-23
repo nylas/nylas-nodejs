@@ -97,10 +97,7 @@ class Nylas {
     });
   }
 
-  static urlForAuthentication(options) {
-    if (!options) {
-      options = {};
-    }
+  static urlForAuthentication(options = {}) {
     if (!this.appId) {
       throw new Error(
         'urlForAuthentication() cannot be called until you provide an appId via config()'
@@ -112,11 +109,8 @@ class Nylas {
     if (!options.loginHint) {
       options.loginHint = '';
     }
-    if (!options.trial) {
-      options.trial = false;
-    }
     let url = `${this.apiServer}/oauth/authorize?client_id=${this
-      .appId}&trial=${options.trial}&response_type=code&scope=email&login_hint=${options.loginHint}&redirect_uri=${options.redirectURI}`;
+      .appId}&response_type=code&scope=email&login_hint=${options.loginHint}&redirect_uri=${options.redirectURI}`;
     if (options.state != null) {
       url += `&state=${options.state}`;
     }
