@@ -81,6 +81,7 @@ describe('Thread', () => {
         messages: [m1, m2],
         drafts: [draft],
       });
+
       expect(t.messages).toBeDefined();
       expect(t.messages[0] instanceof Message).toBe(true);
       expect(t.messages[0].id).toBe('m1');

@@ -87,7 +87,7 @@ export default class Message extends RestfulModel {
         headers: {
           Accept: 'message/rfc822',
         },
-        path: `/messages/${this.id}`,
+        path: `/${this.constructor.collectionName}/${this.id}`,
       })
       .catch(err => Promise.reject(err));
   }

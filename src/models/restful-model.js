@@ -26,11 +26,11 @@ export default class RestfulModel {
   }
 
   fromJSON(json = {}) {
-    const object = this.attributes();
-    for (const key in object) {
-      const attr = object[key];
+    const attributes = this.attributes();
+    for (const attrName in attributes) {
+      const attr = attributes[attrName];
       if (json[attr.jsonKey] !== undefined) {
-        this[key] = attr.fromJSON(json[attr.jsonKey], this);
+        this[attrName] = attr.fromJSON(json[attr.jsonKey], this);
       }
     }
     return this;
@@ -38,10 +38,10 @@ export default class RestfulModel {
 
   toJSON() {
     const json = {};
-    const object = this.attributes();
-    for (const key in object) {
-      const attr = object[key];
-      json[attr.jsonKey] = attr.toJSON(this[key]);
+    const attributes = this.attributes();
+    for (const attrName in attributes) {
+      const attr = attributes[attrName];
+      json[attr.jsonKey] = attr.toJSON(this[attrName]);
     }
     json['object'] = this.constructor.name.toLowerCase();
     return json;

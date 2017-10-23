@@ -9,4 +9,8 @@ export default class ManagementModelCollection extends RestfulModelCollection {
   path() {
     return `/a/${this.appId}/${this.modelClass.collectionName}`;
   }
+
+  _createModel(json) {
+    return new this.modelClass(this.connection, this.appId, json);
+  }
 }

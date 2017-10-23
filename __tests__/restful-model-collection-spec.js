@@ -53,7 +53,7 @@ describe('RestfulModelCollection', () => {
         threadsResponses.push(response);
       }
 
-      testContext.collection.getModelCollection = jest.fn(
+      testContext.collection._getModelCollection = jest.fn(
         (params, offset, limit) =>
           Promise.resolve(threadsResponses[offset / 100])
       );
@@ -69,7 +69,7 @@ describe('RestfulModelCollection', () => {
         },
       ];
       testContext.collection.forEach(params, () => {}, () => {});
-      expect(testContext.collection.getModelCollection).toHaveBeenCalledWith(
+      expect(testContext.collection._getModelCollection).toHaveBeenCalledWith(
         params,
         0,
         100
@@ -81,16 +81,16 @@ describe('RestfulModelCollection', () => {
       testContext.collection.forEach(params, () => {}, () => {});
       setTimeout(() => {
         expect(
-          testContext.collection.getModelCollection.mock.calls[0]
+          testContext.collection._getModelCollection.mock.calls[0]
         ).toEqual([{ from: 'ben@nylas.com' }, 0, 100]);
         expect(
-          testContext.collection.getModelCollection.mock.calls[1]
+          testContext.collection._getModelCollection.mock.calls[1]
         ).toEqual([{ from: 'ben@nylas.com' }, 100, 100]);
         expect(
-          testContext.collection.getModelCollection.mock.calls[2]
+          testContext.collection._getModelCollection.mock.calls[2]
         ).toEqual([{ from: 'ben@nylas.com' }, 200, 100]);
         expect(
-          testContext.collection.getModelCollection.mock.calls[3]
+          testContext.collection._getModelCollection.mock.calls[3]
         ).toEqual([{ from: 'ben@nylas.com' }, 300, 100]);
         done();
       }, 5);
@@ -195,14 +195,14 @@ describe('RestfulModelCollection', () => {
       beforeEach(() => {
         testContext.item = { id: '123' };
         testContext.items = [testContext.item];
-        testContext.collection.getModelCollection = jest.fn(() => {
+        testContext.collection._getModelCollection = jest.fn(() => {
           return Promise.resolve(testContext.items);
         });
       });
 
       test('should fetch one item with the provided params', () => {
         testContext.collection.first({ from: 'ben@nylas.com' });
-        expect(testContext.collection.getModelCollection).toHaveBeenCalledWith(
+        expect(testContext.collection._getModelCollection).toHaveBeenCalledWith(
           { from: 'ben@nylas.com' },
           0,
           1
@@ -235,7 +235,7 @@ describe('RestfulModelCollection', () => {
     describe('when the request fails', () => {
       beforeEach(() => {
         testContext.error = new Error('Network error');
-        testContext.collection.getModelCollection = jest.fn(() => {
+        testContext.collection._getModelCollection = jest.fn(() => {
           return Promise.reject(testContext.error);
         });
       });
@@ -369,7 +369,7 @@ describe('RestfulModelCollection', () => {
         threadsResponses.push(response);
       }
 
-      testContext.collection.getModelCollection = jest.fn(
+      testContext.collection._getModelCollection = jest.fn(
         (params, offset, limit) =>
           Promise.resolve(threadsResponses[offset / 100])
       );
@@ -385,7 +385,7 @@ describe('RestfulModelCollection', () => {
         },
       ];
       testContext.collection.range(params, 0, 50);
-      expect(testContext.collection.getModelCollection).toHaveBeenCalledWith(
+      expect(testContext.collection._getModelCollection).toHaveBeenCalledWith(
         params,
         0,
         50
@@ -404,13 +404,13 @@ describe('RestfulModelCollection', () => {
       testContext.collection.range(params, 0, 300);
       setTimeout(() => {
         expect(
-          testContext.collection.getModelCollection.calls[0].args
+          testContext.collection._getModelCollection.calls[0].args
         ).toEqual([{ from: 'ben@nylas.com' }, 0, 100]);
         expect(
-          testContext.collection.getModelCollection.calls[1].args
+          testContext.collection._getModelCollection.calls[1].args
         ).toEqual([{ from: 'ben@nylas.com' }, 100, 100]);
         expect(
-          testContext.collection.getModelCollection.calls[2].args
+          testContext.collection._getModelCollection.calls[2].args
         ).toEqual([{ from: 'ben@nylas.com' }, 200, 100]);
       }, 5);
     });
@@ -420,16 +420,16 @@ describe('RestfulModelCollection', () => {
       testContext.collection.range(params, 0, 10000);
       setTimeout(() => {
         expect(
-          testContext.collection.getModelCollection.calls[0].args
+          testContext.collection._getModelCollection.calls[0].args
         ).toEqual([{ from: 'ben@nylas.com' }, 0, 100]);
         expect(
-          testContext.collection.getModelCollection.calls[1].args
+          testContext.collection._getModelCollection.calls[1].args
         ).toEqual([{ from: 'ben@nylas.com' }, 100, 100]);
         expect(
-          testContext.collection.getModelCollection.calls[2].args
+          testContext.collection._getModelCollection.calls[2].args
         ).toEqual([{ from: 'ben@nylas.com' }, 200, 100]);
         expect(
-          testContext.collection.getModelCollection.calls[3].args
+          testContext.collection._getModelCollection.calls[3].args
         ).toEqual([{ from: 'ben@nylas.com' }, 300, 100]);
       }, 5);
     });

@@ -1,11 +1,31 @@
 import _ from 'underscore';
 
-import RestfulModel from './restful-model';
+import ManagementModel from './management-model';
 import Attributes from './attributes';
 
-export default class ManagementAccount extends RestfulModel {}
+export default class ManagementAccount extends ManagementModel {
+  upgrade() {
+    return this.connection
+      .request({
+        method: 'POST',
+        path: `/a/${this.appId}/${this.constructor.collectionName}/${this
+          .id}/upgrade`,
+      })
+      .catch(err => Promise.reject(err));
+  }
+
+  downgrade() {
+    return this.connection
+      .request({
+        method: 'POST',
+        path: `/a/${this.appId}/${this.constructor.collectionName}/${this
+          .id}/downgrade`,
+      })
+      .catch(err => Promise.reject(err));
+  }
+}
 ManagementAccount.collectionName = 'accounts';
-ManagementAccount.attributes = _.extend({}, RestfulModel.attributes, {
+ManagementAccount.attributes = _.extend({}, ManagementModel.attributes, {
   billingState: Attributes.String({
     modelKey: 'billingState',
     jsonKey: 'billing_state',

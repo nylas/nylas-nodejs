@@ -26,7 +26,7 @@ export default class RestfulModelCollection {
     return async.until(
       () => finished,
       callback => {
-        return this.getModelCollection(
+        return this._getModelCollection(
           params,
           offset,
           REQUEST_CHUNK_SIZE
@@ -75,7 +75,7 @@ export default class RestfulModelCollection {
     if (!params) {
       params = {};
     }
-    return this.getModelCollection(params, 0, 1)
+    return this._getModelCollection(params, 0, 1)
       .then(items => {
         if (callback) {
           callback(null, items[0]);
@@ -114,7 +114,7 @@ export default class RestfulModelCollection {
       return Promise.reject(err);
     }
 
-    return this.getModel(id, params)
+    return this._getModel(id, params)
       .then(model => {
         if (callback) {
           callback(null, model);
@@ -151,7 +151,7 @@ export default class RestfulModelCollection {
             REQUEST_CHUNK_SIZE,
             limit - accumulated.length
           );
-          return this.getModelCollection(params, chunkOffset, chunkLimit)
+          return this._getModelCollection(params, chunkOffset, chunkLimit)
             .then(models => {
               accumulated = accumulated.concat(models);
               finished =
@@ -223,9 +223,11 @@ export default class RestfulModelCollection {
     return `/${this.modelClass.collectionName}`;
   }
 
-  // Internal
+  _createModel(json) {
+    return new this.modelClass(this.connection, json);
+  }
 
-  getModel(id, params) {
+  _getModel(id, params) {
     if (!params) {
       params = {};
     }
@@ -236,12 +238,12 @@ export default class RestfulModelCollection {
         qs: params,
       })
       .then(json => {
-        const model = new this.modelClass(this.connection, json);
+        const model = this._createModel(json);
         return Promise.resolve(model);
       });
   }
 
-  getModelCollection(params, offset, limit) {
+  _getModelCollection(params, offset, limit) {
     return this.connection
       .request({
         method: 'GET',
@@ -250,7 +252,7 @@ export default class RestfulModelCollection {
       })
       .then(jsonArray => {
         const models = jsonArray.map(json => {
-          return new this.modelClass(this.connection, json);
+          return this._createModel(json);
         });
         return Promise.resolve(models);
       });

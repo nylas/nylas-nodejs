@@ -6,17 +6,17 @@ import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 
 describe('ManagementAccount', () => {
-  beforeEach(() =>
-    Promise.onPossiblyUnhandledRejection(function(e, promise) {})
-  );
+  const APP_ID = 'abc';
+  beforeEach(() => {
+    Nylas.config({
+      appId: APP_ID,
+      appSecret: 'xyz',
+    });
+    Promise.onPossiblyUnhandledRejection((e, promise) => {});
+  });
 
   describe('list', () =>
     test('should do a GET request to get the account list', () => {
-      Nylas.config({
-        appId: 'abc',
-        appSecret: 'xyz',
-      });
-
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
           {
@@ -29,16 +29,59 @@ describe('ManagementAccount', () => {
           },
         ])
       );
+      Nylas.accounts
+        .list({}, (err, account) => {
+          expect(accounts.length).toEqual(1);
+          expect(accounts[0].id).toEqual('8rilmlwuo4zmpjedz8bcplclk');
+        })
+        .then(() =>
+          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+            method: 'GET',
+            qs: { limit: 100, offset: 0 },
+            path: `/a/${APP_ID}/accounts`,
+          })
+        );
+    }));
 
-      Nylas.accounts.list({}, (err, account) => {
-        expect(accounts.length).toEqual(1);
-        expect(accounts[0].id).toEqual('8rilmlwuo4zmpjedz8bcplclk');
-      });
+  describe('upgrade', () =>
+    test('should POST to upgrade an account', () => {
+      Nylas.accounts.connection.request = jest.fn(() =>
+        Promise.resolve([
+          {
+            success: 'true',
+          },
+        ])
+      );
+      Nylas.accounts
+        .first()
+        .then(account => account.upgrade())
+        .then(resp => {
+          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+            method: 'POST',
+            path: `/a/${APP_ID}/accounts/upgrade`,
+          });
+          expect(resp.success).toBe('true');
+        });
+    }));
 
-      expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
-        method: 'GET',
-        qs: { limit: 100, offset: 0 },
-        path: '/a/abc/accounts',
-      });
+  describe('downgrade', () =>
+    test('should POST to upgrade an account', () => {
+      Nylas.accounts.connection.request = jest.fn(() =>
+        Promise.resolve([
+          {
+            success: 'true',
+          },
+        ])
+      );
+      Nylas.accounts
+        .first()
+        .then(account => account.downgrade())
+        .then(resp => {
+          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+            method: 'POST',
+            path: `/a/${APP_ID}/accounts/downgrade`,
+          });
+          expect(resp.success).toBe('true');
+        });
     }));
 });
