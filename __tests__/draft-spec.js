@@ -5,6 +5,7 @@ import _ from 'underscore';
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import Draft from '../src/models/draft';
+import Message from '../src/models/message';
 
 describe('Draft', () => {
   let testContext;
@@ -193,19 +194,21 @@ describe('Draft', () => {
         });
       });
 
-      test('should resolve with the draft object', done => {
-        testContext.draft.save().then(draft => {
-          expect(draft.id).toBe('id-1234');
-          expect(draft.threadId).toBe('new-thread-id');
+      test('should resolve with the message object', done => {
+        testContext.draft.send().then(message => {
+          expect(message.id).toBe('id-1234');
+          expect(message.threadId).toBe('new-thread-id');
+          expect(message).toBeInstanceOf(Message);
           done();
         });
       });
 
-      test('should call the callback with the draft object', done => {
-        testContext.draft.save((err, draft) => {
+      test('should call the callback with the message object', done => {
+        testContext.draft.send((err, message) => {
           expect(err).toBe(null);
-          expect(draft.id).toBe('id-1234');
-          expect(draft.threadId).toBe('new-thread-id');
+          expect(message.id).toBe('id-1234');
+          expect(message.threadId).toBe('new-thread-id');
+          expect(message).toBeInstanceOf(Message);
           done();
         });
       });
@@ -220,7 +223,7 @@ describe('Draft', () => {
       });
 
       test('should reject with the error', done => {
-        testContext.draft.save().catch(err => {
+        testContext.draft.send().catch(err => {
           expect(err).toBe(testContext.error);
           done();
         });
@@ -228,9 +231,9 @@ describe('Draft', () => {
 
       test('should call the callback with the error', done => {
         testContext.draft
-          .save((err, draft) => {
+          .send((err, message) => {
             expect(err).toBe(testContext.error);
-            expect(draft).toBe(undefined);
+            expect(message).toBe(undefined);
             done();
           })
           .catch(() => {});

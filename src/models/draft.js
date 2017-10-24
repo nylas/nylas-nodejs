@@ -50,11 +50,11 @@ export default class Draft extends Message {
         path: '/send',
       })
       .then(json => {
-        this.fromJSON(json);
+        const message = new Message(this.connection, json);
         if (callback) {
-          callback(null, this);
+          callback(null, message);
         }
-        return Promise.resolve(this);
+        return Promise.resolve(message);
       })
       .catch(err => {
         if (callback) {
