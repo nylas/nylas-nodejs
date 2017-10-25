@@ -19,7 +19,7 @@ describe('Draft', () => {
   });
 
   describe('save', () => {
-    test('should do a POST request if the draft has no id', () => {
+    test('should do a POST request if the draft has no id', done => {
       testContext.draft.id = undefined;
       testContext.draft.save().then(() => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
@@ -48,10 +48,11 @@ describe('Draft', () => {
           qs: {},
           path: '/drafts',
         });
+        done();
       });
     });
 
-    test('should do a PUT request if the draft has an id', () => {
+    test('should do a PUT request if the draft has an id', done => {
       testContext.draft.id = 'id-1234';
       testContext.draft.save().then(() => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
@@ -80,6 +81,7 @@ describe('Draft', () => {
           qs: {},
           path: '/drafts/id-1234',
         });
+        done();
       });
     });
 
