@@ -13,6 +13,9 @@ export default class Draft extends Message {
   }
 
   toJSON() {
+    if (this.rawMime) {
+      throw Error('toJSON() cannot be called for raw MIME drafts');
+    }
     const json = super.toJSON(...arguments);
     json.file_ids = this.fileIds();
     if (this.draft) {
@@ -21,26 +24,47 @@ export default class Draft extends Message {
     return json;
   }
 
-  save(params, callback = null) {
-    if (!params) {
-      params = {};
+  save(params = {}, callback = null) {
+    if (this.rawMime) {
+      const err = new Error('save() cannot be called for raw MIME drafts');
+      if (callback) {
+        callback(err);
+      }
+      return Promise.reject(err);
     }
     return this._save(params, callback);
   }
 
   saveRequestBody() {
+    if (this.rawMime) {
+      throw Error('saveRequestBody() cannot be called for raw MIME drafts');
+    }
     return super.saveRequestBody(...arguments);
   }
 
+  toString() {
+    if (this.rawMime) {
+      throw Error('toString() cannot be called for raw MIME drafts');
+    }
+    super.toString();
+  }
+
   send(callback = null) {
-    let body;
-    if (this.id) {
-      body = {
-        draft_id: this.id,
-        version: this.version,
-      };
-    } else {
-      body = this.saveRequestBody();
+    let body = this.rawMime,
+      headers = { 'Content-Type': 'message/rfc822' },
+      json = false;
+
+    if (!this.rawMime) {
+      headers = {};
+      json = true;
+      if (this.id) {
+        body = {
+          draft_id: this.id,
+          version: this.version,
+        };
+      } else {
+        body = this.saveRequestBody();
+      }
     }
 
     return this.connection

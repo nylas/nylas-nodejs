@@ -74,31 +74,4 @@ describe('Message', () => {
         expect(rawMessage).toBe('MIME');
       });
     }));
-
-  describe('sendRaw', () =>
-    test('should support sending with raw MIME', () => {
-      const msg = `MIME-Version: 1.0 \
-Content-Type: text/plain; charset=UTF-8 \
-In-Reply-To: <84umizq7c4jtrew491brpa6iu-0@mailer.nylas.com> \
-References: <84umizq7c4jtrew491brpa6iu-0@mailer.nylas.com> \
-Subject: Meeting on Thursday \
-From: Bill <wbrogers@mit.edu> \
-To: Ben Bitdiddle <ben.bitdiddle@gmail.com> \
-\
-Hey Ben, \
-\
-Would you like to grab coffee @ 2pm this Thursday?`;
-
-      Message.sendRaw(testContext.connection, msg).then(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          headers: {
-            'Content-Type': 'message/rfc822',
-          },
-          method: 'POST',
-          path: '/send',
-          body: msg,
-          json: false,
-        });
-      });
-    }));
 });

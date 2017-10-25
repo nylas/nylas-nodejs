@@ -117,34 +117,6 @@ export default class Message extends RestfulModel {
     }
     return this._save(params, callback);
   }
-
-  // raw MIME send
-  static sendRaw(nylasConnection, message, callback = null) {
-    const opts = {
-      method: 'POST',
-      body: message,
-      path: '/send',
-    };
-
-    opts.headers = { 'Content-Type': 'message/rfc822' };
-    opts.json = false;
-
-    return nylasConnection
-      .request(opts)
-      .then(json => {
-        const msg = new Message(nylasConnection, json);
-        if (callback) {
-          callback(null, msg);
-        }
-        return Promise.resolve(msg);
-      })
-      .catch(function(err) {
-        if (callback) {
-          callback(err);
-        }
-        return Promise.reject(err);
-      });
-  }
 }
 Message.collectionName = 'messages';
 Message.attributes = _.extend({}, RestfulModel.attributes, {
