@@ -21,63 +21,65 @@ describe('Draft', () => {
   describe('save', () => {
     test('should do a POST request if the draft has no id', () => {
       testContext.draft.id = undefined;
-      testContext.draft.save();
-      expect(testContext.connection.request).toHaveBeenCalledWith({
-        method: 'POST',
-        body: {
-          id: undefined,
-          object: 'draft',
-          account_id: undefined,
-          to: [],
-          cc: [],
-          bcc: [],
-          from: [],
-          date: null,
-          body: '',
-          files: [],
-          unread: undefined,
-          snippet: undefined,
-          thread_id: undefined,
-          subject: '',
-          draft: undefined,
-          version: undefined,
-          folder: undefined,
-          labels: [],
-          file_ids: [],
-        },
-        qs: {},
-        path: '/drafts',
+      testContext.draft.save().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'draft',
+            account_id: undefined,
+            to: [],
+            cc: [],
+            bcc: [],
+            from: [],
+            date: null,
+            body: '',
+            files: [],
+            unread: undefined,
+            snippet: undefined,
+            thread_id: undefined,
+            subject: '',
+            draft: undefined,
+            version: undefined,
+            folder: undefined,
+            labels: [],
+            file_ids: [],
+          },
+          qs: {},
+          path: '/drafts',
+        });
       });
     });
 
     test('should do a PUT request if the draft has an id', () => {
       testContext.draft.id = 'id-1234';
-      testContext.draft.save();
-      expect(testContext.connection.request).toHaveBeenCalledWith({
-        method: 'PUT',
-        body: {
-          id: 'id-1234',
-          object: 'draft',
-          account_id: undefined,
-          to: [],
-          cc: [],
-          bcc: [],
-          from: [],
-          date: null,
-          body: '',
-          files: [],
-          unread: undefined,
-          snippet: undefined,
-          thread_id: undefined,
-          subject: '',
-          draft: undefined,
-          version: undefined,
-          folder: undefined,
-          labels: [],
-          file_ids: [],
-        },
-        qs: {},
-        path: '/drafts/id-1234',
+      testContext.draft.save().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'PUT',
+          body: {
+            id: 'id-1234',
+            object: 'draft',
+            account_id: undefined,
+            to: [],
+            cc: [],
+            bcc: [],
+            from: [],
+            date: null,
+            body: '',
+            files: [],
+            unread: undefined,
+            snippet: undefined,
+            thread_id: undefined,
+            subject: '',
+            draft: undefined,
+            version: undefined,
+            folder: undefined,
+            labels: [],
+            file_ids: [],
+          },
+          qs: {},
+          path: '/drafts/id-1234',
+        });
       });
     });
 
@@ -138,52 +140,60 @@ describe('Draft', () => {
   });
 
   describe('send', () => {
-    test('should send the draft_id and version if the draft has an id', () => {
+    test('should send the draft_id and version if the draft has an id', done => {
       testContext.draft.id = 'id-1234';
       testContext.draft.version = 2;
-      testContext.draft.send();
-      expect(testContext.connection.request).toHaveBeenCalledWith({
-        method: 'POST',
-        body: {
-          draft_id: 'id-1234',
-          version: 2,
-        },
-        path: '/send',
+      testContext.draft.send().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            draft_id: 'id-1234',
+            version: 2,
+          },
+          path: '/send',
+          headers: {},
+          json: true,
+        });
+        done();
       });
     });
 
-    test('should send the draft JSON if the draft has no id', () => {
+    test('should send the draft JSON if the draft has no id', done => {
       testContext.draft.id = undefined;
       testContext.draft.subject = 'Test Subject';
-      testContext.draft.send();
-      expect(testContext.connection.request).toHaveBeenCalledWith({
-        method: 'POST',
-        body: {
-          id: undefined,
-          object: 'draft',
-          account_id: undefined,
-          to: [],
-          cc: [],
-          bcc: [],
-          from: [],
-          date: null,
-          body: '',
-          files: [],
-          unread: undefined,
-          snippet: undefined,
-          thread_id: undefined,
-          subject: 'Test Subject',
-          draft: undefined,
-          version: undefined,
-          folder: undefined,
-          labels: [],
-          file_ids: [],
-        },
-        path: '/send',
+      testContext.draft.send().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'draft',
+            account_id: undefined,
+            to: [],
+            cc: [],
+            bcc: [],
+            from: [],
+            date: null,
+            body: '',
+            files: [],
+            unread: undefined,
+            snippet: undefined,
+            thread_id: undefined,
+            subject: 'Test Subject',
+            draft: undefined,
+            version: undefined,
+            folder: undefined,
+            labels: [],
+            file_ids: [],
+          },
+          path: '/send',
+          headers: {},
+          json: true,
+        });
+        done();
       });
     });
 
-    test('should send the draft as raw MIME if rawMime exists', () => {
+    test('should send the draft as raw MIME if rawMime exists', done => {
       const msg = `MIME-Version: 1.0 \
 Content-Type: text/plain; charset=UTF-8 \
 In-Reply-To: <84umizq7c4jtrew491brpa6iu-0@mailer.nylas.com> \
@@ -207,6 +217,7 @@ Would you like to grab coffee @ 2pm this Thursday?`;
           body: msg,
           json: false,
         });
+        done();
       });
     });
 

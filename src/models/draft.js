@@ -70,8 +70,10 @@ export default class Draft extends Message {
     return this.connection
       .request({
         method: 'POST',
-        body,
         path: '/send',
+        headers,
+        body,
+        json,
       })
       .then(json => {
         const message = new Message(this.connection, json);
