@@ -27,10 +27,7 @@ export default class Message extends RestfulModel {
     }
   }
 
-  fromJSON(json) {
-    if (!json) {
-      json = {};
-    }
+  fromJSON(json = {}) {
     super.fromJSON(json);
 
     // Only change the `draft` bit if the incoming json has an `object`
@@ -137,7 +134,6 @@ Message.attributes = _.extend({}, RestfulModel.attributes, {
     itemClass: Contact,
   }),
   date: Attributes.DateTime({
-    queryable: true,
     modelKey: 'date',
   }),
   body: Attributes.String({
@@ -148,18 +144,15 @@ Message.attributes = _.extend({}, RestfulModel.attributes, {
     itemClass: File,
   }),
   starred: Attributes.Boolean({
-    queryable: true,
     modelKey: 'starred',
   }),
   unread: Attributes.Boolean({
-    queryable: true,
     modelKey: 'unread',
   }),
   snippet: Attributes.String({
     modelKey: 'snippet',
   }),
   threadId: Attributes.String({
-    queryable: true,
     modelKey: 'threadId',
     jsonKey: 'thread_id',
   }),
@@ -169,11 +162,9 @@ Message.attributes = _.extend({}, RestfulModel.attributes, {
   draft: Attributes.Boolean({
     modelKey: 'draft',
     jsonKey: 'draft',
-    queryable: true,
   }),
   version: Attributes.Number({
     modelKey: 'version',
-    queryable: true,
   }),
   folder: Attributes.Object({
     modelKey: 'folder',
@@ -182,5 +173,8 @@ Message.attributes = _.extend({}, RestfulModel.attributes, {
   labels: Attributes.Collection({
     modelKey: 'labels',
     itemClass: Label,
+  }),
+  headers: Attributes.Object({
+    modelKey: 'headers',
   }),
 });

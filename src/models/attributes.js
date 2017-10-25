@@ -4,10 +4,9 @@
 // The Attribute class also exposes convenience methods for generating Matchers.
 
 class Attribute {
-  constructor({ modelKey, queryable, jsonKey }) {
+  constructor({ modelKey, jsonKey }) {
     this.modelKey = modelKey;
     this.jsonKey = jsonKey || modelKey;
-    this.queryable = queryable;
   }
 
   toJSON(val) {

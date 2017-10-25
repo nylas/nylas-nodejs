@@ -90,11 +90,9 @@ Thread.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'subject',
   }),
   unread: Attributes.Boolean({
-    queryable: true,
     modelKey: 'unread',
   }),
   starred: Attributes.Boolean({
-    queryable: true,
     modelKey: 'starred',
   }),
   messageIds: Attributes.StringList({
@@ -106,7 +104,6 @@ Thread.attributes = _.extend({}, RestfulModel.attributes, {
     jsonKey: 'version',
   }),
   tags: Attributes.Collection({
-    queryable: true,
     modelKey: 'tags',
     itemClass: Tag,
   }),
@@ -115,27 +112,22 @@ Thread.attributes = _.extend({}, RestfulModel.attributes, {
     itemClass: Contact,
   }),
   lastMessageTimestamp: Attributes.DateTime({
-    queryable: true,
     modelKey: 'lastMessageTimestamp',
     jsonKey: 'last_message_timestamp',
   }),
   firstMessageTimestamp: Attributes.DateTime({
-    queryable: true,
     modelKey: 'firstMessageTimestamp',
     jsonKey: 'first_message_timestamp',
   }),
   lastMessageReceivedTimestamp: Attributes.DateTime({
-    queryable: true,
     modelKey: 'lastMessageReceivedTimestamp',
     jsonKey: 'last_message_received_timestamp',
   }),
   lastMessageSentTimestamp: Attributes.DateTime({
-    queryable: true,
     modelKey: 'lastMessageSentTimestamp',
     jsonKey: 'last_message_sent_timestamp',
   }),
   hasAttachments: Attributes.Boolean({
-    queryable: true,
     modelKey: 'has_attachments',
   }),
   labels: Attributes.Collection({

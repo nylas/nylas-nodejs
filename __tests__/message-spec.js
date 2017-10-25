@@ -18,7 +18,7 @@ describe('Message', () => {
     testContext.message.id = '4333';
     testContext.message.starred = true;
     testContext.message.unread = false;
-    return Promise.onPossiblyUnhandledRejection(function(e, promise) {});
+    return Promise.onPossiblyUnhandledRejection((e, promise) => {});
   });
 
   describe('save', () => {

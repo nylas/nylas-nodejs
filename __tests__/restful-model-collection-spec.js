@@ -194,20 +194,37 @@ describe('RestfulModelCollection', () => {
   describe('first', () => {
     describe('when the request is successful', () => {
       beforeEach(() => {
-        testContext.item = { id: '123' };
+        testContext.item = {
+          id: '123',
+          headers: {
+            'In-Reply-To': null,
+            'Message-Id': '<123@mailer.nylas.com>',
+            References: [],
+          },
+        };
         testContext.items = [testContext.item];
         testContext.collection._getModelCollection = jest.fn(() => {
           return Promise.resolve(testContext.items);
         });
       });
 
-      test('should fetch one item with the provided params', () => {
-        testContext.collection.first({ from: 'ben@nylas.com' });
-        expect(testContext.collection._getModelCollection).toHaveBeenCalledWith(
-          { from: 'ben@nylas.com' },
-          0,
-          1
-        );
+      test('should fetch one item with the provided params', done => {
+        testContext.collection
+          .first({
+            from: 'ben@nylas.com',
+            view: 'expanded',
+          })
+          .then(msg => {
+            expect(
+              testContext.collection._getModelCollection
+            ).toHaveBeenCalledWith(
+              { from: 'ben@nylas.com', view: 'expanded' },
+              0,
+              1
+            );
+            expect(msg).toBe(testContext.item);
+            done();
+          });
       });
 
       test('should resolve with the first item', done => {
