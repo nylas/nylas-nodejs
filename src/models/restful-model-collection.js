@@ -251,7 +251,10 @@ export default class RestfulModelCollection {
       });
   }
 
-  _getModelCollection(params, offset, limit, path = this.path()) {
+  _getModelCollection(params, offset, limit, path) {
+    if (!path) {
+      path = this.path();
+    }
     return this.connection
       .request({
         method: 'GET',

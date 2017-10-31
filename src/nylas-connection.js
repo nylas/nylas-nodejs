@@ -59,7 +59,7 @@ module.exports = class NylasConnection {
         options.body = {};
       }
     }
-    if (!options.json) {
+    if (options.json == null) {
       options.json = true;
     }
     if (!options.downloadRequest) {
@@ -115,6 +115,8 @@ module.exports = class NylasConnection {
         } else {
           if (options.downloadRequest) {
             return resolve(response);
+          } else if (options.json === false) {
+            return resolve(JSON.parse(body));
           } else {
             return resolve(body);
           }
