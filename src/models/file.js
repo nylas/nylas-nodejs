@@ -93,10 +93,6 @@ export default class File extends RestfulModel {
   }
 
   metadata(callback = null) {
-    if (!this.id) {
-      throw new Error('Please provide a File id');
-    }
-
     return this.connection
       .request({
         path: `/files/${this.id}`,

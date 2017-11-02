@@ -3,7 +3,7 @@ import _ from 'underscore';
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
-export class Participant extends RestfulModel {
+export default class Participant extends RestfulModel {
   toJSON() {
     const json = super.toJSON(...arguments);
     if (!json['name']) {

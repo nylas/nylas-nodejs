@@ -36,10 +36,7 @@ export default class Delta {
       });
   }
 
-  startStream(cursor, params) {
-    if (!params) {
-      params = {};
-    }
+  startStream(cursor, params = {}) {
     return this._startStream(request, cursor, params);
   }
 
@@ -72,14 +69,11 @@ class DeltaStream extends EventEmitter {
   // @param {Array<string>} params.excludeTypes object types to not return deltas for (e.g., {excludeTypes: ['thread']})
   // @param {Array<string>} params.includeTypes object types to exclusively return deltas for (e.g., {includeTypes: ['thread']})
   // @param {boolean} params.expanded boolean to specify wether to request the expanded view
-  constructor(createRequest, connection, cursor, params) {
+  constructor(createRequest, connection, cursor, params = {}) {
     super(createRequest, connection, cursor, params);
     this.createRequest = createRequest;
     this.connection = connection;
     this.cursor = cursor;
-    if (!params) {
-      params = {};
-    }
     this.params = params;
     if (!(this.connection instanceof require('../nylas-connection'))) {
       throw new Error('Connection object not provided');
