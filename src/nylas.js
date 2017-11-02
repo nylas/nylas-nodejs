@@ -81,7 +81,7 @@ class Nylas {
         },
       };
 
-      return request(options, function(error, response, body) {
+      return request(options, (error, response, body) => {
         if (error) {
           reject(error);
           if (callback) {

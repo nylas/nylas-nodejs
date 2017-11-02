@@ -60,7 +60,7 @@ export default class RestfulModelCollection {
         }
         return Promise.resolve(json.count);
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
@@ -85,12 +85,9 @@ export default class RestfulModelCollection {
   }
 
   list(params = {}, callback = null) {
-    let limit = Infinity;
-    if ('limit' in params) {
-      limit = params['limit'];
-    }
-
-    return this._range({ params, limit, callback });
+    const limit = params.limit || Infinity;
+    const offset = params.offset;
+    return this._range({ params, offset, limit, callback });
   }
 
   find(id, callback = null, params = {}) {

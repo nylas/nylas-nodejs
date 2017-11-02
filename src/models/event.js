@@ -57,7 +57,7 @@ export default class Event extends RestfulModel {
         }
         return Promise.resolve(this);
       })
-      .catch(function(err) {
+      .catch(err => {
         if (callback) {
           callback(err);
         }
