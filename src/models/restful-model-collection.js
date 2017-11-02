@@ -84,10 +84,7 @@ export default class RestfulModelCollection {
       });
   }
 
-  list(params, callback = null) {
-    if (!params) {
-      params = {};
-    }
+  list(params = {}, callback = null) {
     let limit = Infinity;
     if ('limit' in params) {
       limit = params['limit'];

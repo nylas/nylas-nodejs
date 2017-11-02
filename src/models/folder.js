@@ -12,10 +12,7 @@ export class Label extends RestfulModel {
     return json;
   }
 
-  save(params, callback = null) {
-    if (!params) {
-      params = {};
-    }
+  save(params = {}, callback = null) {
     return this._save(params, callback);
   }
 }

@@ -16,10 +16,7 @@ export default class RestfulModelInstance {
     return `/${this.modelClass.endpointName}`;
   }
 
-  get(params) {
-    if (!params) {
-      params = {};
-    }
+  get(params = {}) {
     return this.connection
       .request({
         method: 'GET',

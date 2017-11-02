@@ -19,10 +19,7 @@ export default class Event extends RestfulModel {
     return dct;
   }
 
-  save(params, callback = null) {
-    if (!params) {
-      params = {};
-    }
+  save(params = {}, callback = null) {
     return this._save(params, callback);
   }
 

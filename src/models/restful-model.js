@@ -60,10 +60,7 @@ export default class RestfulModel {
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
   // They should instead define a save() function which calls _save.
-  _save(params, callback = null) {
-    if (!params) {
-      params = {};
-    }
+  _save(params = {}, callback = null) {
     if (_.isFunction(params)) {
       callback = params;
       params = {};

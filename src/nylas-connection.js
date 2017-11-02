@@ -16,7 +16,6 @@ import Draft from './models/draft';
 import File from './models/file';
 import Calendar from './models/calendar';
 import Event from './models/event';
-import Tag from './models/tag';
 import Delta from './models/delta';
 import { Label, Folder } from './models/folder';
 
@@ -33,7 +32,6 @@ module.exports = class NylasConnection {
     this.files = new RestfulModelCollection(File, this);
     this.calendars = new RestfulModelCollection(Calendar, this);
     this.events = new RestfulModelCollection(Event, this);
-    this.tags = new RestfulModelCollection(Tag, this);
     this.deltas = new Delta(this);
     this.labels = new RestfulModelCollection(Label, this);
     this.folders = new RestfulModelCollection(Folder, this);
