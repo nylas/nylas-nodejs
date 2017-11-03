@@ -141,13 +141,9 @@ nylas.threads.find(THREAD_ID, (err, thread) => {
 // block upon an error, or when processing is finished.
 
 nylas.threads.forEach(
-  { unread: true, from: EMAIL_ADDRESS },
-  (err, thread) => {
-    console.log(thread.subject);
-  },
-  err => {
-    console.log('Finished iterating through threads.');
-  }
+  { unread: false, from: 'chaiskye@gmail.com' },
+  thread => console.log(thread.subject),
+  err => console.log('Finished iterating through threads.')
 );
 
 // Returns an array of all matching threads, paginating the underlying API as necessary.
