@@ -77,6 +77,12 @@ export default class Draft extends Message {
       })
       .then(json => {
         const message = new Message(this.connection, json);
+
+        // We may get failures for a partial send
+        if (json.failures) {
+          message.failures = json.failures;
+        }
+
         if (callback) {
           callback(null, message);
         }
@@ -92,6 +98,9 @@ export default class Draft extends Message {
 }
 Draft.collectionName = 'drafts';
 Draft.attributes = _.extend({}, Message.attributes, {
+  version: Attributes.Number({
+    modelKey: 'version',
+  }),
   replyToMessageId: Attributes.String({
     modelKey: 'replyToMessageId',
     jsonKey: 'reply_to_message_id',

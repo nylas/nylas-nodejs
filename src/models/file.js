@@ -113,17 +113,17 @@ export default class File extends RestfulModel {
 }
 File.collectionName = 'files';
 File.attributes = _.extend({}, RestfulModel.attributes, {
-  filename: Attributes.String({
-    modelKey: 'filename',
-    jsonKey: 'filename',
+  contentType: Attributes.String({
+    modelKey: 'contentType',
+    jsonKey: 'content_type',
   }),
   size: Attributes.Number({
     modelKey: 'size',
     jsonKey: 'size',
   }),
-  contentType: Attributes.String({
-    modelKey: 'contentType',
-    jsonKey: 'content_type',
+  filename: Attributes.String({
+    modelKey: 'filename',
+    jsonKey: 'filename',
   }),
   messageIds: Attributes.Collection({
     modelKey: 'messageIds',

@@ -71,8 +71,9 @@ Event.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'calendarId',
     jsonKey: 'calendar_id',
   }),
-  busy: Attributes.Boolean({
-    modelKey: 'busy',
+  messageId: Attributes.String({
+    modelKey: 'messageId',
+    jsonKey: 'message_id',
   }),
   title: Attributes.String({
     modelKey: 'title',
@@ -80,8 +81,16 @@ Event.attributes = _.extend({}, RestfulModel.attributes, {
   description: Attributes.String({
     modelKey: 'description',
   }),
-  status: Attributes.String({
-    modelKey: 'status',
+  owner: Attributes.String({
+    modelKey: 'owner',
+  }),
+  participants: Attributes.Collection({
+    modelKey: 'participants',
+    itemClass: Participant,
+  }),
+  readOnly: Attributes.Boolean({
+    modelKey: 'readOnly',
+    jsonKey: 'read_only',
   }),
   location: Attributes.String({
     modelKey: 'location',
@@ -97,8 +106,10 @@ Event.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'end',
     jsonKey: '_end',
   }),
-  participants: Attributes.Collection({
-    modelKey: 'participants',
-    itemClass: Participant,
+  busy: Attributes.Boolean({
+    modelKey: 'busy',
+  }),
+  status: Attributes.String({
+    modelKey: 'status',
   }),
 });

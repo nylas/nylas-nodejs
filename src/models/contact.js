@@ -17,7 +17,6 @@ Contact.attributes = _.extend({}, RestfulModel.attributes, {
   name: Attributes.String({
     modelKey: 'name',
   }),
-
   email: Attributes.String({
     modelKey: 'email',
   }),

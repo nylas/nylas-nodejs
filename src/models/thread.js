@@ -37,25 +37,8 @@ export default class Thread extends RestfulModel {
 }
 Thread.collectionName = 'threads';
 Thread.attributes = _.extend({}, RestfulModel.attributes, {
-  snippet: Attributes.String({
-    modelKey: 'snippet',
-  }),
   subject: Attributes.String({
     modelKey: 'subject',
-  }),
-  unread: Attributes.Boolean({
-    modelKey: 'unread',
-  }),
-  starred: Attributes.Boolean({
-    modelKey: 'starred',
-  }),
-  messageIds: Attributes.StringList({
-    modelKey: 'messageIds',
-    jsonKey: 'message_ids',
-  }),
-  version: Attributes.String({
-    modelKey: 'version',
-    jsonKey: 'version',
   }),
   participants: Attributes.Collection({
     modelKey: 'participants',
@@ -65,10 +48,6 @@ Thread.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'lastMessageTimestamp',
     jsonKey: 'last_message_timestamp',
   }),
-  firstMessageTimestamp: Attributes.DateTime({
-    modelKey: 'firstMessageTimestamp',
-    jsonKey: 'first_message_timestamp',
-  }),
   lastMessageReceivedTimestamp: Attributes.DateTime({
     modelKey: 'lastMessageReceivedTimestamp',
     jsonKey: 'last_message_received_timestamp',
@@ -77,18 +56,43 @@ Thread.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'lastMessageSentTimestamp',
     jsonKey: 'last_message_sent_timestamp',
   }),
+  firstMessageTimestamp: Attributes.DateTime({
+    modelKey: 'firstMessageTimestamp',
+    jsonKey: 'first_message_timestamp',
+  }),
+  snippet: Attributes.String({
+    modelKey: 'snippet',
+  }),
+  unread: Attributes.Boolean({
+    modelKey: 'unread',
+  }),
+  starred: Attributes.Boolean({
+    modelKey: 'starred',
+  }),
   hasAttachments: Attributes.Boolean({
     modelKey: 'has_attachments',
+  }),
+  version: Attributes.String({
+    modelKey: 'version',
+    jsonKey: 'version',
+  }),
+  folder: Attributes.Object({
+    modelKey: 'folder',
+    itemClass: Folder,
+    jsonKey: 'folders',
   }),
   labels: Attributes.Collection({
     modelKey: 'labels',
     itemClass: Label,
     jsonKey: 'labels',
   }),
-  folder: Attributes.Object({
-    modelKey: 'folder',
-    itemClass: Folder,
-    jsonKey: 'folders',
+  messageIds: Attributes.StringList({
+    modelKey: 'messageIds',
+    jsonKey: 'message_ids',
+  }),
+  draftIds: Attributes.StringList({
+    modelKey: 'draftIds',
+    jsonKey: 'draft_ids',
   }),
   messages: Attributes.Collection({
     modelKey: 'messages',

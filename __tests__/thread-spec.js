@@ -89,6 +89,5 @@ describe('Thread', () => {
       expect(t.messages[1].id).toBe('m2');
       expect(t.drafts[0] instanceof Message).toBe(true);
       expect(t.drafts[0].id).toBe('m3');
-      expect(t.drafts[0].draft).toBe(true);
     }));
 });

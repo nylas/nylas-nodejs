@@ -18,14 +18,13 @@ export class Label extends RestfulModel {
 }
 Label.collectionName = 'labels';
 Label.attributes = _.extend({}, RestfulModel.attributes, {
-  displayName: Attributes.String({
-    modelKey: 'displayName',
-    jsonKey: 'display_name',
-  }),
-
   name: Attributes.String({
     modelKey: 'name',
     jsonKey: 'name',
+  }),
+  displayName: Attributes.String({
+    modelKey: 'displayName',
+    jsonKey: 'display_name',
   }),
 });
 

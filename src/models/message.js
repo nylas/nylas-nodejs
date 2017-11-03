@@ -1,9 +1,10 @@
 import _ from 'underscore';
 
-import File from './file';
 import RestfulModel from './restful-model';
-import Contact from './contact';
 import Attributes from './attributes';
+import File from './file';
+import Event from './event';
+import Contact from './contact';
 import { Label, Folder } from './folder';
 
 export default class Message extends RestfulModel {
@@ -25,20 +26,6 @@ export default class Message extends RestfulModel {
     if (!this.bcc) {
       this.bcc = [];
     }
-  }
-
-  fromJSON(json = {}) {
-    super.fromJSON(json);
-
-    // Only change the `draft` bit if the incoming json has an `object`
-    // property. Because of `DraftChangeSet`, it's common for incoming json
-    // to be an empty hash. In this case we want to leave the pre-existing
-    // draft bit alone.
-    if (json.object) {
-      this.draft = json.object === 'draft';
-    }
-
-    return this;
   }
 
   // We calculate the list of participants instead of grabbing it from
@@ -114,6 +101,18 @@ export default class Message extends RestfulModel {
 }
 Message.collectionName = 'messages';
 Message.attributes = _.extend({}, RestfulModel.attributes, {
+  subject: Attributes.String({
+    modelKey: 'subject',
+  }),
+  from: Attributes.Collection({
+    modelKey: 'from',
+    itemClass: Contact,
+  }),
+  replyTo: Attributes.Collection({
+    modelKey: 'replyTo',
+    jsonKey: 'reply_to',
+    itemClass: Contact,
+  }),
   to: Attributes.Collection({
     modelKey: 'to',
     itemClass: Contact,
@@ -126,42 +125,32 @@ Message.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'bcc',
     itemClass: Contact,
   }),
-  from: Attributes.Collection({
-    modelKey: 'from',
-    itemClass: Contact,
-  }),
   date: Attributes.DateTime({
     modelKey: 'date',
-  }),
-  body: Attributes.String({
-    modelKey: 'body',
-  }),
-  files: Attributes.Collection({
-    modelKey: 'files',
-    itemClass: File,
-  }),
-  starred: Attributes.Boolean({
-    modelKey: 'starred',
-  }),
-  unread: Attributes.Boolean({
-    modelKey: 'unread',
-  }),
-  snippet: Attributes.String({
-    modelKey: 'snippet',
   }),
   threadId: Attributes.String({
     modelKey: 'threadId',
     jsonKey: 'thread_id',
   }),
-  subject: Attributes.String({
-    modelKey: 'subject',
+  snippet: Attributes.String({
+    modelKey: 'snippet',
   }),
-  draft: Attributes.Boolean({
-    modelKey: 'draft',
-    jsonKey: 'draft',
+  body: Attributes.String({
+    modelKey: 'body',
   }),
-  version: Attributes.Number({
-    modelKey: 'version',
+  unread: Attributes.Boolean({
+    modelKey: 'unread',
+  }),
+  starred: Attributes.Boolean({
+    modelKey: 'starred',
+  }),
+  files: Attributes.Collection({
+    modelKey: 'files',
+    itemClass: File,
+  }),
+  events: Attributes.Collection({
+    modelKey: 'events',
+    itemClass: Event,
   }),
   folder: Attributes.Object({
     modelKey: 'folder',
