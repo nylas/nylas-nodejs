@@ -498,18 +498,15 @@ Nylas.accounts.first().then(account => {
 });
 ```
 
-Example Express App
+Example Apps
 ----
 
-An example Express app is included in the `example` directory. You can run it to see how an authentication flow might be implemented:
+We have a few example Express apps in the `example` directory that show examples for authentication and webhooks. You can run them to see how they're implemented:
 
-```
-cd example
-npm install
-DEBUG=example:* ./bin/www
-```
+`npm install` or `yarn`
+`npm start` or `yarn start`
 
-Note that you'll need to replace the Nylas App ID and Secret in `app.js` with your application's credentials.
+Note that you'll need to replace the Nylas app ID and app secret in `app.js` or create a `config.js` file with your application's credentials.
 
 
 Contributing
