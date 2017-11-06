@@ -1,20 +1,39 @@
+# Changelog
+
+### 4.0.0 / 2017-11-06
+
+* Converted Coffeescript to ES6
+* Added ESLint and Prettier for linting
+* Updated test framework from Jasmine 1.0 to Jest
+* Changed Travis to run Node 8 and lint, build, and test code in CI
+* Updated docs and example code
+* Added `search()` for messages and threads
+* Added `upgrade()` and `downgrade()` for account management
+* Added `getRaw()` for retrieving raw messages
+* **BREAKING CHANGE**: Changed API for sending raw messages to use `draft.send()` instead of `Message.sendRaw()`
+* Changed `list()` to override default `offset` with user’s
+* **BREAKING CHANGE**: Changed models for `Contact`, `Draft`, `Event`, `File`, `Folder`, `Message`, and `Thread` to accurately reflect the attribute that the API returns
+* Return headers correctly for `expanded` view for `Message` objects
+* **BREAKING CHANGE**: Return `Message` object instead of `Draft` object after send
+* Return sending failures for partial sends
+* Return server errors for SMTP exceptions on send
+* **BREAKING CHANGE**: Privatized `_range()`, `_getModel()`, and `_getModelCollection()` (not documented)
+* **BREAKING CHANGE**: Removed `draft` attribute on `Message` and `Draft` objects, since the object type is already distinguished
+* **BREAKING CHANGE**: Removed support for `Tag` objects, which has been deprecated, and instance methods on `Thread` for `Tag` changes
+* **BREAKING CHANGE**: Removed support for `generateCursor()`, which has been deprecated
+* **BREAKING CHANGE**: Removed support for the `trial` option for auth, which has been deprecated
+
 ###  3.1.1 / 2017-10-06
 
-* No longer throw an error after successful calls to Message.sendRaw
+* No longer throw an error after successful calls to `Message.sendRaw()`
 * Add status to event model
-* Don't require secret for urlForAuthentication, allowing client-side usage
-  without leaking or faking the app secret
+* Don't require secret for `urlForAuthentication()`, allowing client-side usage without leaking or faking the app secret
 * Catch rejected promises in some missing cases
-* Emit DeltaStream retry status as an event
-* Don't console.log, ever (callers should instrument desired logging)
+* Emit `DeltaStream` retry status as an event
+* Don't `console.log()`, ever (callers should instrument desired logging)
 * Fix missing fields and typos in message and thread models
 
 ### 3.0.0 / 2016-08-14
 
-* Add support for `view=expanded` option. Now all methods on that hit the api
-  can take querystring params as objects. Additionaly, you can pass in
-  `{expanded: true}` for convenience.
-* **BREAKING CHANGE**: Delta stream now also supports `view=expanded`, `exclude_types`, and
-  `include_types`, as well as any arbitrary querystring param.
-  `Delta::startStream` now takes an object as a second argument for querystring
-  params, instead of an `exclude_types` array.
+* Add support for `view=expanded` option. Now all methods on that hit the API can take querystring params as objects. Additionally, you can pass in `{expanded: true}` for convenience.
+* **BREAKING CHANGE**: `DeltaStream` now also supports `view=expanded`, `exclude_types`, and `include_types`, as well as any arbitrary query string param. `Delta::startStream` now takes an object as a second argument for query string params, instead of an `exclude_types` array.
