@@ -500,6 +500,7 @@ Example Apps
 We have a few example Express apps in the `example` directory that show examples for authentication and webhooks. You can run them to see how they're implemented:
 
 `npm install` or `yarn`
+
 `npm start` or `yarn start`
 
 Note that you'll need to replace the Nylas app ID and app secret in `app.js` or create a `config.js` file with your application's credentials.
