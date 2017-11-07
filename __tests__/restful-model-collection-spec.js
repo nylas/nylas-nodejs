@@ -73,28 +73,32 @@ describe('RestfulModelCollection', () => {
       expect(testContext.collection._getModelCollection).toHaveBeenCalledWith(
         params,
         0,
-        100
+        100,
+        '/threads'
       );
     });
 
     test('should fetch repeatedly until fewer than requested models are returned', done => {
       const params = { from: 'ben@nylas.com' };
-      testContext.collection.forEach(params, () => {}, () => {});
-      setTimeout(() => {
-        expect(
-          testContext.collection._getModelCollection.mock.calls[0]
-        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100]);
-        expect(
-          testContext.collection._getModelCollection.mock.calls[1]
-        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100]);
-        expect(
-          testContext.collection._getModelCollection.mock.calls[2]
-        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100]);
-        expect(
-          testContext.collection._getModelCollection.mock.calls[3]
-        ).toEqual([{ from: 'ben@nylas.com' }, 300, 100]);
-        done();
-      }, 5);
+      testContext.collection.forEach(
+        params,
+        () => {},
+        () => {
+          expect(
+            testContext.collection._getModelCollection.mock.calls[0]
+          ).toEqual([{ from: 'ben@nylas.com' }, 0, 100, '/threads']);
+          expect(
+            testContext.collection._getModelCollection.mock.calls[1]
+          ).toEqual([{ from: 'ben@nylas.com' }, 100, 100, '/threads']);
+          expect(
+            testContext.collection._getModelCollection.mock.calls[2]
+          ).toEqual([{ from: 'ben@nylas.com' }, 200, 100, '/threads']);
+          expect(
+            testContext.collection._getModelCollection.mock.calls[3]
+          ).toEqual([{ from: 'ben@nylas.com' }, 300, 100, '/threads']);
+          done();
+        }
+      );
     });
 
     test('should call eachCallback with each model fetched', done => {
@@ -103,12 +107,11 @@ describe('RestfulModelCollection', () => {
       testContext.collection.forEach(
         params,
         () => (eachCallCount += 1),
-        () => {}
+        () => {
+          expect(eachCallCount).toBe(313);
+          done();
+        }
       );
-      setTimeout(() => {
-        expect(eachCallCount).toBe(313);
-        done();
-      }, 5);
     });
 
     test('should call completeCallback when finished', done => {
@@ -117,12 +120,12 @@ describe('RestfulModelCollection', () => {
       testContext.collection.forEach(
         params,
         () => {},
-        () => (doneCallCount += 1)
+        () => {
+          doneCallCount += 1;
+          expect(doneCallCount).toBe(1);
+          done();
+        }
       );
-      setTimeout(() => {
-        expect(doneCallCount).toBe(1);
-        done();
-      }, 5);
     });
   });
 
@@ -220,7 +223,8 @@ describe('RestfulModelCollection', () => {
             ).toHaveBeenCalledWith(
               { from: 'ben@nylas.com', view: 'expanded' },
               0,
-              1
+              1,
+              '/threads'
             );
             expect(msg).toBe(testContext.item);
             done();
@@ -598,7 +602,7 @@ describe('RestfulModelCollection', () => {
         params,
         0,
         50,
-        null
+        '/threads'
       );
     });
 
@@ -611,37 +615,47 @@ describe('RestfulModelCollection', () => {
           subject: 'A',
         },
       ];
-      testContext.collection._range({ params, offset: 0, limit: 300 });
-      setTimeout(() => {
+      const callback = () => {
         expect(
-          testContext.collection._getModelCollection.calls[0].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100]);
+          testContext.collection._getModelCollection.mock.calls[0]
+        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100, '/threads']);
         expect(
-          testContext.collection._getModelCollection.calls[1].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100]);
+          testContext.collection._getModelCollection.mock.calls[1]
+        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100, '/threads']);
         expect(
-          testContext.collection._getModelCollection.calls[2].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100]);
-      }, 5);
+          testContext.collection._getModelCollection.mock.calls[2]
+        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100, '/threads']);
+      };
+      testContext.collection._range({
+        params,
+        callback,
+        offset: 0,
+        limit: 300,
+      });
     });
 
     test('should stop fetching if fewer than requested models are returned', () => {
       const params = { from: 'ben@nylas.com' };
-      testContext.collection._range({ params, offset: 0, limit: 10000 });
-      setTimeout(() => {
+      const callback = () => {
         expect(
-          testContext.collection._getModelCollection.calls[0].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100]);
+          testContext.collection._getModelCollection.mock.calls[0]
+        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100, '/threads']);
         expect(
-          testContext.collection._getModelCollection.calls[1].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100]);
+          testContext.collection._getModelCollection.mock.calls[1]
+        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100, '/threads']);
         expect(
-          testContext.collection._getModelCollection.calls[2].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100]);
+          testContext.collection._getModelCollection.mock.calls[2]
+        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100, '/threads']);
         expect(
-          testContext.collection._getModelCollection.calls[3].args
-        ).toEqual([{ from: 'ben@nylas.com' }, 300, 100]);
-      }, 5);
+          testContext.collection._getModelCollection.mock.calls[3]
+        ).toEqual([{ from: 'ben@nylas.com' }, 300, 100, '/threads']);
+      };
+      testContext.collection._range({
+        params,
+        callback,
+        offset: 0,
+        limit: 10000,
+      });
     });
 
     test('should call the callback with all of the loaded models', done => {
