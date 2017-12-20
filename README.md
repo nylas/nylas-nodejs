@@ -520,3 +520,8 @@ Tests can be run with:
 Our linter can be run with:
 
 `npm run lint` or `yarn lint`
+
+To use the package during local development, symlink the directory:
+
+`npm link` or `yarn link` in the `nylas-nodejs` directory
+`npm link nylas` or `yarn link nylas` in the directory with your code that uses the package
