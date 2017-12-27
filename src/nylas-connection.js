@@ -21,6 +21,7 @@ import { Label, Folder } from './models/folder';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
+const SUPPORTED_API_VERSION = '1.0';
 
 module.exports = class NylasConnection {
   constructor(accessToken) {
@@ -91,6 +92,8 @@ module.exports = class NylasConnection {
       options.headers['User-Agent'] = `Nylas Node SDK v${SDK_VERSION}`;
     }
 
+    options.headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
+
     return options;
   }
 
@@ -102,6 +105,14 @@ module.exports = class NylasConnection {
 
     return new Promise((resolve, reject) => {
       return request(options, (error, response, body = {}) => {
+        const apiVersion = response.headers['nylas-api-version'];
+        if (SUPPORTED_API_VERSION != apiVersion) {
+          console.warn(
+            `WARNING: ${SDK_VERSION} may not support Nylas API v${apiVersion}.`
+          );
+          console.warn('Upgrade package to ensure that it works properly.');
+        }
+
         if (error || response.statusCode > 299) {
           if (!error) {
             error = new Error(body.message);
