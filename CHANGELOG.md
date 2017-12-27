@@ -1,5 +1,10 @@
 # Changelog
 
+### 4.1.0 / 2017-12-27
+
+* Added variable for supported version of Nylas API - set to `1.0` and will be updated when the SDK supports later versions of the API
+* Added warnings when the version of the API that the SDK supports differs from the version of the API that the application is using 
+
 ### 4.0.0 / 2017-11-06
 
 * Converted Coffeescript to ES6
