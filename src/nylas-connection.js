@@ -105,7 +105,7 @@ module.exports = class NylasConnection {
 
     return new Promise((resolve, reject) => {
       return request(options, (error, response, body = {}) => {
-        const apiVersion = response.headers['nylas-api-version'];
+        const apiVersion = response.headers['Nylas-Api-Version'];
         if (SUPPORTED_API_VERSION != apiVersion) {
           console.warn(
             `WARNING: ${SDK_VERSION} may not support Nylas API v${apiVersion}.`
