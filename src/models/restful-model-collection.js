@@ -34,18 +34,16 @@ export default class RestfulModelCollection {
     return async.until(
       () => finished,
       callback => {
-        return this._getItems(
-          params,
-          offset,
-          REQUEST_CHUNK_SIZE
-        ).then(items => {
-          for (const item of items) {
-            eachCallback(item);
+        return this._getItems(params, offset, REQUEST_CHUNK_SIZE).then(
+          items => {
+            for (const item of items) {
+              eachCallback(item);
+            }
+            offset += items.length;
+            finished = items.length < REQUEST_CHUNK_SIZE;
+            return callback();
           }
-          offset += items.length;
-          finished = items.length < REQUEST_CHUNK_SIZE;
-          return callback();
-        });
+        );
       },
       err => {
         if (completeCallback) {

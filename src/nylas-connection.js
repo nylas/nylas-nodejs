@@ -21,7 +21,7 @@ import { Label, Folder } from './models/folder';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
-const SUPPORTED_API_VERSION = '1.0';
+const SUPPORTED_API_VERSION = '2.0-beta';
 
 module.exports = class NylasConnection {
   constructor(accessToken) {

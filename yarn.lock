@@ -2427,6 +2427,17 @@ number-is-nan@^1.0.0:
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/nwmatcher/-/nwmatcher-1.4.3.tgz#64348e3b3d80f035b40ac11563d278f8b72db89c"
 
+"nylas@file:/Users/anniecook/Code/Nylas/nylas-nodejs":
+  version "4.1.0"
+  dependencies:
+    JSONStream "1.0.4"
+    async "0.9.0"
+    backoff "2.4.1"
+    bluebird "^2.9.13"
+    clone "1.0.1"
+    request "^2.63.0"
+    underscore "^1.7.0"
+
 oauth-sign@~0.8.1, oauth-sign@~0.8.2:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.8.2.tgz#46a6ab7f0aead8deae9ec0565780b7d4efeb9d43"
