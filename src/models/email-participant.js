@@ -3,7 +3,7 @@ import _ from 'underscore';
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
-export default class Participant extends RestfulModel {
+export default class EmailParticipant extends RestfulModel {
   toJSON() {
     const json = super.toJSON(...arguments);
     if (!json['name']) {
@@ -13,15 +13,12 @@ export default class Participant extends RestfulModel {
     return json;
   }
 }
-Participant.collectionName = 'participants';
-Participant.attributes = {
+EmailParticipant.collectionName = 'email-participants';
+EmailParticipant.attributes = {
   name: Attributes.String({
     modelKey: 'name',
   }),
   email: Attributes.String({
     modelKey: 'email',
-  }),
-  status: Attributes.String({
-    modelKey: 'status',
   }),
 };

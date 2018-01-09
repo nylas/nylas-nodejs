@@ -4,7 +4,7 @@ import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import File from './file';
 import Event from './event';
-import Contact from './contact';
+import EmailParticipant from './email-participant';
 import { Label, Folder } from './folder';
 
 export default class Message extends RestfulModel {
@@ -105,24 +105,24 @@ Message.attributes = _.extend({}, RestfulModel.attributes, {
   }),
   from: Attributes.Collection({
     modelKey: 'from',
-    itemClass: Contact,
+    itemClass: EmailParticipant,
   }),
   replyTo: Attributes.Collection({
     modelKey: 'replyTo',
     jsonKey: 'reply_to',
-    itemClass: Contact,
+    itemClass: EmailParticipant,
   }),
   to: Attributes.Collection({
     modelKey: 'to',
-    itemClass: Contact,
+    itemClass: EmailParticipant,
   }),
   cc: Attributes.Collection({
     modelKey: 'cc',
-    itemClass: Contact,
+    itemClass: EmailParticipant,
   }),
   bcc: Attributes.Collection({
     modelKey: 'bcc',
-    itemClass: Contact,
+    itemClass: EmailParticipant,
   }),
   date: Attributes.DateTime({
     modelKey: 'date',

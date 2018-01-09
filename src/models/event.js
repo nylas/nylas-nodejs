@@ -3,7 +3,7 @@ import _ from 'underscore';
 
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
-import Participant from './participant';
+import EventParticipant from './event-participant';
 
 export default class Event extends RestfulModel {
   saveRequestBody() {
@@ -86,7 +86,7 @@ Event.attributes = _.extend({}, RestfulModel.attributes, {
   }),
   participants: Attributes.Collection({
     modelKey: 'participants',
-    itemClass: Participant,
+    itemClass: EventParticipant,
   }),
   readOnly: Attributes.Boolean({
     modelKey: 'readOnly',
