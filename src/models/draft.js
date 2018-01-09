@@ -9,7 +9,6 @@ import Attributes from './attributes';
 export default class Draft extends Message {
   constructor(...args) {
     super(...args);
-    this.save = this.save.bind(this);
   }
 
   toJSON() {

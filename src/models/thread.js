@@ -10,7 +10,6 @@ export default class Thread extends RestfulModel {
   constructor(...args) {
     super(...args);
     this.fromJSON = this.fromJSON.bind(this);
-    this.save = this.save.bind(this);
   }
 
   fromJSON(json) {

@@ -10,7 +10,6 @@ import { Label, Folder } from './folder';
 export default class Message extends RestfulModel {
   constructor() {
     super(...arguments);
-    this.save = this.save.bind(this);
     if (!this.body) {
       this.body = '';
     }
