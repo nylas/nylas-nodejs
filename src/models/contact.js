@@ -123,7 +123,11 @@ WebPage.attributes = _.extend({}, RestfulModel.attributes, {
   }),
 });
 
-export default class Contact extends RestfulModel {}
+export default class Contact extends RestfulModel {
+  getPicture(params = {}, callback = null) {
+    return this._get(params, callback, '/picture');
+  }
+}
 Contact.collectionName = 'contacts';
 Contact.attributes = _.extend({}, RestfulModel.attributes, {
   givenName: Attributes.String({

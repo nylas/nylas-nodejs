@@ -88,6 +88,18 @@ export default class RestfulModel {
         return Promise.reject(err);
       });
   }
+
+  _get(params = {}, callback = null, path_suffix = '') {
+    return this.connection
+      .request({
+        method: 'GET',
+        path: `/${this.constructor.collectionName}/${this.id}${path_suffix}`,
+        qs: params,
+      })
+      .then(response => {
+        return Promise.resolve(response);
+      });
+  }
 }
 RestfulModel.attributes = {
   id: Attributes.String({
