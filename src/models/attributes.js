@@ -57,6 +57,29 @@ class AttributeStringList extends Attribute {
   }
 }
 
+class AttributeDate extends Attribute {
+  toJSON(val) {
+    if (!val) {
+      return null;
+    }
+    if (!(val instanceof Date)) {
+      throw new Error(
+        `Attempting to toJSON AttributeDate which is not a date: ${
+          this.modelKey
+        } = ${val}`
+      );
+    }
+    return val.toISOString();
+  }
+
+  fromJSON(val, parent) {
+    if (!val) {
+      return null;
+    }
+    return new Date(val);
+  }
+}
+
 class AttributeDateTime extends Attribute {
   toJSON(val) {
     if (!val) {
@@ -127,6 +150,9 @@ module.exports = {
   DateTime() {
     return new AttributeDateTime(...arguments);
   },
+  Date() {
+    return new AttributeDate(...arguments);
+  },
   Collection() {
     return new AttributeCollection(...arguments);
   },
@@ -143,4 +169,5 @@ module.exports = {
   AttributeDateTime,
   AttributeCollection,
   AttributeBoolean,
+  AttributeDate,
 };

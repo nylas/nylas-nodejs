@@ -147,7 +147,7 @@ Contact.attributes = _.extend({}, RestfulModel.attributes, {
   nickname: Attributes.String({
     modelKey: 'nickname',
   }),
-  birthday: Attributes.DateTime({
+  birthday: Attributes.Date({
     modelKey: 'birthday',
   }),
   companyName: Attributes.String({
