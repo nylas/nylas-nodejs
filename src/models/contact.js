@@ -54,6 +54,7 @@ class PhysicalAddress extends RestfulModel {
       json.street_address = this.streetAddress;
       json.postal_code = this.postalCode;
       json.state = this.state;
+      json.city = this.city;
       json.country = this.country;
     }
     return json;
@@ -72,6 +73,9 @@ PhysicalAddress.attributes = _.extend({}, RestfulModel.attributes, {
   }),
   streetAddress: Attributes.String({
     modelKey: 'streetAddress',
+  }),
+  city: Attributes.String({
+    modelKey: 'city',
   }),
   postalCode: Attributes.String({
     modelKey: 'postalCode',
@@ -124,6 +128,10 @@ WebPage.attributes = _.extend({}, RestfulModel.attributes, {
 });
 
 export default class Contact extends RestfulModel {
+  save(params = {}, callback = null) {
+    return this._save(params, callback);
+  }
+
   getPicture(params = {}, callback = null) {
     return this._get(params, callback, '/picture');
   }
