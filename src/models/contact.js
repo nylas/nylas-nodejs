@@ -73,12 +73,14 @@ PhysicalAddress.attributes = _.extend({}, RestfulModel.attributes, {
   }),
   streetAddress: Attributes.String({
     modelKey: 'streetAddress',
+    jsonKey: 'street_address',
   }),
   city: Attributes.String({
     modelKey: 'city',
   }),
   postalCode: Attributes.String({
     modelKey: 'postalCode',
+    jsonKey: 'postal_code',
   }),
   state: Attributes.String({
     modelKey: 'state',
