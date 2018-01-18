@@ -60,7 +60,7 @@ class AttributeStringList extends Attribute {
 class AttributeDate extends Attribute {
   toJSON(val) {
     if (!val) {
-      return null;
+      return val;
     }
     if (!(val instanceof Date)) {
       throw new Error(

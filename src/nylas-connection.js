@@ -96,7 +96,25 @@ module.exports = class NylasConnection {
 
     return options;
   }
+  _getWarningForVersion(sdkApiVersion = null, apiVersion = null){
+    let warning = ''
+    if (sdkApiVersion != apiVersion) {
+      warning += `WARNING: SDK version may not support your Nylas API version.`
+      if (sdkApiVersion && apiVersion) {
+        warning += ` SDK supports version ${sdkApiVersion} of the API and your application is currently running on version ${apiVersion} of the API.`;
 
+        const apiNum = parseInt(apiVersion.split('-')[0]);
+        const sdkNum = parseInt(sdkApiVersion.split('-')[0]);
+
+        if (sdkNum > apiNum) {
+          warning += ` Please update the version of the API that your application is using through the developer dashboard.`;
+        } else if (apiNum > sdkNum) {
+          warning += ` Please update the sdk to ensure it works properly.`;
+        }
+      }
+    }
+    return warning;
+  }
   request(options) {
     if (!options) {
       options = {};
@@ -105,12 +123,12 @@ module.exports = class NylasConnection {
 
     return new Promise((resolve, reject) => {
       return request(options, (error, response, body = {}) => {
-        const apiVersion = response.headers['Nylas-Api-Version'];
-        if (SUPPORTED_API_VERSION != apiVersion) {
-          console.warn(
-            `WARNING: ${SDK_VERSION} may not support Nylas API v${apiVersion}.`
-          );
-          console.warn('Upgrade package to ensure that it works properly.');
+        // node headers are lowercase so this refers to `Nylas-Api-Version`
+        const apiVersion = response.headers['nylas-api-version'];
+
+        const warning = this._getWarningForVersion(SUPPORTED_API_VERSION, apiVersion)
+        if (warning) {
+          console.warn(warning)
         }
 
         if (error || response.statusCode > 299) {
