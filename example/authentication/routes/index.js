@@ -173,6 +173,16 @@ router.get('/logout', function(req, res, next) {
   res.redirect('/');
 });
 
+router.get('/get-message', function(req, res, next) {
+  // Account has been setup, let's use Nylas' Node SDK to retrieve an email
+  const nylas = Nylas.with(req.session.nylas_access_token);
+
+  // Find the first message matching the filter criteria
+  nylas.messages.first().then(function(message) {
+    res.send(message.body);
+  });
+});
+
 router.get('/', function(req, res, next) {
   if (!req.session.nylas_access_token) {
     // If the user hasn't connected their email account from any provider, send
@@ -180,13 +190,7 @@ router.get('/', function(req, res, next) {
     return res.redirect('/choose-login');
   }
 
-  // Account has been setup, let's use Nylas' Node SDK to retrieve an email
-  const nylas = Nylas.with(req.session.nylas_access_token);
-
-  // Find the first thread matching the filter criteria
-  nylas.messages.first().then(function(message) {
-    res.send(message.body);
-  });
+   res.sendFile(path.join(__dirname + '/../views/authed_account.html'))
 });
 
 module.exports = router;

@@ -59,7 +59,14 @@ You'll need to have a Nylas [developer account](https://developer.nylas.com), a
 Google Application (if you'd like to connect Google accounts), and the
 respective `client_id` and `client_secret`s.  Learn about how to setup the
 Google App to correctly work with Nylas
-[here](https://support.nylas.com/hc/en-us/articles/222176307-Google-OAuth-Setup-Guide).
+[here](https://docs.nylas.com/docs/native-auth-google-oauth-setup-guide).
+
+After you follow that setup doc, you'll have to configure your google client app
+to properly redirect to this example app. On the Google developer console, under 
+the credentials tab, click the edit button for the client ID that you created.
+Add `http://localhost:3000/google/oauth2callback` as an authorized redirect URI 
+and save this change. Now a user will be redirected back to to this example
+app after authenticating.
 
 ## Initial Setup
 
@@ -80,3 +87,7 @@ npm start
 ```
 
 Visit http://localhost:3000 in your browser.
+
+Auth a gmail account. After, you will be redirected back to the example
+application. To show a basic use case for what you can do after authing 
+with Nylas, we added a button to get the authed accounts most recent email!
