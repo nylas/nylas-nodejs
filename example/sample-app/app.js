@@ -12,11 +12,11 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 // setup the Nylas API
 global.Nylas = require('nylas').config({
-  appId: 'c96gge1jo29pl2rebcb7utsbp',
+  appId: '<app ID here>',
   appSecret: '<app secret here>',
 });
 
