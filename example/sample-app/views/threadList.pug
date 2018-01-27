@@ -1,8 +1,9 @@
 extends layout
 
 block content
-  h1= 'First thread from ' + account
+  h1= '10 Threads'
   div(class='frame')
-     h3= thread.subject
-     p= thread.snippet
+     each thread in threads
+        li= thread.subject
+
   a(href='/dashboard') Try Another Function

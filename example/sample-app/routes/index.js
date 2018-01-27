@@ -16,7 +16,8 @@ router.get('/', function(req, res, next) {
 router.get('/oauth/callback', function(req, res, next) {
   if (req.query.code) {
     Nylas.exchangeCodeForToken(req.query.code).then(function(token) {
-      res.redirect('/threads/top?token=' + token);
+      req.session.token = token;
+      res.redirect('/dashboard');
     });
   } else if (req.query.error) {
     res.render('error', {

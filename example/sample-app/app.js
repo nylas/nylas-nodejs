@@ -4,9 +4,12 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var assert = require('assert');
 
 var routes = require('./routes/index');
 var threads = require('./routes/threads');
+var dashboard = require('./routes/dashboard');
 
 var app = express();
 
@@ -14,11 +17,24 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// setup the Nylas API
-global.Nylas = require('nylas').config({
+var nylasAppConfigs = {
   appId: '<app ID here>',
   appSecret: '<app secret here>',
-});
+};
+
+assert.notEqual(
+  nylasAppConfigs.appId,
+  '<app ID here>',
+  'Please replace with you Nylas App ID'
+);
+assert.notEqual(
+  nylasAppConfigs.appSecret,
+  '<app secret here>',
+  'Please replace with your Nylas App Secret'
+);
+
+// setup the Nylas API
+global.Nylas = require('nylas').config(nylasAppConfigs);
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -26,10 +42,37 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+var sessionSecret = {
+  secret: '<session secret here>',
+};
+
+assert.notEqual(
+  sessionSecret.secret,
+  '<session secret here>',
+  'Please replace with your session secret'
+);
+
+app.use(
+  session(
+    Object.assign(
+      {
+        resave: false,
+        saveUninitialized: true,
+      },
+      sessionSecret
+    )
+  )
+);
 app.use(express.static(path.join(__dirname, 'public')));
 
+function checkAuth(req, res, next) {
+  if (!req.session.token) res.redirect('/');
+  next();
+}
 app.use('/', routes);
-app.use('/threads', threads);
+app.use('/threads', checkAuth, threads);
+app.use('/dashboard', checkAuth, dashboard);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
