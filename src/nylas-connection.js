@@ -96,10 +96,10 @@ module.exports = class NylasConnection {
 
     return options;
   }
-  _getWarningForVersion(sdkApiVersion = null, apiVersion = null){
-    let warning = ''
+  _getWarningForVersion(sdkApiVersion = null, apiVersion = null) {
+    let warning = '';
     if (sdkApiVersion != apiVersion) {
-      warning += `WARNING: SDK version may not support your Nylas API version.`
+      warning += `WARNING: SDK version may not support your Nylas API version.`;
       if (sdkApiVersion && apiVersion) {
         warning += ` SDK supports version ${sdkApiVersion} of the API and your application is currently running on version ${apiVersion} of the API.`;
 
@@ -126,9 +126,12 @@ module.exports = class NylasConnection {
         // node headers are lowercase so this refers to `Nylas-Api-Version`
         const apiVersion = response.headers['nylas-api-version'];
 
-        const warning = this._getWarningForVersion(SUPPORTED_API_VERSION, apiVersion)
+        const warning = this._getWarningForVersion(
+          SUPPORTED_API_VERSION,
+          apiVersion
+        );
         if (warning) {
-          console.warn(warning)
+          console.warn(warning);
         }
 
         if (error || response.statusCode > 299) {

@@ -190,7 +190,7 @@ router.get('/', function(req, res, next) {
     return res.redirect('/choose-login');
   }
 
-   res.sendFile(path.join(__dirname + '/../views/authed_account.html'))
+  res.sendFile(path.join(__dirname + '/../views/authed_account.html'));
 });
 
 module.exports = router;

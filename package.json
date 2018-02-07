@@ -6,9 +6,9 @@
   "main": "lib/nylas.js",
   "scripts": {
     "test": "jest",
-    "lint": "eslint \"./!(lib)/**/*.js\"",
+    "lint": "eslint \"./src/**/*.js\"",
     "prettier":
-      "prettier --single-quote --trailing-comma es5 --write \"./!(lib)/**/*.js\"",
+      "prettier --single-quote --trailing-comma es5 --write \"./src/**/*.js\"",
     "build": "babel src --presets babel-preset-env --out-dir lib",
     "prepublish": "yarn build",
     "watch": "nodemon -w src --exec npm run build"

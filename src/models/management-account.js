@@ -8,8 +8,9 @@ export default class ManagementAccount extends ManagementModel {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.appId}/${this.constructor.collectionName}/${this
-          .id}/upgrade`,
+        path: `/a/${this.appId}/${this.constructor.collectionName}/${
+          this.id
+        }/upgrade`,
       })
       .catch(err => Promise.reject(err));
   }
@@ -18,8 +19,9 @@ export default class ManagementAccount extends ManagementModel {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.appId}/${this.constructor.collectionName}/${this
-          .id}/downgrade`,
+        path: `/a/${this.appId}/${this.constructor.collectionName}/${
+          this.id
+        }/downgrade`,
       })
       .catch(err => Promise.reject(err));
   }

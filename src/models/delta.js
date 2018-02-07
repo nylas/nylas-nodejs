@@ -90,7 +90,9 @@ class DeltaStream extends EventEmitter {
       .on('fail', () => {
         return this.emit(
           'error',
-          `Nylas DeltaStream failed to reconnect after ${DeltaStream.MAX_RESTART_RETRIES} retries.`
+          `Nylas DeltaStream failed to reconnect after ${
+            DeltaStream.MAX_RESTART_RETRIES
+          } retries.`
         );
       });
   }
@@ -187,10 +189,9 @@ class DeltaStream extends EventEmitter {
   _restartConnection(n) {
     this.emit(
       'info',
-      `Restarting Nylas DeltaStream connection (attempt ${n + 1}): ${this
-        .request != null
-        ? this.request.href
-        : undefined}`
+      `Restarting Nylas DeltaStream connection (attempt ${n + 1}): ${
+        this.request != null ? this.request.href : undefined
+      }`
     );
     this.close();
     return this.open();
