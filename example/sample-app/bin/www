@@ -26,7 +26,6 @@ var server = http.createServer(app);
  */
 var localHost = `http://localhost:${port}`;
 server.listen(port, () => console.log(`> Listening on ${localHost}`));
-server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
@@ -97,3 +96,8 @@ if (process.env.NODE_ENV !== 'production') {
     console.error(err)
   }
 }
+
+// handle unhandledRejections
+process.on("unhandledRejection", (err, promise) => {
+  console.error("Unhandled promise rejection:\n" + err.stack);
+});
