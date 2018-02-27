@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('example:server');
 var http = require('http');
-
+var opn = require('opn');
 /**
  * Get port from environment and store in Express.
  */
@@ -24,7 +24,8 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-
+var localHost = `http://localhost:${port}`;
+server.listen(port, () => console.log(`> Listening on ${localHost}`));
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
@@ -87,4 +88,12 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    opn(localHost)
+  } catch (err) {
+    console.error(err)
+  }
 }
