@@ -98,10 +98,13 @@ module.exports = class NylasConnection {
   }
   _getWarningForVersion(sdkApiVersion = null, apiVersion = null) {
     let warning = '';
+
     if (sdkApiVersion != apiVersion) {
-      warning += `WARNING: SDK version may not support your Nylas API version.`;
       if (sdkApiVersion && apiVersion) {
-        warning += ` SDK supports version ${sdkApiVersion} of the API and your application is currently running on version ${apiVersion} of the API.`;
+        warning +=
+          `WARNING: SDK version may not support your Nylas API version.` +
+          ` SDK supports version ${sdkApiVersion} of the API and your application` +
+          ` is currently running on version ${apiVersion} of the API.`;
 
         const apiNum = parseInt(apiVersion.split('-')[0]);
         const sdkNum = parseInt(sdkApiVersion.split('-')[0]);
