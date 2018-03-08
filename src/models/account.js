@@ -29,4 +29,8 @@ Account.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'syncState',
     jsonKey: 'sync_state',
   }),
+  linkedAt: Attributes.DateTime({
+    modelKey: 'linkedAt',
+    jsonKey: 'linked_at',
+  }),
 });

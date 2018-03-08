@@ -6,6 +6,7 @@ import Account from '../src/models/account';
 
 describe('account', () => {
   let testContext;
+  const linkedAtNum = 1520546095;
 
   beforeEach(() => {
     testContext = {};
@@ -20,6 +21,7 @@ describe('account', () => {
         organization_unit: 'folder',
         provider: 'eas',
         sync_state: 'running',
+        linked_at: linkedAtNum,
       })
     );
   });
@@ -30,6 +32,12 @@ describe('account', () => {
       method: 'GET',
       path: '/account',
       qs: {},
+    });
+  });
+
+  test('linkedAt exsits on account', () => {
+    testContext.connection.account.get().then(function(account) {
+      expect(account.linkedAt);
     });
   });
 });
