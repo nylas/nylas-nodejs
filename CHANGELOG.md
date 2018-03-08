@@ -1,4 +1,17 @@
 # Changelog
+### 4.2.1 / 2018-03-08
+
+* Add  status code to error to allow it to bubble up from API request errors
+* Improvements to example/sample-app 
+* Move version mismatch warning to only print if both API and SDK versions are present. This will decrease unhelpful spamming.
+* Add linkedAt to the account model
+* Parse response into JSON if it is a string.
+
+### 4.2.0 / 2018-02-07
+
+* Bump supported Nylas API version to 2.0
+* Add support for new contact fields and functionality
+
 
 ### 4.1.0 / 2017-12-27
 
