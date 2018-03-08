@@ -141,6 +141,9 @@ module.exports = class NylasConnection {
           if (body.server_error) {
             error = `${error.message} (Server Error: ${body.server_error})`;
           }
+          if (response.statusCode) {
+            error.statusCode = response.statusCode;
+          }
           return reject(error);
         } else {
           if (options.downloadRequest) {
