@@ -137,6 +137,12 @@ module.exports = class NylasConnection {
           console.warn(warning);
         }
 
+        // raw MIMI emails have json === false and the body is a string so
+        // we need to turn into JSON before we can access fields
+        if (options.json === false) {
+          body = JSON.parse(body);
+        }
+
         if (error || response.statusCode > 299) {
           if (!error) {
             error = new Error(body.message);
@@ -151,8 +157,6 @@ module.exports = class NylasConnection {
         } else {
           if (options.downloadRequest) {
             return resolve(response);
-          } else if (options.json === false) {
-            return resolve(JSON.parse(body));
           } else {
             return resolve(body);
           }
