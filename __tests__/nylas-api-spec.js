@@ -172,14 +172,14 @@ describe('Nylas', () => {
       Nylas.appSecret = undefined;
       const options = { redirectURI: 'https://localhost/callback' };
       expect(Nylas.urlForAuthentication(options)).toEqual(
-        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&scope=email&login_hint=&redirect_uri=https://localhost/callback'
+        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=&redirect_uri=https://localhost/callback'
       );
     });
 
     test('should generate the correct authentication URL', () => {
       const options = { redirectURI: 'https://localhost/callback' };
       expect(Nylas.urlForAuthentication(options)).toEqual(
-        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&scope=email&login_hint=&redirect_uri=https://localhost/callback'
+        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=&redirect_uri=https://localhost/callback'
       );
     });
 
@@ -189,7 +189,18 @@ describe('Nylas', () => {
         redirectURI: 'https://localhost/callback',
       };
       expect(Nylas.urlForAuthentication(options)).toEqual(
-        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&scope=email&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback'
+        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback'
+      );
+    });
+
+    test('should add scopes when provided in the options', () => {
+      const options = {
+        loginHint: 'test@nylas.com',
+        redirectURI: 'https://localhost/callback',
+        scopes: ['calendar', 'contacts'],
+      };
+      expect(Nylas.urlForAuthentication(options)).toEqual(
+        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=test@nylas.com&redirect_uri=https://localhost/callback&scopes=calendar,contacts'
       );
     });
   });

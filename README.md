@@ -54,6 +54,12 @@ Authentication
 -----
 The Nylas REST API uses server-side (three-legged) OAuth, and the Node.js bindings provide convenience methods that simplify the OAuth process. For more information about authenticating users with Nylas, visit the [API docs](https://nylas.com/docs/#authentication).
 
+`urlForAuthentication()` takes in an `options` object, which must have a `redirectURI` property defined. Other supported, but optional, properties are:
+
+* `loginHint` - The user's email address, if known.
+* `state` - An arbitrary string that will be returned back as a query param in your `redirectURI`.
+* `scopes` - An array of which scopes you'd like to auth with. Possible items are `'email'`, `'calendar'`, and `'contacts'`. If omitted, defaults to all scopes.
+
 ### Step 1: Redirect the user to Nylas
 
 ```javascript

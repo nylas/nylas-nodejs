@@ -111,11 +111,14 @@ class Nylas {
     }
     let url = `${this.apiServer}/oauth/authorize?client_id=${
       this.appId
-    }&response_type=code&scope=email&login_hint=${
+    }&response_type=code&login_hint=${
       options.loginHint
     }&redirect_uri=${options.redirectURI}`;
     if (options.state != null) {
       url += `&state=${options.state}`;
+    }
+    if (options.scopes != null) {
+      url += `&scopes=${options.scopes.join(',')}`;
     }
     return url;
   }
