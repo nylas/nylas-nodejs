@@ -133,4 +133,8 @@ File.attributes = {
     modelKey: 'contentId',
     jsonKey: 'content_id',
   }),
+  contentDisposition: Attributes.String({
+    modelKey: 'contentDisposition',
+    jsonKey: 'content_disposition',
+  }),
 };
