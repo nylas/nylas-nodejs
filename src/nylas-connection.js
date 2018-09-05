@@ -142,13 +142,16 @@ module.exports = class NylasConnection {
         if (options.json === false) {
           body = JSON.parse(body);
         }
+        if (typeof error === 'string') {
+          error = new Error(error);
+        }
 
         if (error || response.statusCode > 299) {
           if (!error) {
             error = new Error(body.message);
           }
           if (body.server_error) {
-            error = `${error.message} (Server Error: ${body.server_error})`;
+            error.message = `${error.message} (Server Error: ${body.server_error})`;
           }
           if (response.statusCode) {
             error.statusCode = response.statusCode;
