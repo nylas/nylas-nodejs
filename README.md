@@ -14,7 +14,7 @@ API Overview
 Every resource (i.e., messages, events, contacts) is accessed via an instance of `Nylas`. Before making any requests, be sure to call `config` and initialize the `Nylas` instance with your `appId` and `appSecret`. Then, call `with` and pass it your `accessToken`. The `accessToken` allows `Nylas` to make requests for a given account's resources.
 
 ```javascript
-import Nylas from 'nylas';
+const Nylas = require('nylas');
 
 Nylas.config({
   appId: APP_ID,
@@ -63,7 +63,7 @@ The Nylas REST API uses server-side (three-legged) OAuth, and the Node.js bindin
 ### Step 1: Redirect the user to Nylas
 
 ```javascript
-import Nylas from 'nylas';
+const Nylas = require('nylas');
 
 Nylas.config({
   appId: APP_ID,
@@ -247,7 +247,7 @@ Uploading Files
 Because of a bug in the library we use to issue HTTP requests, we can't pass a stream to the file upload function, which is why we read the file directly.
 
 ```javascript
-import fs from 'fs';
+const fs = require('fs');
 
 const nylas = Nylas.with(ACCESS_TOKEN);
 
@@ -280,7 +280,7 @@ Downloading Files
 -----
 
 ```javascript
-import fs from 'fs';
+const fs = require('fs');
 
 const nylas = Nylas.with(ACCESS_TOKEN);
 
@@ -476,7 +476,7 @@ The [Nylas Sync Engine](http://github.com/nylas/sync-engine) is open-source, and
 It requires us to "auth" to it by passing the account id as an auth token. Here's an example of fetching the messages of the first account after getting the account ID:
 
 ```javascript
-import Nylas from 'nylas';
+const Nylas = require('nylas');
 
 Nylas.config({
   appId: 'appId', // Doesn't matter when running locally
