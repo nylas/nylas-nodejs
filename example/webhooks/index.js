@@ -32,7 +32,6 @@ app.get('/webhook', function(req, res) {
 });
 
 app.post('/webhook', function(req, res) {
-  res.sendStatus(200);
   // Verify the request to make sure it's actually from Nylas.
   if (!verify_nylas_request(req)) {
     console.log('Failed to verify nylas');
@@ -55,6 +54,7 @@ app.post('/webhook', function(req, res) {
     );
   }
   // Don't forget to let Nylas know that everything was pretty ok.
+  res.sendStatus(200);
 });
 
 // Each request made by Nylas includes an X-Nylas-Signature header. The header
