@@ -102,4 +102,4 @@ Draft.attributes = {
     modelKey: 'replyToMessageId',
     jsonKey: 'reply_to_message_id',
   }),
-};
+} ;
