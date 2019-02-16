@@ -111,9 +111,9 @@ class Nylas {
     }
     let url = `${this.apiServer}/oauth/authorize?client_id=${
       this.appId
-    }&response_type=code&login_hint=${
-      options.loginHint
-    }&redirect_uri=${options.redirectURI}`;
+    }&response_type=code&login_hint=${options.loginHint}&redirect_uri=${
+      options.redirectURI
+    }`;
     if (options.state != null) {
       url += `&state=${options.state}`;
     }
