@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
