@@ -1,11 +1,18 @@
 # Changelog
-### 4.2.1 / 2018-03-08
+
+### Unreleased
+
+nothing yet
+
+### 4.2.2 / 2018-03-08
 
 * Add  status code to error to allow it to bubble up from API request errors
-* Improvements to example/sample-app 
+* Improvements to example/sample-app
 * Move version mismatch warning to only print if both API and SDK versions are present. This will decrease unhelpful spamming.
 * Add linkedAt to the account model
 * Parse response into JSON if it is a string.
+
+Note: version 4.2.1 was not released.
 
 ### 4.2.0 / 2018-02-07
 
@@ -16,7 +23,7 @@
 ### 4.1.0 / 2017-12-27
 
 * Added variable for supported version of Nylas API - set to `1.0` and will be updated when the SDK supports later versions of the API
-* Added warnings when the version of the API that the SDK supports differs from the version of the API that the application is using 
+* Added warnings when the version of the API that the SDK supports differs from the version of the API that the application is using
 
 ### 4.0.0 / 2017-11-06
 
