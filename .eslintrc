@@ -14,8 +14,9 @@
       "singleQuote": true,
       "trailingComma": "es5"
     }],
-    "prefer-const": "warn",
+    "prefer-const": "warn"
   },
+  "parser": "babel-eslint",
   "parserOptions": {
     "sourceType": "module"
   }
