@@ -71,7 +71,7 @@ export default class File extends RestfulModel {
       })
       .then(response => {
         let filename;
-        const file = _.extend(response.headers, { body: response.body });
+        const file = { ...response.headers, body: response.body };
         if ('content-disposition' in file) {
           filename =
             /filename=([^;]*)/.exec(file['content-disposition'])[1] ||
@@ -112,7 +112,8 @@ export default class File extends RestfulModel {
   }
 }
 File.collectionName = 'files';
-File.attributes = _.extend({}, RestfulModel.attributes, {
+File.attributes = {
+  ...RestfulModel.attributes,
   contentType: Attributes.String({
     modelKey: 'contentType',
     jsonKey: 'content_type',
@@ -134,4 +135,4 @@ File.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'contentId',
     jsonKey: 'content_id',
   }),
-});
+};

@@ -6,7 +6,8 @@ import Attributes from './attributes';
 export default class Account extends RestfulModel {}
 Account.collectionName = 'accounts';
 Account.endpointName = 'account';
-Account.attributes = _.extend({}, RestfulModel.attributes, {
+Account.attributes = {
+  ...RestfulModel.attributes,
   name: Attributes.String({
     modelKey: 'name',
   }),
@@ -33,4 +34,4 @@ Account.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'linkedAt',
     jsonKey: 'linked_at',
   }),
-});
+};

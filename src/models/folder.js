@@ -17,7 +17,8 @@ export class Label extends RestfulModel {
   }
 }
 Label.collectionName = 'labels';
-Label.attributes = _.extend({}, RestfulModel.attributes, {
+Label.attributes = {
+  ...RestfulModel.attributes,
   name: Attributes.String({
     modelKey: 'name',
     jsonKey: 'name',
@@ -26,7 +27,7 @@ Label.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'displayName',
     jsonKey: 'display_name',
   }),
-});
+};
 
 export class Folder extends Label {}
 Folder.collectionName = 'folders';

@@ -27,7 +27,8 @@ export default class ManagementAccount extends ManagementModel {
   }
 }
 ManagementAccount.collectionName = 'accounts';
-ManagementAccount.attributes = _.extend({}, ManagementModel.attributes, {
+ManagementAccount.attributes = {
+  ...ManagementModel.attributes,
   billingState: Attributes.String({
     modelKey: 'billingState',
     jsonKey: 'billing_state',
@@ -43,4 +44,4 @@ ManagementAccount.attributes = _.extend({}, ManagementModel.attributes, {
   trial: Attributes.Boolean({
     modelKey: 'trial',
   }),
-});
+};

@@ -58,7 +58,7 @@ export default class RestfulModelCollection {
       .request({
         method: 'GET',
         path: this.path(),
-        qs: _.extend({ view: 'count' }, params),
+        qs: { view: 'count', ...params },
       })
       .then(json => {
         if (callback) {
@@ -278,7 +278,7 @@ export default class RestfulModelCollection {
       return this.connection.request({
         method: 'GET',
         path,
-        qs: _.extend({}, params, { offset, limit }),
+        qs: { ...params, offset, limit },
       });
     }
 
@@ -307,7 +307,7 @@ export default class RestfulModelCollection {
       .request({
         method: 'GET',
         path,
-        qs: _.extend({}, params, { offset, limit }),
+        qs: { ...params, offset, limit },
       })
       .then(jsonArray => {
         const models = jsonArray.map(json => {
