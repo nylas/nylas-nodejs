@@ -115,13 +115,10 @@ class DeltaStream extends EventEmitter {
     const includeTypes =
       this.params.includeTypes != null ? this.params.includeTypes : [];
 
-    const queryObj = _.extend(
-      {},
-      _.omit(this.params, 'excludeTypes', 'includeTypes'),
-      {
-        cursor: this.cursor,
-      }
-    );
+    const queryObj = {
+      ..._.omit(this.params, 'excludeTypes', 'includeTypes'),
+      cursor: this.cursor,
+    };
     if (excludeTypes.length > 0) {
       queryObj.exclude_types = excludeTypes.join(',');
     }

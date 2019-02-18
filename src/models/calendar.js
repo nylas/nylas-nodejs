@@ -5,7 +5,8 @@ import Attributes from './attributes';
 
 export default class Calendar extends RestfulModel {}
 Calendar.collectionName = 'calendars';
-Calendar.attributes = _.extend({}, RestfulModel.attributes, {
+Calendar.attributes = {
+  ...RestfulModel.attributes,
   name: Attributes.String({
     modelKey: 'name',
   }),
@@ -16,4 +17,4 @@ Calendar.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'readOnly',
     jsonKey: 'read_only',
   }),
-});
+};

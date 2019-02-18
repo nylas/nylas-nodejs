@@ -12,7 +12,7 @@ class RestfulSubclassA extends RestfulModel {}
 class RestfulSubclassB extends RestfulModel {}
 
 class RestfulSubclassAttributes extends RestfulModel {}
-RestfulSubclassAttributes.attributes = _.extend({}, RestfulModel.attributes, {
+RestfulSubclassAttributes.attributes = { ...RestfulModel.attributes,
   testNumber: Attributes.Number({
     modelKey: 'testNumber',
     jsonKey: 'test_number',
@@ -21,7 +21,7 @@ RestfulSubclassAttributes.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'testBoolean',
     jsonKey: 'test_boolean',
   }),
-});
+};
 
 describe('RestfulModel', () => {
   let testContext;

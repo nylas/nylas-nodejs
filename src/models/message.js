@@ -103,7 +103,8 @@ export default class Message extends RestfulModel {
   }
 }
 Message.collectionName = 'messages';
-Message.attributes = _.extend({}, RestfulModel.attributes, {
+Message.attributes = {
+  ...RestfulModel.attributes,
   subject: Attributes.String({
     modelKey: 'subject',
   }),
@@ -166,4 +167,4 @@ Message.attributes = _.extend({}, RestfulModel.attributes, {
   headers: Attributes.Object({
     modelKey: 'headers',
   }),
-});
+};

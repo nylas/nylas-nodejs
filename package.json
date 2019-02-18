@@ -7,7 +7,7 @@
     "test": "jest",
     "lint": "eslint \"./src/**/*.js\"",
     "prettier": "prettier --single-quote --trailing-comma es5 --write \"./src/**/*.js\"",
-    "build": "babel src --presets @babel/preset-env --out-dir lib",
+    "build": "babel src --out-dir lib",
     "prepublish": "yarn build",
     "prepare": "yarn build",
     "watch": "nodemon -w src --exec npm run build"
@@ -33,6 +33,7 @@
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
     "@babel/preset-env": "^7.3.1",
     "eslint": "^5.14.0",
     "eslint-config-prettier": "^4.0.0",
