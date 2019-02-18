@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 import Message from './message';
 import RestfulModel from './restful-model';
 import Contact from './contact';

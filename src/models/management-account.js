@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 import ManagementModel from './management-model';
 import Attributes from './attributes';
 

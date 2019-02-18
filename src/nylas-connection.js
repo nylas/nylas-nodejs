@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import clone from 'clone';
 import request from 'request';
 import Promise from 'bluebird';

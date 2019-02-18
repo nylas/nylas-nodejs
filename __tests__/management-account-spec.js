@@ -1,6 +1,5 @@
 import Promise from 'bluebird';
 import request from 'request';
-import _ from 'underscore';
 
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';

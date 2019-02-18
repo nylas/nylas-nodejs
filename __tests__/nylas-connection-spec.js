@@ -1,5 +1,3 @@
-import _ from 'underscore';
-
 import NylasConnection from '../src/nylas-connection';
 
 import PACKAGE_JSON from '../package.json';
