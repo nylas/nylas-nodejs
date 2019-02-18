@@ -13,14 +13,15 @@ class EmailAddress extends RestfulModel {
   }
 }
 EmailAddress.collectionName = 'email_addresses';
-EmailAddress.attributes = _.extend({}, RestfulModel.attributes, {
+EmailAddress.attributes = {
+  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
   email: Attributes.String({
     modelKey: 'email',
   }),
-});
+};
 
 class IMAddress extends RestfulModel {
   toJSON() {
@@ -32,7 +33,8 @@ class IMAddress extends RestfulModel {
   }
 }
 IMAddress.collectionName = 'im_addresses';
-IMAddress.attributes = _.extend({}, RestfulModel.attributes, {
+IMAddress.attributes = {
+  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -40,7 +42,7 @@ IMAddress.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'imAddress',
     jsonKey: 'im_address',
   }),
-});
+};
 
 class PhysicalAddress extends RestfulModel {
   toJSON() {
@@ -61,7 +63,8 @@ class PhysicalAddress extends RestfulModel {
   }
 }
 PhysicalAddress.collectionName = 'physical_addresses';
-PhysicalAddress.attributes = _.extend({}, RestfulModel.attributes, {
+PhysicalAddress.attributes = {
+  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -88,7 +91,7 @@ PhysicalAddress.attributes = _.extend({}, RestfulModel.attributes, {
   country: Attributes.String({
     modelKey: 'country',
   }),
-});
+};
 
 class PhoneNumber extends RestfulModel {
   toJSON() {
@@ -101,14 +104,15 @@ class PhoneNumber extends RestfulModel {
 }
 
 PhoneNumber.collectionName = 'phone_numbers';
-PhoneNumber.attributes = _.extend({}, RestfulModel.attributes, {
+PhoneNumber.attributes = {
+  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
   number: Attributes.String({
     modelKey: 'number',
   }),
-});
+};
 
 class WebPage extends RestfulModel {
   toJSON() {
@@ -120,14 +124,15 @@ class WebPage extends RestfulModel {
   }
 }
 WebPage.collectionName = 'web_pages';
-WebPage.attributes = _.extend({}, RestfulModel.attributes, {
+WebPage.attributes = {
+  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
   url: Attributes.String({
     modelKey: 'url',
   }),
-});
+};
 
 export default class Contact extends RestfulModel {
   save(params = {}, callback = null) {
@@ -139,7 +144,8 @@ export default class Contact extends RestfulModel {
   }
 }
 Contact.collectionName = 'contacts';
-Contact.attributes = _.extend({}, RestfulModel.attributes, {
+Contact.attributes = {
+  ...RestfulModel.attributes,
   givenName: Attributes.String({
     modelKey: 'givenName',
     jsonKey: 'given_name',
@@ -208,4 +214,4 @@ Contact.attributes = _.extend({}, RestfulModel.attributes, {
     jsonKey: 'web_pages',
     itemClass: WebPage,
   }),
-});
+};

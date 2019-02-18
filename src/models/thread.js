@@ -35,7 +35,8 @@ export default class Thread extends RestfulModel {
   }
 }
 Thread.collectionName = 'threads';
-Thread.attributes = _.extend({}, RestfulModel.attributes, {
+Thread.attributes = {
+  ...RestfulModel.attributes,
   subject: Attributes.String({
     modelKey: 'subject',
   }),
@@ -101,4 +102,4 @@ Thread.attributes = _.extend({}, RestfulModel.attributes, {
     modelKey: 'drafts',
     itemClass: Message,
   }),
-});
+};

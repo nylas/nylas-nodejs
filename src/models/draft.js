@@ -96,7 +96,8 @@ export default class Draft extends Message {
   }
 }
 Draft.collectionName = 'drafts';
-Draft.attributes = _.extend({}, Message.attributes, {
+Draft.attributes = {
+  ...Message.attributes,
   version: Attributes.Number({
     modelKey: 'version',
   }),
@@ -104,4 +105,4 @@ Draft.attributes = _.extend({}, Message.attributes, {
     modelKey: 'replyToMessageId',
     jsonKey: 'reply_to_message_id',
   }),
-});
+};

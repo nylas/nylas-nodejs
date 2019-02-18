@@ -66,7 +66,8 @@ export default class Event extends RestfulModel {
   }
 }
 Event.collectionName = 'events';
-Event.attributes = _.extend({}, RestfulModel.attributes, {
+Event.attributes = {
+  ...RestfulModel.attributes,
   calendarId: Attributes.String({
     modelKey: 'calendarId',
     jsonKey: 'calendar_id',
@@ -112,4 +113,4 @@ Event.attributes = _.extend({}, RestfulModel.attributes, {
   status: Attributes.String({
     modelKey: 'status',
   }),
-});
+};
