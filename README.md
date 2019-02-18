@@ -519,15 +519,17 @@ We'd love your help making the Nylas Node.js SDK better. Come chat in the [Nylas
 
 Please sign the [Contributor License Agreement](https://goo.gl/forms/lKbET6S6iWsGoBbz2) before submitting pull requests. (It's similar to other projects, like NodeJS or Meteor.)
 
+We use [Yarn](https://yarnpkg.com/) instead of NPM.
+
 Tests can be run with:
 
-`npm test` or `yarn test`
+`yarn test`
 
 Our linter can be run with:
 
-`npm run lint` or `yarn lint`
+`yarn lint`
 
 To use the package during local development, symlink the directory:
 
-`npm link` or `yarn link` in the `nylas-nodejs` directory
-`npm link nylas` or `yarn link nylas` in the directory with your code that uses the package
+`yarn link` in the `nylas-nodejs` directory
+`yarn link nylas` in the directory with your code that uses the package
