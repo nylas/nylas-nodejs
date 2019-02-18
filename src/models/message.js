@@ -42,12 +42,16 @@ export default class Message extends RestfulModel {
         if (contact) {
           participants[
             `${((contact ? contact.email : undefined) != null
-              ? contact ? contact.email : undefined
+              ? contact
+                ? contact.email
+                : undefined
               : ''
             )
               .toLowerCase()
               .trim()} ${((contact ? contact.name : undefined) != null
-              ? contact ? contact.name : undefined
+              ? contact
+                ? contact.name
+                : undefined
               : ''
             )
               .toLowerCase()
