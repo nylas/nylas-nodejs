@@ -1,20 +1,23 @@
 {
   "name": "nylas",
   "version": "4.2.2",
-  "description":
-    "A NodeJS wrapper for the Nylas REST API for email, contacts, and calendar.",
+  "description": "A NodeJS wrapper for the Nylas REST API for email, contacts, and calendar.",
   "main": "lib/nylas.js",
   "scripts": {
     "test": "jest",
     "lint": "eslint \"./src/**/*.js\"",
-    "prettier":
-      "prettier --single-quote --trailing-comma es5 --write \"./src/**/*.js\"",
-    "build": "babel src --presets babel-preset-env --out-dir lib",
+    "prettier": "prettier --single-quote --trailing-comma es5 --write \"./src/**/*.js\"",
+    "build": "babel src --presets @babel/preset-env --out-dir lib",
     "prepublish": "yarn build",
     "prepare": "yarn build",
     "watch": "nodemon -w src --exec npm run build"
   },
-  "keywords": ["email", "contacts", "calendar", "nylas"],
+  "keywords": [
+    "email",
+    "contacts",
+    "calendar",
+    "nylas"
+  ],
   "author": "Nylas, Inc.",
   "license": "MIT",
   "dependencies": {
@@ -28,8 +31,9 @@
     "underscore": "^1.7.0"
   },
   "devDependencies": {
-    "babel-cli": "6",
-    "babel-preset-env": "^1.6.0",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
     "eslint": "^5.14.0",
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-prettier": "^3.0.1",
