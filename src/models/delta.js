@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import omit from 'lodash/omit';
 import backoff from 'backoff';
 import JSONStream from 'JSONStream';
 import Promise from 'bluebird';
@@ -116,7 +116,7 @@ class DeltaStream extends EventEmitter {
       this.params.includeTypes != null ? this.params.includeTypes : [];
 
     const queryObj = {
-      ..._.omit(this.params, 'excludeTypes', 'includeTypes'),
+      ...omit(this.params, ['excludeTypes', 'includeTypes']),
       cursor: this.cursor,
     };
     if (excludeTypes.length > 0) {

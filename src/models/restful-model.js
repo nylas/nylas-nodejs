@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import _ from 'underscore';
+import isFunction from 'lodash/isFunction';
 
 import * as Attributes from './attributes';
 
@@ -61,7 +61,7 @@ export default class RestfulModel {
   // do shouldn't have to reimplement the same boilerplate.
   // They should instead define a save() function which calls _save.
   _save(params = {}, callback = null) {
-    if (_.isFunction(params)) {
+    if (isFunction(params)) {
       callback = params;
       params = {};
     }
