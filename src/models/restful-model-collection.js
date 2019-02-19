@@ -1,5 +1,5 @@
 import async from 'async';
-import _ from 'underscore';
+import isFunction from 'lodash/isFunction';
 import Promise from 'bluebird';
 
 import Message from './message';
@@ -184,7 +184,7 @@ export default class RestfulModelCollection {
 
     const id = itemOrId.id ? itemOrId.id : itemOrId;
 
-    if (_.isFunction(params)) {
+    if (isFunction(params)) {
       callback = params;
       params = {};
     }

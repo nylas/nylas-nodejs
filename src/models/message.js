@@ -1,4 +1,4 @@
-import _ from 'underscore';
+import union from 'lodash/union';
 
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
@@ -32,11 +32,7 @@ export default class Message extends RestfulModel {
   // from more dependencies.
   participants() {
     const participants = {};
-    const contacts = _.union(
-      this.to != null ? this.to : [],
-      this.cc != null ? this.cc : [],
-      this.from != null ? this.from : []
-    );
+    const contacts = union(this.to, this.cc, this.from);
     for (const contact of contacts) {
       if (contact && (contact.email ? contact.email.length : undefined) > 0) {
         if (contact) {
@@ -64,7 +60,7 @@ export default class Message extends RestfulModel {
   }
 
   fileIds() {
-    return _.map(this.files, file => file.id);
+    return (this.files || []).map(file => file.id);
   }
 
   getRaw() {
