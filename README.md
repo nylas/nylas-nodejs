@@ -521,13 +521,13 @@ Please sign the [Contributor License Agreement](https://goo.gl/forms/lKbET6S6iWs
 
 Tests can be run with:
 
-`npm test` or `yarn test`
+`npm test`
 
 Our linter can be run with:
 
-`npm run lint` or `yarn lint`
+`npm run lint`
 
 To use the package during local development, symlink the directory:
 
-`npm link` or `yarn link` in the `nylas-nodejs` directory
-`npm link nylas` or `yarn link nylas` in the directory with your code that uses the package
+`npm link` in the `nylas-nodejs` directory
+`npm link nylas` in the directory with your code that uses the package
