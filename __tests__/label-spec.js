@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import request from 'request';
 
 import Nylas from '../src/nylas';
@@ -22,7 +21,6 @@ describe('Label', () => {
     testContext.label = new Label(testContext.connection);
     testContext.label.displayName = 'Label name';
     testContext.label.name = 'Longer label name';
-    return Promise.onPossiblyUnhandledRejection((e, promise) => {});
   });
 
   describe('save', () => {

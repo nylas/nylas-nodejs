@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import isFunction from 'lodash/isFunction';
 
 import * as Attributes from './attributes';

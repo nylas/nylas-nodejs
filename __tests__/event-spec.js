@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import request from 'request';
 
 import Nylas from '../src/nylas';
@@ -13,7 +12,6 @@ describe('Event', () => {
     testContext.connection = new NylasConnection('123');
     testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.event = new Event(testContext.connection);
-    return Promise.onPossiblyUnhandledRejection((e, promise) => {});
   });
 
   describe('save', () => {

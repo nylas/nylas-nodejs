@@ -1,5 +1,3 @@
-import Promise from 'bluebird';
-
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import Contact from '../src/models/contact';
@@ -14,7 +12,6 @@ describe('Contact', () => {
       return Promise.resolve();
     });
     testContext.contact = new Contact(testContext.connection);
-    return Promise.onPossiblyUnhandledRejection((e, promise) => {});
   });
 
   describe('save', () => {

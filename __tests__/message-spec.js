@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import request from 'request';
 
 import Nylas from '../src/nylas';
@@ -17,7 +16,6 @@ describe('Message', () => {
     testContext.message.id = '4333';
     testContext.message.starred = true;
     testContext.message.unread = false;
-    return Promise.onPossiblyUnhandledRejection((e, promise) => {});
   });
 
   describe('save', () => {
@@ -37,7 +35,8 @@ describe('Message', () => {
           qs: {},
           path: '/messages/4333',
         });
-      });
+      })
+      .catch(() => {});
     });
 
     test('should do a PUT with folder if folder is defined', () => {
@@ -55,7 +54,8 @@ describe('Message', () => {
           qs: {},
           path: '/messages/4333',
         });
-      });
+      })
+      .catch(() => {});
     });
   });
 
@@ -71,6 +71,7 @@ describe('Message', () => {
           path: '/messages/4333',
         });
         expect(rawMessage).toBe('MIME');
-      });
+      })
+      .catch(() => {});
     }));
 });

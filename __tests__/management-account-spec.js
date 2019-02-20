@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import request from 'request';
 
 import Nylas from '../src/nylas';
@@ -11,7 +10,6 @@ describe('ManagementAccount', () => {
       appId: APP_ID,
       appSecret: 'xyz',
     });
-    Promise.onPossiblyUnhandledRejection((e, promise) => {});
   });
 
   describe('list', () =>
@@ -39,7 +37,8 @@ describe('ManagementAccount', () => {
             qs: { limit: 100, offset: 0 },
             path: `/a/${APP_ID}/accounts`,
           })
-        );
+        )
+        .catch(() => {});
     }));
 
   describe('upgrade', () =>
@@ -60,7 +59,8 @@ describe('ManagementAccount', () => {
             path: `/a/${APP_ID}/accounts/upgrade`,
           });
           expect(resp.success).toBe('true');
-        });
+        })
+        .catch(() => {});
     }));
 
   describe('downgrade', () =>
@@ -81,6 +81,7 @@ describe('ManagementAccount', () => {
             path: `/a/${APP_ID}/accounts/downgrade`,
           });
           expect(resp.success).toBe('true');
-        });
+        })
+        .catch(() => {});
     }));
 });

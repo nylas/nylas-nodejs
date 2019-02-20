@@ -1,5 +1,3 @@
-import Promise from 'bluebird';
-
 import File from './file';
 import Message from './message';
 import Contact from './contact';
