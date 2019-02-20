@@ -1,6 +1,5 @@
 import async from 'async';
 import isFunction from 'lodash/isFunction';
-import Promise from 'bluebird';
 
 import Message from './message';
 import Thread from './thread';

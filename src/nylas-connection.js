@@ -1,6 +1,5 @@
 import clone from 'lodash/clone';
 import request from 'request';
-import Promise from 'bluebird';
 
 import RestfulModel from './models/restful-model';
 import RestfulModelCollection from './models/restful-model-collection';

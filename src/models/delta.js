@@ -1,7 +1,6 @@
 import omit from 'lodash/omit';
 import backoff from 'backoff';
 import JSONStream from 'JSONStream';
-import Promise from 'bluebird';
 import request from 'request';
 import { EventEmitter } from 'events';
 

@@ -1,5 +1,3 @@
-import Promise from 'bluebird';
-
 export default class RestfulModelInstance {
   constructor(modelClass, connection) {
     this.modelClass = modelClass;

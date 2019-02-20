@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import request from 'request';
 
 import Nylas from '../src/nylas';
@@ -18,7 +17,6 @@ describe('Thread', () => {
     testContext.thread.id = '4333';
     testContext.thread.starred = true;
     testContext.thread.unread = false;
-    return Promise.onPossiblyUnhandledRejection((e, promise) => {});
   });
 
   describe('save', () => {
@@ -37,7 +35,8 @@ describe('Thread', () => {
           qs: {},
           path: '/threads/4333',
         })
-      );
+      )
+      .catch(() => {});
     });
 
     test('should do a PUT with folder if folder is defined', () => {

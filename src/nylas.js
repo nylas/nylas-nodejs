@@ -1,5 +1,4 @@
 import request from 'request';
-import Promise from 'bluebird';
 
 import NylasConnection from './nylas-connection';
 import ManagementAccount from './models/management-account';

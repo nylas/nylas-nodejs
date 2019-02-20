@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import request from 'request';
 
 import Nylas from '../src/nylas';
@@ -17,7 +16,6 @@ describe('File', () => {
     testContext.file.contentType = 'text/plain';
     testContext.file.filename = 'sample.txt';
     testContext.file.id = 'fileId';
-    return Promise.onPossiblyUnhandledRejection((e, promise) => {});
   });
 
   describe('upload', () => {
@@ -257,7 +255,8 @@ describe('File', () => {
           expect(err).toBe(testContext.error);
           expect(file).toBe(undefined);
           done();
-        });
+        })
+        .catch(() => {});
       });
     });
   });
