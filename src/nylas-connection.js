@@ -1,4 +1,4 @@
-import clone from 'clone';
+import clone from 'lodash/clone';
 import request from 'request';
 import Promise from 'bluebird';
 
