@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import request from 'request';
 
 import Nylas from '../src/nylas';
@@ -9,7 +8,6 @@ describe('Nylas', () => {
     Nylas.appId = undefined;
     Nylas.appSecret = undefined;
     Nylas.apiServer = 'https://api.nylas.com';
-    return Promise.onPossiblyUnhandledRejection((e, promise) => {});
   });
 
   describe('config', () => {
@@ -83,7 +81,7 @@ describe('Nylas', () => {
 
     test('should return a promise', () => {
       const p = Nylas.exchangeCodeForToken('code-from-server');
-      expect(p instanceof Promise).toBe(true);
+      expect(p).toBeInstanceOf(Promise);
     });
 
     test('should make a request to /oauth/token with the correct grant_type and client params', () => {
@@ -107,7 +105,8 @@ describe('Nylas', () => {
       Nylas.exchangeCodeForToken('code-from-server').then(accessToken => {
         expect(accessToken).toEqual('12345');
         done();
-      });
+      })
+      .catch(() => {});
     });
 
     test('should reject with the request error', done => {
@@ -131,7 +130,8 @@ describe('Nylas', () => {
             expect(accessToken).toBe('12345');
             done();
           }
-        );
+        )
+        .catch(() => {});
       });
 
       test('should call it with the request error', done => {
@@ -146,7 +146,7 @@ describe('Nylas', () => {
             expect(returnedError).toBe(error);
             done();
           }
-        );
+        ).catch(() => {});
       });
     });
   });

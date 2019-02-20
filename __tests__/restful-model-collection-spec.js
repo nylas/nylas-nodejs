@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import request from 'request';
 
 import Nylas from '../src/nylas';

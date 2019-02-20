@@ -1,5 +1,3 @@
-import Promise from 'bluebird';
-
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
 

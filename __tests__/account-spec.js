@@ -1,5 +1,3 @@
-import Promise from 'bluebird';
-
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import Account from '../src/models/account';
