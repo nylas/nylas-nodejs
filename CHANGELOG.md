@@ -4,6 +4,14 @@
 
 nothing yet
 
+### 4.2.3 / 2019-02-21
+
+* Drop unnecessary dependencies: express-session, clone
+* Replace Underscore with lodash
+* Replace Bluebird promises with native promises
+* Upgrade all other dependencies and devDependencies to latest versions
+* Reduce package size by only including `lib` directory
+
 ### 4.2.2 / 2018-03-08
 
 * Add  status code to error to allow it to bubble up from API request errors
