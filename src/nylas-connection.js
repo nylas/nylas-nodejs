@@ -22,8 +22,9 @@ const SDK_VERSION = PACKAGE_JSON.version;
 const SUPPORTED_API_VERSION = '2.0';
 
 module.exports = class NylasConnection {
-  constructor(accessToken) {
+  constructor(accessToken, { clientId }) {
     this.accessToken = accessToken;
+    this.clientId = clientId;
     this.threads = new RestfulModelCollection(Thread, this);
     this.contacts = new RestfulModelCollection(Contact, this);
     this.messages = new RestfulModelCollection(Message, this);
@@ -91,6 +92,7 @@ module.exports = class NylasConnection {
     }
 
     options.headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
+    options.headers['X-Nylas-Client-Id'] = this.clientId;
 
     return options;
   }

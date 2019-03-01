@@ -10,7 +10,7 @@ describe('Message', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('123');
+    testContext.connection = new NylasConnection('123', { clientId: "foo"});
     testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.message = new Message(testContext.connection);
     testContext.message.id = '4333';

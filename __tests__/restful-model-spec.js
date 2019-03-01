@@ -26,7 +26,7 @@ describe('RestfulModel', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('token');
+    testContext.connection = new NylasConnection('token', { clientId: "foo"});
   });
 
   test('should throw an exception unless constructed with a connection', () => {

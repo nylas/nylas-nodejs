@@ -8,7 +8,7 @@ describe('account', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('123');
+    testContext.connection = new NylasConnection('123', { clientId: "foo"});
     testContext.connection.request = jest.fn(() =>
       Promise.resolve({
         account_id: 'hecea680y4sborshkiraj17c',
@@ -33,7 +33,7 @@ describe('account', () => {
     });
   });
 
-  test('linkedAt exsits on account', () => {
+  test('linkedAt exists on account', () => {
     testContext.connection.account.get().then(function(account) {
       expect(account.linkedAt);
     });
