@@ -31,14 +31,14 @@ class Nylas {
 
     let conn;
     if (this.hostedAPI()) {
-      conn = new NylasConnection(this.appSecret);
+      conn = new NylasConnection(this.appSecret, { clientId: this.appId });
       this.accounts = new ManagementModelCollection(
         ManagementAccount,
         conn,
         this.appId
       );
     } else {
-      conn = new NylasConnection(this.appSecret);
+      conn = new NylasConnection(this.appSecret, { clientId: this.appId });
       this.accounts = new RestfulModelCollection(Account, conn, this.appId);
     }
 
@@ -53,7 +53,7 @@ class Nylas {
     if (!accessToken) {
       throw new Error('This function requires an access token');
     }
-    return new NylasConnection(accessToken);
+    return new NylasConnection(accessToken, { clientId: this.appId });
   }
 
   static exchangeCodeForToken(code, callback) {

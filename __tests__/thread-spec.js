@@ -11,7 +11,7 @@ describe('Thread', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('123');
+    testContext.connection = new NylasConnection('123', { clientId: "foo"});
     testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.thread = new Thread(testContext.connection);
     testContext.thread.id = '4333';
