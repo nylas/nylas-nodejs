@@ -10,7 +10,7 @@ describe('Draft', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('123');
+    testContext.connection = new NylasConnection('123', { clientId: "foo"});
     testContext.connection.request = jest.fn(() => Promise.resolve({}));
     testContext.draft = new Draft(testContext.connection);
   });

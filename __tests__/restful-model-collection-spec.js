@@ -15,7 +15,7 @@ describe('RestfulModelCollection', () => {
       appSecret: '123',
     });
     testContext = {};
-    testContext.connection = new NylasConnection('test-access-token');
+    testContext.connection = new NylasConnection('test-access-token', { clientId: "foo"});
     testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.collection = new RestfulModelCollection(
       Thread,

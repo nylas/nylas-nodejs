@@ -1,7 +1,4 @@
-import request from 'request';
-
 import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
 
 describe('ManagementAccount', () => {
   const APP_ID = 'abc';
