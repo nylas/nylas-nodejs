@@ -466,6 +466,12 @@ Nylas.accounts
   .first()
   .then(account => account.upgrade())
   .then(response => console.log(response));
+
+// Revoke all tokens or all but one token for an account
+Nylas.accounts
+  .first()
+  .then(account => account.revokeAll('kept_access_token'))
+  .then(response => console.log(response));
 ```
 
 Open-Source API
