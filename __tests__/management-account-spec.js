@@ -63,7 +63,7 @@ describe('ManagementAccount', () => {
   });
 
   describe('downgrade', () => {
-    test('should POST to upgrade an account', () => {
+    test('should POST to downgrade an account', () => {
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
           {
@@ -82,6 +82,50 @@ describe('ManagementAccount', () => {
           expect(resp.success).toBe('true');
         })
         .catch(() => {});
-    });
+    })
+  });
+
+  describe('revokeAll', () => {
+    test('should POST to revoke all tokens of an account', () => {
+      Nylas.accounts.connection.request = jest.fn(() =>
+        Promise.resolve([
+          {
+            success: 'true',
+          },
+        ])
+      );
+      Nylas.accounts
+        .first()
+        .then(account => account.revokeAll())
+        .then(resp => {
+          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+            method: 'POST',
+            path: `/a/${APP_ID}/accounts/revoke_all`,
+          });
+          expect(resp.success).toBe('true');
+        })
+        .catch(() => {});
+    }),
+  
+    test('should POST to revoke all tokens of an account except one token', () => {
+      Nylas.accounts.connection.request = jest.fn(() =>
+        Promise.resolve([
+          {
+            success: 'true',
+          },
+        ])
+      );
+      Nylas.accounts
+        .first()
+        .then(account => account.revokeAll('abc123')) 
+        .then(resp => {
+          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+            method: 'POST',
+            path: `/a/${APP_ID}/accounts/revoke_all`, 
+          });
+          expect(resp.success).toBe('true');
+        })
+        .catch(() => {});
+    })
   });
 });
