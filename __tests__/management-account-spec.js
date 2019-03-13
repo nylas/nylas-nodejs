@@ -11,20 +11,21 @@ describe('ManagementAccount', () => {
 
   describe('list', () => {
     test('should do a GET request to get the account list', () => {
+      console.log('this test is running')
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
           {
             account_id: '8rilmlwuo4zmpjedz8bcplclk',
             billing_state: 'free',
             id: '8rilmlwuo4zmpjedz8bcplclk',
-            namespace_id: '2lrhtr5xxrqv3hrcre54tugru',
+            namespace_id: '2lrhtr5xxrqv3hrcre54tugru', // delete this? this isn't in an API response. 
             sync_state: 'running',
             trial: false,
           },
         ])
       );
       Nylas.accounts
-        .list({}, (err, account) => {
+        .list({}, (err, accounts) => {
           expect(accounts.length).toEqual(1);
           expect(accounts[0].id).toEqual('8rilmlwuo4zmpjedz8bcplclk');
         })
@@ -85,28 +86,31 @@ describe('ManagementAccount', () => {
     })
   });
 
-  describe('revokeAll', () => {
-    test('should POST to revoke all tokens of an account', () => {
-      Nylas.accounts.connection.request = jest.fn(() =>
-        Promise.resolve([
-          {
-            success: 'true',
-          },
-        ])
-      );
-      Nylas.accounts
-        .first()
-        .then(account => account.revokeAll())
-        .then(resp => {
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
-            method: 'POST',
-            path: `/a/${APP_ID}/accounts/revoke_all`,
-          });
-          expect(resp.success).toBe('true');
-        })
-        .catch(() => {});
-    }),
-  
+  describe(
+    'revokeAll',
+    () =>
+      test('should POST to revoke all tokens of an account', () => {
+        Nylas.accounts.connection.request = jest.fn(() =>
+          Promise.resolve([
+            {
+              success: 'true',
+            },
+          ])
+        );
+        Nylas.accounts
+          .first()
+          .then(account => account.revokeAll())
+          .then(resp => {
+            expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+              method: 'POST',
+              path: `/a/${APP_ID}/accounts/revoke_all`,
+              body: { keep_access_token: undefined },
+            });
+            expect(resp.success).toBe('true');
+          })
+          .catch(() => {});
+      }),
+
     test('should POST to revoke all tokens of an account except one token', () => {
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
@@ -117,11 +121,12 @@ describe('ManagementAccount', () => {
       );
       Nylas.accounts
         .first()
-        .then(account => account.revokeAll('abc123')) 
+        .then(account => account.revokeAll('abc123'))
         .then(resp => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
-            path: `/a/${APP_ID}/accounts/revoke_all`, 
+            path: `/a/${APP_ID}/accounts/revoke_all`,
+            body: { keep_access_token: 'abc123' },
           });
           expect(resp.success).toBe('true');
         })
