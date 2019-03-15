@@ -11,8 +11,8 @@
     "lint": "eslint \"./src/**/*.js\"",
     "prettier": "prettier --single-quote --trailing-comma es5 --write \"./src/**/*.js\"",
     "build": "babel src --out-dir lib",
-    "prepublish": "yarn build",
-    "prepare": "yarn build",
+    "prepublish": "npm run build",
+    "prepare": "npm run build",
     "watch": "nodemon -w src --exec npm run build"
   },
   "keywords": [

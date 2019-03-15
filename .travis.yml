@@ -1,8 +1,13 @@
 language: node_js
 node_js:
-  - "8"
+  - 8
+  - 9
+  - 10
 
-script:
-  - yarn lint
-  - yarn build
-  - yarn test
+script: npm test
+
+matrix:
+  include:
+  - name: "eslint"
+    node_js: 11
+    script: npm run lint
