@@ -2,6 +2,10 @@
 
 ### Unreleased
 
+nothing yet
+
+### 4.3.0 / 2019-03-18
+
 * Add X-Nylas-Client-Id header for HTTP requests
 
 ### 4.2.3 / 2019-02-21
