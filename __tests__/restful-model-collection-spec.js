@@ -15,7 +15,9 @@ describe('RestfulModelCollection', () => {
       appSecret: '123',
     });
     testContext = {};
-    testContext.connection = new NylasConnection('test-access-token', { clientId: "foo"});
+    testContext.connection = new NylasConnection('test-access-token', {
+      clientId: 'foo',
+    });
     testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.collection = new RestfulModelCollection(
       Thread,
@@ -279,7 +281,7 @@ describe('RestfulModelCollection', () => {
     });
   });
 
-  describe('list', () =>
+  describe('list', () => {
     test('should call range() with an infinite range', () => {
       testContext.collection._range = jest.fn();
 
@@ -291,7 +293,8 @@ describe('RestfulModelCollection', () => {
         limit: Infinity,
         callback,
       });
-    }));
+    });
+  });
 
   describe('find', () => {
     test('should reject with an error if an id is not provided', () => {
@@ -556,10 +559,11 @@ describe('RestfulModelCollection', () => {
     });
   });
 
-  describe('path', () =>
+  describe('path', () => {
     test("should return the modelClass' collectionName with no prefix", () => {
       expect(testContext.collection.path()).toEqual('/threads');
-    }));
+    });
+  });
 
   describe('_range', () => {
     beforeEach(() => {

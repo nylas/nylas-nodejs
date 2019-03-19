@@ -9,7 +9,7 @@ describe('Delta', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('123', { clientId: "foo"});
+    testContext.connection = new NylasConnection('123', { clientId: 'foo' });
     testContext.delta = new Delta(testContext.connection);
     jest.useFakeTimers();
   });

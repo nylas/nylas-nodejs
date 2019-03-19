@@ -102,11 +102,12 @@ describe('Nylas', () => {
         options.callback(null, null, { access_token: '12345' })
       );
 
-      Nylas.exchangeCodeForToken('code-from-server').then(accessToken => {
-        expect(accessToken).toEqual('12345');
-        done();
-      })
-      .catch(() => {});
+      Nylas.exchangeCodeForToken('code-from-server')
+        .then(accessToken => {
+          expect(accessToken).toEqual('12345');
+          done();
+        })
+        .catch(() => {});
     });
 
     test('should reject with the request error', done => {
@@ -130,8 +131,7 @@ describe('Nylas', () => {
             expect(accessToken).toBe('12345');
             done();
           }
-        )
-        .catch(() => {});
+        ).catch(() => {});
       });
 
       test('should call it with the request error', done => {

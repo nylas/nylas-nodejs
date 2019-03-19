@@ -9,7 +9,7 @@ describe('ManagementAccount', () => {
     });
   });
 
-  describe('list', () =>
+  describe('list', () => {
     test('should do a GET request to get the account list', () => {
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
@@ -36,9 +36,10 @@ describe('ManagementAccount', () => {
           })
         )
         .catch(() => {});
-    }));
+    });
+  });
 
-  describe('upgrade', () =>
+  describe('upgrade', () => {
     test('should POST to upgrade an account', () => {
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
@@ -58,9 +59,10 @@ describe('ManagementAccount', () => {
           expect(resp.success).toBe('true');
         })
         .catch(() => {});
-    }));
+    });
+  });
 
-  describe('downgrade', () =>
+  describe('downgrade', () => {
     test('should POST to upgrade an account', () => {
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
@@ -80,5 +82,6 @@ describe('ManagementAccount', () => {
           expect(resp.success).toBe('true');
         })
         .catch(() => {});
-    }));
+    });
+  });
 });
