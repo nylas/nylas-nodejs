@@ -9,7 +9,7 @@ describe('File', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('123', { clientId: "foo"});
+    testContext.connection = new NylasConnection('123', { clientId: 'foo' });
     testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.file = new File(testContext.connection);
     testContext.file.data = 'Sample data';
@@ -251,12 +251,13 @@ describe('File', () => {
       });
 
       test('should call the callback with the error', done => {
-        testContext.file.metadata((err, file) => {
-          expect(err).toBe(testContext.error);
-          expect(file).toBe(undefined);
-          done();
-        })
-        .catch(() => {});
+        testContext.file
+          .metadata((err, file) => {
+            expect(err).toBe(testContext.error);
+            expect(file).toBe(undefined);
+            done();
+          })
+          .catch(() => {});
       });
     });
   });
