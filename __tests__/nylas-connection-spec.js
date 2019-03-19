@@ -8,10 +8,12 @@ describe('NylasConnection', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('test-access-token', { clientId: "foo"});
+    testContext.connection = new NylasConnection('test-access-token', {
+      clientId: 'foo',
+    });
   });
 
-  describe('requestOptions', () =>
+  describe('requestOptions', () => {
     test("should pass view='expanded' when expanded param is provided", () => {
       const options = {
         method: 'GET',
@@ -24,8 +26,9 @@ describe('NylasConnection', () => {
       expect(result.headers['User-Agent']).toEqual(
         `Nylas Node SDK v${SDK_VERSION}`
       );
-      expect(result.headers['X-Nylas-Client-Id']).toEqual("foo")
-    }));
+      expect(result.headers['X-Nylas-Client-Id']).toEqual('foo');
+    });
+  });
   describe('mismatched api version warnings', () => {
     test('should not warn if Nylas API version matches SDK supported API version', () => {
       const noWarning = testContext.connection._getWarningForVersion(

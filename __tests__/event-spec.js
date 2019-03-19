@@ -9,7 +9,7 @@ describe('Event', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('123', { clientId: "foo"});
+    testContext.connection = new NylasConnection('123', { clientId: 'foo' });
     testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.event = new Event(testContext.connection);
   });
@@ -150,7 +150,7 @@ describe('Event', () => {
     });
   });
 
-  describe('rsvp', () =>
+  describe('rsvp', () => {
     test('should do a POST request to the RSVP endpoint', () => {
       testContext.event.id = 'public_id';
       testContext.event.rsvp('yes', 'I will come.');
@@ -163,5 +163,6 @@ describe('Event', () => {
         },
         path: '/send-rsvp',
       });
-    }));
+    });
+  });
 });

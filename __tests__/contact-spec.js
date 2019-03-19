@@ -7,7 +7,7 @@ describe('Contact', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('123', { clientId: "foo"});
+    testContext.connection = new NylasConnection('123', { clientId: 'foo' });
     testContext.connection.request = jest.fn(() => {
       return Promise.resolve();
     });

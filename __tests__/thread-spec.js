@@ -11,7 +11,7 @@ describe('Thread', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('123', { clientId: "foo"});
+    testContext.connection = new NylasConnection('123', { clientId: 'foo' });
     testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.thread = new Thread(testContext.connection);
     testContext.thread.id = '4333';
@@ -24,19 +24,21 @@ describe('Thread', () => {
       const label = new Label(testContext.connection);
       label.id = 'label_id';
       testContext.thread.labels = [label];
-      testContext.thread.save().then(() =>
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'PUT',
-          body: {
-            label_ids: ['label_id'],
-            starred: true,
-            unread: false,
-          },
-          qs: {},
-          path: '/threads/4333',
-        })
-      )
-      .catch(() => {});
+      testContext.thread
+        .save()
+        .then(() =>
+          expect(testContext.connection.request).toHaveBeenCalledWith({
+            method: 'PUT',
+            body: {
+              label_ids: ['label_id'],
+              starred: true,
+              unread: false,
+            },
+            qs: {},
+            path: '/threads/4333',
+          })
+        )
+        .catch(() => {});
     });
 
     test('should do a PUT with folder if folder is defined', () => {
@@ -57,7 +59,7 @@ describe('Thread', () => {
     });
   });
 
-  describe('fromJSON', () =>
+  describe('fromJSON', () => {
     test('should populate messages and draft fields when receiving expanded thread', () => {
       const m1 = {
         id: 'm1',
@@ -87,5 +89,6 @@ describe('Thread', () => {
       expect(t.messages[1].id).toBe('m2');
       expect(t.drafts[0] instanceof Message).toBe(true);
       expect(t.drafts[0].id).toBe('m3');
-    }));
+    });
+  });
 });

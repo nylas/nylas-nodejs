@@ -16,7 +16,7 @@ describe('Label', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('123', { clientId: "foo"});
+    testContext.connection = new NylasConnection('123', { clientId: 'foo' });
     testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.label = new Label(testContext.connection);
     testContext.label.displayName = 'Label name';

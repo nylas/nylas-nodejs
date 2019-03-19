@@ -10,7 +10,8 @@ class RestfulSubclassA extends RestfulModel {}
 class RestfulSubclassB extends RestfulModel {}
 
 class RestfulSubclassAttributes extends RestfulModel {}
-RestfulSubclassAttributes.attributes = { ...RestfulModel.attributes,
+RestfulSubclassAttributes.attributes = {
+  ...RestfulModel.attributes,
   testNumber: Attributes.Number({
     modelKey: 'testNumber',
     jsonKey: 'test_number',
@@ -26,7 +27,7 @@ describe('RestfulModel', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('token', { clientId: "foo"});
+    testContext.connection = new NylasConnection('token', { clientId: 'foo' });
   });
 
   test('should throw an exception unless constructed with a connection', () => {
@@ -43,14 +44,15 @@ describe('RestfulModel', () => {
     expect(model.id).toBe('123');
   });
 
-  describe('attributes', () =>
+  describe('attributes', () => {
     test('should return the attributes attached to the class', () => {
       const model = new RestfulModel(testContext.connection, {
         object: 'thread',
         id: '123',
       });
       expect(model.attributes()).toBe(model.constructor.attributes);
-    }));
+    });
+  });
 
   describe('isEqual', () => {
     beforeEach(() => {
@@ -132,7 +134,7 @@ describe('RestfulModel', () => {
       expect(testContext.m.daysOld).toBe(undefined);
     });
 
-    describe('Attributes.Number', () =>
+    describe('Attributes.Number', () => {
       test('should read number attributes and coerce them to numeric values', () => {
         testContext.m.fromJSON({ test_number: 4 });
         expect(testContext.m.testNumber).toBe(4);
@@ -145,9 +147,10 @@ describe('RestfulModel', () => {
 
         testContext.m.fromJSON({ test_number: 0 });
         expect(testContext.m.testNumber).toBe(0);
-      }));
+      });
+    });
 
-    describe('Attributes.Boolean', () =>
+    describe('Attributes.Boolean', () => {
       test('should read `true` or true and coerce everything else to false', () => {
         testContext.m.fromJSON({ test_boolean: true });
         expect(testContext.m.testBoolean).toBe(true);
@@ -169,7 +172,8 @@ describe('RestfulModel', () => {
 
         testContext.m.fromJSON({ test_boolean: null });
         expect(testContext.m.testBoolean).toBe(false);
-      }));
+      });
+    });
   });
 
   describe('toJSON', () => {
