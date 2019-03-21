@@ -11,14 +11,12 @@ describe('ManagementAccount', () => {
 
   describe('list', () => {
     test('should do a GET request to get the account list', () => {
-      console.log('this test is running')
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
           {
             account_id: '8rilmlwuo4zmpjedz8bcplclk',
             billing_state: 'free',
             id: '8rilmlwuo4zmpjedz8bcplclk',
-            namespace_id: '2lrhtr5xxrqv3hrcre54tugru', // delete this? this isn't in an API response. 
             sync_state: 'running',
             trial: false,
           },
@@ -132,5 +130,5 @@ describe('ManagementAccount', () => {
         })
         .catch(() => {});
     })
-  });
+  );
 });
