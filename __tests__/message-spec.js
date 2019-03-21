@@ -80,4 +80,5 @@ describe('Message', () => {
         })
         .catch(() => {});
     });
+  });
 });
