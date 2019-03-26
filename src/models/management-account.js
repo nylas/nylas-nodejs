@@ -35,13 +35,13 @@ export default class ManagementAccount extends ManagementModel {
       })
       .catch(err => Promise.reject(err));
   }
- ipAddresses() {
+  ipAddresses() {
     return this.connection
-       .request({
-          method: 'GET',
-          path: `/a/${this.appId}/ip_addresses`,
-            })
-       .catch(err => Promise.reject(err));
+      .request({
+        method: 'GET',
+        path: `/a/${this.appId}/ip_addresses`,
+      })
+      .catch(err => Promise.reject(err));
   }
 }
 ManagementAccount.collectionName = 'accounts';
