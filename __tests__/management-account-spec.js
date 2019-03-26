@@ -131,4 +131,36 @@ describe('ManagementAccount', () => {
         .catch(() => {});
     })
   );
+
+  describe('ip_addresses', () => {
+    test('should do a GET request to get the ip_addresses', () => {
+      Nylas.accounts.connection.request = jest.fn(() =>
+        Promise.resolve([
+            {"ip_addresses": [
+                    "52.25.153.17",
+                    "52.26.120.161",
+                    "52.39.252.208",
+                    "54.71.62.98",
+                    "34.208.138.149",
+                    "52.88.199.110",
+                    "54.69.11.122",
+                    "54.149.110.158"
+                    ],
+             "updated_at": 1544658529
+            }
+        ])
+      );
+      Nylas.accounts
+        .first()
+        .then(account => account.ipAddresses())
+        .then( resp => {
+          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+            method: 'GET',
+            path: `/a/${APP_ID}/ip_addresses`,
+          })
+        })
+        .catch(() => {});
+    });
+  });
+
 });
