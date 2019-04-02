@@ -99,6 +99,21 @@ router.get('/oauth/callback', (req, res, next) => {
 });
 ```
 
+Getting IP Addresses to Whitelist
+-----
+
+To obtain a dynamic list of IP addresses that Nylas might use to connect.
+
+```javascript
+  const nylas = Nylas.with(ACCESS_TOKEN);
+  
+  // Get IP Addresses
+  
+  Nylas.accounts.first()
+  .then(account => account.ipAddresses())
+  .then(response => console.log(response));
+```
+
 Fetching Messages, Events, Contacts, etc.
 -----
 
