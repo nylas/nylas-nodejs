@@ -4,6 +4,10 @@
 
 nothing yet
 
+### 4.5.0 / 2019-04-02
+
+* Add support for `/ip_addresses` endpoint
+
 ### 4.4.0 / 2019-03-25
 
 * Add support for `revoke-all` endpoint
