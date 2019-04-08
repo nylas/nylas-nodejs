@@ -8,22 +8,47 @@ import ManagementModelCollection from './models/management-model-collection';
 
 class Nylas {
   constructor() {
-    this.appId = null;
-    this.appSecret = null;
+    this.clientId = null;
+    this.clientSecret = null;
   }
 
-  static config({ appId, appSecret, apiServer }) {
+  static config({ clientId, clientSecret, apiServer, ...appNames }) {
     if (apiServer && apiServer.indexOf('://') === -1) {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
       );
     }
 
-    if (appId) {
-      this.appId = appId;
+    let appId;
+    let appSecret;
+
+    for (let key in appNames) {
+      if (key === 'appId') {
+        appId = appNames[key];
+      } else if (key === 'appSecret') {
+        appSecret = appNames[key];
+      }
     }
+
+    if (appId) {
+      this.clientId = appId;
+      process.emitWarning('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.', {
+        code: 'DeprecationWarning'
+      });
+    }
+
     if (appSecret) {
-      this.appSecret = appSecret;
+      this.clientSecret = appSecret;
+      process.emitWarning('"appSecret" will be deprecated in version 5.0.0. Use "clientId" instead.', {
+        code: 'DeprecationWarning'
+      });
+    }
+
+    if (clientId) {
+      this.clientId = clientId;
+    }
+    if (clientSecret) {
+      this.clientSecret = clientSecret;
     }
     if (apiServer) {
       this.apiServer = apiServer;
@@ -31,35 +56,63 @@ class Nylas {
 
     let conn;
     if (this.hostedAPI()) {
-      conn = new NylasConnection(this.appSecret, { clientId: this.appId });
+      conn = new NylasConnection(this.clientSecret, { clientId: this.clientId });
       this.accounts = new ManagementModelCollection(
         ManagementAccount,
         conn,
-        this.appId
+        this.clientId
       );
     } else {
-      conn = new NylasConnection(this.appSecret, { clientId: this.appId });
-      this.accounts = new RestfulModelCollection(Account, conn, this.appId);
+      conn = new NylasConnection(this.clientSecret, { clientId: this.clientId });
+      this.accounts = new RestfulModelCollection(Account, conn, this.clientId);
     }
 
     return this;
   }
 
+  static get appId() {
+    process.emitWarning('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.', {
+      code: 'DeprecationWarning'
+    });
+    return this.clientId
+  }
+
+  static set appId(value) {
+    this.clientId = value;
+    process.emitWarning('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.', {
+      code: 'DeprecationWarning'
+    });
+  }
+
+  static get appSecret() {
+    process.emitWarning('"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.', {
+      code: 'DeprecationWarning'
+    });
+    return this.clientSecret
+  }
+
+  static set appSecret(value) {
+    this.clientSecret = value;
+    process.emitWarning('"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.', {
+      code: 'DeprecationWarning'
+    });
+  }
+
   static hostedAPI() {
-    return this.appId != null && this.appSecret != null;
+    return this.clientId != null && this.clientSecret != null;
   }
 
   static with(accessToken) {
     if (!accessToken) {
       throw new Error('This function requires an access token');
     }
-    return new NylasConnection(accessToken, { clientId: this.appId });
+    return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
   static exchangeCodeForToken(code, callback) {
-    if (!this.appId || !this.appSecret) {
+    if (!this.clientId || !this.clientSecret) {
       throw new Error(
-        'exchangeCodeForToken() cannot be called until you provide an appId and secret via config()'
+        'exchangeCodeForToken() cannot be called until you provide a clientId and secret via config()'
       );
     }
     if (!code) {
@@ -72,8 +125,8 @@ class Nylas {
         json: true,
         url: `${this.apiServer}/oauth/token`,
         qs: {
-          client_id: this.appId,
-          client_secret: this.appSecret,
+          client_id: this.clientId,
+          client_secret: this.clientSecret,
           grant_type: 'authorization_code',
           code: code,
         },
@@ -96,9 +149,9 @@ class Nylas {
   }
 
   static urlForAuthentication(options = {}) {
-    if (!this.appId) {
+    if (!this.clientId) {
       throw new Error(
-        'urlForAuthentication() cannot be called until you provide an appId via config()'
+        'urlForAuthentication() cannot be called until you provide a clientId via config()'
       );
     }
     if (!options.redirectURI) {

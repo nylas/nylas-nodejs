@@ -18,19 +18,19 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 var nylasAppConfigs = {
-  appId: '<app ID here>',
-  appSecret: '<app secret here>',
+  clientId: '<client ID here>',
+  clientSecret: '<client secret here>',
 };
 
 assert.notEqual(
-  nylasAppConfigs.appId,
-  '<app ID here>',
-  'Please replace with you Nylas App ID'
+  nylasAppConclients.clientId,
+  '<client ID here>',
+  'Please replace with you Nylas Client ID'
 );
 assert.notEqual(
-  nylasAppConfigs.appSecret,
-  '<app secret here>',
-  'Please replace with your Nylas App Secret'
+  nylasAppConfigs.clientSecret,
+  '<client secret here>',
+  'Please replace with your Nylas Client Secret'
 );
 
 // setup the Nylas API
