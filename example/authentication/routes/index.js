@@ -29,7 +29,7 @@ const GOOGLE_OAUTH_ACCESS_TOKEN_URL =
 function get_email_from_access_token(google_access_token) {
   const data = {
     access_token: google_access_token,
-    fields: 'email',
+    fields: ['email'],
   };
   return request
     .post({ url: GOOGLE_OAUTH_TOKEN_VALIDATION_URL, form: data })
