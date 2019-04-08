@@ -22,7 +22,7 @@ class Nylas {
     let appId;
     let appSecret;
 
-    for (let key in appNames) {
+    for (const key in appNames) {
       if (key === 'appId') {
         appId = appNames[key];
       } else if (key === 'appSecret') {
@@ -32,16 +32,22 @@ class Nylas {
 
     if (appId) {
       this.clientId = appId;
-      process.emitWarning('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.', {
-        code: 'DeprecationWarning'
-      });
+      process.emitWarning(
+        '"appId" will be deprecated in version 5.0.0. Use "clientId" instead.',
+        {
+          code: 'DeprecationWarning',
+        }
+      );
     }
 
     if (appSecret) {
       this.clientSecret = appSecret;
-      process.emitWarning('"appSecret" will be deprecated in version 5.0.0. Use "clientId" instead.', {
-        code: 'DeprecationWarning'
-      });
+      process.emitWarning(
+        '"appSecret" will be deprecated in version 5.0.0. Use "clientId" instead.',
+        {
+          code: 'DeprecationWarning',
+        }
+      );
     }
 
     if (clientId) {
@@ -56,14 +62,18 @@ class Nylas {
 
     let conn;
     if (this.hostedAPI()) {
-      conn = new NylasConnection(this.clientSecret, { clientId: this.clientId });
+      conn = new NylasConnection(this.clientSecret, {
+        clientId: this.clientId,
+      });
       this.accounts = new ManagementModelCollection(
         ManagementAccount,
         conn,
         this.clientId
       );
     } else {
-      conn = new NylasConnection(this.clientSecret, { clientId: this.clientId });
+      conn = new NylasConnection(this.clientSecret, {
+        clientId: this.clientId,
+      });
       this.accounts = new RestfulModelCollection(Account, conn, this.clientId);
     }
 
@@ -71,31 +81,43 @@ class Nylas {
   }
 
   static get appId() {
-    process.emitWarning('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.', {
-      code: 'DeprecationWarning'
-    });
-    return this.clientId
+    process.emitWarning(
+      '"appId" will be deprecated in version 5.0.0. Use "clientId" instead.',
+      {
+        code: 'DeprecationWarning',
+      }
+    );
+    return this.clientId;
   }
 
   static set appId(value) {
     this.clientId = value;
-    process.emitWarning('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.', {
-      code: 'DeprecationWarning'
-    });
+    process.emitWarning(
+      '"appId" will be deprecated in version 5.0.0. Use "clientId" instead.',
+      {
+        code: 'DeprecationWarning',
+      }
+    );
   }
 
   static get appSecret() {
-    process.emitWarning('"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.', {
-      code: 'DeprecationWarning'
-    });
-    return this.clientSecret
+    process.emitWarning(
+      '"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.',
+      {
+        code: 'DeprecationWarning',
+      }
+    );
+    return this.clientSecret;
   }
 
   static set appSecret(value) {
     this.clientSecret = value;
-    process.emitWarning('"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.', {
-      code: 'DeprecationWarning'
-    });
+    process.emitWarning(
+      '"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.',
+      {
+        code: 'DeprecationWarning',
+      }
+    );
   }
 
   static hostedAPI() {
