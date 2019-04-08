@@ -11,14 +11,14 @@ Install the Nylas SDK:
 API Overview
 ------------
 
-Every resource (i.e., messages, events, contacts) is accessed via an instance of `Nylas`. Before making any requests, be sure to call `config` and initialize the `Nylas` instance with your `appId` and `appSecret`. Then, call `with` and pass it your `accessToken`. The `accessToken` allows `Nylas` to make requests for a given account's resources.
+Every resource (i.e., messages, events, contacts) is accessed via an instance of `Nylas`. Before making any requests, be sure to call `config` and initialize the `Nylas` instance with your `clientId` and `clientSecret`. Then, call `with` and pass it your `accessToken`. The `accessToken` allows `Nylas` to make requests for a given account's resources.
 
 ```javascript
 const Nylas = require('nylas');
 
 Nylas.config({
-  appId: APP_ID,
-  appSecret: APP_SECRET,
+  clientId: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
 });
 
 const nylas = Nylas.with(ACCESS_TOKEN);
@@ -66,8 +66,8 @@ The Nylas REST API uses server-side (three-legged) OAuth, and the Node.js bindin
 const Nylas = require('nylas');
 
 Nylas.config({
-  appId: APP_ID,
-  appSecret: APP_SECRET,
+  clientId: CLIENT_ID,
+  clientSecret: CLIENT_SECRET,
 });
 
 router.get('/connect', (req, res, next) => {
@@ -509,8 +509,8 @@ It requires us to "auth" to it by passing the account id as an auth token. Here'
 const Nylas = require('nylas');
 
 Nylas.config({
-  appId: 'appId', // Doesn't matter when running locally
-  appSecret: 'appSecret', // Doesn't matter when running locally
+  clientId: 'clientId', // Doesn't matter when running locally
+  clientSecret: 'clientSecret', // Doesn't matter when running locally
   apiServer: 'http://localhost:5555',
 });
 
