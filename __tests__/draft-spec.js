@@ -80,38 +80,16 @@ describe('Draft', () => {
         payload: 'Any string you want!!',
       };
 
-      testContext.draft.id = 'id-1234';
       testContext.draft.tracking = tracking;
       testContext.draft.save().then(() => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'PUT',
+          method: 'POST',
           body: {
-            id: 'id-1234',
-            object: 'draft',
-            account_id: undefined,
-            to: [],
-            cc: [],
-            bcc: [],
-            from: [],
-            date: null,
-            body: '',
-            files: [],
-            events: [],
-            unread: undefined,
-            snippet: undefined,
-            thread_id: undefined,
-            subject: '',
-            version: undefined,
-            folder: undefined,
-            labels: [],
-            file_ids: [],
-            headers: undefined,
-            reply_to: [],
-            reply_to_message_id: undefined,
+            ...DEFAULT_DRAFT_SEND_BODY,
             tracking,
           },
           qs: {},
-          path: '/drafts/id-1234',
+          path: '/drafts',
         });
         done();
       });
