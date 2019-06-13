@@ -58,7 +58,7 @@ The Nylas REST API uses server-side (three-legged) OAuth, and the Node.js bindin
 
 * `loginHint` - The user's email address, if known.
 * `state` - An arbitrary string that will be returned back as a query param in your `redirectURI`.
-* `scopes` - An array of which scopes you'd like to auth with. Possible items are `'email'`, `'calendar'`, and `'contacts'`. If omitted, defaults to all scopes.
+* `scopes` - An array of which scopes you'd like to auth with. The Nylas API provides granular authentication scopes that empower users with control over what level of access your application has to their data. See supported [Authentication Scopes](https://docs.nylas.com/docs/authentication-scopes) for a full list of scopes and details behind the scopes. If omitted, defaults to all scopes.
 
 ### Step 1: Redirect the user to Nylas
 
@@ -73,6 +73,7 @@ Nylas.config({
 router.get('/connect', (req, res, next) => {
   options = {
     redirectURI: 'http://localhost:3000/oauth/callback',
+    scopes: ['email.read_only', 'email.send'],
   };
   res.redirect(Nylas.urlForAuthentication(options));
 });
