@@ -107,9 +107,9 @@ To obtain a dynamic list of IP addresses that Nylas might use to connect.
 
 ```javascript
   const nylas = Nylas.with(ACCESS_TOKEN);
-  
+
   // Get IP Addresses
-  
+
   Nylas.accounts.first()
   .then(account => account.ipAddresses())
   .then(response => console.log(response));
@@ -326,6 +326,29 @@ const draft = nylas.drafts.build({
   to: [{ email: 'ben@nylas.com' }],
   replyToMessageId: MESSAGE_ID,
 });
+
+// Enabling tracking
+
+  const draft = nylas.drafts.build({
+    "tracking":{
+    	"opens": true
+    },
+    "body" : "let's have coffee!",
+    "subject": "coffee",
+    "to": [
+        {
+            "name": "test",
+            "email": "test@test.com"
+        }
+    ],
+    "from": [
+    	{
+    		"name": "test2",
+    		"email": "test2@test.com"
+    }
+    ]
+  });
+
 
 // Sending the draft
 
