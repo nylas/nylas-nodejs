@@ -17,6 +17,8 @@ export default class Draft extends Message {
     if (this.draft) {
       json.object = 'draft';
     }
+
+    json['tracking'] = this.tracking;
     return json;
   }
 
