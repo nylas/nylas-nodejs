@@ -60,10 +60,10 @@ export default class Draft extends Message {
           version: this.version
         };
       } else {
-        body = this.saveRequestBody();
         if (tracking) {
           body['tracking'] = tracking;
         }
+        body = this.saveRequestBody();
       }
     }
 
