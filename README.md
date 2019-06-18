@@ -328,9 +328,6 @@ const draft = nylas.drafts.build({
 // Enabling tracking
 
   const draft = nylas.drafts.build({
-    "tracking":{
-    	"opens": true
-    },
     "body" : "let's have coffee!",
     "subject": "coffee",
     "to": [
@@ -350,7 +347,7 @@ const draft = nylas.drafts.build({
 
 // Sending the draft
 
-draft.send().then(message => {
+draft.send(tracking).then(message => {
   console.log(`${message.id} was sent`);
 });
 
