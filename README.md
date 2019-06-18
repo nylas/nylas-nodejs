@@ -107,9 +107,7 @@ To obtain a dynamic list of IP addresses that Nylas might use to connect.
 
 ```javascript
   const nylas = Nylas.with(ACCESS_TOKEN);
-
   // Get IP Addresses
-
   Nylas.accounts.first()
   .then(account => account.ipAddresses())
   .then(response => console.log(response));

@@ -44,6 +44,7 @@ describe('Draft', () => {
             headers: undefined,
             reply_to: [],
             reply_to_message_id: undefined,
+            // tracking: {}
           },
           qs: {},
           path: '/drafts',
@@ -192,6 +193,7 @@ describe('Draft', () => {
             headers: undefined,
             reply_to: [],
             reply_to_message_id: undefined,
+            tracking: {}
           },
           path: '/send',
           headers: {},
