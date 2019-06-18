@@ -43,8 +43,7 @@ describe('Draft', () => {
             file_ids: [],
             headers: undefined,
             reply_to: [],
-            reply_to_message_id: undefined,
-            // tracking: {}
+            reply_to_message_id: undefined
           },
           qs: {},
           path: '/drafts',
@@ -167,7 +166,7 @@ describe('Draft', () => {
     test('should send the draft JSON if the draft has no id', done => {
       testContext.draft.id = undefined;
       testContext.draft.subject = 'Test Subject';
-      testContext.draft.send().then(() => {
+      testContext.draft.send({"opens": true}).then(() => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
