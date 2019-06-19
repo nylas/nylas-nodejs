@@ -57,13 +57,13 @@ export default class Draft extends Message {
       if (this.id) {
         body = {
           draft_id: this.id,
-          version: this.version
+          version: this.version,
         };
       } else {
+        body = this.saveRequestBody();
         if (tracking) {
           body['tracking'] = tracking;
         }
-        body = this.saveRequestBody();
       }
     }
 
