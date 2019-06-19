@@ -326,28 +326,18 @@ const draft = nylas.drafts.build({
 });
 
 // Enabling tracking
+// NB: When passing in the tracking object, you *must* pass in null as the first parameter.
 
-  const draft = nylas.drafts.build({
-    "body" : "let's have coffee!",
-    "subject": "coffee",
-    "to": [
-        {
-            "name": "test",
-            "email": "test@test.com"
-        }
-    ],
-    "from": [
-    	{
-    		"name": "test2",
-    		"email": "test2@test.com"
-    }
-    ]
-  });
-
+const tracking = {
+  "links": true,
+  "opens": true,
+  "thread_replies": true,
+  "payload": "12345"
+}
 
 // Sending the draft
 
-draft.send(tracking).then(message => {
+draft.send(null, tracking).then(message => {
   console.log(`${message.id} was sent`);
 });
 
