@@ -77,12 +77,15 @@ The following subsections explain how key elements of the sample app were prepar
 
 The ```./example/sample-app/views``` subdirectory contains a series of Pugs to inject information into the web pages before they are rendered:
 
-* ```dashboard.pug```: The main screen containing the links to display the first thread and a list of threads.
-* ```error.pug```: Displays error information.
-* ```index.pug```: The sign-in screen.
-* ```layout.pug```: Sets up the main layout.
-* ```thread.pug```: Displays the first message thread.
-* ```threadlist.pug```: Displays a list of message threads.
+Pug|Description                                       
+---|---
+```dashboard.pug```|The main screen containing the links to display the first thread and a list of threads.
+```error.pug```|!Displays error information.
+```index.pug```|The sign-in screen.
+```layout.pug```|Sets up the main layout.
+```thread.pug```|Displays the first message thread.
+```threadlist.pug```|Displays a list of message threads.
+
 
 ### Set up the Routes
 
