@@ -80,7 +80,7 @@ The ```./example/sample-app/views``` subdirectory contains a series of Pugs to i
 Pug|Description                                       
 ---|---
 ```dashboard.pug```|The main screen containing the links to display the first thread and a list of threads.
-```error.pug```|!Displays error information.
+```error.pug```|Displays error information.
 ```index.pug```|The sign-in screen.
 ```layout.pug```|Sets up the main layout.
 ```thread.pug```|Displays the first message thread.
@@ -91,8 +91,11 @@ Pug|Description
 
 ```./example/sample-app/routes``` contains the following routes:
 
-* ```dashboard.js```: Defines the root (```/```) route that displays a message indicating that the specified email account has been linked to the Nylas account.
-* ```index.js```: Defines the root (```/```) route that displays the welcome screen with a link to sign in. The link is constructed using the ```urlForAuthentication``` API which starts the OAuth process:
+Route|Description                                       
+---|---
+```dashboard.js```|Defines the root (```/```) route that displays a message indicating that the specified email account has been linked to the Nylas account.
+```index.js```|Defines the root (```/```) route that displays the welcome screen with a link to sign in. The link is constructed using the ```urlForAuthentication``` API, which starts the OAuth process.
+
 ```shell
 router.get('/', function(req, res, next) {
   options = {
