@@ -4,6 +4,10 @@
 
 nothing yet
 
+### 4.6.0 / 2019-06-20
+
+* Enable link tracking
+
 ### 4.5.0 / 2019-04-02
 
 * Add support for `/ip_addresses` endpoint
