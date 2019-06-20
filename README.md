@@ -325,7 +325,8 @@ const draft = nylas.drafts.build({
   replyToMessageId: MESSAGE_ID,
 });
 
-//NB: When passing in the tracking object, you *must* pass in a value for callback as the first parameter.
+// Enabling Tracking
+// NB: When passing in the tracking object, you *must* pass in a value for callback as the first parameter.
 
 const tracking = {
   "links": true,
