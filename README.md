@@ -58,7 +58,7 @@ The Nylas REST API uses server-side (three-legged) OAuth, and the Node.js bindin
 
 * `loginHint` - The user's email address, if known.
 * `state` - An arbitrary string that will be returned back as a query param in your `redirectURI`.
-* `scopes` - An array of which scopes you'd like to auth with. Possible items are `'email'`, `'calendar'`, and `'contacts'`. If omitted, defaults to all scopes.
+* `scopes` - An array of which scopes you'd like to auth with. The Nylas API provides granular authentication scopes that empower users with control over what level of access your application has to their data. See supported [Authentication Scopes](https://docs.nylas.com/docs/authentication-scopes) for a full list of scopes and details behind the scopes. If omitted, defaults to all scopes.
 
 ### Step 1: Redirect the user to Nylas
 
@@ -73,6 +73,7 @@ Nylas.config({
 router.get('/connect', (req, res, next) => {
   options = {
     redirectURI: 'http://localhost:3000/oauth/callback',
+    scopes: ['email.read_only', 'email.send'],
   };
   res.redirect(Nylas.urlForAuthentication(options));
 });
@@ -106,9 +107,7 @@ To obtain a dynamic list of IP addresses that Nylas might use to connect.
 
 ```javascript
   const nylas = Nylas.with(ACCESS_TOKEN);
-  
   // Get IP Addresses
-  
   Nylas.accounts.first()
   .then(account => account.ipAddresses())
   .then(response => console.log(response));
@@ -326,9 +325,19 @@ const draft = nylas.drafts.build({
   replyToMessageId: MESSAGE_ID,
 });
 
+// Enabling tracking
+// NB: When passing in the tracking object, you *must* pass in a value for callback as the first parameter.
+
+const tracking = {
+  "links": true,
+  "opens": true,
+  "thread_replies": true,
+  "payload": "12345"
+}
+
 // Sending the draft
 
-draft.send().then(message => {
+draft.send(null, tracking).then(message => {
   console.log(`${message.id} was sent`);
 });
 
