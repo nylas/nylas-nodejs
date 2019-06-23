@@ -142,9 +142,6 @@ module.exports = class NylasConnection {
         if (options.json === false) {
           body = JSON.parse(body);
         }
-        if (typeof error === 'string') {
-          error = new Error(error);
-        }
 
         if (error || response.statusCode > 299) {
           if (!error) {
