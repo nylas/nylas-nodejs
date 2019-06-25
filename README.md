@@ -6,7 +6,7 @@ The Nylas Node.js SDK provides all of the functionality of the Nylas [REST API](
 
 * [Install](#install)
 * [Usage](#usage)
-* [Quick Start](#quick-strat)
+* [Quick Start](#quick-start)
 * [Contributing](#contributing)
 
 # Install
