@@ -17,6 +17,7 @@ export default class Draft extends Message {
     if (this.draft) {
       json.object = 'draft';
     }
+
     return json;
   }
 
@@ -45,7 +46,7 @@ export default class Draft extends Message {
     super.toString();
   }
 
-  send(callback = null) {
+  send(callback = null, tracking) {
     let body = this.rawMime,
       headers = { 'Content-Type': 'message/rfc822' },
       json = false;
@@ -60,6 +61,9 @@ export default class Draft extends Message {
         };
       } else {
         body = this.saveRequestBody();
+        if (tracking) {
+          body['tracking'] = tracking;
+        }
       }
     }
 

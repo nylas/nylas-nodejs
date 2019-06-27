@@ -148,7 +148,9 @@ module.exports = class NylasConnection {
             error = new Error(body.message);
           }
           if (body.server_error) {
-            error = `${error.message} (Server Error: ${body.server_error})`;
+            error.message = `${error.message} (Server Error: ${
+              body.server_error
+            })`;
           }
           if (response.statusCode) {
             error.statusCode = response.statusCode;

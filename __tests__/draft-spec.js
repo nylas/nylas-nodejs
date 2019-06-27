@@ -43,7 +43,7 @@ describe('Draft', () => {
             file_ids: [],
             headers: undefined,
             reply_to: [],
-            reply_to_message_id: undefined,
+            reply_to_message_id: undefined
           },
           qs: {},
           path: '/drafts',
@@ -192,6 +192,45 @@ describe('Draft', () => {
             headers: undefined,
             reply_to: [],
             reply_to_message_id: undefined,
+          },
+          path: '/send',
+          headers: {},
+          json: true,
+        });
+        done();
+      });
+    });
+
+    test('should send the draft JSON if the draft has no id and has a tracking object passed in as a parameter', done => {
+      testContext.draft.id = undefined;
+      testContext.draft.subject = 'Test Subject';
+      testContext.draft.send(null, {"opens": true}).then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'draft',
+            account_id: undefined,
+            to: [],
+            cc: [],
+            bcc: [],
+            from: [],
+            date: null,
+            body: '',
+            files: [],
+            events: [],
+            unread: undefined,
+            snippet: undefined,
+            thread_id: undefined,
+            subject: 'Test Subject',
+            version: undefined,
+            folder: undefined,
+            labels: [],
+            file_ids: [],
+            headers: undefined,
+            reply_to: [],
+            reply_to_message_id: undefined,
+            tracking: {"opens": true}
           },
           path: '/send',
           headers: {},
