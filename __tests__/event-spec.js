@@ -100,6 +100,9 @@ describe('Event', () => {
             id: 'id-1234',
             title: 'test event',
             when: {},
+            participants: [
+              {'name': 'foo', 'email': 'bar', 'status': 'noreply'}
+            ],
           };
           return Promise.resolve(eventJSON);
         });
@@ -109,6 +112,9 @@ describe('Event', () => {
         testContext.event.save().then(event => {
           expect(event.id).toBe('id-1234');
           expect(event.title).toBe('test event');
+          let participant = event.participants[0];
+          expect(participant.toJSON()).toEqual(
+            {'name': 'foo', 'email': 'bar', 'status': 'noreply'});
           done();
         });
       });
