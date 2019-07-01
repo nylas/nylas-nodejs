@@ -11,11 +11,12 @@ describe('Message', () => {
   beforeEach(() => {
     testContext = {};
     testContext.connection = new NylasConnection('123', { clientId: 'foo' });
-    testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.message = new Message(testContext.connection);
     testContext.message.id = '4333';
     testContext.message.starred = true;
     testContext.message.unread = false;
+    testContext.message.to = [{"email": "foo", "name": "bar"}];
+    testContext.connection.request = jest.fn(() => Promise.resolve(testContext.message.toJSON()));
   });
 
   describe('save', () => {
@@ -60,6 +61,16 @@ describe('Message', () => {
           });
         })
         .catch(() => {});
+    });
+
+    test('should resolve with the message object', done => {
+      testContext.message.save().then(message => {
+        expect(message.id).toBe('4333');
+        let toParticipant = message.to[0];
+        expect(toParticipant.toJSON()).toEqual(
+          {'email': 'foo', 'name': 'bar'});
+        done();
+      });
     });
   });
 

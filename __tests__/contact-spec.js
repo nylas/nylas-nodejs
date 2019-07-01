@@ -103,6 +103,10 @@ describe('Contact', () => {
           given_name: 'John',
           middle_name: 'Jacob',
           surname: 'Jingleheimer Schmidt',
+          suffix: 'II',
+          job_title: 'artist',
+          phone_numbers: [{'type': 'mobile', 'number': '555-444-3333'}],
+          physical_addresses: [{'type': 'home', 'city': 'Boston'}],
         };
         return Promise.resolve(contactJSON);
       });
@@ -114,6 +118,10 @@ describe('Contact', () => {
         expect(contact.givenName).toBe('John');
         expect(contact.middleName).toBe('Jacob');
         expect(contact.surname).toBe('Jingleheimer Schmidt');
+        expect(contact.suffix).toBe('II');
+        expect(contact.jobTitle).toBe('artist');
+        expect(contact.phoneNumbers[0].toJSON()).toEqual({'type': 'mobile', 'number': '555-444-3333'});
+        expect(contact.physicalAddresses[0].toJSON()).toEqual({'type': 'home', 'city': 'Boston'});
         done();
       });
     });
