@@ -24,18 +24,25 @@ describe('account', () => {
     );
   });
 
-  test('should fetch an account model', () => {
+  test('should fetch an account model', done => {
     testContext.connection.account.get();
     expect(testContext.connection.request).toHaveBeenCalledWith({
       method: 'GET',
       path: '/account',
       qs: {},
     });
+    done();
   });
 
-  test('linkedAt exists on account', () => {
+  test('account attributes should resolve', done => {
     testContext.connection.account.get().then(function(account) {
-      expect(account.linkedAt);
+      expect(account.id).toBe('hecea680y4sborshkiraj17c');
+      expect(account.emailAddress).toBe('jeremy@emmerge.com');
+      expect(account.organizationUnit).toBe('folder');
+      expect(account.provider).toBe('eas');
+      expect(account.syncState).toBe('running');
+      expect(account.linkedAt).toEqual(new Date(linkedAtNum * 1000));
     });
+    done();
   });
 });
