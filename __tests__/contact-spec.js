@@ -36,11 +36,12 @@ describe('Contact', () => {
             office_location: undefined,
             notes: undefined,
             picture_url: undefined,
-            email_addresses: [],
+            emails: [],
             im_addresses: [],
             physical_addresses: [],
             phone_numbers: [],
             web_pages: [],
+            groups:[],
           },
           qs: {},
           path: '/contacts',
@@ -69,11 +70,12 @@ describe('Contact', () => {
             office_location: undefined,
             notes: undefined,
             picture_url: undefined,
-            email_addresses: [],
+            emails: [],
             im_addresses: [],
             physical_addresses: [],
             phone_numbers: [],
             web_pages: [],
+            groups:[],
           },
           qs: {},
           path: '/contacts/1257',
@@ -100,13 +102,27 @@ describe('Contact', () => {
       testContext.connection.request = jest.fn(() => {
         const contactJSON = {
           id: '1257',
+          object: 'contact',
+          account_id: '1234',
           given_name: 'John',
           middle_name: 'Jacob',
           surname: 'Jingleheimer Schmidt',
           suffix: 'II',
+          nickname: 'John',
+          birthday: '2019-07-01',
+          company_name: 'Life',
           job_title: 'artist',
-          phone_numbers: [{'type': 'mobile', 'number': '555-444-3333'}],
+          manager_name: 'April',
+          office_location: 'SF, CA, USA',
+          notes: 'lalala',
+          picture_url: 'example.com',
+          emails: [{'type': 'work', 'email': 'john@test.com'}],
+          im_addresses: [{'type': 'yahoo', 'im_address': 'jjj'}],
           physical_addresses: [{'type': 'home', 'city': 'Boston'}],
+          phone_numbers: [{'type': 'mobile', 'number': '555-444-3333'}],
+          web_pages: [{'type': 'blog', 'url': 'johnblogs.com'}],
+          groups: [{id: '123', 'object': 'contact', 'account_id': '1234', 'name': 'Fam', 'path': 'Fam'}],
+          source: 'Contacts',
         };
         return Promise.resolve(contactJSON);
       });
@@ -114,14 +130,29 @@ describe('Contact', () => {
 
     test('should resolve with the contact object', done => {
       testContext.contact.save().then(contact => {
+        console.log('THIS IS THE CONTACT', contact);
         expect(contact.id).toBe('1257');
+        expect(contact.object).toBe('contact');
+        expect(contact.accountId).toBe('1234');
         expect(contact.givenName).toBe('John');
         expect(contact.middleName).toBe('Jacob');
         expect(contact.surname).toBe('Jingleheimer Schmidt');
         expect(contact.suffix).toBe('II');
+        expect(contact.nickname).toBe('John');
+        expect(contact.birthday).toBe('2019-07-01');
+        expect(contact.companyName).toBe('Life');
         expect(contact.jobTitle).toBe('artist');
-        expect(contact.phoneNumbers[0].toJSON()).toEqual({'type': 'mobile', 'number': '555-444-3333'});
+        expect(contact.managerName).toBe('April');
+        expect(contact.officeLocation).toBe('SF, CA, USA');
+        expect(contact.notes).toBe('lalala');
+        expect(contact.pictureUrl).toBe('example.com');
+        expect(contact.emailAddresses[0].toJSON()).toEqual({'type': 'work', 'email': 'john@test.com'});
+        expect(contact.imAddresses[0].toJSON()).toEqual({'type': 'yahoo', 'im_address': 'jjj'});
         expect(contact.physicalAddresses[0].toJSON()).toEqual({'type': 'home', 'city': 'Boston'});
+        expect(contact.phoneNumbers[0].toJSON()).toEqual({'type': 'mobile', 'number': '555-444-3333'});
+        expect(contact.webPages[0].toJSON()).toEqual({'type': 'blog', 'url': 'johnblogs.com'});
+        expect(contact.groups[0].toJSON()).toEqual({id: '123', 'object': 'contact', 'account_id': '1234', 'name': 'Fam', 'path': 'Fam'});
+        expect(contact.source).toBe('Contacts');
         done();
       });
     });
