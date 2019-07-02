@@ -10,7 +10,7 @@ class EmailAddress extends RestfulModel {
     return json;
   }
 }
-EmailAddress.collectionName = 'email_addresses';
+EmailAddress.collectionName = 'emails';
 EmailAddress.attributes = {
   ...RestfulModel.attributes,
   type: Attributes.String({
@@ -25,7 +25,7 @@ class IMAddress extends RestfulModel {
   toJSON() {
     const json = {
       type: this.type,
-      im_address: this.im_address,
+      im_address: this.imAddress,
     };
     return json;
   }
@@ -132,6 +132,39 @@ WebPage.attributes = {
   }),
 };
 
+class Groups extends RestfulModel {
+  toJSON() {
+    const json = {
+      id: this.id,
+      object: this.object,
+      account_id: this.accountId,
+      name: this.name,
+      path: this.path,
+    };
+    return json;
+  }
+}
+Groups.collectionName = 'groups';
+Groups.attributes = {
+  ...RestfulModel.attributes,
+  id: Attributes.String({
+    modelKey: 'id',
+  }),
+  object: Attributes.String({
+    modelKey: 'object',
+  }),
+  accountId: Attributes.String({
+    modelKey: 'accountId',
+    jsonKey: 'account_id',
+  }),
+  name: Attributes.String({
+    modelKey: 'name',
+  }),
+  path: Attributes.String({
+    modelKey: 'path',
+  }),
+};
+
 export default class Contact extends RestfulModel {
   save(params = {}, callback = null) {
     return this._save(params, callback);
@@ -161,7 +194,7 @@ Contact.attributes = {
   nickname: Attributes.String({
     modelKey: 'nickname',
   }),
-  birthday: Attributes.Date({
+  birthday: Attributes.String({
     modelKey: 'birthday',
   }),
   companyName: Attributes.String({
@@ -189,7 +222,7 @@ Contact.attributes = {
   }),
   emailAddresses: Attributes.Collection({
     modelKey: 'emailAddresses',
-    jsonKey: 'email_addresses',
+    jsonKey: 'emails',
     itemClass: EmailAddress,
   }),
   imAddresses: Attributes.Collection({
@@ -211,5 +244,12 @@ Contact.attributes = {
     modelKey: 'webPages',
     jsonKey: 'web_pages',
     itemClass: WebPage,
+  }),
+  groups: Attributes.Collection({
+    modelKey: 'groups',
+    itemClass: Groups,
+  }),
+  source: Attributes.String({
+    modelKey: 'source',
   }),
 };
