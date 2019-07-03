@@ -39,8 +39,14 @@ export default class Draft extends Message {
     return super.saveRequestBody(...arguments);
   }
 
-  deleteRequestBody() {
-    return { version: this.version };
+  deleteRequestBody(params) {
+    var body = {};
+    if (params.hasOwnProperty('version')) {
+      body.version = params.version;
+    } else {
+      body.version = this.version;
+    }
+    return body;
   }
 
   toString() {

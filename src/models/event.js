@@ -16,6 +16,14 @@ export default class Event extends RestfulModel {
     return dct;
   }
 
+  deleteRequestQueryString(params) {
+    var qs = {};
+    if (params.hasOwnProperty('notify_participants')) {
+      qs.notify_participants = params.notify_participants;
+    }
+    return qs;
+  }
+
   save(params = {}, callback = null) {
     return this._save(params, callback);
   }
