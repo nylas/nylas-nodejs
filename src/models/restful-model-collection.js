@@ -172,7 +172,7 @@ export default class RestfulModelCollection {
     return this._range({ params, offset, limit, path });
   }
 
-  delete(itemOrId, body = {}, callback = null) {
+  delete(itemOrId, params = {}, callback = null) {
     if (!itemOrId) {
       const err = new Error('delete() requires an item or an id');
       if (callback) {
@@ -181,19 +181,49 @@ export default class RestfulModelCollection {
       return Promise.reject(err);
     }
 
-    if (isFunction(body)) {
-      callback = body;
-      body = {};
+    if (isFunction(params)) {
+      callback = params;
+      params = {};
     }
 
-    const id = itemOrId.id ? itemOrId.id : itemOrId;
-    const deleteBody = itemOrId.id ? itemOrId.deleteRequestBody() : body;
+    let item;
+    if (itemOrId.id) {
+      item = itemOrId;
+    } else {
+      item = this.build({ id: itemOrId });
+    }
+
+    const options = item.deleteRequestOptions(params);
+    options.item = item;
+    options.callback = callback;
+
+    return this.deleteItem(options);
+  }
+
+  deleteItem(options) {
+    const item = options.item;
+    const callback = options.callback || null;
+    let body;
+    let qs;
+
+    if (options.hasOwnProperty('body')) {
+      body = options.body;
+    } else {
+      body = item.deleteRequestBody({});
+    }
+
+    if (options.hasOwnProperty('qs')) {
+      qs = options.qs;
+    } else {
+      qs = item.deleteRequestQueryString({});
+    }
 
     return this.connection
       .request({
         method: 'DELETE',
-        body: deleteBody,
-        path: `${this.path()}/${id}`,
+        qs: qs,
+        body: body,
+        path: `${this.path()}/${item.id}`,
       })
       .then(() => {
         if (callback) {

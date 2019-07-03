@@ -61,9 +61,21 @@ export default class RestfulModel {
     return this.toJSON();
   }
 
-  // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody() {
+  // deleteRequestQueryString is used by delete(). Subclasses should override this method.
+  deleteRequestQueryString(params) {
     return {};
+  }
+  // deleteRequestBody is used by delete(). Subclasses should override this method.
+  deleteRequestBody(params) {
+    return {};
+  }
+
+  // deleteRequestOptions is used by delete(). Subclasses should override this method.
+  deleteRequestOptions(params) {
+    return {
+      body: this.deleteRequestBody(params),
+      qs: this.deleteRequestQueryString(params),
+    };
   }
 
   toString() {

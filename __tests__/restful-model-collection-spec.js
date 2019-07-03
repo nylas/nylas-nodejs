@@ -472,38 +472,51 @@ describe('RestfulModelCollection', () => {
   describe('delete', () => {
     beforeEach(() => {
       testContext.collection = new RestfulModelCollection(
-        Draft,
+        Event,
         testContext.connection
       );
-      testContext.item = new Draft(testContext.connection, {
-        id: '123', version: 1,
+      testContext.item = new Event(testContext.connection, {
+        id: '123',
       });
     });
 
-    test('should populate body if called with a model object', () => {
-      testContext.collection.delete(testContext.item);
+    test('should populate qs if params passed in', () => {
+      testContext.collection.delete(testContext.item, { notify_participants: false });
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
-        body: { version: 1 },
-        path: '/drafts/123',
+        qs: { notify_participants: false },
+        body: {},
+        path: '/events/123',
       });
     });
 
     test('should accept a model id as the first parameter', () => {
-      testContext.collection.delete(testContext.item.id);
+      testContext.collection.delete(testContext.item.id, { notify_participants: true });
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
+        qs: { notify_participants: true },
         body: {},
-        path: '/drafts/123',
+        path: '/events/123',
       });
     });
 
-    test('should include body in the request if it was passed in', () => {
-      testContext.collection.delete(testContext.item.id, { version: 0 });
+    test('should work without params', () => {
+      testContext.collection.delete(testContext.item);
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
-        body: { version: 0 },
-        path: '/drafts/123',
+        qs: {},
+        body: {},
+        path: '/events/123',
+      });
+    });
+
+    test('should work with extraneous params', () => {
+      testContext.collection.delete(testContext.item, {'foo': 'bar'});
+      expect(testContext.connection.request).toHaveBeenCalledWith({
+        method: 'DELETE',
+        qs: {},
+        body: {},
+        path: '/events/123',
       });
     });
 
@@ -541,6 +554,78 @@ describe('RestfulModelCollection', () => {
             expect(err).toBe(testContext.error);
             done();
           })
+          .catch(() => {});
+      });
+    });
+  });
+
+  describe('deleteItem', () => {
+    beforeEach(() => {
+      testContext.collection = new RestfulModelCollection(
+        Draft,
+        testContext.connection
+      );
+      testContext.item = new Draft(testContext.connection, {
+        id: '123', version: 0,
+      });
+    });
+
+    test('should populate body with draft version', () => {
+      testContext.collection.deleteItem({item: testContext.item});
+      expect(testContext.connection.request).toHaveBeenCalledWith({
+        method: 'DELETE',
+        qs: {},
+        body: { version: 0 },
+        path: '/drafts/123',
+      });
+    });
+
+    test('should override draft version if it was passed in', () => {
+      testContext.collection.deleteItem({item: testContext.item, body: { version: 2 }});
+      expect(testContext.connection.request).toHaveBeenCalledWith({
+        method: 'DELETE',
+        qs: {},
+        body: { version: 2 },
+        path: '/drafts/123',
+      });
+    });
+
+    describe('when the api request is successful', () => {
+      test('should resolve', done => {
+        testContext.collection.deleteItem({item: testContext.item}).then(() => done());
+      });
+
+      test('should call its callback with no error', done => {
+        function callback(err) {
+          expect(err).toBe(null);
+          done();
+        }
+        testContext.collection.deleteItem({item: testContext.item, callback: callback});
+      });
+    });
+
+    describe('when the api request fails', () => {
+      beforeEach(() => {
+        testContext.error = new Error('Network error');
+        testContext.connection.request = jest.fn(() => {
+          return Promise.reject(testContext.error);
+        });
+      });
+
+      test('should reject', done => {
+        testContext.collection.deleteItem({item: testContext.item}).catch(err => {
+          expect(err).toBe(testContext.error);
+          done();
+        });
+      });
+
+      test('should call its callback with the error', done => {
+        function callback(err) {
+          expect(err).toBe(testContext.error);
+          done();
+        }
+        testContext.collection
+          .deleteItem({item: testContext.item, callback: callback})
           .catch(() => {});
       });
     });

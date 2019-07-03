@@ -359,7 +359,7 @@ nylas.drafts
   });
 
 // Deleting a draft with the draft object
-nylas.drafts.delete(draft);
+nylas.drafts.deleteItem({item: draft, callback: <optional_callback>});
 
 // Deleting a draft with the draft id and version
 nylas.drafts.delete('123draftid456', {version: 0});
