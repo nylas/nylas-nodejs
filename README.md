@@ -265,11 +265,11 @@ const fs = require('fs');
 
 const nylas = Nylas.with(ACCESS_TOKEN);
 
-fs.readFile(filePath, 'utf8', (err, data) => {
+fs.readFile(filePath, (err, data) => {
   f = nylas.files.build({
     filename: filePath,
     data: data,
-    contentType: 'text/plain',
+    contentType: 'application/pdf',
   });
 
   f.upload((err, file) => {
@@ -357,6 +357,12 @@ nylas.drafts
   .then(message => {
     console.log(`Sent ${message.subject}!`);
   });
+
+// Deleting a draft with the draft object
+nylas.drafts.delete(draft);
+
+// Deleting a draft with the draft id and version
+nylas.drafts.delete('123draftid456', {version: 0});
 
 ```
 

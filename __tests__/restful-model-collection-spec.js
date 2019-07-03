@@ -3,8 +3,9 @@ import request from 'request';
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import RestfulModelCollection from '../src/models/restful-model-collection';
-import Thread from '../src/models/thread';
+import Draft from '../src/models/draft';
 import Event from '../src/models/event';
+import Thread from '../src/models/thread';
 
 describe('RestfulModelCollection', () => {
   let testContext;
@@ -470,17 +471,21 @@ describe('RestfulModelCollection', () => {
 
   describe('delete', () => {
     beforeEach(() => {
-      testContext.item = new Thread(testContext.connection, {
-        id: '123',
+      testContext.collection = new RestfulModelCollection(
+        Draft,
+        testContext.connection
+      );
+      testContext.item = new Draft(testContext.connection, {
+        id: '123', version: 1,
       });
     });
 
-    test('should accept a model object as the first parameter', () => {
+    test('should populate body if called with a model object', () => {
       testContext.collection.delete(testContext.item);
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
-        qs: {},
-        path: '/threads/123',
+        body: { version: 1 },
+        path: '/drafts/123',
       });
     });
 
@@ -488,17 +493,17 @@ describe('RestfulModelCollection', () => {
       testContext.collection.delete(testContext.item.id);
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
-        qs: {},
-        path: '/threads/123',
+        body: {},
+        path: '/drafts/123',
       });
     });
 
-    test('should include params in the request if they were passed in', () => {
-      testContext.collection.delete(testContext.item.id, { foo: 'bar' });
+    test('should include body in the request if it was passed in', () => {
+      testContext.collection.delete(testContext.item.id, { version: 0 });
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
-        qs: { foo: 'bar' },
-        path: '/threads/123',
+        body: { version: 0 },
+        path: '/drafts/123',
       });
     });
 

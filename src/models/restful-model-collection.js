@@ -172,7 +172,7 @@ export default class RestfulModelCollection {
     return this._range({ params, offset, limit, path });
   }
 
-  delete(itemOrId, params = {}, callback = null) {
+  delete(itemOrId, body = {}, callback = null) {
     if (!itemOrId) {
       const err = new Error('delete() requires an item or an id');
       if (callback) {
@@ -181,16 +181,18 @@ export default class RestfulModelCollection {
       return Promise.reject(err);
     }
 
-    const id = itemOrId.id ? itemOrId.id : itemOrId;
-
-    if (isFunction(params)) {
-      callback = params;
-      params = {};
+    if (isFunction(body)) {
+      callback = body;
+      body = {};
     }
+
+    const id = itemOrId.id ? itemOrId.id : itemOrId;
+    const deleteBody = itemOrId.id ? itemOrId.deleteRequestBody() : body;
+
     return this.connection
       .request({
         method: 'DELETE',
-        qs: params,
+        body: deleteBody,
         path: `${this.path()}/${id}`,
       })
       .then(() => {

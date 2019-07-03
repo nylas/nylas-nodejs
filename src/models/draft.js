@@ -39,6 +39,10 @@ export default class Draft extends Message {
     return super.saveRequestBody(...arguments);
   }
 
+  deleteRequestBody() {
+    return { version: this.version };
+  }
+
   toString() {
     if (this.rawMime) {
       throw Error('toString() cannot be called for raw MIME drafts');
