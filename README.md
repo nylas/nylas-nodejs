@@ -27,6 +27,8 @@ yarn add nylas
 
 Every resource (i.e. messages, events, contacts, etc.) is accessed via an instance of ```Nylas```. Before making any requests, call ```config``` and initialize the Nylas instance with your APP ID and APP Secret. Then, call ```with``` and pass it your access token. The access token allows Nylas to make requests for a given email account's resources.
 
+**Note:** Set the values for ```APP_ID``` and ```APP_SECRET``` to the Client ID and Client Secret that were assigned to your Nylas app in the Nylas dashboard. Although the naming convention differs between the dashboard and API parameters, they both mean the same thing.
+
 ```javascript
 const Nylas = require('nylas');
 
@@ -52,7 +54,7 @@ A quick start tutorial on how to get up and running with the SDK is available [h
 
 # Contributing
 
-We'd love your help making the Nylas Node.js SDK better. Come chat in the [Nylas community Slack channel](http://slack-invite.nylas.com/) or email support@nylas.com.
+We'd love your help making the Nylas Node.js SDK better. Email us at support@nylas.com.
 
 Please sign the [Contributor License Agreement](https://goo.gl/forms/lKbET6S6iWsGoBbz2) before submitting pull requests (it's similar to other projects, like NodeJS or Meteor).
 
