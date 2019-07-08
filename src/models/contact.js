@@ -10,7 +10,7 @@ class EmailAddress extends RestfulModel {
     return json;
   }
 }
-EmailAddress.collectionName = 'emails';
+EmailAddress.collectionName = 'email_addresses';
 EmailAddress.attributes = {
   ...RestfulModel.attributes,
   type: Attributes.String({
@@ -134,29 +134,14 @@ WebPage.attributes = {
 
 class Groups extends RestfulModel {
   toJSON() {
-    const json = {
-      id: this.id,
-      object: this.object,
-      account_id: this.accountId,
-      name: this.name,
-      path: this.path,
-    };
+    const json = super.toJSON(...arguments);
+    json['object'] = 'contact_group';
     return json;
   }
 }
 Groups.collectionName = 'groups';
 Groups.attributes = {
   ...RestfulModel.attributes,
-  id: Attributes.String({
-    modelKey: 'id',
-  }),
-  object: Attributes.String({
-    modelKey: 'object',
-  }),
-  accountId: Attributes.String({
-    modelKey: 'accountId',
-    jsonKey: 'account_id',
-  }),
   name: Attributes.String({
     modelKey: 'name',
   }),
