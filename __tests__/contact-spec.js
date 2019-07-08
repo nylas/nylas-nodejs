@@ -116,13 +116,13 @@ describe('Contact', () => {
           office_location: 'SF, CA, USA',
           notes: 'lalala',
           picture_url: 'example.com',
-          emails: [{'type': 'work', 'email': 'john@test.com'}],
-          im_addresses: [{'type': 'yahoo', 'im_address': 'jjj'}],
-          physical_addresses: [{'type': 'home', 'city': 'Boston'}],
-          phone_numbers: [{'type': 'mobile', 'number': '555-444-3333'}],
-          web_pages: [{'type': 'blog', 'url': 'johnblogs.com'}],
-          groups: [{id: '123', 'object': 'contact', 'account_id': '1234', 'name': 'Fam', 'path': 'Fam'}],
-          source: 'Contacts',
+          emails: [{type: 'work', email: 'john@test.com'}],
+          im_addresses: [{type: 'yahoo', im_address: 'jjj'}],
+          physical_addresses: [{type: 'home', city: 'Boston'}],
+          phone_numbers: [{type: 'mobile', number: '555-444-3333'}],
+          web_pages: [{type: 'blog', url: 'johnblogs.com'}],
+          groups: [{id: '123', object: 'contact_group', account_id: '1234', name: 'Fam', path: 'Fam'}],
+          source: 'inbox',
         };
         return Promise.resolve(contactJSON);
       });
@@ -130,7 +130,6 @@ describe('Contact', () => {
 
     test('should resolve with the contact object', done => {
       testContext.contact.save().then(contact => {
-        console.log('THIS IS THE CONTACT', contact);
         expect(contact.id).toBe('1257');
         expect(contact.object).toBe('contact');
         expect(contact.accountId).toBe('1234');
@@ -146,13 +145,13 @@ describe('Contact', () => {
         expect(contact.officeLocation).toBe('SF, CA, USA');
         expect(contact.notes).toBe('lalala');
         expect(contact.pictureUrl).toBe('example.com');
-        expect(contact.emailAddresses[0].toJSON()).toEqual({'type': 'work', 'email': 'john@test.com'});
-        expect(contact.imAddresses[0].toJSON()).toEqual({'type': 'yahoo', 'im_address': 'jjj'});
-        expect(contact.physicalAddresses[0].toJSON()).toEqual({'type': 'home', 'city': 'Boston'});
-        expect(contact.phoneNumbers[0].toJSON()).toEqual({'type': 'mobile', 'number': '555-444-3333'});
-        expect(contact.webPages[0].toJSON()).toEqual({'type': 'blog', 'url': 'johnblogs.com'});
-        expect(contact.groups[0].toJSON()).toEqual({id: '123', 'object': 'contact', 'account_id': '1234', 'name': 'Fam', 'path': 'Fam'});
-        expect(contact.source).toBe('Contacts');
+        expect(contact.emailAddresses[0].toJSON()).toEqual({type: 'work', email: 'john@test.com'});
+        expect(contact.imAddresses[0].toJSON()).toEqual({type: 'yahoo', im_address: 'jjj'});
+        expect(contact.physicalAddresses[0].toJSON()).toEqual({type: 'home', city: 'Boston'});
+        expect(contact.phoneNumbers[0].toJSON()).toEqual({type: 'mobile', number: '555-444-3333'});
+        expect(contact.webPages[0].toJSON()).toEqual({type: 'blog', url: 'johnblogs.com'});
+        expect(contact.groups[0].toJSON()).toEqual({id: '123', object: 'contact_group', account_id: '1234', name: 'Fam', path: 'Fam'});
+        expect(contact.source).toBe('inbox');
         done();
       });
     });
