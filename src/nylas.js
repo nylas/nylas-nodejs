@@ -12,7 +12,7 @@ class Nylas {
     this.clientSecret = null;
   }
 
-  static config({ clientId, clientSecret, apiServer, ...appNames }) {
+  static config({ clientId, clientSecret, apiServer, ...deprecatingParams }) {
     if (apiServer && apiServer.indexOf('://') === -1) {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
@@ -22,11 +22,11 @@ class Nylas {
     let appId;
     let appSecret;
 
-    for (const key in appNames) {
+    for (const key in deprecatingParams) {
       if (key === 'appId') {
-        appId = appNames[key];
+        appId = deprecatingParams[key];
       } else if (key === 'appSecret') {
-        appSecret = appNames[key];
+        appSecret = deprecatingParams[key];
       }
     }
 

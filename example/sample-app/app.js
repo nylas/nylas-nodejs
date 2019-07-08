@@ -23,9 +23,9 @@ var nylasAppConfigs = {
 };
 
 assert.notEqual(
-  nylasAppConclients.clientId,
+  nylasAppConfigs.clientId,
   '<client ID here>',
-  'Please replace with you Nylas Client ID'
+  'Please replace with your Nylas Client ID'
 );
 assert.notEqual(
   nylasAppConfigs.clientSecret,
