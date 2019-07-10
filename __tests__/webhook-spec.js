@@ -132,6 +132,7 @@ describe('Webhook', () => {
           method: 'DELETE',
           path: `/a/${APP_ID}/webhooks/${WEBHOOK_ID}`,
           qs: {},
+          body: {},
         });
         done();
         })
@@ -147,6 +148,7 @@ describe('Webhook', () => {
           method: 'DELETE',
           path: `/a/${APP_ID}/webhooks/${WEBHOOK_ID}`,
           qs: {},
+          body: {},
         });
         done();
         })

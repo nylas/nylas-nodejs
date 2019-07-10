@@ -5,6 +5,7 @@ import NylasConnection from '../src/nylas-connection';
 import RestfulModelCollection from '../src/models/restful-model-collection';
 import Draft from '../src/models/draft';
 import Event from '../src/models/event';
+import { Folder, Label } from '../src/models/folder';
 import Thread from '../src/models/thread';
 
 describe('RestfulModelCollection', () => {
@@ -480,7 +481,7 @@ describe('RestfulModelCollection', () => {
       });
     });
 
-    test('should populate qs if params passed in', () => {
+    test('should populate qs if params passed in', done => {
       testContext.collection.delete(testContext.item, { notify_participants: false });
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
@@ -488,9 +489,10 @@ describe('RestfulModelCollection', () => {
         body: {},
         path: '/events/123',
       });
+      done();
     });
 
-    test('should accept a model id as the first parameter', () => {
+    test('should accept an object id as the first parameter', done => {
       testContext.collection.delete(testContext.item.id, { notify_participants: true });
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
@@ -498,9 +500,10 @@ describe('RestfulModelCollection', () => {
         body: {},
         path: '/events/123',
       });
+      done();
     });
 
-    test('should work without params', () => {
+    test('should work without query params', done => {
       testContext.collection.delete(testContext.item);
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
@@ -508,9 +511,10 @@ describe('RestfulModelCollection', () => {
         body: {},
         path: '/events/123',
       });
+      done();
     });
 
-    test('should work with extraneous params', () => {
+    test('should work with extraneous params', done => {
       testContext.collection.delete(testContext.item, {'foo': 'bar'});
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
@@ -518,6 +522,7 @@ describe('RestfulModelCollection', () => {
         body: {},
         path: '/events/123',
       });
+      done();
     });
 
     describe('when the api request is successful', () => {
@@ -530,6 +535,65 @@ describe('RestfulModelCollection', () => {
           expect(err).toBe(null);
           done();
         });
+      });
+    });
+
+    describe('test folder and label deletion', () => {
+      test('folder should not have a delete request body', done => {
+        testContext.collection = new RestfulModelCollection(
+          Folder,
+          testContext.connection
+        );
+        testContext.item = new Folder(testContext.connection, {
+          id: '123',
+          displayName: 'foo'
+        });
+        testContext.collection.delete(testContext.item, {'display_name': 'not required'});
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'DELETE',
+          qs: {},
+          body: {},
+          path: '/folders/123',
+        });
+        done();
+      });
+
+      test('label should have a delete request body', done => {
+        testContext.collection = new RestfulModelCollection(
+          Label,
+          testContext.connection
+        );
+        testContext.item = new Label(testContext.connection, {
+          id: '123',
+          displayName: 'foo'
+        });
+        testContext.collection.delete(testContext.item, {'display_name': 'required'});
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'DELETE',
+          qs: {},
+          body: {'display_name': 'required'},
+          path: '/labels/123',
+        });
+        done();
+      });
+
+      test('delete should read displayName from label object if display_name not provided', done => {
+        testContext.collection = new RestfulModelCollection(
+          Label,
+          testContext.connection
+        );
+        testContext.item = new Label(testContext.connection, {
+          id: '123',
+        });
+        testContext.item.displayName = 'foo';
+        testContext.collection.delete(testContext.item);
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'DELETE',
+          qs: {},
+          body: {'display_name': 'foo'},
+          path: '/labels/123',
+        });
+        done();
       });
     });
 
@@ -570,7 +634,7 @@ describe('RestfulModelCollection', () => {
       });
     });
 
-    test('should populate body with draft version', () => {
+    test('should populate body with draft object\'s version if version param not provided', () => {
       testContext.collection.deleteItem({item: testContext.item});
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',

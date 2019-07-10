@@ -186,12 +186,7 @@ export default class RestfulModelCollection {
       params = {};
     }
 
-    let item;
-    if (itemOrId.id) {
-      item = itemOrId;
-    } else {
-      item = this.build({ id: itemOrId });
-    }
+    const item = itemOrId.id ? itemOrId : this.build({ id: itemOrId });
 
     const options = item.deleteRequestOptions(params);
     options.item = item;
@@ -203,20 +198,12 @@ export default class RestfulModelCollection {
   deleteItem(options) {
     const item = options.item;
     const callback = options.callback || null;
-    let body;
-    let qs;
-
-    if (options.hasOwnProperty('body')) {
-      body = options.body;
-    } else {
-      body = item.deleteRequestBody({});
-    }
-
-    if (options.hasOwnProperty('qs')) {
-      qs = options.qs;
-    } else {
-      qs = item.deleteRequestQueryString({});
-    }
+    const body = options.hasOwnProperty('body')
+      ? options.body
+      : item.deleteRequestBody({});
+    const qs = options.hasOwnProperty('qs')
+      ? options.qs
+      : item.deleteRequestQueryString({});
 
     return this.connection
       .request({
