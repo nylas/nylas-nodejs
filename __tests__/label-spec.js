@@ -30,7 +30,6 @@ describe('Label', () => {
         method: 'POST',
         body: {
           display_name: 'Label name',
-          name: 'Longer label name',
         },
         qs: {},
         path: '/labels',
@@ -44,7 +43,6 @@ describe('Label', () => {
         method: 'PUT',
         body: {
           display_name: 'Label name',
-          name: 'Longer label name',
         },
         qs: {},
         path: '/labels/label_id',

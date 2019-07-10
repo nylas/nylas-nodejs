@@ -1,7 +1,7 @@
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
-export class Label extends RestfulModel {
+export class Folder extends RestfulModel {
   saveRequestBody() {
     const json = {};
     json['display_name'] = this.displayName;
@@ -13,8 +13,8 @@ export class Label extends RestfulModel {
     return this._save(params, callback);
   }
 }
-Label.collectionName = 'labels';
-Label.attributes = {
+Folder.collectionName = 'folders';
+Folder.attributes = {
   ...RestfulModel.attributes,
   name: Attributes.String({
     modelKey: 'name',
@@ -26,5 +26,21 @@ Label.attributes = {
   }),
 };
 
-export class Folder extends Label {}
-Folder.collectionName = 'folders';
+export class Label extends Folder {
+  saveRequestBody() {
+    return { display_name: this.displayName };
+  }
+
+  deleteRequestBody(params) {
+    var body = {};
+    if (params.hasOwnProperty('display_name')) {
+      body.display_name = params.display_name;
+    } else if (params.hasOwnProperty('displayName')) {
+      body.display_name = params.displayName;
+    } else {
+      body.display_name = this.displayName;
+    }
+    return body;
+  }
+}
+Label.collectionName = 'labels';
