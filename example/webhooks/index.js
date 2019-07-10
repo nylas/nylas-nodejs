@@ -38,6 +38,9 @@ app.post('/webhook', function(req, res) {
     return res.status(401).send('X-Nylas-Signature failed verification 🚷 ');
   }
 
+  // A quick 200 response tells Nylas your endpoint is online and healthy.
+  res.sendStatus(200);
+
   // Nylas sent us a webhook notification for some kind of event, so we should
   // process it!
   const data = req.body.deltas;
@@ -53,8 +56,6 @@ app.post('/webhook', function(req, res) {
       data[i].object_data.id
     );
   }
-  // Don't forget to let Nylas know that everything was pretty ok.
-  res.sendStatus(200);
 });
 
 // Each request made by Nylas includes an X-Nylas-Signature header. The header
