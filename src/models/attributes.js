@@ -64,9 +64,7 @@ class AttributeDate extends Attribute {
     }
     if (!(val instanceof Date)) {
       throw new Error(
-        `Attempting to toJSON AttributeDate which is not a date: ${
-          this.modelKey
-        } = ${val}`
+        `Attempting to toJSON AttributeDate which is not a date: ${this.modelKey} = ${val}`
       );
     }
     return val.toISOString();
@@ -87,9 +85,7 @@ class AttributeDateTime extends Attribute {
     }
     if (!(val instanceof Date)) {
       throw new Error(
-        `Attempting to toJSON AttributeDateTime which is not a date: ${
-          this.modelKey
-        } = ${val}`
+        `Attempting to toJSON AttributeDateTime which is not a date: ${this.modelKey} = ${val}`
       );
     }
     return val.getTime() / 1000.0;

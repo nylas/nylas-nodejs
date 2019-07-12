@@ -107,11 +107,7 @@ class Nylas {
     if (!options.loginHint) {
       options.loginHint = '';
     }
-    let url = `${this.apiServer}/oauth/authorize?client_id=${
-      this.appId
-    }&response_type=code&login_hint=${options.loginHint}&redirect_uri=${
-      options.redirectURI
-    }`;
+    let url = `${this.apiServer}/oauth/authorize?client_id=${this.appId}&response_type=code&login_hint=${options.loginHint}&redirect_uri=${options.redirectURI}`;
     if (options.state != null) {
       url += `&state=${options.state}`;
     }
