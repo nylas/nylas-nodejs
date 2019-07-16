@@ -19,6 +19,30 @@ describe('File', () => {
   });
 
   describe('upload', () => {
+    test('should raise error if missing filename', done => {
+      testContext.file.filename = undefined;
+      expect(() => {
+        testContext.file.upload();
+      }).toThrow();
+      done();
+    });
+
+    test('should raise error if missing data', done => {
+      testContext.file.data = undefined;
+      expect(() => {
+        testContext.file.upload();
+      }).toThrow();
+      done();
+    });
+
+    test('should raise error if missing contentType', done => {
+      testContext.file.contentType = undefined;
+      expect(() => {
+        testContext.file.upload();
+      }).toThrow();
+      done();
+    });
+
     test('should do a POST request', done => {
       testContext.file.upload().catch(() => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
@@ -44,8 +68,12 @@ describe('File', () => {
         testContext.connection.request = jest.fn(() => {
           const fileJSON = [
             {
-              id: 'id-1234',
+              account_id: 'aid-5678',
+              content_type: 'text/plain',
               filename: 'sample.txt',
+              id: 'id-1234',
+              object: 'file',
+              size: 123
             },
           ];
           return Promise.resolve(fileJSON);
@@ -54,8 +82,12 @@ describe('File', () => {
 
       test('should resolve with the file object', done => {
         testContext.file.upload().then(file => {
-          expect(file.id).toBe('id-1234');
+          expect(file.accountId).toBe('aid-5678');
+          expect(file.contentType).toBe('text/plain');
           expect(file.filename).toBe('sample.txt');
+          expect(file.id).toBe('id-1234');
+          expect(file.object).toBe('file');
+          expect(file.size).toBe(123);
           done();
         });
       });
@@ -63,8 +95,12 @@ describe('File', () => {
       test('should call the callback with the file object', done => {
         testContext.file.upload((err, file) => {
           expect(err).toBe(null);
-          expect(file.id).toBe('id-1234');
+          expect(file.accountId).toBe('aid-5678');
+          expect(file.contentType).toBe('text/plain');
           expect(file.filename).toBe('sample.txt');
+          expect(file.id).toBe('id-1234');
+          expect(file.object).toBe('file');
+          expect(file.size).toBe(123);
           done();
         });
       });

@@ -4,6 +4,12 @@
 
 nothing yet
 
+### 4.6.1 / 2019-07-10
+
+* Add billingState to Account model
+* Fix error to string reassignment bug
+* Update webhooks example code
+
 ### 4.6.0 / 2019-06-20
 
 * Enable link tracking

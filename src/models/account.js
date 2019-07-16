@@ -28,6 +28,12 @@ Account.attributes = {
     modelKey: 'syncState',
     jsonKey: 'sync_state',
   }),
+
+  billingState: Attributes.String({
+    modelKey: 'billingState',
+    jsonKey: 'billing_state',
+  }),
+
   linkedAt: Attributes.DateTime({
     modelKey: 'linkedAt',
     jsonKey: 'linked_at',
