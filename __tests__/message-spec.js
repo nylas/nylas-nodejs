@@ -2,8 +2,10 @@ import request from 'request';
 
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
+import File from '../src/models/file';
 import Message from '../src/models/message';
 import { Label } from '../src/models/folder';
+import RestfulModelCollection from '../src/models/restful-model-collection'
 
 describe('Message', () => {
   let testContext;
@@ -17,6 +19,13 @@ describe('Message', () => {
     testContext.message.unread = false;
     testContext.message.to = [{"email": "foo", "name": "bar"}];
     testContext.connection.request = jest.fn(() => Promise.resolve(testContext.message.toJSON()));
+    testContext.collection = new RestfulModelCollection(
+      Message,
+      testContext.connection
+    );
+    testContext.collection._getModelCollection = jest.fn(() => {
+      return Promise.resolve([testContext.message]);
+    });
   });
 
   describe('save', () => {
@@ -92,4 +101,30 @@ describe('Message', () => {
         .catch(() => {});
     });
   });
+
+  describe('first', () => {
+    test('should resolve with the first item', done => {
+      const fileObj = {
+        account_id: 'foo',
+        content_disposition: 'inline',
+        content_id: 'bar',
+        content_type: 'image/png',
+        filename: 'foobar.png',
+        id: 'file_id',
+        object: 'file',
+        message_ids: [],
+        size: 123,
+      }
+      const file = new File(testContext.connection, fileObj);
+      testContext.message.files = [file];
+      testContext.collection.first().then(message => {
+        expect(message instanceof Message).toBe(true);
+        expect(message).toBe(testContext.message);
+        let file = message.files[0];
+        expect(file.toJSON()).toEqual(fileObj);
+        expect(file.contentDisposition).toEqual(fileObj.content_disposition);
+        done();
+      });
+    });
+  })
 });
