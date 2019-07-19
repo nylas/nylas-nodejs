@@ -107,17 +107,30 @@ export default class RestfulModel {
       });
   }
 
-  protected _get(params = {}, callback = null, path_suffix = '') {
+  protected _get(
+    params: { [key: string]: string } = {},
+    callback?: (error: Error | null, result?: any) => void,
+    pathSuffix = ''
+  ) {
     const collectionName = (this.constructor as any).collectionName;
+
     return this.connection
       .request({
         method: 'GET',
-        path: `/${collectionName}/${this.id}${path_suffix}`,
+        path: `/${collectionName}/${this.id}${pathSuffix}`,
         qs: params,
       })
       .then(response => {
-        // todo bg: this does not call it's callback at all!
+        if (callback) {
+          callback(null, response);
+        }
         return Promise.resolve(response);
+      })
+      .catch(err => {
+        if (callback) {
+          callback(err);
+        }
+        return Promise.reject(err);
       });
   }
 }

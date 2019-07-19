@@ -173,7 +173,7 @@ export default class Contact extends RestfulModel {
     return this._save(params, callback);
   }
 
-  getPicture(params = {}, callback: null) {
+  getPicture(params = {}, callback?: (error: Error | null, result?: any) => void) {
     return this._get(params, callback, '/picture');
   }
 }
