@@ -45,7 +45,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       callback => {
         return this._getItems(params, offset, REQUEST_CHUNK_SIZE).then(items => {
           for (const item of items) {
-            eachCallback(item as T);
+            eachCallback(item);
           }
           offset += items.length;
           finished = items.length < REQUEST_CHUNK_SIZE;
@@ -96,7 +96,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return this._getItems(params, 0, 1)
       .then(items => {
         if (callback) {
-          callback(null, items[0] as T);
+          callback(null, items[0]);
         }
         return Promise.resolve(items[0]);
       })
@@ -259,7 +259,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
           const chunkLimit = Math.min(REQUEST_CHUNK_SIZE, limit - accumulated.length);
           return this._getItems(params, chunkOffset, chunkLimit, path)
             .then(items => {
-              accumulated = accumulated.concat(items as T[]);
+              accumulated = accumulated.concat(items);
               finished = items.length < REQUEST_CHUNK_SIZE || accumulated.length >= limit;
               return chunkCallback();
             })
@@ -287,7 +287,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     offset: number,
     limit: number,
     path?: string
-  ): Promise<T[] | string[]> {
+  ): Promise<T[]> {
     // Items can be either models or ids
 
     if (!path) {
@@ -299,7 +299,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         method: 'GET',
         path,
         qs: { ...params, offset, limit },
-      }) as Promise<string[]>;
+      });
     }
 
     return this._getModelCollection(params, offset, limit, path);
