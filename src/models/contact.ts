@@ -169,8 +169,8 @@ export default class Contact extends RestfulModel {
   phoneNumbers?: PhoneNumber[];
   webPages?: WebPage[];
 
-  save(...args: Parameters<this['_save']>) {
-    return this._save(...args);
+  save(params: SaveCallback | {}, callback?: SaveCallback) {
+    return this._save(params, callback);
   }
 
   getPicture(params = {}, callback: null) {

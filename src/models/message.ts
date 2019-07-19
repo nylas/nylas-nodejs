@@ -1,6 +1,6 @@
 import union from 'lodash/union';
 
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import File from './file';
 import Event from './event';
@@ -84,8 +84,8 @@ export default class Message extends RestfulModel {
     return json;
   }
 
-  save(...args: Parameters<this['_save']>) {
-    return this._save(...args);
+  save(params: SaveCallback | {}, callback?: SaveCallback) {
+    return this._save(params, callback);
   }
 }
 Message.collectionName = 'messages';

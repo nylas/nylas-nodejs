@@ -78,7 +78,7 @@ export default class RestfulModel {
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
   // They should instead define a save() function which calls _save.
-  _save(params: SaveCallback | {} = {}, callback?: SaveCallback) {
+  protected _save(params: SaveCallback | {} = {}, callback?: SaveCallback) {
     if (isFunction(params)) {
       callback = params as SaveCallback;
       params = {};
@@ -107,7 +107,7 @@ export default class RestfulModel {
       });
   }
 
-  _get(params = {}, callback = null, path_suffix = '') {
+  protected _get(params = {}, callback = null, path_suffix = '') {
     const collectionName = (this.constructor as any).collectionName;
     return this.connection
       .request({

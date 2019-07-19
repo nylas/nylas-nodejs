@@ -46,7 +46,7 @@ export default class Delta {
     return this._startStream(request, cursor, params);
   }
 
-  _startStream(createRequest: CreateRequestType, cursor: string, params: any) {
+  protected _startStream(createRequest: CreateRequestType, cursor: string, params: any) {
     const stream = new DeltaStream(createRequest, this.connection, cursor, params);
     stream.open();
     return stream;
@@ -177,7 +177,7 @@ class DeltaStream extends EventEmitter {
     return this.request;
   }
 
-  _onDataReceived(data?: any) {
+  protected _onDataReceived(data?: any) {
     // Nylas sends a newline heartbeat in the raw data stream once every 5 seconds.
     // Automatically restart the connection if we haven't gotten any data in
     // Delta.streamingTimeoutMs. The connection will restart with the last
@@ -190,12 +190,12 @@ class DeltaStream extends EventEmitter {
     ) as any;
   }
 
-  _onError(err: Error) {
+  protected _onError(err: Error) {
     this.emit('error', err);
     return this.restartBackoff.reset();
   }
 
-  _restartConnection(n: number) {
+  protected _restartConnection(n: number) {
     this.emit(
       'info',
       `Restarting Nylas DeltaStream connection (attempt ${n + 1}): ${

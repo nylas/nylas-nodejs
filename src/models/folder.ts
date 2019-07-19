@@ -1,4 +1,4 @@
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 
 export class Label extends RestfulModel {
@@ -12,8 +12,8 @@ export class Label extends RestfulModel {
     return json;
   }
 
-  save(...args: Parameters<this['_save']>) {
-    return this._save(...args);
+  save(params: SaveCallback | {}, callback?: SaveCallback) {
+    return this._save(params, callback);
   }
 }
 Label.collectionName = 'labels';

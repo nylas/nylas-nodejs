@@ -1,5 +1,5 @@
 import Message from './message';
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Contact from './contact';
 import Attributes from './attributes';
 import { Label, Folder } from './folder';
@@ -41,8 +41,8 @@ export default class Thread extends RestfulModel {
     return json;
   }
 
-  save(...args: Parameters<this['_save']>) {
-    return this._save(...args);
+  save(params: SaveCallback | {}, callback?: SaveCallback) {
+    return this._save(params, callback);
   }
 }
 Thread.collectionName = 'threads';

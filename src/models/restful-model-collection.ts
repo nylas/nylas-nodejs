@@ -83,7 +83,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
 
   first(
     params: { view?: string; [key: string]: any } = {},
-    callback: (error: Error | null, obj?: T) => void
+    callback?: (error: Error | null, obj?: T) => void
   ) {
     if (params.view == 'count') {
       const err = new Error('first() cannot be called with the count view');
@@ -124,7 +124,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
 
   find(
     id: string,
-    callback: (error: Error | null, model?: T) => void,
+    callback?: (error: Error | null, model?: T) => void,
     params: { view?: string; [key: string]: any } = {}
   ) {
     if (!id) {
@@ -235,7 +235,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return `/${this.modelClass.collectionName}`;
   }
 
-  _range({
+  protected _range({
     params = {},
     offset = 0,
     limit = 100,
@@ -248,7 +248,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     callback?: (error: Error | null, results?: T[]) => void;
     path?: string;
   }) {
-    return new Promise((resolve, reject) => {
+    return new Promise<T[]>((resolve, reject) => {
       let accumulated: T[] = [];
       let finished = false;
 
@@ -282,7 +282,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     });
   }
 
-  _getItems(
+  protected _getItems(
     params: { [key: string]: any },
     offset: number,
     limit: number,
@@ -305,11 +305,11 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return this._getModelCollection(params, offset, limit, path);
   }
 
-  _createModel(json: { [key: string]: any }) {
+  protected _createModel(json: { [key: string]: any }) {
     return new this.modelClass(this.connection, json) as T;
   }
 
-  _getModel(id: string, params: { [key: string]: any } = {}): Promise<T> {
+  protected _getModel(id: string, params: { [key: string]: any } = {}): Promise<T> {
     return this.connection
       .request({
         method: 'GET',
@@ -322,7 +322,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       });
   }
 
-  _getModelCollection(
+  protected _getModelCollection(
     params: { [key: string]: any },
     offset: number,
     limit: number,

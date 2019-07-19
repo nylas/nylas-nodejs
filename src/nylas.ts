@@ -69,7 +69,7 @@ class Nylas {
 
   static exchangeCodeForToken(
     code: string,
-    callback: (error: Error | null, accessToken?: string) => void
+    callback?: (error: Error | null, accessToken?: string) => void
   ) {
     if (!this.appId || !this.appSecret) {
       throw new Error(
@@ -80,7 +80,7 @@ class Nylas {
       throw new Error('exchangeCodeForToken() must be called with a code');
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const options = {
         method: 'GET',
         json: true,

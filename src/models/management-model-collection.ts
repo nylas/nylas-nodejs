@@ -16,7 +16,7 @@ export default class ManagementModelCollection<
     return `/a/${this.appId}/${this.modelClass.collectionName}`;
   }
 
-  _createModel(json: { [key: string]: any }) {
+  protected _createModel(json: { [key: string]: any }) {
     return new (this.modelClass as any)(this.connection, this.appId, json);
   }
 }

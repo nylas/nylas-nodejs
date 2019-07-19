@@ -14,8 +14,7 @@ import Event from './models/event';
 import Delta from './models/delta';
 import { Label, Folder } from './models/folder';
 
-import { version as SDK_VERSION } from '../package.json';
-
+const { version: SDK_VERSION } = require('../package.json');
 const SUPPORTED_API_VERSION = '2.0';
 
 export default class NylasConnection {
@@ -99,7 +98,7 @@ export default class NylasConnection {
 
     return options as (CoreOptions & UrlOptions & { downloadRequest: boolean });
   }
-  _getWarningForVersion(sdkApiVersion?: string, apiVersion?: string) {
+  protected _getWarningForVersion(sdkApiVersion?: string, apiVersion?: string) {
     let warning = '';
 
     if (sdkApiVersion != apiVersion) {
@@ -127,7 +126,7 @@ export default class NylasConnection {
     }
     const resolvedOptions = this.requestOptions(options);
 
-    return new Promise((resolve, reject) => {
+    return new Promise<any>((resolve, reject) => {
       return request(resolvedOptions, (error, response, body = {}) => {
         // node headers are lowercase so this refers to `Nylas-Api-Version`
         const apiVersion = response.headers['nylas-api-version'] as string | undefined;

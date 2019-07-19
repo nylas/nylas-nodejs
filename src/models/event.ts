@@ -1,4 +1,4 @@
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import EventParticipant from './event-participant';
 
@@ -24,8 +24,8 @@ export default class Event extends RestfulModel {
   busy?: boolean;
   status?: string;
 
-  save(...args: Parameters<this['_save']>) {
-    return this._save(...args);
+  save(params: SaveCallback | {}, callback?: SaveCallback) {
+    return this._save(params, callback);
   }
 
   saveRequestBody() {
