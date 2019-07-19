@@ -9,12 +9,20 @@
   ],
   "scripts": {
     "test": "jest",
-    "lint": "eslint \"./src/**/*.js\"",
+    "lint": "eslint \"./src/**/*.ts\"",
     "prettier": "prettier --single-quote --trailing-comma es5 --write \"./src/**/*.js\"",
     "build": "tsc",
     "prepublish": "npm run build",
     "prepare": "npm run build",
     "watch": "nodemon -w ./src --exec npm run build"
+  },
+  "jest": {
+    "preset": "ts-jest/presets/js-with-ts",
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.test.json"
+      }
+    }
   },
   "keywords": [
     "email",
@@ -34,13 +42,17 @@
   "devDependencies": {
     "@types/async": "^1.4.29",
     "@types/backoff": "^2.5.1",
+    "@types/jest": "^24.0.15",
     "@types/lodash": "^4.14.136",
     "@types/request": "^2.48.2",
-    "eslint": "^5.14.0",
+    "@typescript-eslint/eslint-plugin": "^1.12.0",
+    "@typescript-eslint/parser": "^1.12.0",
+    "eslint": "^6.0.1",
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.5.0",
     "prettier": "^1.16.4",
+    "ts-jest": "^24.0.2",
     "typescript": "^3.5.3"
   },
   "repository": {

@@ -1,13 +1,13 @@
 import isFunction from 'lodash/isFunction';
 
 import Attributes, { Attribute } from './attributes';
-import NylasConnection from '../nylas-connection'
+import NylasConnection from '../nylas-connection';
 
-export type SaveCallback = (error: Error | null, result?: RestfulModel) => void
+export type SaveCallback = (error: Error | null, result?: RestfulModel) => void;
 
-type RestfulModelJSON = {
+interface RestfulModelJSON {
   id: string;
-  object: string ;
+  object: string;
   accountId: string;
   [key: string]: any;
 }
@@ -15,16 +15,16 @@ type RestfulModelJSON = {
 export default class RestfulModel {
   static endpointName: string = ''; // overrridden in subclasses
   static collectionName: string = ''; // overrridden in subclasses
-  static attributes: {[key: string]: Attribute};
+  static attributes: { [key: string]: Attribute };
 
   connection: NylasConnection;
-  id: string = '';
-  object: string = '';
-  accountId: string = '';
+  id?: string;
+  object?: string;
+  accountId?: string;
 
   constructor(connection: NylasConnection, json?: Partial<RestfulModelJSON>) {
     this.connection = connection;
-    if (!(this.connection instanceof require('../nylas-connection'))) {
+    if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
     if (json) {
@@ -32,7 +32,7 @@ export default class RestfulModel {
     }
   }
 
-  attributes() : {[key: string]: Attribute} {
+  attributes(): { [key: string]: Attribute } {
     return (this.constructor as any).attributes;
   }
 
@@ -83,16 +83,14 @@ export default class RestfulModel {
       callback = params as SaveCallback;
       params = {};
     }
-    const collectionName = (this.constructor as any).collectionName
+    const collectionName = (this.constructor as any).collectionName;
 
     return this.connection
       .request({
         method: this.id ? 'PUT' : 'POST',
         body: this.saveRequestBody(),
         qs: params,
-        path: this.id
-          ? `/${collectionName}/${this.id}`
-          : `/${collectionName}`,
+        path: this.id ? `/${collectionName}/${this.id}` : `/${collectionName}`,
       })
       .then(json => {
         this.fromJSON(json as RestfulModelJSON);
@@ -110,7 +108,7 @@ export default class RestfulModel {
   }
 
   _get(params = {}, callback = null, path_suffix = '') {
-    const collectionName = (this.constructor as any).collectionName
+    const collectionName = (this.constructor as any).collectionName;
     return this.connection
       .request({
         method: 'GET',

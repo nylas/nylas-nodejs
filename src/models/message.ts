@@ -9,10 +9,9 @@ import { Label, Folder } from './folder';
 import _ from 'lodash';
 
 export default class Message extends RestfulModel {
-
   subject: string = '';
-  from: EmailParticipant[] = []
-  replyTo: EmailParticipant[] = []
+  from: EmailParticipant[] = [];
+  replyTo: EmailParticipant[] = [];
   to: EmailParticipant[] = [];
   cc: EmailParticipant[] = [];
   bcc: EmailParticipant[] = [];
@@ -26,24 +25,21 @@ export default class Message extends RestfulModel {
   events?: Event;
   folder?: Folder;
   labels?: Label[];
-  headers?: {[key: string]: string};
+  headers?: { [key: string]: string };
 
   failures?: string[];
-
 
   // We calculate the list of participants instead of grabbing it from
   // a parent because it is a better source of ground truth, and saves us
   // from more dependencies.
   participants() {
-    const participants: {[key: string]: EmailParticipant} = {};
+    const participants: { [key: string]: EmailParticipant } = {};
     const contacts = union(this.to, this.cc, this.from);
     for (const contact of contacts) {
       if (contact && (contact.email ? contact.email.length : '') > 0) {
         if (contact) {
           participants[
-            `${contact.email || ''
-              .toLowerCase()
-              .trim()} ${(contact.name || '')
+            `${contact.email || ''.toLowerCase().trim()} ${(contact.name || '')
               .toLowerCase()
               .trim()}`
           ] = contact;
@@ -76,7 +72,7 @@ export default class Message extends RestfulModel {
     }
 
     // Messages are more limited, though.
-    const json: {[key: string]: any} = {};
+    const json: { [key: string]: any } = {};
     if (this.labels) {
       json['label_ids'] = Array.from(this.labels).map(label => label.id);
     } else if (this.folder) {

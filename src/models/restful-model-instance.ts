@@ -1,14 +1,14 @@
-import RestfulModel from "./restful-model";
-import NylasConnection from "../nylas-connection";
+import RestfulModel from './restful-model';
+import NylasConnection from '../nylas-connection';
 
 export default class RestfulModelInstance<T extends RestfulModel> {
   modelClass: typeof RestfulModel;
   connection: NylasConnection;
-  
+
   constructor(modelClass: typeof RestfulModel, connection: NylasConnection) {
     this.modelClass = modelClass;
     this.connection = connection;
-    if (!(this.connection instanceof require('../nylas-connection'))) {
+    if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
     if (!this.modelClass) {
@@ -20,7 +20,7 @@ export default class RestfulModelInstance<T extends RestfulModel> {
     return `/${this.modelClass.endpointName}`;
   }
 
-  get(params: { [key: string]: any} = {}) {
+  get(params: { [key: string]: any } = {}) {
     return this.connection
       .request({
         method: 'GET',

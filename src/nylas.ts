@@ -7,16 +7,22 @@ import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 
 class Nylas {
-   static appId: string | null = null;
-   static appSecret: string | null = null;
+  static appId: string | null = null;
+  static appSecret: string | null = null;
   static apiServer: string | null = null;
-  static accounts: ManagementModelCollection<ManagementAccount> | RestfulModelCollection<Account>
-  
-  static config({ appId, appSecret, apiServer }: {appId: string, appSecret: string, apiServer?: string}) {
+  static accounts: ManagementModelCollection<ManagementAccount> | RestfulModelCollection<Account>;
+
+  static config({
+    appId,
+    appSecret,
+    apiServer,
+  }: {
+    appId: string;
+    appSecret: string;
+    apiServer?: string;
+  }) {
     if (apiServer && apiServer.indexOf('://') === -1) {
-      throw new Error(
-        'Please specify a fully qualified URL for the API Server.'
-      );
+      throw new Error('Please specify a fully qualified URL for the API Server.');
     }
 
     if (appId) {
@@ -32,11 +38,7 @@ class Nylas {
     let conn;
     if (this.hostedAPI()) {
       conn = new NylasConnection(this.appSecret, { clientId: this.appId });
-      this.accounts = new ManagementModelCollection(
-        ManagementAccount,
-        conn,
-        this.appId!
-      );
+      this.accounts = new ManagementModelCollection(ManagementAccount, conn, this.appId!);
     } else {
       conn = new NylasConnection(this.appSecret, { clientId: this.appId });
       this.accounts = new RestfulModelCollection(Account, conn);
@@ -65,7 +67,10 @@ class Nylas {
     return new NylasConnection(accessToken, { clientId: this.appId });
   }
 
-  static exchangeCodeForToken(code: string, callback: (error: Error | null, accessToken?: string) => void) {
+  static exchangeCodeForToken(
+    code: string,
+    callback: (error: Error | null, accessToken?: string) => void
+  ) {
     if (!this.appId || !this.appSecret) {
       throw new Error(
         'exchangeCodeForToken() cannot be called until you provide an appId and secret via config()'
@@ -104,7 +109,9 @@ class Nylas {
     });
   }
 
-  static urlForAuthentication(options: {redirectURI?: string, loginHint?: string, state?: string, scopes?: string[]} = {}) {
+  static urlForAuthentication(
+    options: { redirectURI?: string; loginHint?: string; state?: string; scopes?: string[] } = {}
+  ) {
     if (!this.appId) {
       throw new Error(
         'urlForAuthentication() cannot be called until you provide an appId via config()'
@@ -118,9 +125,7 @@ class Nylas {
     }
     let url = `${this.apiServer}/oauth/authorize?client_id=${
       this.appId
-    }&response_type=code&login_hint=${options.loginHint}&redirect_uri=${
-      options.redirectURI
-    }`;
+    }&response_type=code&login_hint=${options.loginHint}&redirect_uri=${options.redirectURI}`;
     if (options.state != null) {
       url += `&state=${options.state}`;
     }

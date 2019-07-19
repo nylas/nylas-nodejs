@@ -1,7 +1,7 @@
 import request from 'request';
 
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
+import Nylas from '../nylas';
+import NylasConnection from '../nylas-connection';
 
 describe('Nylas', () => {
   beforeEach(() => {
@@ -98,9 +98,7 @@ describe('Nylas', () => {
     });
 
     test('should resolve with the returned access_token', done => {
-      request.Request = jest.fn(options =>
-        options.callback(null, null, { access_token: '12345' })
-      );
+      request.Request = jest.fn(options => options.callback(null, null, { access_token: '12345' }));
 
       Nylas.exchangeCodeForToken('code-from-server')
         .then(accessToken => {
@@ -125,28 +123,20 @@ describe('Nylas', () => {
         request.Request = jest.fn(options =>
           options.callback(null, null, { access_token: '12345' })
         );
-        Nylas.exchangeCodeForToken(
-          'code-from-server',
-          (returnedError, accessToken) => {
-            expect(accessToken).toBe('12345');
-            done();
-          }
-        ).catch(() => {});
+        Nylas.exchangeCodeForToken('code-from-server', (returnedError, accessToken) => {
+          expect(accessToken).toBe('12345');
+          done();
+        }).catch(() => {});
       });
 
       test('should call it with the request error', done => {
         const error = new Error('network error');
-        request.Request = jest.fn(options =>
-          options.callback(error, null, null)
-        );
+        request.Request = jest.fn(options => options.callback(error, null, null));
 
-        Nylas.exchangeCodeForToken(
-          'code-from-server',
-          (returnedError, accessToken) => {
-            expect(returnedError).toBe(error);
-            done();
-          }
-        ).catch(() => {});
+        Nylas.exchangeCodeForToken('code-from-server', (returnedError, accessToken) => {
+          expect(returnedError).toBe(error);
+          done();
+        }).catch(() => {});
       });
     });
   });

@@ -1,6 +1,4 @@
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
-import Account from '../src/models/account';
+import NylasConnection from '../nylas-connection';
 
 describe('account', () => {
   let testContext;

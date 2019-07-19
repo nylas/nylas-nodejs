@@ -1,9 +1,6 @@
-import request from 'request';
-
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
-import RestfulModel from '../src/models/restful-model';
-import Attributes from '../src/models/attributes';
+import NylasConnection from '../nylas-connection';
+import RestfulModel from '../models/restful-model';
+import Attributes from '../models/attributes';
 
 class RestfulSubclassA extends RestfulModel {}
 
@@ -106,16 +103,10 @@ describe('RestfulModel', () => {
     });
 
     test('should assign attribute values by calling through to attribute fromJSON functions', () => {
-      const testNumberFromJSON =
-        RestfulSubclassAttributes.attributes.testNumber.fromJSON;
-      RestfulSubclassAttributes.attributes.testNumber.fromJSON = jest.fn(
-        json => 'inflated value!'
-      );
+      const testNumberFromJSON = RestfulSubclassAttributes.attributes.testNumber.fromJSON;
+      RestfulSubclassAttributes.attributes.testNumber.fromJSON = jest.fn(json => 'inflated value!');
       testContext.m.fromJSON(testContext.json);
-      expect(
-        RestfulSubclassAttributes.attributes.testNumber.fromJSON.mock.calls
-          .length
-      ).toBe(1);
+      expect(RestfulSubclassAttributes.attributes.testNumber.fromJSON.mock.calls.length).toBe(1);
       expect(testContext.m.testNumber).toBe('inflated value!');
       RestfulSubclassAttributes.attributes.testNumber.fromJSON = testNumberFromJSON;
     });
@@ -185,9 +176,7 @@ describe('RestfulModel', () => {
     });
 
     test('should return a JSON object and call attribute toJSON functions to map values', () => {
-      RestfulModel.attributes.accountId.toJSON = jest.fn(
-        json => 'inflated value!'
-      );
+      RestfulModel.attributes.accountId.toJSON = jest.fn(json => 'inflated value!');
 
       const json = testContext.model.toJSON();
       expect(json instanceof Object).toBe(true);

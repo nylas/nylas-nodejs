@@ -9,7 +9,7 @@ export default class Thread extends RestfulModel {
   participants?: Contact[];
   lastMessageTimestamp?: Date;
   lastMessageReceivedTimestamp?: Date;
-  lastMessageSentTimestamp?:Date;
+  lastMessageSentTimestamp?: Date;
   firstMessageTimestamp?: Date;
   snippet?: string;
   unread?: boolean;
@@ -23,13 +23,13 @@ export default class Thread extends RestfulModel {
   messages?: Message[];
   drafts?: Message[];
 
-  fromJSON = (json: {[key: string]: any}) => {
+  fromJSON = (json: { [key: string]: any }) => {
     super.fromJSON(json);
     return this;
-  }
+  };
 
   saveRequestBody() {
-    const json: {[key: string]: any} = {};
+    const json: { [key: string]: any } = {};
     if (this.labels) {
       json['label_ids'] = this.labels.map(label => label.id);
     } else if (this.folder) {

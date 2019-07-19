@@ -5,7 +5,7 @@ export default class EventParticipant extends RestfulModel {
   name?: string;
   email?: string;
   status?: string;
-  
+
   toJSON(...args: Parameters<RestfulModel['toJSON']>) {
     const json = super.toJSON(...args);
     if (!json['name']) {

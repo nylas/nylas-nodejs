@@ -5,7 +5,7 @@ import request, { ResponseRequest } from 'request';
 import { EventEmitter } from 'events';
 import NylasConnection from '../nylas-connection';
 
-type CreateRequestType = typeof request
+type CreateRequestType = typeof request;
 
 export default class Delta {
   static streamingTimeoutMs = 15000;
@@ -14,7 +14,7 @@ export default class Delta {
 
   constructor(connection: NylasConnection) {
     this.connection = connection;
-    if (!(this.connection instanceof require('../nylas-connection'))) {
+    if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
   }
@@ -47,17 +47,11 @@ export default class Delta {
   }
 
   _startStream(createRequest: CreateRequestType, cursor: string, params: any) {
-    const stream = new DeltaStream(
-      createRequest,
-      this.connection,
-      cursor,
-      params
-    );
+    const stream = new DeltaStream(createRequest, this.connection, cursor, params);
     stream.open();
     return stream;
   }
 }
-
 
 /*
 A connection to the Nylas delta streaming API.
@@ -69,16 +63,15 @@ Emits the following events:
 - `info` when the connection status changes
 */
 class DeltaStream extends EventEmitter {
-
   // Max number of times to retry a connection if we receive no data heartbeats
   // from the Nylas server.
   static MAX_RESTART_RETRIES = 5;
 
   timeoutId?: number;
-  params: {[key: string]: any};
+  params: { [key: string]: any };
   connection: NylasConnection;
   cursor: string;
-  createRequest: CreateRequestType; 
+  createRequest: CreateRequestType;
   request?: ResponseRequest;
   restartBackoff = backoff.exponential({
     randomisationFactor: 0.5,
@@ -93,26 +86,27 @@ class DeltaStream extends EventEmitter {
   // @param {Array<string>} params.excludeTypes object types to not return deltas for (e.g., {excludeTypes: ['thread']})
   // @param {Array<string>} params.includeTypes object types to exclusively return deltas for (e.g., {includeTypes: ['thread']})
   // @param {boolean} params.expanded boolean to specify wether to request the expanded view
-  constructor(createRequest: CreateRequestType, connection: NylasConnection, cursor: string, params: {[key: string]: any} = {}) {
+  constructor(
+    createRequest: CreateRequestType,
+    connection: NylasConnection,
+    cursor: string,
+    params: { [key: string]: any } = {}
+  ) {
     super();
     this.createRequest = createRequest;
     this.connection = connection;
     this.cursor = cursor;
     this.params = params;
-    if (!(this.connection instanceof require('../nylas-connection'))) {
+    if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
     this.restartBackoff.failAfter(DeltaStream.MAX_RESTART_RETRIES);
-    this.restartBackoff
-      .on('backoff', this._restartConnection.bind(this))
-      .on('fail', () => {
-        return this.emit(
-          'error',
-          `Nylas DeltaStream failed to reconnect after ${
-            DeltaStream.MAX_RESTART_RETRIES
-          } retries.`
-        );
-      });
+    this.restartBackoff.on('backoff', this._restartConnection.bind(this)).on('fail', () => {
+      return this.emit(
+        'error',
+        `Nylas DeltaStream failed to reconnect after ${DeltaStream.MAX_RESTART_RETRIES} retries.`
+      );
+    });
   }
 
   close() {
@@ -128,12 +122,10 @@ class DeltaStream extends EventEmitter {
   open() {
     this.close();
     const path = '/delta/streaming';
-    const excludeTypes =
-      this.params.excludeTypes != null ? this.params.excludeTypes : [];
-    const includeTypes =
-      this.params.includeTypes != null ? this.params.includeTypes : [];
+    const excludeTypes = this.params.excludeTypes != null ? this.params.excludeTypes : [];
+    const includeTypes = this.params.includeTypes != null ? this.params.includeTypes : [];
 
-    const queryObj: {[key: string]: any} = {
+    const queryObj: { [key: string]: any } = {
       ...omit(this.params, ['excludeTypes', 'includeTypes']),
       cursor: this.cursor,
     };
@@ -182,7 +174,7 @@ class DeltaStream extends EventEmitter {
       })
       .on('error', this._onError.bind(this));
 
-      return this.request
+    return this.request;
   }
 
   _onDataReceived(data?: any) {

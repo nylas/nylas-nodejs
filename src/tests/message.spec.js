@@ -1,11 +1,8 @@
-import request from 'request';
-
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
-import File from '../src/models/file';
-import Message from '../src/models/message';
-import { Label } from '../src/models/folder';
-import RestfulModelCollection from '../src/models/restful-model-collection'
+import NylasConnection from '../nylas-connection';
+import File from '../models/file';
+import Message from '../models/message';
+import { Label } from '../models/folder';
+import RestfulModelCollection from '../models/restful-model-collection';
 
 describe('Message', () => {
   let testContext;
@@ -17,12 +14,9 @@ describe('Message', () => {
     testContext.message.id = '4333';
     testContext.message.starred = true;
     testContext.message.unread = false;
-    testContext.message.to = [{"email": "foo", "name": "bar"}];
+    testContext.message.to = [{ email: 'foo', name: 'bar' }];
     testContext.connection.request = jest.fn(() => Promise.resolve(testContext.message.toJSON()));
-    testContext.collection = new RestfulModelCollection(
-      Message,
-      testContext.connection
-    );
+    testContext.collection = new RestfulModelCollection(Message, testContext.connection);
     testContext.collection._getModelCollection = jest.fn(() => {
       return Promise.resolve([testContext.message]);
     });
@@ -76,8 +70,7 @@ describe('Message', () => {
       testContext.message.save().then(message => {
         expect(message.id).toBe('4333');
         let toParticipant = message.to[0];
-        expect(toParticipant.toJSON()).toEqual(
-          {'email': 'foo', 'name': 'bar'});
+        expect(toParticipant.toJSON()).toEqual({ email: 'foo', name: 'bar' });
         done();
       });
     });
@@ -114,7 +107,7 @@ describe('Message', () => {
         object: 'file',
         message_ids: [],
         size: 123,
-      }
+      };
       const file = new File(testContext.connection, fileObj);
       testContext.message.files = [file];
       testContext.collection.first().then(message => {
@@ -126,5 +119,5 @@ describe('Message', () => {
         done();
       });
     });
-  })
+  });
 });

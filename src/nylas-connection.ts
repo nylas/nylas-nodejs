@@ -14,8 +14,8 @@ import Event from './models/event';
 import Delta from './models/delta';
 import { Label, Folder } from './models/folder';
 
-const PACKAGE_JSON = require('../package.json');
-const SDK_VERSION = PACKAGE_JSON.version;
+import { version as SDK_VERSION } from '../package.json';
+
 const SUPPORTED_API_VERSION = '2.0';
 
 export default class NylasConnection {
@@ -34,12 +34,15 @@ export default class NylasConnection {
   folders = new RestfulModelCollection<Folder>(Folder, this);
   account = new RestfulModelInstance<Account>(Account, this);
 
-  constructor(accessToken: string | null, { clientId }: {clientId: string | null}) {
+  constructor(accessToken: string | null, { clientId }: { clientId: string | null }) {
     this.accessToken = accessToken;
     this.clientId = clientId;
+    return this;
   }
 
-  requestOptions(options: CoreOptions & {url?: string, downloadRequest?: boolean, path?: string}) {
+  requestOptions(
+    options: CoreOptions & { url?: string; downloadRequest?: boolean; path?: string }
+  ) {
     if (!options) {
       options = {};
     }
@@ -74,8 +77,7 @@ export default class NylasConnection {
       delete options.qs.expanded;
     }
 
-    const user =
-      (options.path || '').substr(0, 3) === '/a/' ? Nylas.appSecret : this.accessToken;
+    const user = (options.path || '').substr(0, 3) === '/a/' ? Nylas.appSecret : this.accessToken;
 
     if (user) {
       options.auth = {
@@ -95,7 +97,7 @@ export default class NylasConnection {
     options.headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
     options.headers['X-Nylas-Client-Id'] = this.clientId;
 
-    return options as (CoreOptions & UrlOptions & {downloadRequest: boolean});
+    return options as (CoreOptions & UrlOptions & { downloadRequest: boolean });
   }
   _getWarningForVersion(sdkApiVersion?: string, apiVersion?: string) {
     let warning = '';
@@ -130,10 +132,7 @@ export default class NylasConnection {
         // node headers are lowercase so this refers to `Nylas-Api-Version`
         const apiVersion = response.headers['nylas-api-version'] as string | undefined;
 
-        const warning = this._getWarningForVersion(
-          SUPPORTED_API_VERSION,
-          apiVersion
-        );
+        const warning = this._getWarningForVersion(SUPPORTED_API_VERSION, apiVersion);
         if (warning) {
           console.warn(warning);
         }
@@ -149,9 +148,7 @@ export default class NylasConnection {
             error = new Error(body.message);
           }
           if (body.server_error) {
-            error.message = `${error.message} (Server Error: ${
-              body.server_error
-            })`;
+            error.message = `${error.message} (Server Error: ${body.server_error})`;
           }
           if (response.statusCode) {
             error.statusCode = response.statusCode;
@@ -167,4 +164,4 @@ export default class NylasConnection {
       });
     });
   }
-};
+}

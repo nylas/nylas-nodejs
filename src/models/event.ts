@@ -19,10 +19,14 @@ export default class Event extends RestfulModel {
     end_time: number;
     end_date: string;
     time: number;
-    object:string;
+    object: string;
   };
   busy?: boolean;
   status?: string;
+
+  save(...args: Parameters<this['_save']>) {
+    return this._save(...args);
+  }
 
   saveRequestBody() {
     const dct = this.toJSON();
@@ -37,8 +41,7 @@ export default class Event extends RestfulModel {
     return dct;
   }
 
-
-  fromJSON(json: {[key: string]: any}) {
+  fromJSON(json: { [key: string]: any }) {
     super.fromJSON(json);
 
     if (this.when) {
@@ -46,9 +49,7 @@ export default class Event extends RestfulModel {
       // "when" formats into two timestamps we can use for range querying. Note that for
       // all-day events, we use first second of start date and last second of end date.
       this.start =
-        this.when.start_time ||
-        new Date(this.when.start_date).getTime() / 1000.0 ||
-        this.when.time;
+        this.when.start_time || new Date(this.when.start_date).getTime() / 1000.0 || this.when.time;
       this.end =
         this.when.end_time ||
         new Date(this.when.end_date).getTime() / 1000.0 + (60 * 60 * 24 - 1) ||

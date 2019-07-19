@@ -58,7 +58,7 @@ class PhysicalAddress extends RestfulModel {
   postalCode?: string;
 
   toJSON() {
-    const json: {[key: string]: any} = {
+    const json: { [key: string]: any } = {
       type: this.type,
       format: this.format,
     };

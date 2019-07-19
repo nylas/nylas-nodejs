@@ -1,6 +1,5 @@
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
-import Contact from '../src/models/contact';
+import NylasConnection from '../nylas-connection';
+import Contact from '../models/contact';
 
 describe('Contact', () => {
   let testContext;
@@ -105,8 +104,8 @@ describe('Contact', () => {
           surname: 'Jingleheimer Schmidt',
           suffix: 'II',
           job_title: 'artist',
-          phone_numbers: [{'type': 'mobile', 'number': '555-444-3333'}],
-          physical_addresses: [{'type': 'home', 'city': 'Boston'}],
+          phone_numbers: [{ type: 'mobile', number: '555-444-3333' }],
+          physical_addresses: [{ type: 'home', city: 'Boston' }],
         };
         return Promise.resolve(contactJSON);
       });
@@ -120,8 +119,11 @@ describe('Contact', () => {
         expect(contact.surname).toBe('Jingleheimer Schmidt');
         expect(contact.suffix).toBe('II');
         expect(contact.jobTitle).toBe('artist');
-        expect(contact.phoneNumbers[0].toJSON()).toEqual({'type': 'mobile', 'number': '555-444-3333'});
-        expect(contact.physicalAddresses[0].toJSON()).toEqual({'type': 'home', 'city': 'Boston'});
+        expect(contact.phoneNumbers[0].toJSON()).toEqual({
+          type: 'mobile',
+          number: '555-444-3333',
+        });
+        expect(contact.physicalAddresses[0].toJSON()).toEqual({ type: 'home', city: 'Boston' });
         done();
       });
     });
@@ -141,9 +143,7 @@ describe('Contact', () => {
   describe('when the request fails', () => {
     beforeEach(() => {
       testContext.error = new Error('Network error');
-      testContext.connection.request = jest.fn(() =>
-        Promise.reject(testContext.error)
-      );
+      testContext.connection.request = jest.fn(() => Promise.reject(testContext.error));
     });
 
     test('should reject with the error', done => {

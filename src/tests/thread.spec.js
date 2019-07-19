@@ -1,10 +1,7 @@
-import request from 'request';
-
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
-import Thread from '../src/models/thread';
-import Message from '../src/models/message';
-import { Label } from '../src/models/folder';
+import NylasConnection from '../nylas-connection';
+import Thread from '../models/thread';
+import Message from '../models/message';
+import { Label } from '../models/folder';
 
 describe('Thread', () => {
   let testContext;

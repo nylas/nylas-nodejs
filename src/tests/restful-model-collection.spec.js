@@ -1,10 +1,8 @@
-import request from 'request';
-
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
-import RestfulModelCollection from '../src/models/restful-model-collection';
-import Thread from '../src/models/thread';
-import Event from '../src/models/event';
+import Nylas from '../nylas';
+import NylasConnection from '../nylas-connection';
+import RestfulModelCollection from '../models/restful-model-collection';
+import Thread from '../models/thread';
+import Event from '../models/event';
 
 describe('RestfulModelCollection', () => {
   let testContext;
@@ -19,10 +17,7 @@ describe('RestfulModelCollection', () => {
       clientId: 'foo',
     });
     testContext.connection.request = jest.fn(() => Promise.resolve());
-    testContext.collection = new RestfulModelCollection(
-      Thread,
-      testContext.connection
-    );
+    testContext.collection = new RestfulModelCollection(Thread, testContext.connection);
   });
 
   describe('constructor', () => {
@@ -41,11 +36,7 @@ describe('RestfulModelCollection', () => {
       for (let x = 0; x <= 3; x++) {
         const response = [];
         const count = x < 3 ? 99 : 12;
-        for (
-          let i = 0, end = count, asc = 0 <= end;
-          asc ? i <= end : i >= end;
-          asc ? i++ : i--
-        ) {
+        for (let i = 0, end = count, asc = 0 <= end; asc ? i <= end : i >= end; asc ? i++ : i--) {
           response.push({
             id: '123',
             account_id: undefined,
@@ -55,9 +46,8 @@ describe('RestfulModelCollection', () => {
         threadsResponses.push(response);
       }
 
-      testContext.collection._getModelCollection = jest.fn(
-        (params, offset, limit) =>
-          Promise.resolve(threadsResponses[offset / 100])
+      testContext.collection._getModelCollection = jest.fn((params, offset, limit) =>
+        Promise.resolve(threadsResponses[offset / 100])
       );
     });
 
@@ -85,18 +75,30 @@ describe('RestfulModelCollection', () => {
         params,
         () => {},
         () => {
-          expect(
-            testContext.collection._getModelCollection.mock.calls[0]
-          ).toEqual([{ from: 'ben@nylas.com' }, 0, 100, '/threads']);
-          expect(
-            testContext.collection._getModelCollection.mock.calls[1]
-          ).toEqual([{ from: 'ben@nylas.com' }, 100, 100, '/threads']);
-          expect(
-            testContext.collection._getModelCollection.mock.calls[2]
-          ).toEqual([{ from: 'ben@nylas.com' }, 200, 100, '/threads']);
-          expect(
-            testContext.collection._getModelCollection.mock.calls[3]
-          ).toEqual([{ from: 'ben@nylas.com' }, 300, 100, '/threads']);
+          expect(testContext.collection._getModelCollection.mock.calls[0]).toEqual([
+            { from: 'ben@nylas.com' },
+            0,
+            100,
+            '/threads',
+          ]);
+          expect(testContext.collection._getModelCollection.mock.calls[1]).toEqual([
+            { from: 'ben@nylas.com' },
+            100,
+            100,
+            '/threads',
+          ]);
+          expect(testContext.collection._getModelCollection.mock.calls[2]).toEqual([
+            { from: 'ben@nylas.com' },
+            200,
+            100,
+            '/threads',
+          ]);
+          expect(testContext.collection._getModelCollection.mock.calls[3]).toEqual([
+            { from: 'ben@nylas.com' },
+            300,
+            100,
+            '/threads',
+          ]);
           done();
         }
       );
@@ -144,9 +146,7 @@ describe('RestfulModelCollection', () => {
 
     describe('when the request is successful', () => {
       beforeEach(() => {
-        testContext.connection.request = jest.fn(() =>
-          Promise.resolve({ count: 1023 })
-        );
+        testContext.connection.request = jest.fn(() => Promise.resolve({ count: 1023 }));
       });
 
       test('should resolve with the count', done => {
@@ -157,13 +157,10 @@ describe('RestfulModelCollection', () => {
       });
 
       test('should call the optional callback with the count', done => {
-        testContext.collection.count(
-          { from: 'ben@nylas.com' },
-          (callbackError, count) => {
-            expect(count).toBe(1023);
-            done();
-          }
-        );
+        testContext.collection.count({ from: 'ben@nylas.com' }, (callbackError, count) => {
+          expect(count).toBe(1023);
+          done();
+        });
       });
     });
 
@@ -176,12 +173,10 @@ describe('RestfulModelCollection', () => {
       });
 
       test('should reject with any error', done => {
-        testContext.collection
-          .count({ from: 'ben@nylas.com' })
-          .catch(rejectError => {
-            expect(rejectError).toBe(testContext.error);
-            done();
-          });
+        testContext.collection.count({ from: 'ben@nylas.com' }).catch(rejectError => {
+          expect(rejectError).toBe(testContext.error);
+          done();
+        });
       });
 
       test('should call the optional callback with any error', done => {
@@ -219,9 +214,7 @@ describe('RestfulModelCollection', () => {
             view: 'expanded',
           })
           .then(msg => {
-            expect(
-              testContext.collection._getModelCollection
-            ).toHaveBeenCalledWith(
+            expect(testContext.collection._getModelCollection).toHaveBeenCalledWith(
               { from: 'ben@nylas.com', view: 'expanded' },
               0,
               1,
@@ -380,10 +373,7 @@ describe('RestfulModelCollection', () => {
     });
 
     test('should reject with an error if called on any model but Message or Thread', () => {
-      testContext.collection = new RestfulModelCollection(
-        Event,
-        testContext.connection
-      );
+      testContext.collection = new RestfulModelCollection(Event, testContext.connection);
       testContext.collection.search().catch(err => {
         expect(err).toBeInstanceOf(Error);
       });
@@ -401,16 +391,14 @@ describe('RestfulModelCollection', () => {
     });
 
     test('should pass user-defined limit and offset to the request', done => {
-      testContext.collection
-        .search('blah', { limit: 1, offset: 1 })
-        .catch(() => {
-          expect(testContext.connection.request).toHaveBeenCalledWith({
-            method: 'GET',
-            path: '/threads/search',
-            qs: { limit: 1, offset: 1, q: 'blah' },
-          });
-          done();
+      testContext.collection.search('blah', { limit: 1, offset: 1 }).catch(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'GET',
+          path: '/threads/search',
+          qs: { limit: 1, offset: 1, q: 'blah' },
         });
+        done();
+      });
     });
 
     describe('when the request succeeds', () => {
@@ -547,15 +535,11 @@ describe('RestfulModelCollection', () => {
     });
 
     test('should initialize the new instance with the connection', () => {
-      expect(testContext.collection.build().connection).toBe(
-        testContext.connection
-      );
+      expect(testContext.collection.build().connection).toBe(testContext.connection);
     });
 
     test('should set other attributes provided to the build method', () => {
-      expect(testContext.collection.build({ subject: '123' }).subject).toEqual(
-        '123'
-      );
+      expect(testContext.collection.build({ subject: '123' }).subject).toEqual('123');
     });
   });
 
@@ -571,11 +555,7 @@ describe('RestfulModelCollection', () => {
       for (let x = 0; x <= 3; x++) {
         const response = [];
         const count = x < 3 ? 99 : 12;
-        for (
-          let i = 0, end = count, asc = 0 <= end;
-          asc ? i <= end : i >= end;
-          asc ? i++ : i--
-        ) {
+        for (let i = 0, end = count, asc = 0 <= end; asc ? i <= end : i >= end; asc ? i++ : i--) {
           response.push({
             id: '123',
             account_id: undefined,
@@ -585,9 +565,8 @@ describe('RestfulModelCollection', () => {
         threadsResponses.push(response);
       }
 
-      testContext.collection._getModelCollection = jest.fn(
-        (params, offset, limit) =>
-          Promise.resolve(threadsResponses[offset / 100])
+      testContext.collection._getModelCollection = jest.fn((params, offset, limit) =>
+        Promise.resolve(threadsResponses[offset / 100])
       );
     });
 
@@ -619,15 +598,24 @@ describe('RestfulModelCollection', () => {
         },
       ];
       const callback = () => {
-        expect(
-          testContext.collection._getModelCollection.mock.calls[0]
-        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100, '/threads']);
-        expect(
-          testContext.collection._getModelCollection.mock.calls[1]
-        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100, '/threads']);
-        expect(
-          testContext.collection._getModelCollection.mock.calls[2]
-        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100, '/threads']);
+        expect(testContext.collection._getModelCollection.mock.calls[0]).toEqual([
+          { from: 'ben@nylas.com' },
+          0,
+          100,
+          '/threads',
+        ]);
+        expect(testContext.collection._getModelCollection.mock.calls[1]).toEqual([
+          { from: 'ben@nylas.com' },
+          100,
+          100,
+          '/threads',
+        ]);
+        expect(testContext.collection._getModelCollection.mock.calls[2]).toEqual([
+          { from: 'ben@nylas.com' },
+          200,
+          100,
+          '/threads',
+        ]);
       };
       testContext.collection._range({
         params,
@@ -640,18 +628,30 @@ describe('RestfulModelCollection', () => {
     test('should stop fetching if fewer than requested models are returned', () => {
       const params = { from: 'ben@nylas.com' };
       const callback = () => {
-        expect(
-          testContext.collection._getModelCollection.mock.calls[0]
-        ).toEqual([{ from: 'ben@nylas.com' }, 0, 100, '/threads']);
-        expect(
-          testContext.collection._getModelCollection.mock.calls[1]
-        ).toEqual([{ from: 'ben@nylas.com' }, 100, 100, '/threads']);
-        expect(
-          testContext.collection._getModelCollection.mock.calls[2]
-        ).toEqual([{ from: 'ben@nylas.com' }, 200, 100, '/threads']);
-        expect(
-          testContext.collection._getModelCollection.mock.calls[3]
-        ).toEqual([{ from: 'ben@nylas.com' }, 300, 100, '/threads']);
+        expect(testContext.collection._getModelCollection.mock.calls[0]).toEqual([
+          { from: 'ben@nylas.com' },
+          0,
+          100,
+          '/threads',
+        ]);
+        expect(testContext.collection._getModelCollection.mock.calls[1]).toEqual([
+          { from: 'ben@nylas.com' },
+          100,
+          100,
+          '/threads',
+        ]);
+        expect(testContext.collection._getModelCollection.mock.calls[2]).toEqual([
+          { from: 'ben@nylas.com' },
+          200,
+          100,
+          '/threads',
+        ]);
+        expect(testContext.collection._getModelCollection.mock.calls[3]).toEqual([
+          { from: 'ben@nylas.com' },
+          300,
+          100,
+          '/threads',
+        ]);
       };
       testContext.collection._range({
         params,
@@ -676,12 +676,10 @@ describe('RestfulModelCollection', () => {
 
     test('should resolve with the loaded models', done => {
       const params = { from: 'ben@nylas.com' };
-      testContext.collection
-        ._range({ params, offset: 0, limit: 10000 })
-        .then(function(models) {
-          expect(models.length).toBe(313);
-          done();
-        });
+      testContext.collection._range({ params, offset: 0, limit: 10000 }).then(function(models) {
+        expect(models.length).toBe(313);
+        done();
+      });
     });
   });
 });

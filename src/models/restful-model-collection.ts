@@ -9,7 +9,6 @@ import NylasConnection from '../nylas-connection';
 const REQUEST_CHUNK_SIZE = 100;
 type ErrorCallback = (error: Error | null) => void;
 
-
 export default class RestfulModelCollection<T extends RestfulModel> {
   modelClass: typeof RestfulModel;
   connection: NylasConnection;
@@ -17,7 +16,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
   constructor(modelClass: typeof RestfulModel, connection: NylasConnection) {
     this.modelClass = modelClass;
     this.connection = connection;
-    if (!(this.connection instanceof require('../nylas-connection'))) {
+    if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
     if (!this.modelClass) {
@@ -25,7 +24,11 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     }
   }
 
-  forEach(params: {view?: string, [key: string]: any} = {}, eachCallback: (item: T) => void, completeCallback?: ErrorCallback) {
+  forEach(
+    params: { view?: string; [key: string]: any } = {},
+    eachCallback: (item: T) => void,
+    completeCallback?: ErrorCallback
+  ) {
     if (params.view == 'count') {
       const err = new Error('forEach() cannot be called with the count view');
       if (completeCallback) {
@@ -40,16 +43,14 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return async.until(
       () => finished,
       callback => {
-        return this._getItems(params, offset, REQUEST_CHUNK_SIZE).then(
-          items => {
-            for (const item of items) {
-              eachCallback(item as T);
-            }
-            offset += items.length;
-            finished = items.length < REQUEST_CHUNK_SIZE;
-            return callback();
+        return this._getItems(params, offset, REQUEST_CHUNK_SIZE).then(items => {
+          for (const item of items) {
+            eachCallback(item as T);
           }
-        );
+          offset += items.length;
+          finished = items.length < REQUEST_CHUNK_SIZE;
+          return callback();
+        });
       },
       err => {
         if (completeCallback) {
@@ -80,7 +81,10 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       });
   }
 
-  first(params: {view?: string, [key: string]: any} = {}, callback: (error: Error | null, obj?: T) => void) {
+  first(
+    params: { view?: string; [key: string]: any } = {},
+    callback: (error: Error | null, obj?: T) => void
+  ) {
     if (params.view == 'count') {
       const err = new Error('first() cannot be called with the count view');
       if (callback) {
@@ -104,7 +108,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       });
   }
 
-    list(params: {view?: string, [key: string]: any} = {}, callback?: ErrorCallback) {
+  list(params: { view?: string; [key: string]: any } = {}, callback?: ErrorCallback) {
     if (params.view == 'count') {
       const err = new Error('list() cannot be called with the count view');
       if (callback) {
@@ -118,7 +122,11 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return this._range({ params, offset, limit, callback });
   }
 
-  find(id: string, callback: (error: Error | null, model?: T) => void, params: {view?: string, [key: string]: any} = {}) {
+  find(
+    id: string,
+    callback: (error: Error | null, model?: T) => void,
+    params: { view?: string; [key: string]: any } = {}
+  ) {
     if (!id) {
       const err = new Error('find() must be called with an item id');
       if (callback) {
@@ -128,9 +136,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     }
 
     if (params.view == 'count' || params.view == 'ids') {
-      const err = new Error(
-        'find() cannot be called with the count or ids view'
-      );
+      const err = new Error('find() cannot be called with the count or ids view');
       if (callback) {
         callback(err);
       }
@@ -152,11 +158,13 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       });
   }
 
-  search(query: string, params: {limit?: number, offset?: number, [key: string]: any} = {}, callback?: (error?: Error) => void) {
+  search(
+    query: string,
+    params: { limit?: number; offset?: number; [key: string]: any } = {},
+    callback?: (error?: Error) => void
+  ) {
     if (this.modelClass != Message && this.modelClass != Thread) {
-      const err = new Error(
-        'search() can only be called for messages and threads'
-      );
+      const err = new Error('search() can only be called for messages and threads');
       if (callback) {
         callback(err);
       }
@@ -214,7 +222,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       });
   }
 
-  build(args: {[key: string]: any}) {
+  build(args: { [key: string]: any }) {
     const model = new this.modelClass(this.connection);
     for (const key in args) {
       const val = args[key];
@@ -227,12 +235,18 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return `/${this.modelClass.collectionName}`;
   }
 
-  _range({params = {}, offset = 0, limit=100, callback, path}: {
-    params?: {[key: string]: any},
-    offset?: number,
-    limit?: number,
-    callback?: (error: Error | null, results?: T[]) => void,
-    path?: string,
+  _range({
+    params = {},
+    offset = 0,
+    limit = 100,
+    callback,
+    path,
+  }: {
+    params?: { [key: string]: any };
+    offset?: number;
+    limit?: number;
+    callback?: (error: Error | null, results?: T[]) => void;
+    path?: string;
   }) {
     return new Promise((resolve, reject) => {
       let accumulated: T[] = [];
@@ -242,16 +256,11 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         () => finished,
         chunkCallback => {
           const chunkOffset = offset + accumulated.length;
-          const chunkLimit = Math.min(
-            REQUEST_CHUNK_SIZE,
-            limit - accumulated.length
-          );
+          const chunkLimit = Math.min(REQUEST_CHUNK_SIZE, limit - accumulated.length);
           return this._getItems(params, chunkOffset, chunkLimit, path)
-            .then((items) => {
+            .then(items => {
               accumulated = accumulated.concat(items as T[]);
-              finished =
-                items.length < REQUEST_CHUNK_SIZE ||
-                accumulated.length >= limit;
+              finished = items.length < REQUEST_CHUNK_SIZE || accumulated.length >= limit;
               return chunkCallback();
             })
             .catch(err => reject(err));
@@ -273,7 +282,12 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     });
   }
 
-  _getItems(params: {[key: string]: any}, offset: number, limit: number, path?: string): Promise<T[] | string[]> {
+  _getItems(
+    params: { [key: string]: any },
+    offset: number,
+    limit: number,
+    path?: string
+  ): Promise<T[] | string[]> {
     // Items can be either models or ids
 
     if (!path) {
@@ -291,11 +305,11 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return this._getModelCollection(params, offset, limit, path);
   }
 
-  _createModel(json: {[key: string]: any}) {
+  _createModel(json: { [key: string]: any }) {
     return new this.modelClass(this.connection, json) as T;
   }
 
-  _getModel(id: string, params: {[key: string]: any} = {}): Promise<T> {
+  _getModel(id: string, params: { [key: string]: any } = {}): Promise<T> {
     return this.connection
       .request({
         method: 'GET',
@@ -308,7 +322,12 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       });
   }
 
-  _getModelCollection(params: {[key: string]: any}, offset: number, limit: number, path: string): Promise<T[]> {
+  _getModelCollection(
+    params: { [key: string]: any },
+    offset: number,
+    limit: number,
+    path: string
+  ): Promise<T[]> {
     return this.connection
       .request({
         method: 'GET',

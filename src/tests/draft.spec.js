@@ -1,9 +1,6 @@
-import request from 'request';
-
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
-import Draft from '../src/models/draft';
-import Message from '../src/models/message';
+import NylasConnection from '../nylas-connection';
+import Draft from '../models/draft';
+import Message from '../models/message';
 
 describe('Draft', () => {
   let testContext;
@@ -43,7 +40,7 @@ describe('Draft', () => {
             file_ids: [],
             headers: undefined,
             reply_to: [],
-            reply_to_message_id: undefined
+            reply_to_message_id: undefined,
           },
           qs: {},
           path: '/drafts',
@@ -120,9 +117,7 @@ describe('Draft', () => {
     describe('when the request fails', () => {
       beforeEach(() => {
         testContext.error = new Error('Network error');
-        testContext.connection.request = jest.fn(() =>
-          Promise.reject(testContext.error)
-        );
+        testContext.connection.request = jest.fn(() => Promise.reject(testContext.error));
       });
 
       test('should reject with the error', done => {
@@ -204,7 +199,7 @@ describe('Draft', () => {
     test('should send the draft JSON if the draft has no id and has a tracking object passed in as a parameter', done => {
       testContext.draft.id = undefined;
       testContext.draft.subject = 'Test Subject';
-      testContext.draft.send(null, {"opens": true}).then(() => {
+      testContext.draft.send(null, { opens: true }).then(() => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
@@ -230,7 +225,7 @@ describe('Draft', () => {
             headers: undefined,
             reply_to: [],
             reply_to_message_id: undefined,
-            tracking: {"opens": true}
+            tracking: { opens: true },
           },
           path: '/send',
           headers: {},
@@ -302,9 +297,7 @@ Would you like to grab coffee @ 2pm this Thursday?`;
     describe('when the request fails', () => {
       beforeEach(() => {
         testContext.error = new Error('Network error');
-        testContext.connection.request = jest.fn(() =>
-          Promise.reject(testContext.error)
-        );
+        testContext.connection.request = jest.fn(() => Promise.reject(testContext.error));
       });
 
       test('should reject with the error', done => {

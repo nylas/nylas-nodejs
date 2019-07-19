@@ -6,7 +6,7 @@ export default class Account extends RestfulModel {
   emailAddress?: string;
   provider?: string;
   organizationUnit?: string;
-  syncState?: string
+  syncState?: string;
   billingState?: string;
   linkedAt?: Date;
 }

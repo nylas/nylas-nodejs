@@ -6,7 +6,7 @@ export class Label extends RestfulModel {
   name?: string;
 
   saveRequestBody() {
-    const json: {[key: string]: any} = {};
+    const json: { [key: string]: any } = {};
     json['display_name'] = this.displayName;
     json['name'] = this.name;
     return json;

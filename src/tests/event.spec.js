@@ -1,8 +1,5 @@
-import request from 'request';
-
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
-import Event from '../src/models/event';
+import NylasConnection from '../nylas-connection';
+import Event from '../models/event';
 
 describe('Event', () => {
   let testContext;
@@ -100,9 +97,7 @@ describe('Event', () => {
             id: 'id-1234',
             title: 'test event',
             when: {},
-            participants: [
-              {'name': 'foo', 'email': 'bar', 'status': 'noreply'}
-            ],
+            participants: [{ name: 'foo', email: 'bar', status: 'noreply' }],
           };
           return Promise.resolve(eventJSON);
         });
@@ -113,8 +108,7 @@ describe('Event', () => {
           expect(event.id).toBe('id-1234');
           expect(event.title).toBe('test event');
           let participant = event.participants[0];
-          expect(participant.toJSON()).toEqual(
-            {'name': 'foo', 'email': 'bar', 'status': 'noreply'});
+          expect(participant.toJSON()).toEqual({ name: 'foo', email: 'bar', status: 'noreply' });
           done();
         });
       });
@@ -132,9 +126,7 @@ describe('Event', () => {
     describe('when the request fails', () => {
       beforeEach(() => {
         testContext.error = new Error('Network error');
-        testContext.connection.request = jest.fn(() =>
-          Promise.reject(testContext.error)
-        );
+        testContext.connection.request = jest.fn(() => Promise.reject(testContext.error));
       });
 
       test('should reject with the error', done => {

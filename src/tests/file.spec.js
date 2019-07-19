@@ -1,8 +1,5 @@
-import request from 'request';
-
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
-import File from '../src/models/file';
+import NylasConnection from '../nylas-connection';
+import File from '../models/file';
 
 describe('File', () => {
   let testContext;
@@ -73,7 +70,7 @@ describe('File', () => {
               filename: 'sample.txt',
               id: 'id-1234',
               object: 'file',
-              size: 123
+              size: 123,
             },
           ];
           return Promise.resolve(fileJSON);

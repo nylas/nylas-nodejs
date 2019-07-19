@@ -1,8 +1,8 @@
 import { EventEmitter } from 'events';
 import { PassThrough } from 'stream';
 
-import Delta from '../src/models/delta';
-import NylasConnection from '../src/nylas-connection';
+import Delta from '../models/delta';
+import NylasConnection from '../nylas-connection';
 
 describe('Delta', () => {
   let testContext;
@@ -36,10 +36,7 @@ describe('Delta', () => {
     };
 
     test('start and close stream', () => {
-      const stream = testContext.delta._startStream(
-        createRequest,
-        'deltacursor0'
-      );
+      const stream = testContext.delta._startStream(createRequest, 'deltacursor0');
       const { request } = stream;
 
       expect(request.origOpts.method).toBe('GET');
@@ -60,15 +57,11 @@ describe('Delta', () => {
     });
 
     test('passes the correct params to the request', () => {
-      const stream = testContext.delta._startStream(
-        createRequest,
-        'deltacursor0',
-        {
-          expanded: true,
-          includeTypes: ['thread', 'message'],
-          excludeTypes: ['event'],
-        }
-      );
+      const stream = testContext.delta._startStream(createRequest, 'deltacursor0', {
+        expanded: true,
+        includeTypes: ['thread', 'message'],
+        excludeTypes: ['event'],
+      });
       const { request } = stream;
 
       expect(request.origOpts.method).toBe('GET');
@@ -82,10 +75,7 @@ describe('Delta', () => {
     });
 
     test('stream response parsing', () => {
-      const stream = testContext.delta._startStream(
-        createRequest,
-        'deltacursor0'
-      );
+      const stream = testContext.delta._startStream(createRequest, 'deltacursor0');
       const { request } = stream;
       const deltas = observeDeltas(stream);
 
@@ -110,10 +100,7 @@ describe('Delta', () => {
     });
 
     test('stream response parsing, delta split across data packets', () => {
-      const stream = testContext.delta._startStream(
-        createRequest,
-        'deltacursor0'
-      );
+      const stream = testContext.delta._startStream(createRequest, 'deltacursor0');
       const { request } = stream;
       const deltas = observeDeltas(stream);
 
@@ -145,18 +132,14 @@ describe('Delta', () => {
     });
 
     test('stream timeout and auto-restart', () => {
-      const stream = testContext.delta._startStream(
-        createRequest,
-        'deltacursor0'
-      );
+      const stream = testContext.delta._startStream(createRequest, 'deltacursor0');
       const { request } = stream;
 
       const response = createResponse(200);
       request.emit('response', response);
       expect(stream.cursor).toEqual('deltacursor0');
 
-      const expectRequestNotAborted = request =>
-        expect(request.abort.calls.length).toEqual(0);
+      const expectRequestNotAborted = request => expect(request.abort.calls.length).toEqual(0);
 
       // Server sends a heartbeat every 5 seconds.
       response.write('\n');
@@ -188,13 +171,9 @@ describe('Delta', () => {
 
   describe('latestCursor', () => {
     test('returns a cursor', () => {
-      testContext.connection.request = jest.fn(() =>
-        Promise.resolve({ cursor: 'abcdefg' })
-      );
+      testContext.connection.request = jest.fn(() => Promise.resolve({ cursor: 'abcdefg' }));
 
-      testContext.delta.latestCursor((err, cursor) =>
-        expect(cursor).toEqual('abcdefg')
-      );
+      testContext.delta.latestCursor((err, cursor) => expect(cursor).toEqual('abcdefg'));
 
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'POST',

@@ -1,9 +1,5 @@
-import request from 'request';
-
-import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
-import Message from '../src/models/message';
-import { Label } from '../src/models/folder';
+import NylasConnection from '../nylas-connection';
+import { Label } from '../models/folder';
 
 const testUntil = fn => {
   let finished = false;

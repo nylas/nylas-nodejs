@@ -4,10 +4,10 @@ import Attributes from './attributes';
 export default class File extends RestfulModel {
   filename?: string;
   data?: any;
-  messageIds?: string[]
+  messageIds?: string[];
   contentType?: string;
-  contentId?: string
-  contentDisposition?:string;
+  contentId?: string;
+  contentDisposition?: string;
   size?: string;
 
   upload = (callback?: (error: Error | null, model?: File) => void) => {
@@ -56,9 +56,11 @@ export default class File extends RestfulModel {
         }
         return Promise.reject(err);
       });
-  }
+  };
 
-  download = (callback?:(error: Error | null, file?: {body: any, [key: string]: any}) => void) => {
+  download = (
+    callback?: (error: Error | null, file?: { body: any; [key: string]: any }) => void
+  ) => {
     if (!this.id) {
       throw new Error('Please provide a File id');
     }
@@ -73,9 +75,7 @@ export default class File extends RestfulModel {
         let filename;
         const file = { ...response.headers, body: response.body };
         if ('content-disposition' in file) {
-          filename =
-            /filename=([^;]*)/.exec(file['content-disposition'])![1] ||
-            'filename';
+          filename = /filename=([^;]*)/.exec(file['content-disposition'])![1] || 'filename';
         } else {
           filename = 'filename';
         }
@@ -90,9 +90,9 @@ export default class File extends RestfulModel {
         }
         return Promise.reject(err);
       });
-  }
+  };
 
-  metadata = (callback?:(error: Error | null, metadata?: { [key: string]: any}) => void) => {
+  metadata = (callback?: (error: Error | null, metadata?: { [key: string]: any }) => void) => {
     return this.connection
       .request({
         path: `/files/${this.id}`,
@@ -109,7 +109,7 @@ export default class File extends RestfulModel {
         }
         return Promise.reject(err);
       });
-  }
+  };
 }
 File.collectionName = 'files';
 File.attributes = {

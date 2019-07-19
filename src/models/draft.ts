@@ -1,6 +1,4 @@
-import File from './file';
 import Message from './message';
-import Contact from './contact';
 import Attributes from './attributes';
 import { SaveCallback } from './restful-model';
 
@@ -47,9 +45,9 @@ export default class Draft extends Message {
     return super.toString();
   }
 
-  send(callback?:(error: Error | null, message?: Message) => void, tracking?: boolean) {
+  send(callback?: (error: Error | null, message?: Message) => void, tracking?: boolean) {
     let body: any = this.rawMime,
-      headers: {[key: string]: string} = { 'Content-Type': 'message/rfc822' },
+      headers: { [key: string]: string } = { 'Content-Type': 'message/rfc822' },
       json = false;
 
     if (!this.rawMime) {
