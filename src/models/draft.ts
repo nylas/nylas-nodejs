@@ -31,7 +31,7 @@ export default class Draft extends Message {
     return this._save(params, callback);
   }
 
-  saveRequestBody() {
+  protected saveRequestBody() {
     if (this.rawMime) {
       throw Error('saveRequestBody() cannot be called for raw MIME drafts');
     }

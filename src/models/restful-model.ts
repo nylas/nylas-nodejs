@@ -67,7 +67,7 @@ export default class RestfulModel {
 
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
   // fields the API allows updating. Subclasses should override this method.
-  saveRequestBody() {
+  protected saveRequestBody() {
     return this.toJSON();
   }
 

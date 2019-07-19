@@ -28,7 +28,7 @@ export default class Event extends RestfulModel {
     return this._save(params, callback);
   }
 
-  saveRequestBody() {
+  protected saveRequestBody() {
     const dct = this.toJSON();
     if (this.start && this.end) {
       dct['when'] = {

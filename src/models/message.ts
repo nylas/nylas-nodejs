@@ -65,7 +65,7 @@ export default class Message extends RestfulModel {
       .catch(err => Promise.reject(err));
   }
 
-  saveRequestBody() {
+  protected saveRequestBody() {
     // It's possible to update most of the fields of a draft.
     if (this.constructor.name === 'Draft') {
       return super.saveRequestBody();

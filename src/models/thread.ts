@@ -28,7 +28,7 @@ export default class Thread extends RestfulModel {
     return this;
   };
 
-  saveRequestBody() {
+  protected saveRequestBody() {
     const json: { [key: string]: any } = {};
     if (this.labels) {
       json['label_ids'] = this.labels.map(label => label.id);
