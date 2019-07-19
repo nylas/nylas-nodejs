@@ -1,9 +1,12 @@
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
-export default class EventParticipant extends RestfulModel {
-  toJSON() {
-    const json = super.toJSON(...arguments);
+export default class EmailParticipant extends RestfulModel {
+  name?: string;
+  email?: string;
+
+  toJSON(...args: Parameters<RestfulModel['toJSON']>) {
+    const json = super.toJSON(...args);
     if (!json['name']) {
       json['name'] = json['email'];
     }
@@ -11,15 +14,12 @@ export default class EventParticipant extends RestfulModel {
     return json;
   }
 }
-EventParticipant.collectionName = 'event-participants';
-EventParticipant.attributes = {
+EmailParticipant.collectionName = 'email-participants';
+EmailParticipant.attributes = {
   name: Attributes.String({
     modelKey: 'name',
   }),
   email: Attributes.String({
     modelKey: 'email',
-  }),
-  status: Attributes.String({
-    modelKey: 'status',
   }),
 };

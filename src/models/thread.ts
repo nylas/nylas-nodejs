@@ -1,22 +1,35 @@
 import Message from './message';
 import RestfulModel from './restful-model';
 import Contact from './contact';
-import * as Attributes from './attributes';
+import Attributes from './attributes';
 import { Label, Folder } from './folder';
 
 export default class Thread extends RestfulModel {
-  constructor(...args) {
-    super(...args);
-    this.fromJSON = this.fromJSON.bind(this);
-  }
+  subject?: string;
+  participants?: Contact[];
+  lastMessageTimestamp?: Date;
+  lastMessageReceivedTimestamp?: Date;
+  lastMessageSentTimestamp?:Date;
+  firstMessageTimestamp?: Date;
+  snippet?: string;
+  unread?: boolean;
+  starred?: boolean;
+  hasAttachments?: boolean;
+  version?: string;
+  folder?: Folder;
+  labels?: Label[];
+  messageIds?: string[];
+  draftIds?: string[];
+  messages?: Message[];
+  drafts?: Message[];
 
-  fromJSON(json) {
+  fromJSON = (json: {[key: string]: any}) => {
     super.fromJSON(json);
     return this;
   }
 
   saveRequestBody() {
-    const json = {};
+    const json: {[key: string]: any} = {};
     if (this.labels) {
       json['label_ids'] = this.labels.map(label => label.id);
     } else if (this.folder) {
@@ -28,8 +41,8 @@ export default class Thread extends RestfulModel {
     return json;
   }
 
-  save(params = {}, callback = null) {
-    return this._save(params, callback);
+  save(...args: Parameters<this['_save']>) {
+    return this._save(...args);
   }
 }
 Thread.collectionName = 'threads';

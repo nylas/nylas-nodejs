@@ -2,15 +2,18 @@ import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
 export class Label extends RestfulModel {
+  displayName?: string;
+  name?: string;
+
   saveRequestBody() {
-    const json = {};
+    const json: {[key: string]: any} = {};
     json['display_name'] = this.displayName;
     json['name'] = this.name;
     return json;
   }
 
-  save(params = {}, callback = null) {
-    return this._save(params, callback);
+  save(...args: Parameters<this['_save']>) {
+    return this._save(...args);
   }
 }
 Label.collectionName = 'labels';

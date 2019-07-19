@@ -1,5 +1,11 @@
-export default class RestfulModelInstance {
-  constructor(modelClass, connection) {
+import RestfulModel from "./restful-model";
+import NylasConnection from "../nylas-connection";
+
+export default class RestfulModelInstance<T extends RestfulModel> {
+  modelClass: typeof RestfulModel;
+  connection: NylasConnection;
+  
+  constructor(modelClass: typeof RestfulModel, connection: NylasConnection) {
     this.modelClass = modelClass;
     this.connection = connection;
     if (!(this.connection instanceof require('../nylas-connection'))) {
@@ -14,15 +20,15 @@ export default class RestfulModelInstance {
     return `/${this.modelClass.endpointName}`;
   }
 
-  get(params = {}) {
+  get(params: { [key: string]: any} = {}) {
     return this.connection
       .request({
         method: 'GET',
         path: this.path(),
         qs: params,
       })
-      .then(json => {
-        const model = new this.modelClass(this.connection, json);
+      .then((json: any) => {
+        const model = new this.modelClass(this.connection, json) as T;
         return Promise.resolve(model);
       });
   }

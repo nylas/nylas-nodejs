@@ -1,15 +1,18 @@
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 
 class EmailAddress extends RestfulModel {
+  type?: string;
+  email?: string;
+
   toJSON() {
-    const json = {
+    return {
       type: this.type,
       email: this.email,
     };
-    return json;
   }
 }
+
 EmailAddress.collectionName = 'email_addresses';
 EmailAddress.attributes = {
   ...RestfulModel.attributes,
@@ -22,12 +25,14 @@ EmailAddress.attributes = {
 };
 
 class IMAddress extends RestfulModel {
+  type?: string;
+  im_address?: string;
+
   toJSON() {
-    const json = {
+    return {
       type: this.type,
       im_address: this.im_address,
     };
-    return json;
   }
 }
 IMAddress.collectionName = 'im_addresses';
@@ -43,8 +48,17 @@ IMAddress.attributes = {
 };
 
 class PhysicalAddress extends RestfulModel {
+  type?: string;
+  format?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  address?: string;
+  streetAddress?: string;
+  postalCode?: string;
+
   toJSON() {
-    const json = {
+    const json: {[key: string]: any} = {
       type: this.type,
       format: this.format,
     };
@@ -92,12 +106,14 @@ PhysicalAddress.attributes = {
 };
 
 class PhoneNumber extends RestfulModel {
+  type?: string;
+  number?: string;
+
   toJSON() {
-    const json = {
+    return {
       type: this.type,
       number: this.number,
     };
-    return json;
   }
 }
 
@@ -113,12 +129,14 @@ PhoneNumber.attributes = {
 };
 
 class WebPage extends RestfulModel {
+  type?: string;
+  url?: string;
+
   toJSON() {
-    const json = {
+    return {
       type: this.type,
       url: this.url,
     };
-    return json;
   }
 }
 WebPage.collectionName = 'web_pages';
@@ -133,11 +151,29 @@ WebPage.attributes = {
 };
 
 export default class Contact extends RestfulModel {
-  save(params = {}, callback = null) {
-    return this._save(params, callback);
+  givenName?: string;
+  middleName?: string;
+  surname?: string;
+  suffix?: string;
+  nickname?: string;
+  birthday?: Date;
+  companyName?: Date;
+  jobTitle?: string;
+  managerName?: string;
+  officeLocation?: string;
+  notes?: string;
+  pictureUrl?: string;
+  emailAddresses?: EmailAddress[];
+  imAddresses?: IMAddress[];
+  physicalAddresses?: PhysicalAddress[];
+  phoneNumbers?: PhoneNumber[];
+  webPages?: WebPage[];
+
+  save(...args: Parameters<this['_save']>) {
+    return this._save(...args);
   }
 
-  getPicture(params = {}, callback = null) {
+  getPicture(params = {}, callback: null) {
     return this._get(params, callback, '/picture');
   }
 }

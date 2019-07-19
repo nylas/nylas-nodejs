@@ -2,13 +2,15 @@ import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
 export default class File extends RestfulModel {
-  constructor(...args) {
-    super(...args);
-    this.upload = this.upload.bind(this);
-    this.download = this.download.bind(this);
-  }
+  filename?: string;
+  data?: any;
+  messageIds?: string[]
+  contentType?: string;
+  contentId?: string
+  contentDisposition?:string;
+  size?: string;
 
-  upload(callback = null) {
+  upload = (callback?: (error: Error | null, model?: File) => void) => {
     if (!this.filename) {
       throw new Error('Please define a filename');
     }
@@ -23,7 +25,7 @@ export default class File extends RestfulModel {
       .request({
         method: 'POST',
         json: false,
-        path: `/${this.constructor.collectionName}`,
+        path: `/${File.collectionName}`,
         formData: {
           file: {
             value: this.data,
@@ -34,7 +36,7 @@ export default class File extends RestfulModel {
           },
         },
       })
-      .then(json => {
+      .then((json: any) => {
         // The API returns a list of files. It should
         // always have a length of 1 since we only
         // upload file-by-file.
@@ -56,7 +58,7 @@ export default class File extends RestfulModel {
       });
   }
 
-  download(callback = null) {
+  download = (callback?:(error: Error | null, file?: {body: any, [key: string]: any}) => void) => {
     if (!this.id) {
       throw new Error('Please provide a File id');
     }
@@ -67,12 +69,12 @@ export default class File extends RestfulModel {
         encoding: null,
         downloadRequest: true,
       })
-      .then(response => {
+      .then((response: any) => {
         let filename;
         const file = { ...response.headers, body: response.body };
         if ('content-disposition' in file) {
           filename =
-            /filename=([^;]*)/.exec(file['content-disposition'])[1] ||
+            /filename=([^;]*)/.exec(file['content-disposition'])![1] ||
             'filename';
         } else {
           filename = 'filename';
@@ -90,12 +92,12 @@ export default class File extends RestfulModel {
       });
   }
 
-  metadata(callback = null) {
+  metadata = (callback?:(error: Error | null, metadata?: { [key: string]: any}) => void) => {
     return this.connection
       .request({
         path: `/files/${this.id}`,
       })
-      .then(response => {
+      .then((response: any) => {
         if (callback) {
           callback(null, response);
         }
@@ -127,7 +129,7 @@ File.attributes = {
   messageIds: Attributes.Collection({
     modelKey: 'messageIds',
     jsonKey: 'message_ids',
-    itemClass: String,
+    itemClass: String as any,
   }),
   contentId: Attributes.String({
     modelKey: 'contentId',

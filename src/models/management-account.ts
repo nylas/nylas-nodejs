@@ -2,11 +2,16 @@ import ManagementModel from './management-model';
 import Attributes from './attributes';
 
 export default class ManagementAccount extends ManagementModel {
+  billingState?: string;
+  namespaceId?: string;
+  syncState?: string;
+  trial?: boolean;
+
   upgrade() {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.appId}/${this.constructor.collectionName}/${
+        path: `/a/${this.appId}/${ManagementAccount.collectionName}/${
           this.id
         }/upgrade`,
       })
@@ -17,18 +22,18 @@ export default class ManagementAccount extends ManagementModel {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.appId}/${this.constructor.collectionName}/${
+        path: `/a/${this.appId}/${ManagementAccount.collectionName}/${
           this.id
         }/downgrade`,
       })
       .catch(err => Promise.reject(err));
   }
 
-  revokeAll(keep_access_token) {
+  revokeAll(keep_access_token: any) {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.appId}/${this.constructor.collectionName}/${
+        path: `/a/${this.appId}/${ManagementAccount.collectionName}/${
           this.id
         }/revoke-all`,
         body: { keep_access_token: keep_access_token },

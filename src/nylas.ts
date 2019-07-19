@@ -7,12 +7,12 @@ import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 
 class Nylas {
-  constructor() {
-    this.appId = null;
-    this.appSecret = null;
-  }
-
-  static config({ appId, appSecret, apiServer }) {
+   static appId: string | null = null;
+   static appSecret: string | null = null;
+  static apiServer: string | null = null;
+  static accounts: ManagementModelCollection<ManagementAccount> | RestfulModelCollection<Account>
+  
+  static config({ appId, appSecret, apiServer }: {appId: string, appSecret: string, apiServer?: string}) {
     if (apiServer && apiServer.indexOf('://') === -1) {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
@@ -35,11 +35,11 @@ class Nylas {
       this.accounts = new ManagementModelCollection(
         ManagementAccount,
         conn,
-        this.appId
+        this.appId!
       );
     } else {
       conn = new NylasConnection(this.appSecret, { clientId: this.appId });
-      this.accounts = new RestfulModelCollection(Account, conn, this.appId);
+      this.accounts = new RestfulModelCollection(Account, conn);
     }
 
     return this;
@@ -49,14 +49,23 @@ class Nylas {
     return this.appId != null && this.appSecret != null;
   }
 
-  static with(accessToken) {
+  static with(accessToken: string) {
     if (!accessToken) {
       throw new Error('This function requires an access token');
     }
     return new NylasConnection(accessToken, { clientId: this.appId });
   }
 
-  static exchangeCodeForToken(code, callback) {
+  // This is here because TypeScript will not allow you to call a method called "with".
+  // It's a reserved word in the TypeScript language.
+  static withAccessToken(accessToken: string) {
+    if (!accessToken) {
+      throw new Error('This function requires an access token');
+    }
+    return new NylasConnection(accessToken, { clientId: this.appId });
+  }
+
+  static exchangeCodeForToken(code: string, callback: (error: Error | null, accessToken?: string) => void) {
     if (!this.appId || !this.appSecret) {
       throw new Error(
         'exchangeCodeForToken() cannot be called until you provide an appId and secret via config()'
@@ -95,7 +104,7 @@ class Nylas {
     });
   }
 
-  static urlForAuthentication(options = {}) {
+  static urlForAuthentication(options: {redirectURI?: string, loginHint?: string, state?: string, scopes?: string[]} = {}) {
     if (!this.appId) {
       throw new Error(
         'urlForAuthentication() cannot be called until you provide an appId via config()'
@@ -125,4 +134,4 @@ Nylas.apiServer = 'https://api.nylas.com';
 
 // We keep the old `module.exports` syntax for now to ensure that people using
 // `require` don't have to use `.default` to use this package
-module.exports = Nylas;
+export = Nylas;

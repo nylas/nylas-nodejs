@@ -1,12 +1,9 @@
 import clone from 'lodash/clone';
-import request from 'request';
+import request, { UrlOptions, CoreOptions } from 'request';
 
-import RestfulModel from './models/restful-model';
 import RestfulModelCollection from './models/restful-model-collection';
 import RestfulModelInstance from './models/restful-model-instance';
 import Account from './models/account';
-import ManagementAccount from './models/management-account';
-import ManagementModelCollection from './models/management-model-collection';
 import Thread from './models/thread';
 import Contact from './models/contact';
 import Message from './models/message';
@@ -21,24 +18,28 @@ const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
 const SUPPORTED_API_VERSION = '2.0';
 
-module.exports = class NylasConnection {
-  constructor(accessToken, { clientId }) {
+export default class NylasConnection {
+  accessToken: string | null;
+  clientId: string | null;
+
+  threads = new RestfulModelCollection<Thread>(Thread, this);
+  contacts = new RestfulModelCollection<Contact>(Contact, this);
+  messages = new RestfulModelCollection<Message>(Message, this);
+  drafts = new RestfulModelCollection<Draft>(Draft, this);
+  files = new RestfulModelCollection<File>(File, this);
+  calendars = new RestfulModelCollection<Calendar>(Calendar, this);
+  events = new RestfulModelCollection<Event>(Event, this);
+  deltas = new Delta(this);
+  labels = new RestfulModelCollection<Label>(Label, this);
+  folders = new RestfulModelCollection<Folder>(Folder, this);
+  account = new RestfulModelInstance<Account>(Account, this);
+
+  constructor(accessToken: string | null, { clientId }: {clientId: string | null}) {
     this.accessToken = accessToken;
     this.clientId = clientId;
-    this.threads = new RestfulModelCollection(Thread, this);
-    this.contacts = new RestfulModelCollection(Contact, this);
-    this.messages = new RestfulModelCollection(Message, this);
-    this.drafts = new RestfulModelCollection(Draft, this);
-    this.files = new RestfulModelCollection(File, this);
-    this.calendars = new RestfulModelCollection(Calendar, this);
-    this.events = new RestfulModelCollection(Event, this);
-    this.deltas = new Delta(this);
-    this.labels = new RestfulModelCollection(Label, this);
-    this.folders = new RestfulModelCollection(Folder, this);
-    this.account = new RestfulModelInstance(Account, this);
   }
 
-  requestOptions(options) {
+  requestOptions(options: CoreOptions & {url?: string, downloadRequest?: boolean, path?: string}) {
     if (!options) {
       options = {};
     }
@@ -74,7 +75,7 @@ module.exports = class NylasConnection {
     }
 
     const user =
-      options.path.substr(0, 3) === '/a/' ? Nylas.appSecret : this.accessToken;
+      (options.path || '').substr(0, 3) === '/a/' ? Nylas.appSecret : this.accessToken;
 
     if (user) {
       options.auth = {
@@ -94,9 +95,9 @@ module.exports = class NylasConnection {
     options.headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
     options.headers['X-Nylas-Client-Id'] = this.clientId;
 
-    return options;
+    return options as (CoreOptions & UrlOptions & {downloadRequest: boolean});
   }
-  _getWarningForVersion(sdkApiVersion = null, apiVersion = null) {
+  _getWarningForVersion(sdkApiVersion?: string, apiVersion?: string) {
     let warning = '';
 
     if (sdkApiVersion != apiVersion) {
@@ -118,16 +119,16 @@ module.exports = class NylasConnection {
     }
     return warning;
   }
-  request(options) {
+  request(options?: Parameters<this['requestOptions']>[0]) {
     if (!options) {
       options = {};
     }
-    options = this.requestOptions(options);
+    const resolvedOptions = this.requestOptions(options);
 
     return new Promise((resolve, reject) => {
-      return request(options, (error, response, body = {}) => {
+      return request(resolvedOptions, (error, response, body = {}) => {
         // node headers are lowercase so this refers to `Nylas-Api-Version`
-        const apiVersion = response.headers['nylas-api-version'];
+        const apiVersion = response.headers['nylas-api-version'] as string | undefined;
 
         const warning = this._getWarningForVersion(
           SUPPORTED_API_VERSION,
@@ -139,7 +140,7 @@ module.exports = class NylasConnection {
 
         // raw MIMI emails have json === false and the body is a string so
         // we need to turn into JSON before we can access fields
-        if (options.json === false) {
+        if (resolvedOptions.json === false) {
           body = JSON.parse(body);
         }
 
@@ -157,7 +158,7 @@ module.exports = class NylasConnection {
           }
           return reject(error);
         } else {
-          if (options.downloadRequest) {
+          if (resolvedOptions.downloadRequest) {
             return resolve(response);
           } else {
             return resolve(body);

@@ -3,6 +3,27 @@ import Attributes from './attributes';
 import EventParticipant from './event-participant';
 
 export default class Event extends RestfulModel {
+  start: number = 0;
+  end: number = 0;
+  calendarId?: string;
+  messageId?: string;
+  title?: string;
+  description?: string;
+  owner?: string;
+  participants?: EventParticipant[];
+  readOnly?: boolean;
+  location?: string;
+  when?: {
+    start_time: number;
+    start_date: string;
+    end_time: number;
+    end_date: string;
+    time: number;
+    object:string;
+  };
+  busy?: boolean;
+  status?: string;
+
   saveRequestBody() {
     const dct = this.toJSON();
     if (this.start && this.end) {
@@ -16,11 +37,8 @@ export default class Event extends RestfulModel {
     return dct;
   }
 
-  save(params = {}, callback = null) {
-    return this._save(params, callback);
-  }
 
-  fromJSON(json) {
+  fromJSON(json: {[key: string]: any}) {
     super.fromJSON(json);
 
     if (this.when) {
@@ -40,14 +58,14 @@ export default class Event extends RestfulModel {
     return this;
   }
 
-  rsvp(status, comment, callback) {
+  rsvp(status: string, comment: string, callback: (error: Error | null, model?: Event) => void) {
     return this.connection
       .request({
         method: 'POST',
         body: { event_id: this.id, status: status, comment: comment },
         path: '/send-rsvp',
       })
-      .then(json => {
+      .then((json: any) => {
         this.fromJSON(json);
         if (callback) {
           callback(null, this);

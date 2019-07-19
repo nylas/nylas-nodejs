@@ -1,7 +1,16 @@
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
-export default class Calendar extends RestfulModel {}
+export default class Calendar extends RestfulModel {
+  name?: string;
+  description?: string;
+  readOnly?: boolean;
+
+  save(...args: Parameters<this['_save']>) {
+    return this._save(...args);
+  }
+}
+
 Calendar.collectionName = 'calendars';
 Calendar.attributes = {
   ...RestfulModel.attributes,

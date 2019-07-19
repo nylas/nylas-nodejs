@@ -1,18 +1,25 @@
 import omit from 'lodash/omit';
 import backoff from 'backoff';
 import JSONStream from 'JSONStream';
-import request from 'request';
+import request, { ResponseRequest } from 'request';
 import { EventEmitter } from 'events';
+import NylasConnection from '../nylas-connection';
+
+type CreateRequestType = typeof request
 
 export default class Delta {
-  constructor(connection) {
+  static streamingTimeoutMs = 15000;
+
+  connection: NylasConnection;
+
+  constructor(connection: NylasConnection) {
     this.connection = connection;
     if (!(this.connection instanceof require('../nylas-connection'))) {
       throw new Error('Connection object not provided');
     }
   }
 
-  latestCursor(callback) {
+  latestCursor(callback: (error: Error | null, cursor: string | null) => void) {
     const reqOpts = {
       method: 'POST',
       path: '/delta/latest_cursor',
@@ -20,7 +27,7 @@ export default class Delta {
 
     return this.connection
       .request(reqOpts)
-      .then(response => {
+      .then((response: any) => {
         const { cursor } = response;
         if (callback) {
           callback(null, cursor);
@@ -35,11 +42,11 @@ export default class Delta {
       });
   }
 
-  startStream(cursor, params = {}) {
+  startStream(cursor: string, params = {}) {
     return this._startStream(request, cursor, params);
   }
 
-  _startStream(createRequest, cursor, params) {
+  _startStream(createRequest: CreateRequestType, cursor: string, params: any) {
     const stream = new DeltaStream(
       createRequest,
       this.connection,
@@ -50,7 +57,7 @@ export default class Delta {
     return stream;
   }
 }
-Delta.streamingTimeoutMs = 15000;
+
 
 /*
 A connection to the Nylas delta streaming API.
@@ -62,14 +69,32 @@ Emits the following events:
 - `info` when the connection status changes
 */
 class DeltaStream extends EventEmitter {
+
+  // Max number of times to retry a connection if we receive no data heartbeats
+  // from the Nylas server.
+  static MAX_RESTART_RETRIES = 5;
+
+  timeoutId?: number;
+  params: {[key: string]: any};
+  connection: NylasConnection;
+  cursor: string;
+  createRequest: CreateRequestType; 
+  request?: ResponseRequest;
+  restartBackoff = backoff.exponential({
+    randomisationFactor: 0.5,
+    initialDelay: 250,
+    maxDelay: 30000,
+    factor: 4,
+  });
+
   // @param {function} createRequest function to create a request; only present for testability
   // @param {string} cursor Nylas delta API cursor
   // @param {Object} params object contianing query string params to be passed to  the request
   // @param {Array<string>} params.excludeTypes object types to not return deltas for (e.g., {excludeTypes: ['thread']})
   // @param {Array<string>} params.includeTypes object types to exclusively return deltas for (e.g., {includeTypes: ['thread']})
   // @param {boolean} params.expanded boolean to specify wether to request the expanded view
-  constructor(createRequest, connection, cursor, params = {}) {
-    super(createRequest, connection, cursor, params);
+  constructor(createRequest: CreateRequestType, connection: NylasConnection, cursor: string, params: {[key: string]: any} = {}) {
+    super();
     this.createRequest = createRequest;
     this.connection = connection;
     this.cursor = cursor;
@@ -77,12 +102,6 @@ class DeltaStream extends EventEmitter {
     if (!(this.connection instanceof require('../nylas-connection'))) {
       throw new Error('Connection object not provided');
     }
-    this.restartBackoff = backoff.exponential({
-      randomisationFactor: 0.5,
-      initialDelay: 250,
-      maxDelay: 30000,
-      factor: 4,
-    });
     this.restartBackoff.failAfter(DeltaStream.MAX_RESTART_RETRIES);
     this.restartBackoff
       .on('backoff', this._restartConnection.bind(this))
@@ -114,7 +133,7 @@ class DeltaStream extends EventEmitter {
     const includeTypes =
       this.params.includeTypes != null ? this.params.includeTypes : [];
 
-    const queryObj = {
+    const queryObj: {[key: string]: any} = {
       ...omit(this.params, ['excludeTypes', 'includeTypes']),
       cursor: this.cursor,
     };
@@ -131,10 +150,10 @@ class DeltaStream extends EventEmitter {
       qs: queryObj,
     });
 
-    return (this.request = this.createRequest(reqOpts)
+    this.request = this.createRequest(reqOpts)
       .on('response', response => {
         if (response.statusCode !== 200) {
-          response.on('data', data => {
+          response.on('data', (data: any) => {
             let err = data;
             try {
               err = JSON.parse(err);
@@ -153,7 +172,7 @@ class DeltaStream extends EventEmitter {
             // Each data block received may not be a complete JSON object. Pipe through
             // JSONStream.parse(), which handles converting data blocks to JSON objects.
             .pipe(JSONStream.parse())
-            .on('data', obj => {
+            .on('data', (obj: any) => {
               if (obj.cursor) {
                 this.cursor = obj.cursor;
               }
@@ -161,28 +180,30 @@ class DeltaStream extends EventEmitter {
             })
         );
       })
-      .on('error', this._onError.bind(this)));
+      .on('error', this._onError.bind(this));
+
+      return this.request
   }
 
-  _onDataReceived(data) {
+  _onDataReceived(data?: any) {
     // Nylas sends a newline heartbeat in the raw data stream once every 5 seconds.
     // Automatically restart the connection if we haven't gotten any data in
     // Delta.streamingTimeoutMs. The connection will restart with the last
     // received cursor.
     clearTimeout(this.timeoutId);
     this.restartBackoff.reset();
-    return (this.timeoutId = setTimeout(
+    this.timeoutId = setTimeout(
       this.restartBackoff.backoff.bind(this.restartBackoff),
       Delta.streamingTimeoutMs
-    ));
+    ) as any;
   }
 
-  _onError(err) {
+  _onError(err: Error) {
     this.emit('error', err);
     return this.restartBackoff.reset();
   }
 
-  _restartConnection(n) {
+  _restartConnection(n: number) {
     this.emit(
       'info',
       `Restarting Nylas DeltaStream connection (attempt ${n + 1}): ${
@@ -193,6 +214,3 @@ class DeltaStream extends EventEmitter {
     return this.open();
   }
 }
-// Max number of times to retry a connection if we receive no data heartbeats
-// from the Nylas server.
-DeltaStream.MAX_RESTART_RETRIES = 5;

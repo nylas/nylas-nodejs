@@ -2,17 +2,18 @@ import File from './file';
 import Message from './message';
 import Contact from './contact';
 import Attributes from './attributes';
+import { SaveCallback } from './restful-model';
 
 export default class Draft extends Message {
-  constructor(...args) {
-    super(...args);
-  }
+  rawMime?: string;
+  version?: number;
+  draft: boolean = true;
 
-  toJSON() {
+  toJSON(...args: Parameters<Message['toJSON']>) {
     if (this.rawMime) {
       throw Error('toJSON() cannot be called for raw MIME drafts');
     }
-    const json = super.toJSON(...arguments);
+    const json = super.toJSON(...args);
     json.file_ids = this.fileIds();
     if (this.draft) {
       json.object = 'draft';
@@ -21,7 +22,7 @@ export default class Draft extends Message {
     return json;
   }
 
-  save(params = {}, callback = null) {
+  save(params = {}, callback?: SaveCallback) {
     if (this.rawMime) {
       const err = new Error('save() cannot be called for raw MIME drafts');
       if (callback) {
@@ -36,19 +37,19 @@ export default class Draft extends Message {
     if (this.rawMime) {
       throw Error('saveRequestBody() cannot be called for raw MIME drafts');
     }
-    return super.saveRequestBody(...arguments);
+    return super.saveRequestBody();
   }
 
   toString() {
     if (this.rawMime) {
       throw Error('toString() cannot be called for raw MIME drafts');
     }
-    super.toString();
+    return super.toString();
   }
 
-  send(callback = null, tracking) {
-    let body = this.rawMime,
-      headers = { 'Content-Type': 'message/rfc822' },
+  send(callback?:(error: Error | null, message?: Message) => void, tracking?: boolean) {
+    let body: any = this.rawMime,
+      headers: {[key: string]: string} = { 'Content-Type': 'message/rfc822' },
       json = false;
 
     if (!this.rawMime) {
@@ -62,7 +63,7 @@ export default class Draft extends Message {
       } else {
         body = this.saveRequestBody();
         if (tracking) {
-          body['tracking'] = tracking;
+          body.tracking = tracking;
         }
       }
     }
@@ -75,7 +76,7 @@ export default class Draft extends Message {
         body,
         json,
       })
-      .then(json => {
+      .then((json: any) => {
         const message = new Message(this.connection, json);
 
         // We may get failures for a partial send
