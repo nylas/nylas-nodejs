@@ -12,12 +12,13 @@ describe('ManagementAccount', () => {
 
   describe('list', () => {
     test('should do a GET request to get the account list', done => {
-      expect.assertions(4);
+      expect.assertions(5);
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
           {
             account_id: '8rilmlwuo4zmpjedz8bcplclk',
             billing_state: 'paid',
+            email: 'margaret@hamilton.com',
             id: ACCOUNT_ID,
             sync_state: 'running',
             trial: false,
@@ -28,7 +29,8 @@ describe('ManagementAccount', () => {
         .list({}, (err, accounts) => {
           expect(accounts.length).toEqual(1);
           expect(accounts[0].id).toEqual('8rilmlwuo4zmpjedz8bcplclk');
-          expect(accounts[0].billingState).toBe('paid');
+          expect(accounts[0].billingState).toEqual('paid');
+          expect(accounts[0].emailAddress).toEqual('margaret@hamilton.com');
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 100, offset: 0 },
