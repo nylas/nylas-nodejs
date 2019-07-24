@@ -51,6 +51,10 @@ ManagementAccount.attributes = {
     modelKey: 'billingState',
     jsonKey: 'billing_state',
   }),
+  emailAddress: Attributes.String({
+    modelKey: 'emailAddress',
+    jsonKey: 'email',
+  }),
   namespaceId: Attributes.String({
     modelKey: 'namespaceId',
     jsonKey: 'namespace_id',
