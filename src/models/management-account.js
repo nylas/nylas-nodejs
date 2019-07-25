@@ -59,6 +59,9 @@ ManagementAccount.attributes = {
     modelKey: 'namespaceId',
     jsonKey: 'namespace_id',
   }),
+  provider: Attributes.String({
+    modelKey: 'provider',
+  }),
   syncState: Attributes.String({
     modelKey: 'syncState',
     jsonKey: 'sync_state',
