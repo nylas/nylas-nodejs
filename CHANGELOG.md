@@ -2,7 +2,9 @@
 
 ### Unreleased
 
-nothing yet
+* Add contentDisposition to File
+* Add emailAddress to ManagementAccount
+* Add provider to ManagementAccount
 
 ### 4.6.1 / 2019-07-10
 
