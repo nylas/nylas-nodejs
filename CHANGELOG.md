@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 4.6.2 / 2019-07-26
 
 * Add contentDisposition to File
 * Add emailAddress to ManagementAccount
@@ -8,7 +8,7 @@
 * Update dependancies
 * Add `groups` and `source` to contact attributes
 * Fix contact birthday type from date to string
-* Fix `emailAddresses` attribute in contact model
+* Fix `emailAddresses` attribute in Contact model
 
 ### 4.6.1 / 2019-07-10
 
