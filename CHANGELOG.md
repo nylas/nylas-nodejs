@@ -6,6 +6,9 @@
 * Add emailAddress to ManagementAccount
 * Add provider to ManagementAccount
 * Update dependancies
+* Add `groups` and `source` to contact attributes
+* Fix contact birthday type from date to string
+* Fix `emailAddresses` attribute in contact model
 
 ### 4.6.1 / 2019-07-10
 
