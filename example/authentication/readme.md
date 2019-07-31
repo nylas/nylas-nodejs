@@ -6,7 +6,7 @@ APIs](https://www.nylas.com/docs/platform#native_authentication).  You can
 connect both Exchange accounts and Gmail account's in this example.
 
 It shows how to receive a `refresh_token` from Google before authenticating with
-Nylas. Then it uses the Nylas Ruby SDK to connect an email account and load the
+Nylas. Then it uses the Nylas Node SDK to connect an email account and load the
 user's latest email.
 
 While this steps through the Google OAuth flow manually, you can alternatively
