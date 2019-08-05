@@ -37,6 +37,15 @@ export default class ManagementAccount extends ManagementModel {
       })
       .catch(err => Promise.reject(err));
   }
+  tokenInfo(access_token) {
+    return this.connection
+      .request({
+        method: 'POST',
+        path: `/a/${this.appId}/${this.constructor.collectionName}/${this.id}/token-info`,
+        body: { access_token: access_token ? access_token : this.connection.accessToken },
+      })
+      .catch(err => Promise.reject(err));
+  }
 }
 ManagementAccount.collectionName = 'accounts';
 ManagementAccount.attributes = {
