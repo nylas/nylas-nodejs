@@ -42,7 +42,9 @@ export default class ManagementAccount extends ManagementModel {
       .request({
         method: 'POST',
         path: `/a/${this.appId}/${this.constructor.collectionName}/${this.id}/token-info`,
-        body: { access_token: access_token ? access_token : this.connection.accessToken },
+        body: { 
+          access_token: access_token
+        },
       })
       .catch(err => Promise.reject(err));
   }

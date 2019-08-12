@@ -276,7 +276,7 @@ describe('ManagementAccount', () => {
       Nylas.accounts.connection.request = requestMock
       Nylas.accounts
         .first()
-        .then(account => account.tokenInfo('xyz'))
+        .then(account => account.tokenInfo('abc123'))
         .then(resp => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledTimes(2);
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
@@ -287,7 +287,7 @@ describe('ManagementAccount', () => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
             path: `/a/${APP_ID}/accounts/${ACCOUNT_ID}/token-info`,
-            body: { access_token: 'xyz' }, 
+            body: { access_token: 'abc123' }, 
           });
           expect(resp.created_at).toBe(1563496685);
           expect(resp.scopes).toBe('calendar,email,contacts');
@@ -297,8 +297,8 @@ describe('ManagementAccount', () => {
         });
     });
 
-    test('should populate body param when none passed in', done => {
-      expect.assertions(7);
+    test('should error when no access token passed in', done => {
+      expect.assertions(4);
       const requestMock = jest.fn()
       requestMock
         .mockReturnValueOnce(
@@ -313,12 +313,7 @@ describe('ManagementAccount', () => {
           ])
         )
         .mockReturnValueOnce(
-          Promise.resolve({
-            created_at: 1563496685,
-            scopes: 'calendar,email,contacts',
-            state: 'valid',
-            updated_at: 1563496685,
-          })
+          Promise.resolve('Error: No access_token passed.')
         )
       Nylas.accounts.connection.request = requestMock
       Nylas.accounts
@@ -334,12 +329,9 @@ describe('ManagementAccount', () => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
             path: `/a/${APP_ID}/accounts/${ACCOUNT_ID}/token-info`,
-            body: { access_token: 'xyz' },
+            body: { access_token: undefined },
           });
-          expect(resp.created_at).toBe(1563496685);
-          expect(resp.scopes).toBe('calendar,email,contacts');
-          expect(resp.state).toBe('valid');
-          expect(resp.updated_at).toBe(1563496685);
+          expect(resp).toBe('Error: No access_token passed.');
           done();
         });
     });
