@@ -46,6 +46,15 @@ export default class RestfulModel {
     return json;
   }
 
+  // Subclasses should override this method.
+  pathPrefix() {
+    return '';
+  }
+
+  saveEndpoint() {
+    return `${this.pathPrefix()}/${this.constructor.collectionName}`;
+  }
+
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
   // fields the API allows updating. Subclasses should override this method.
   saveRequestBody() {
@@ -70,8 +79,8 @@ export default class RestfulModel {
         body: this.saveRequestBody(),
         qs: params,
         path: this.id
-          ? `/${this.constructor.collectionName}/${this.id}`
-          : `/${this.constructor.collectionName}`,
+          ? `${this.saveEndpoint()}/${this.id}`
+          : `${this.saveEndpoint()}`,
       })
       .then(json => {
         this.fromJSON(json);

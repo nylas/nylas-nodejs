@@ -371,6 +371,31 @@ nylas.messages.search('Hey!').then(messages => console.log(messages));
 
 ```
 
+Creating and Updating Webhooks
+-----
+You can programmatically create, read, update and delete webhooks.
+
+```javascript
+// create a new webhook
+const newWebhook = Nylas.webhooks.build({
+  callbackUrl: 'https://wwww.myapp.com/webhook',
+  state: 'active',
+  triggers: ['event.created', 'event.updated'],
+  });
+newWebhook.save().then(webhook => console.log(webhook.id));
+
+// get and update the state of an existing webhook
+// note: a webhook's callbackUrl & triggers are not updateable, only its state.
+Nylas.webhooks.find('existingWebhookId').then(existingWebhook => {
+  existingWebhook.state = 'active';
+  existingWebhook.save();
+})
+
+// delete an existing webhook
+Nylas.webhooks.delete(existingWebhook);
+
+```
+
 Using the Delta Streaming API
 ------
 
