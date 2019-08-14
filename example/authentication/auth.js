@@ -8,8 +8,8 @@ if (config.nylasClientSecret === '' || config.nylasClientId === '') {
 
 // setup the Nylas API
 global.Nylas = require('nylas').config({
-  appId: config.nylasClientId,
-  appSecret: config.nylasClientSecret,
+  clientId: config.nylasClientId,
+  clientSecret: config.nylasClientSecret,
 });
 
 // First POST to /connect/authorize to get an authorization code from Nylas

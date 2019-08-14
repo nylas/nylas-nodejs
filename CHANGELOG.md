@@ -4,6 +4,7 @@
 
 * Update app id and app secret to client id and client secret
 * Add support for `/token-info` endpoint
+* Add webhooks CRUD functionality
 
 ### 4.6.2 / 2019-07-26
 

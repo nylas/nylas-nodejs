@@ -5,6 +5,7 @@ import ManagementAccount from './models/management-account';
 import Account from './models/account';
 import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
+import Webhook from './models/webhook';
 
 class Nylas {
   constructor() {
@@ -60,20 +61,17 @@ class Nylas {
       this.apiServer = apiServer;
     }
 
-    let conn;
+    const conn = new NylasConnection(this.clientSecret, {
+      clientId: this.clientId,
+    });
+    this.webhooks = new ManagementModelCollection(Webhook, conn, this.clientId);
     if (this.clientCredentials()) {
-      conn = new NylasConnection(this.clientSecret, {
-        clientId: this.clientId,
-      });
       this.accounts = new ManagementModelCollection(
         ManagementAccount,
         conn,
         this.clientId
       );
     } else {
-      conn = new NylasConnection(this.clientSecret, {
-        clientId: this.clientId,
-      });
       this.accounts = new RestfulModelCollection(Account, conn, this.clientId);
     }
 

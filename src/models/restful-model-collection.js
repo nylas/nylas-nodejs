@@ -208,7 +208,7 @@ export default class RestfulModelCollection {
   }
 
   build(args) {
-    const model = new this.modelClass(this.connection);
+    const model = this._createModel({});
     for (const key in args) {
       const val = args[key];
       model[key] = val;

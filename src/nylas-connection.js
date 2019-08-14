@@ -74,7 +74,9 @@ module.exports = class NylasConnection {
     }
 
     const user =
-      options.path.substr(0, 3) === '/a/' ? Nylas.appSecret : this.accessToken;
+      options.path.substr(0, 3) === '/a/'
+        ? Nylas.clientSecret
+        : this.accessToken;
 
     if (user) {
       options.auth = {
