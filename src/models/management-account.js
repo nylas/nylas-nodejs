@@ -41,7 +41,7 @@ export default class ManagementAccount extends ManagementModel {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.appId}/${this.constructor.collectionName}/${this.id}/token-info`,
+        path: `/a/${this.clientId}/${this.constructor.collectionName}/${this.id}/token-info`,
         body: {
           access_token: access_token,
         },
