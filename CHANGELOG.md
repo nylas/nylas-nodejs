@@ -1,5 +1,10 @@
 # Changelog
 
+### 4.7.2 / Unreleased
+
+* Update app id and app secret to client id and client secret
+* Add support for `/token-info` endpoint
+
 ### 4.6.2 / 2019-07-26
 
 * Add contentDisposition to File
