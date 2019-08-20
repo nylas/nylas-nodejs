@@ -1,6 +1,6 @@
 # Changelog
 
-### 4.7.2 / Unreleased
+### 4.7.0 / 2019-08-20
 
 * Update app id and app secret to client id and client secret
 * Add support for `/token-info` endpoint
