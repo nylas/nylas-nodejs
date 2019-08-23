@@ -3,6 +3,7 @@ import request from 'request';
 import NylasConnection from './nylas-connection';
 import ManagementAccount from './models/management-account';
 import Account from './models/account';
+import Connect from './models/connect';
 import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
@@ -64,6 +65,7 @@ class Nylas {
     const conn = new NylasConnection(this.clientSecret, {
       clientId: this.clientId,
     });
+    this.connect = new Connect(conn);
     this.webhooks = new ManagementModelCollection(Webhook, conn, this.clientId);
     if (this.clientCredentials()) {
       this.accounts = new ManagementModelCollection(
