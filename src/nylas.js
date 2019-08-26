@@ -67,7 +67,7 @@ class Nylas {
     const conn = new NylasConnection(this.clientSecret, {
       clientId: this.clientId,
     });
-    this.connect = new Connect(conn);
+    this.connect = new Connect(conn, this.clientId);
     this.webhooks = new ManagementModelCollection(Webhook, conn, this.clientId);
     if (this.clientCredentials()) {
       this.accounts = new ManagementModelCollection(
