@@ -37,7 +37,8 @@ class Nylas {
       process.emitWarning(
         '"appId" will be deprecated in version 5.0.0. Use "clientId" instead.',
         {
-          code: 'DeprecationWarning',
+          code: 'Nylas',
+          type: 'DeprecationWarning',
         }
       );
     }
@@ -45,9 +46,10 @@ class Nylas {
     if (appSecret) {
       this.clientSecret = appSecret;
       process.emitWarning(
-        '"appSecret" will be deprecated in version 5.0.0. Use "clientId" instead.',
+        '"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.',
         {
-          code: 'DeprecationWarning',
+          code: 'Nylas',
+          type: 'DeprecationWarning',
         }
       );
     }
@@ -84,7 +86,8 @@ class Nylas {
     process.emitWarning(
       '"appId" will be deprecated in version 5.0.0. Use "clientId" instead.',
       {
-        code: 'DeprecationWarning',
+        code: 'Nylas',
+        type: 'DeprecationWarning',
       }
     );
     return this.clientId;
@@ -95,7 +98,8 @@ class Nylas {
     process.emitWarning(
       '"appId" will be deprecated in version 5.0.0. Use "clientId" instead.',
       {
-        code: 'DeprecationWarning',
+        code: 'Nylas',
+        type: 'DeprecationWarning',
       }
     );
   }
@@ -104,7 +108,8 @@ class Nylas {
     process.emitWarning(
       '"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.',
       {
-        code: 'DeprecationWarning',
+        code: 'Nylas',
+        type: 'DeprecationWarning',
       }
     );
     return this.clientSecret;
@@ -115,7 +120,8 @@ class Nylas {
     process.emitWarning(
       '"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.',
       {
-        code: 'DeprecationWarning',
+        code: 'Nylas',
+        type: 'DeprecationWarning',
       }
     );
   }
