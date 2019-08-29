@@ -1,7 +1,7 @@
 export default class Connect {
   constructor(connection, clientId) {
     this.connection = connection;
-    this.clientId = clientId; 
+    this.clientId = clientId;
   }
 
   authorize(options = {}) {
@@ -11,12 +11,11 @@ export default class Connect {
         'connect.authorize() cannot be called until you provide a clientId via Nylas.config()'
       );
     }
-    
     return this.connection
       .request({
         method: 'POST',
         path: '/connect/authorize',
-        body: { 
+        body: {
           client_id: this.clientId,
           name: options.name,
           email_address: options.email_address,

@@ -147,7 +147,7 @@ module.exports = class NylasConnection {
 
         if (error || response.statusCode > 299) {
           if (!error) {
-            error = new Error(JSON.stringify(body)); 
+            error = new Error(JSON.stringify(body));
           }
           if (body.server_error) {
             error.message = `${error.message} (Server Error: 
