@@ -5,6 +5,7 @@
 * Update formatting for DeprecationWarnings
 * Update package-lock.json
 
+
 ### 4.7.0 / 2019-08-20
 
 * Update app id and app secret to client id and client secret
