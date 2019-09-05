@@ -3,6 +3,7 @@
 ### Unreleased
 
 * Update formatting for DeprecationWarnings
+* Update package-lock.json
 
 ### 4.7.0 / 2019-08-20
 
