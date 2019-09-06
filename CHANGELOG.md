@@ -4,7 +4,7 @@
 
 * Update formatting for DeprecationWarnings
 * Update package-lock.json
-
+* Add support for `/connect/authorize` endpoint
 
 ### 4.7.0 / 2019-08-20
 
