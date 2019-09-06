@@ -4,7 +4,7 @@ describe('Connect', () => {
 
   const name = 'Connect Test';
   const password = 'connecting123';
-  const scopes = 'email, calendar, contacts';
+  const scopes = 'email.modify,email.send,calendar,contacts';
   const exchangeEmail = 'connect_test@outlook.com';
   const gmailEmail = 'connect_test@gmail.com';
   const imapEmail = 'connect_test@yahoo.com';
@@ -12,7 +12,7 @@ describe('Connect', () => {
   const CLIENT_ID = 'abc';
   const authorizeOptions = ((email, provider, settings) => {
   	return {
-	  	name: 'Connect Test',
+	  	name: name,
 	  	email_address: email,
 	  	provider: provider,
 	  	settings: settings,
@@ -64,7 +64,7 @@ describe('Connect', () => {
           }
         });
         done();
-        })
+      })
     });
   });
 });
