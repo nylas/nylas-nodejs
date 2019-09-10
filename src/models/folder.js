@@ -30,17 +30,5 @@ export class Label extends Folder {
   saveRequestBody() {
     return { display_name: this.displayName };
   }
-
-  deleteRequestBody(params) {
-    var body = {};
-    if (params.hasOwnProperty('display_name')) {
-      body.display_name = params.display_name;
-    } else if (params.hasOwnProperty('displayName')) {
-      body.display_name = params.displayName;
-    } else {
-      body.display_name = this.displayName;
-    }
-    return body;
-  }
 }
 Label.collectionName = 'labels';
