@@ -3,14 +3,64 @@ import Attributes from './attributes';
 import EventParticipant from './event-participant';
 
 export default class Event extends RestfulModel {
+  static set when(when) {
+    this.start =
+      when.start_time ||
+      when.start_date ||
+      when.time ||
+      when.date;
+    this.end =
+      when.end_time ||
+      when.end_date ||
+      when.time ||
+      when.date;
+  }
+
+  static set start(val) {
+    console.log('typeof val: ', typeof val)
+    if (typeof val === 'number') {
+      if (val === this.end) {
+        this.when = {
+          time: val,
+        }
+      } else {
+        this.when.start_time = val;
+      }
+    }  
+    if (typeof val === 'string') {
+      if (val === this.end) {
+        this.when = {
+          date: val,
+        }
+      } else {
+        this.when.start_date = val;
+      }
+    }
+  }
+
+  static set end(val) {
+    if (typeof val === 'number') {
+      if (this.start === val) {
+        this.when = {
+          time: val,
+        }
+      } else {
+        this.when.end_time = val;
+      }
+    }  
+    if (typeof val === 'string') {
+      if (this.start === val) {
+        this.when = {
+          date: val,
+        }
+      } else {
+        this.when.end_date = val;
+      }
+    }
+  }
+
   saveRequestBody() {
     const dct = this.toJSON();
-    if (this.start && this.end) {
-      dct['when'] = {
-        start_time: this.start.toString(),
-        end_time: this.end.toString(),
-      };
-    }
     delete dct['_start'];
     delete dct['_end'];
     return dct;
@@ -32,17 +82,16 @@ export default class Event extends RestfulModel {
     super.fromJSON(json);
 
     if (this.when) {
-      // For indexing and querying purposes, we flatten the start and end of the different
-      // "when" formats into two timestamps we can use for range querying. Note that for
-      // all-day events, we use first second of start date and last second of end date.
       this.start =
         this.when.start_time ||
-        new Date(this.when.start_date).getTime() / 1000.0 ||
-        this.when.time;
+        this.when.start_date ||
+        this.when.time ||
+        this.when.date;
       this.end =
         this.when.end_time ||
-        new Date(this.when.end_date).getTime() / 1000.0 + (60 * 60 * 24 - 1) ||
-        this.when.time;
+        this.when.end_date ||
+        this.when.time ||
+        this.when.date;
       delete this.when.object;
     }
     return this;
@@ -104,11 +153,11 @@ Event.attributes = {
   when: Attributes.Object({
     modelKey: 'when',
   }),
-  start: Attributes.Number({
+  start: Attributes.NumberOrString({
     modelKey: 'start',
     jsonKey: '_start',
   }),
-  end: Attributes.Number({
+  end: Attributes.NumberOrString({
     modelKey: 'end',
     jsonKey: '_end',
   }),
