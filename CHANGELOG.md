@@ -1,11 +1,12 @@
 # Changelog
 
-### Unreleased
+### 4.7.1 / 2019-09-18
 
 * Update formatting for DeprecationWarnings
 * Update package-lock.json
 * Add support for `/connect/authorize` endpoint
 * Fix draft deletion bug
+* Improvements to example/webhooks
 
 ### 4.7.0 / 2019-08-20
 
