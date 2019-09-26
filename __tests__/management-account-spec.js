@@ -1,12 +1,12 @@
 import Nylas from '../src/nylas';
 
 describe('ManagementAccount', () => {
-  const APP_ID = 'abc';
+  const CLIENT_ID = 'abc';
   const ACCOUNT_ID = '8rilmlwuo4zmpjedz8bcplclk';
   beforeEach(() => {
     Nylas.config({
-      appId: APP_ID,
-      appSecret: 'xyz',
+      clientId: CLIENT_ID,
+      clientSecret: 'xyz',
     });
   });
 
@@ -36,7 +36,7 @@ describe('ManagementAccount', () => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 100, offset: 0 },
-            path: `/a/${APP_ID}/accounts`,
+            path: `/a/${CLIENT_ID}/accounts`,
           });
           done();
         })
@@ -71,11 +71,11 @@ describe('ManagementAccount', () => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
-            path: `/a/${APP_ID}/accounts`,
+            path: `/a/${CLIENT_ID}/accounts`,
           });
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
-            path: `/a/${APP_ID}/accounts/${ACCOUNT_ID}/upgrade`,
+            path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/upgrade`,
           });
           expect(resp.success).toBe('true');
           done();
@@ -111,11 +111,11 @@ describe('ManagementAccount', () => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
-            path: `/a/${APP_ID}/accounts`,
+            path: `/a/${CLIENT_ID}/accounts`,
           });
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
-            path: `/a/${APP_ID}/accounts/${ACCOUNT_ID}/downgrade`,
+            path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/downgrade`,
           });
           expect(resp.success).toBe('true');
           done();
@@ -151,11 +151,11 @@ describe('ManagementAccount', () => {
             expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
               method: 'GET',
               qs: { limit: 1, offset: 0 },
-              path: `/a/${APP_ID}/accounts`,
+              path: `/a/${CLIENT_ID}/accounts`,
             });
             expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
               method: 'POST',
-              path: `/a/${APP_ID}/accounts/${ACCOUNT_ID}/revoke-all`,
+              path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/revoke-all`,
               body: { keep_access_token: undefined },
             });
             expect(resp.success).toBe('true');
@@ -190,11 +190,11 @@ describe('ManagementAccount', () => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
-            path: `/a/${APP_ID}/accounts`,
+            path: `/a/${CLIENT_ID}/accounts`,
           });
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
-            path: `/a/${APP_ID}/accounts/${ACCOUNT_ID}/revoke-all`,
+            path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/revoke-all`,
             body: { keep_access_token: 'abc123' },
           });
           expect(resp.success).toBe('true');
@@ -241,7 +241,7 @@ describe('ManagementAccount', () => {
         .then( resp => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
-            path: `/a/${APP_ID}/ip_addresses`,
+            path: `/a/${CLIENT_ID}/ip_addresses`,
           });
           expect(resp.updated_at).toBe(1544658529);
           done();
@@ -282,11 +282,11 @@ describe('ManagementAccount', () => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
-            path: `/a/${APP_ID}/accounts`,
+            path: `/a/${CLIENT_ID}/accounts`,
           });
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
-            path: `/a/${APP_ID}/accounts/${ACCOUNT_ID}/token-info`,
+            path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/token-info`,
             body: { access_token: 'abc123' }, 
           });
           expect(resp.created_at).toBe(1563496685);
@@ -324,11 +324,11 @@ describe('ManagementAccount', () => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
-            path: `/a/${APP_ID}/accounts`,
+            path: `/a/${CLIENT_ID}/accounts`,
           });
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
-            path: `/a/${APP_ID}/accounts/${ACCOUNT_ID}/token-info`,
+            path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/token-info`,
             body: { access_token: undefined },
           });
           expect(resp).toBe('Error: No access_token passed.');

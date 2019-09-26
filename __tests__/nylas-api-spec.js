@@ -5,41 +5,41 @@ import NylasConnection from '../src/nylas-connection';
 
 describe('Nylas', () => {
   beforeEach(() => {
-    Nylas.appId = undefined;
-    Nylas.appSecret = undefined;
+    Nylas.clientId = undefined;
+    Nylas.clientSecret = undefined;
     Nylas.apiServer = 'https://api.nylas.com';
   });
 
   describe('config', () => {
-    test('should allow you to populate the appId, appSecret, apiServer and authServer options', () => {
+    test('should allow you to populate the clientId, clientSecret, apiServer and authServer options', () => {
       const newConfig = {
-        appId: 'newId',
-        appSecret: 'newSecret',
+        clientId: 'newId',
+        clientSecret: 'newSecret',
         apiServer: 'https://api-staging.nylas.com/',
       };
 
       Nylas.config(newConfig);
-      expect(Nylas.appId).toBe(newConfig.appId);
-      expect(Nylas.appSecret).toBe(newConfig.appSecret);
+      expect(Nylas.clientId).toBe(newConfig.clientId);
+      expect(Nylas.clientSecret).toBe(newConfig.clientSecret);
       expect(Nylas.apiServer).toBe(newConfig.apiServer);
     });
 
     test('should not override existing values unless new values are provided', () => {
       const newConfig = {
-        appId: 'newId',
-        appSecret: 'newSecret',
+        clientId: 'newId',
+        clientSecret: 'newSecret',
       };
 
       Nylas.config(newConfig);
-      expect(Nylas.appId).toBe(newConfig.appId);
-      expect(Nylas.appSecret).toBe(newConfig.appSecret);
+      expect(Nylas.clientId).toBe(newConfig.clientId);
+      expect(Nylas.clientSecret).toBe(newConfig.clientSecret);
       expect(Nylas.apiServer).toBe('https://api.nylas.com');
     });
 
     test('should throw an exception if the server options do not contain ://', () => {
       const newConfig = {
-        appId: 'newId',
-        appSecret: 'newSecret',
+        clientId: 'newId',
+        clientSecret: 'newSecret',
         apiServer: 'dontknowwhatImdoing.nylas.com',
       };
 
@@ -53,8 +53,8 @@ describe('Nylas', () => {
 
     test('should return an NylasConnection for making requests with the access token', () => {
       Nylas.config({
-        appId: 'newId',
-        appSecret: 'newSecret',
+        clientId: 'newId',
+        clientSecret: 'newSecret',
       });
 
       const conn = Nylas.with('test-access-token');
@@ -65,17 +65,17 @@ describe('Nylas', () => {
   describe('exchangeCodeForToken', () => {
     beforeEach(() =>
       Nylas.config({
-        appId: 'newId',
-        appSecret: 'newSecret',
+        clientId: 'newId',
+        clientSecret: 'newSecret',
       })
     );
 
     test('should throw an exception if no code is provided', () =>
       expect(() => Nylas.exchangeCodeForToken()).toThrow());
 
-    test('should throw an exception if the app id and secret have not been configured', () => {
-      Nylas.appId = undefined;
-      Nylas.appSecret = undefined;
+    test('should throw an exception if the client id and secret have not been configured', () => {
+      Nylas.clientId = undefined;
+      Nylas.clientSecret = undefined;
       expect(() => Nylas.exchangeCodeForToken('code-from-server')).toThrow();
     });
 
@@ -154,22 +154,22 @@ describe('Nylas', () => {
   describe('urlForAuthentication', () => {
     beforeEach(() =>
       Nylas.config({
-        appId: 'newId',
-        appSecret: 'newSecret',
+        clientId: 'newId',
+        clientSecret: 'newSecret',
       })
     );
 
     test('should require a redirectURI', () =>
       expect(() => Nylas.urlForAuthentication()).toThrow());
 
-    test('should throw an exception if the app id has not been configured', () => {
-      Nylas.appId = undefined;
+    test('should throw an exception if the client id has not been configured', () => {
+      Nylas.clientId = undefined;
       const options = { redirectURI: 'https://localhost/callback' };
       expect(() => Nylas.urlForAuthentication(options)).toThrow();
     });
 
-    test('should not throw an exception if the app secret has not been configured', () => {
-      Nylas.appSecret = undefined;
+    test('should not throw an exception if the client secret has not been configured', () => {
+      Nylas.clientSecret = undefined;
       const options = { redirectURI: 'https://localhost/callback' };
       expect(Nylas.urlForAuthentication(options)).toEqual(
         'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=&redirect_uri=https://localhost/callback'

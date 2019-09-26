@@ -12,8 +12,8 @@ describe('RestfulModelCollection', () => {
 
   beforeEach(() => {
     Nylas.config({
-      appId: '123',
-      appSecret: '123',
+      clientId: '123',
+      clientSecret: '123',
     });
     testContext = {};
     testContext.connection = new NylasConnection('test-access-token', {
