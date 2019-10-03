@@ -137,21 +137,6 @@ class AttributeCollection extends Attribute {
   }
 }
 
-class AttributeNumberOrString extends Attribute {
-  toJSON(val) {
-    return val;
-  }
-  fromJSON(val, parent) {
-    if (isNaN(Number(val))) {
-      return val || '';
-    } else if (!isNaN(val)) {
-      return Number(val);
-    } else {
-      return null;
-    }
-  }
-}
-
 module.exports = {
   Number() {
     return new AttributeNumber(...arguments);
@@ -177,9 +162,6 @@ module.exports = {
   Object() {
     return new Attribute(...arguments);
   },
-  NumberOrString() {
-    return new AttributeNumberOrString(...arguments);
-  },
 
   AttributeNumber,
   AttributeString,
@@ -188,5 +170,4 @@ module.exports = {
   AttributeCollection,
   AttributeBoolean,
   AttributeDate,
-  AttributeNumberOrString,
 };
