@@ -94,6 +94,7 @@ describe('Event', () => {
     });
 
     test('should create event with time when start and end are the same UNIX timestamp', done => {
+      testContext.event.when = {};
       testContext.event.start = 1408875644;
       testContext.event.end = 1408875644;
       testContext.event.save().then(() => {
@@ -125,6 +126,7 @@ describe('Event', () => {
     });
 
     test('should create event with start_time and end_time when start and end are different UNIX timestamps', done => {
+      testContext.event.when = {};
       testContext.event.start = 1409594400
       testContext.event.end = 1409598000
       testContext.event.save().then(() => {
@@ -157,6 +159,7 @@ describe('Event', () => {
     });
 
     test('should create event with date when start and end are same ISO date', done => {
+      testContext.event.when = {};
       testContext.event.start = '1912-06-23';
       testContext.event.end = '1912-06-23';
       testContext.event.save().then(() => {
@@ -188,8 +191,131 @@ describe('Event', () => {
     });
 
     test('should create event with start_date and end_date when start and end are different ISO date', done => {
+      testContext.event.when = {};
       testContext.event.start = '1815-12-10';
       testContext.event.end = '1852-11-27';
+      testContext.event.save().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'event',
+            account_id: undefined,
+            calendar_id: undefined,
+            message_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            owner: undefined,
+            location: undefined,
+            when: {
+              start_date: '1815-12-10',
+              end_date: '1852-11-27',
+            },
+            participants: [],
+            read_only: undefined,
+            status: undefined,
+          },
+          qs: {},
+          path: '/events',
+        });
+        done();
+      });
+    });
+
+    test('should create event with time event param `when` is updated with time', done => {
+      testContext.event.when = { time: 1408875644 };
+      testContext.event.save().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'event',
+            account_id: undefined,
+            calendar_id: undefined,
+            message_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            owner: undefined,
+            location: undefined,
+            when: {
+              time: 1408875644,
+            },
+            participants: [],
+            read_only: undefined,
+            status: undefined,
+          },
+          qs: {},
+          path: '/events',
+        });
+        done();
+      });
+    });
+
+    test('should create event with start_time and end_time when event param `when` is updated with start_time and end_time', done => {
+      testContext.event.when = { start_time: 1409594400, end_time: 1409598000 };
+      testContext.event.save().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'event',
+            account_id: undefined,
+            calendar_id: undefined,
+            message_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            owner: undefined,
+            location: undefined,
+            when: {
+              start_time: 1409594400,
+              end_time: 1409598000,
+            },
+            participants: [],
+            read_only: undefined,
+            status: undefined,
+          },
+          qs: {},
+          path: '/events',
+        });
+        done();
+      });
+    });
+
+    test('should create event with date when the event param `when` is updated with date', done => {
+      testContext.event.when = { date: '1912-06-23' };
+      testContext.event.save().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'event',
+            account_id: undefined,
+            calendar_id: undefined,
+            message_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            owner: undefined,
+            location: undefined,
+            when: {
+              date: '1912-06-23',
+            },
+            participants: [],
+            read_only: undefined,
+            status: undefined,
+          },
+          qs: {},
+          path: '/events',
+        });
+        done();
+      });
+    });
+
+    test('should create event with start_date and end_date when the event param `when` is updated with start_date and end_date', done => {
+      testContext.event.when = { start_date: '1815-12-10', end_date: '1852-11-27' };
       testContext.event.save().then(() => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
@@ -240,9 +366,6 @@ describe('Event', () => {
         testContext.event.save().then(event => {
           expect(event.id).toBe('id-1234');
           expect(event.title).toBe('test event');
-          expect(event.start).toBe(1409594400);
-          expect(event.end).toBe(1409594400);
-          console.log('event.when: ', Object.getPrototypeOf(event.when))
           expect(event.when.time).toEqual(1409594400);
           let participant = event.participants[0];
           expect(participant.toJSON()).toEqual(

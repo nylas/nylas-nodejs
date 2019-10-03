@@ -3,60 +3,63 @@ import Attributes from './attributes';
 import EventParticipant from './event-participant';
 
 export default class Event extends RestfulModel {
-  static set when(when) {
-    this.start =
-      when.start_time ||
-      when.start_date ||
-      when.time ||
-      when.date;
-    this.end =
-      when.end_time ||
-      when.end_date ||
-      when.time ||
-      when.date;
+  
+  get start() {
+    return 
+      this.when.start_time ||
+      this.when.start_date ||
+      this.when.time ||
+      this.when.date;
   }
 
-  static set start(val) {
-    console.log('typeof val: ', typeof val)
-    if (typeof val === 'number') {
-      if (val === this.end) {
-        this.when = {
-          time: val,
-        }
-      } else {
-        this.when.start_time = val;
-      }
-    }  
-    if (typeof val === 'string') {
-      if (val === this.end) {
-        this.when = {
-          date: val,
-        }
-      } else {
-        this.when.start_date = val;
-      }
-    }
+  get end() {
+    return
+      this.when.end_time ||
+      this.when.end_date ||
+      this.when.time ||
+      this.when.date;
   }
 
-  static set end(val) {
-    if (typeof val === 'number') {
-      if (this.start === val) {
-        this.when = {
-          time: val,
-        }
-      } else {
-        this.when.end_time = val;
+  set start(val) {
+    if (this.when) {
+      if (typeof val === 'number') {
+        if (val === this.when.end_time) {
+          this.when = { time: val }
+        } else {
+          delete this.when.time;
+          this.when.start_time = val;        
+        }   
       }
-    }  
-    if (typeof val === 'string') {
-      if (this.start === val) {
-        this.when = {
-          date: val,
-        }
-      } else {
-        this.when.end_date = val;
+      if (typeof val === 'string') {
+        if (val === this.when.end_date) {
+          this.when = { date: val }
+        } else {
+          delete this.when.date;
+          this.when.start_date = val;
+        } 
       }
-    }
+    } 
+  }
+
+  set end(val) {
+    if (this.when) {
+      if (typeof val === 'number') {
+        if (val === this.when.start_time) {
+          this.when = { time: val }
+        } else {
+          delete this.when.time;
+          this.when.end_time = val;        
+        }   
+      }
+      if (typeof val === 'string') {
+        if (val === this.when.start_date) {
+          this.when = { date: val }
+        } else {
+          delete this.when.date;
+          this.when.end_date = val;
+        } 
+      }
+    } 
   }
 
   saveRequestBody() {
@@ -82,16 +85,6 @@ export default class Event extends RestfulModel {
     super.fromJSON(json);
 
     if (this.when) {
-      this.start =
-        this.when.start_time ||
-        this.when.start_date ||
-        this.when.time ||
-        this.when.date;
-      this.end =
-        this.when.end_time ||
-        this.when.end_date ||
-        this.when.time ||
-        this.when.date;
       delete this.when.object;
     }
     return this;
@@ -152,14 +145,6 @@ Event.attributes = {
   }),
   when: Attributes.Object({
     modelKey: 'when',
-  }),
-  start: Attributes.NumberOrString({
-    modelKey: 'start',
-    jsonKey: '_start',
-  }),
-  end: Attributes.NumberOrString({
-    modelKey: 'end',
-    jsonKey: '_end',
   }),
   busy: Attributes.Boolean({
     modelKey: 'busy',
