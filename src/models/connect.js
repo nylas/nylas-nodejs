@@ -52,7 +52,7 @@ export default class Connect {
         },
       })
       .then(resp => resp)
-      .catch(err => Promise.resolve(err)); 
+      .catch(err => Promise.resolve(err));
   }
 
   newAccount() {
