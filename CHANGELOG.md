@@ -3,6 +3,7 @@
 ### UNRELEASED
 
 * Add support for `/connect/token` endpoint
+* Fix events so that is supports all time subojects
 
 ### 4.7.1 / 2019-09-18
 
