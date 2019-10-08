@@ -1,5 +1,9 @@
 # Changelog
 
+### UNRELEASED
+
+* Add support for `/connect/token` endpoint
+
 ### 4.7.1 / 2019-09-18
 
 * Update formatting for DeprecationWarnings
