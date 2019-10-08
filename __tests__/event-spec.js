@@ -351,8 +351,6 @@ describe('Event', () => {
           const eventJSON = {
             id: 'id-1234',
             title: 'test event',
-            start: 1409594400,
-            end: 1409594400,
             when: { time: 1409594400 },
             participants: [
               {'name': 'foo', 'email': 'bar', 'status': 'noreply'}

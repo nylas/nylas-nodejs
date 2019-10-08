@@ -3,18 +3,16 @@ import Attributes from './attributes';
 import EventParticipant from './event-participant';
 
 export default class Event extends RestfulModel {
-  
+
   get start() {
-    return 
-      this.when.start_time ||
+    return this.when.start_time ||
       this.when.start_date ||
       this.when.time ||
       this.when.date;
   }
 
   get end() {
-    return
-      this.when.end_time ||
+    return this.when.end_time ||
       this.when.end_date ||
       this.when.time ||
       this.when.date;
@@ -24,49 +22,50 @@ export default class Event extends RestfulModel {
     if (this.when) {
       if (typeof val === 'number') {
         if (val === this.when.end_time) {
-          this.when = { time: val }
+          this.when = { time: val };
         } else {
           delete this.when.time;
-          this.when.start_time = val;        
-        }   
+          delete this.when.start_date;
+          delete this.when.date;
+          this.when.start_time = val;
+        }
       }
       if (typeof val === 'string') {
         if (val === this.when.end_date) {
-          this.when = { date: val }
+          this.when = { date: val };
         } else {
           delete this.when.date;
+          delete this.when.start_time;
+          delete this.when.time;
           this.when.start_date = val;
-        } 
+        }
       }
-    } 
+    }
   }
 
   set end(val) {
     if (this.when) {
       if (typeof val === 'number') {
         if (val === this.when.start_time) {
-          this.when = { time: val }
+          this.when = { time: val };
         } else {
           delete this.when.time;
-          this.when.end_time = val;        
-        }   
+          delete this.when.end_date;
+          delete this.when.date;
+          this.when.end_time = val;
+        }
       }
       if (typeof val === 'string') {
         if (val === this.when.start_date) {
-          this.when = { date: val }
+          this.when = { date: val };
         } else {
           delete this.when.date;
+          delete this.when.time;
+          delete this.when.end_time;
           this.when.end_date = val;
-        } 
+        }
       }
-    } 
-  }
-
-  saveRequestBody() {
-    const dct = this.toJSON();
-    delete dct['_start'];
-    delete dct['_end'];
-    return dct;
+    }
   }
 
   deleteRequestQueryString(params) {
