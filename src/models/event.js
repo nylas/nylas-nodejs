@@ -3,16 +3,17 @@ import Attributes from './attributes';
 import EventParticipant from './event-participant';
 
 export default class Event extends RestfulModel {
-
   get start() {
-    return this.when.start_time ||
+    return
+      this.when.start_time ||
       this.when.start_date ||
       this.when.time ||
       this.when.date;
   }
 
   get end() {
-    return this.when.end_time ||
+    return
+      this.when.end_time ||
       this.when.end_date ||
       this.when.time ||
       this.when.date;
