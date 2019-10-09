@@ -223,9 +223,9 @@ describe('Event', () => {
       });
     });
 
-    test('should create event with time event param `when` is updated with time', done => {
+    test('should create event with time when event param `when` is updated with time', done => {
       testContext.event.when = { time: 1408875644 };
-      testContext.event.save().then(() => {
+      testContext.event.save().then(event => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
@@ -249,13 +249,15 @@ describe('Event', () => {
           qs: {},
           path: '/events',
         });
+        expect(event.start).toBe(1408875644);
+        expect(event.end).toBe(1408875644);
         done();
       });
     });
 
     test('should create event with start_time and end_time when event param `when` is updated with start_time and end_time', done => {
       testContext.event.when = { start_time: 1409594400, end_time: 1409598000 };
-      testContext.event.save().then(() => {
+      testContext.event.save().then(event => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
@@ -280,13 +282,15 @@ describe('Event', () => {
           qs: {},
           path: '/events',
         });
+        expect(event.start).toBe(1409594400);
+        expect(event.end).toBe(1409598000);
         done();
       });
     });
 
     test('should create event with date when the event param `when` is updated with date', done => {
       testContext.event.when = { date: '1912-06-23' };
-      testContext.event.save().then(() => {
+      testContext.event.save().then(event => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
@@ -310,13 +314,15 @@ describe('Event', () => {
           qs: {},
           path: '/events',
         });
+        expect(event.start).toBe('1912-06-23');
+        expect(event.end).toBe('1912-06-23');
         done();
       });
     });
 
     test('should create event with start_date and end_date when the event param `when` is updated with start_date and end_date', done => {
       testContext.event.when = { start_date: '1815-12-10', end_date: '1852-11-27' };
-      testContext.event.save().then(() => {
+      testContext.event.save().then(event => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
@@ -341,6 +347,8 @@ describe('Event', () => {
           qs: {},
           path: '/events',
         });
+        expect(event.start).toBe('1815-12-10');
+        expect(event.end).toBe('1852-11-27');
         done();
       });
     });
