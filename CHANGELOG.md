@@ -1,6 +1,6 @@
 # Changelog
 
-### UNRELEASED
+### 4.8.0 / 2019-10-09
 
 * Add support for `/connect/token` endpoint
 * Fix events so that they support all time subojects
