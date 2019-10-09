@@ -4,17 +4,21 @@ import EventParticipant from './event-participant';
 
 export default class Event extends RestfulModel {
   get start() {
-    return this.when.start_time || // eslint-disable-line
+    const start =
+      this.when.start_time ||
       this.when.start_date ||
       this.when.time ||
-      this.when.date; // eslint-disable-line
+      this.when.date;
+    return start;
   }
 
   get end() {
-    return this.when.end_time || // eslint-disable-line
+    const end =
+      this.when.end_time ||
       this.when.end_date ||
       this.when.time ||
-      this.when.date; // eslint-disable-line
+      this.when.date;
+    return end;
   }
 
   set start(val) {
