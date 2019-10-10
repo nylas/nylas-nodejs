@@ -1,8 +1,10 @@
 export default class Connect {
-  constructor(connection, clientId, clientSecret) {
+  constructor(connection, clientId, clientSecret, googleClientId, googleClientSecret) {
     this.connection = connection;
     this.clientId = clientId;
     this.clientSecret = clientSecret;
+    this.googleClientId = googleClientId;
+    this.googleClientSecret = googleClientSecret;
   }
 
   authorize(options = {}) {
@@ -57,5 +59,25 @@ export default class Connect {
 
   newAccount() {
     // this.authorize() -> this.token()
+  }
+
+  async gmailAccount({ name, emailAddress, scopes, googleClientId, googleClientSecret, googleRefreshToken }) {
+    const googleOptions = {
+      name: name,
+      email_address: emailAddress,
+      provider: 'gmail',
+      settings: {
+        googleClientId: googleClientId || this.googleClientId,
+        googleClientSecret: googleClientSecret || this.googleClientSecret,
+        googleRefreshToken: googleRefreshToken
+      }
+    }
+
+    if (scopes) {
+      googleOptions.scopes = scopes;
+    }
+
+    token = await this.authorize(googleOptions);
+    return this.token(token);
   }
 }

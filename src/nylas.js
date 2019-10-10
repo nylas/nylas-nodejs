@@ -14,7 +14,7 @@ class Nylas {
     this.clientSecret = null;
   }
 
-  static config({ clientId, clientSecret, apiServer, ...deprecatingParams }) {
+  static config({ clientId, clientSecret, apiServer, googleClientId, googleClientSecret, ...deprecatingParams }) {
     if (apiServer && apiServer.indexOf('://') === -1) {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
@@ -67,7 +67,7 @@ class Nylas {
     const conn = new NylasConnection(this.clientSecret, {
       clientId: this.clientId,
     });
-    this.connect = new Connect(conn, this.clientId, this.clientSecret);
+    this.connect = new Connect(conn, this.clientId, this.clientSecret, googleClientId, googleClientSecret);
     this.webhooks = new ManagementModelCollection(Webhook, conn, this.clientId);
     if (this.clientCredentials()) {
       this.accounts = new ManagementModelCollection(
