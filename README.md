@@ -60,6 +60,6 @@ Please refer to [Contributing](Contributing.md) for information about how to mak
 
 # License
 
-This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE) for the full terms. 
+This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE.txt) for the full terms. 
 
 
