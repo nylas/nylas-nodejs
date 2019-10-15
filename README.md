@@ -8,7 +8,7 @@ The Nylas Communications Platform provides REST APIs for [Email](https://docs.ny
 
 Here are some resources to help you get started:
 
-- [Nylas SDK Tutorials](https://docs.nylas.com/docs/tutorials)
+- [Nylas SDK Tutorials](https://docs.nylas.com/docs/tutorials#section-node-js)
 - [Get Started with the Nylas Communications Platform](https://docs.nylas.com/docs/getting-started)
 - [Sign up for your Nylas developer account.](https://nylas.com/register)
 - [Nylas API Reference](https://docs.nylas.com/reference)
@@ -27,7 +27,7 @@ To install this package from source, clone this repo and run `npm install` from 
 
 ```
 git clone https://github.com/nylas/nylas-nodejs.git
-cd nylas-node.js
+cd nylas-nodejs
 npm install
 ```
 # Usage
