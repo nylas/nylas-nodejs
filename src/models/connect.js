@@ -12,19 +12,18 @@ export default class Connect {
         'connect.authorize() cannot be called until you provide a clientId via Nylas.config()'
       );
     }
-    return this.connection
-      .request({
-        method: 'POST',
-        path: '/connect/authorize',
-        body: {
-          client_id: this.clientId,
-          name: options.name,
-          email_address: options.email_address,
-          provider: options.provider,
-          settings: options.settings,
-          scopes: options.scopes,
-        },
-      });
+    return this.connection.request({
+      method: 'POST',
+      path: '/connect/authorize',
+      body: {
+        client_id: this.clientId,
+        name: options.name,
+        email_address: options.email_address,
+        provider: options.provider,
+        settings: options.settings,
+        scopes: options.scopes,
+      },
+    });
   }
 
   token(code) {
@@ -39,16 +38,15 @@ export default class Connect {
         'connect.token() cannot be called until you provide a clientSecret via Nylas.config()'
       );
     }
-    return this.connection
-      .request({
-        method: 'POST',
-        path: '/connect/token',
-        body: {
-          client_id: this.clientId,
-          client_secret: this.clientSecret,
-          code: code,
-        },
-      });
+    return this.connection.request({
+      method: 'POST',
+      path: '/connect/token',
+      body: {
+        client_id: this.clientId,
+        client_secret: this.clientSecret,
+        code: code,
+      },
+    });
   }
 
   newAccount() {
