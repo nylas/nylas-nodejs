@@ -24,9 +24,7 @@ export default class Connect {
           settings: options.settings,
           scopes: options.scopes,
         },
-      })
-      .then(resp => resp)
-      .catch(err => Promise.resolve(err));
+      });
   }
 
   token(code) {
@@ -50,9 +48,7 @@ export default class Connect {
           client_secret: this.clientSecret,
           code: code,
         },
-      })
-      .then(resp => resp)
-      .catch(err => Promise.resolve(err));
+      });
   }
 
   newAccount() {
