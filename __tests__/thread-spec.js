@@ -5,6 +5,7 @@ import NylasConnection from '../src/nylas-connection';
 import Thread from '../src/models/thread';
 import Message from '../src/models/message';
 import { Label } from '../src/models/folder';
+import EmailParticipant from '../src/models/email-participant';
 
 describe('Thread', () => {
   let testContext;
@@ -89,6 +90,22 @@ describe('Thread', () => {
       expect(t.messages[1].id).toBe('m2');
       expect(t.drafts[0] instanceof Message).toBe(true);
       expect(t.drafts[0].id).toBe('m3');
+    });
+    test('should populate participants', () => {
+      const participants = [
+        {
+          "email": "anna@yahoo.com",
+          "name": "Anna"
+        }
+      ]
+      const t = testContext.thread.fromJSON({
+        participants: participants,
+      });
+
+      expect(t.participants).toBeDefined();
+      expect(t.participants[0] instanceof EmailParticipant).toBe(true);
+      expect(t.participants[0].email).toBe('anna@yahoo.com');
+      expect(t.participants[0].name).toBe('Anna');
     });
   });
 });

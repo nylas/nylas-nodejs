@@ -1,7 +1,7 @@
 import Message from './message';
 import RestfulModel from './restful-model';
-import Contact from './contact';
 import * as Attributes from './attributes';
+import EmailParticipant from './email-participant';
 import { Label, Folder } from './folder';
 
 export default class Thread extends RestfulModel {
@@ -40,7 +40,7 @@ Thread.attributes = {
   }),
   participants: Attributes.Collection({
     modelKey: 'participants',
-    itemClass: Contact,
+    itemClass: EmailParticipant,
   }),
   lastMessageTimestamp: Attributes.DateTime({
     modelKey: 'lastMessageTimestamp',
