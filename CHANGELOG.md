@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+
+* Update Thread participants to use EmailParticipant
+
 ### 4.8.0 / 2019-10-09
 
 * Add support for `/connect/token` endpoint
