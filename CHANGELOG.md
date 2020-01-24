@@ -1,8 +1,10 @@
 # Changelog
 
-### Unreleased
+### 4.9.0 / 2020-01-24
 
+* Remove error handling in /connect models
 * Update Thread participants to use EmailParticipant
+* Bump handlebars version
 
 ### 4.8.0 / 2019-10-09
 
