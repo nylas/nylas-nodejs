@@ -19,6 +19,15 @@ export default class File extends RestfulModel {
       throw new Error('Please define a content-type');
     }
 
+    const formOptions = {
+      filename: this.filename,
+      contentType: this.contentType,
+    };
+
+    if (this.size) {
+      formOptions.knownLength = this.size;
+    }
+
     return this.connection
       .request({
         method: 'POST',
@@ -27,10 +36,7 @@ export default class File extends RestfulModel {
         formData: {
           file: {
             value: this.data,
-            options: {
-              filename: this.filename,
-              contentType: this.contentType,
-            },
+            options: formOptions,
           },
         },
       })
