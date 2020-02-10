@@ -63,6 +63,28 @@ describe('File', () => {
       });
     });
 
+    test('should add knownLength to the request formData', done => {
+      testContext.file.size = 12345;
+      testContext.file.upload().catch(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          json: false,
+          path: '/files',
+          formData: {
+            file: {
+              value: 'Sample data',
+              options: {
+                filename: 'sample.txt',
+                contentType: 'text/plain',
+                knownLength: 12345
+              },
+            },
+          },
+        });
+        done();
+      });
+    });
+
     describe('when the request succeeds', () => {
       beforeEach(() => {
         testContext.connection.request = jest.fn(() => {

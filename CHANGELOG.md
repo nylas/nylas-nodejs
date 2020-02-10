@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+
+* Allow file streaming uploads
+
 ### 4.9.0 / 2020-01-24
 
 * Remove error handling in /connect models
