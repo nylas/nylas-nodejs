@@ -121,6 +121,10 @@ Event.attributes = {
     modelKey: 'calendarId',
     jsonKey: 'calendar_id',
   }),
+  iCalUID: Attributes.String({
+    modelKey: 'iCalUID',
+    jsonKey: 'ical_uid',
+  }),
   messageId: Attributes.String({
     modelKey: 'messageId',
     jsonKey: 'message_id',

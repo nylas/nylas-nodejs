@@ -363,6 +363,7 @@ describe('Event', () => {
             participants: [
               {'name': 'foo', 'email': 'bar', 'status': 'noreply'}
             ],
+            ical_uid: 'id-5678'
           };
           return Promise.resolve(eventJSON);
         });
@@ -373,6 +374,7 @@ describe('Event', () => {
           expect(event.id).toBe('id-1234');
           expect(event.title).toBe('test event');
           expect(event.when.time).toEqual(1409594400);
+          expect(event.iCalUID).toBe('id-5678');
           let participant = event.participants[0];
           expect(participant.toJSON()).toEqual(
             {'name': 'foo', 'email': 'bar', 'status': 'noreply'});
