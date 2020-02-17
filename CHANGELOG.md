@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Add iCalUID attribute to Event model
+* Update SUPPORTED_API_VERSION to 2.1
 * Allow file streaming uploads
 
 ### 4.9.0 / 2020-01-24
