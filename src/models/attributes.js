@@ -87,8 +87,8 @@ class AttributeDateTime extends Attribute {
     }
     if (!(val instanceof Date)) {
       throw new Error(
-        `Attempting to toJSON AttributeDateTime which is not a date: 
-          ${this.modelKey} 
+        `Attempting to toJSON AttributeDateTime which is not a date:
+          ${this.modelKey}
         = ${val}`
       );
     }

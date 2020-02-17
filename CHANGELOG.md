@@ -2,6 +2,8 @@
 
 ### Unreleased
 
+* Fix get contact picture request to correctly use callback, if provided.
+
 ### 4.10.0 / 2020-02-24
 
 * Add iCalUID attribute to Event model
