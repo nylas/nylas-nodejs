@@ -122,7 +122,16 @@ export default class RestfulModel {
         qs: params,
       })
       .then(response => {
+        if (callback) {
+          callback(null, response);
+        }
         return Promise.resolve(response);
+      })
+      .catch(err => {
+        if (callback) {
+          callback(err);
+        }
+        return Promise.reject(err);
       });
   }
 }
