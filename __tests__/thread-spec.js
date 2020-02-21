@@ -4,7 +4,7 @@ import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import Thread from '../src/models/thread';
 import Message from '../src/models/message';
-import { Label } from '../src/models/folder';
+import { Folder, Label } from '../src/models/folder';
 import EmailParticipant from '../src/models/email-participant';
 
 describe('Thread', () => {
@@ -61,7 +61,7 @@ describe('Thread', () => {
   });
 
   describe('fromJSON', () => {
-    test('should populate messages and draft fields when receiving expanded thread', () => {
+    test('should populate messages, draft & folder fields when receiving expanded thread', () => {
       const m1 = {
         id: 'm1',
         object: 'message',
@@ -77,10 +77,16 @@ describe('Thread', () => {
         object: 'draft',
         to: [{ name: 'Bob', email: 'bob@gmail.com' }],
       };
+      const folder = {
+        'display_name': 'Inbox',
+        'id': 'f1',
+        'name': 'inbox'
+      };
 
       const t = testContext.thread.fromJSON({
         messages: [m1, m2],
         drafts: [draft],
+        folders: [folder]
       });
 
       expect(t.messages).toBeDefined();
@@ -90,6 +96,8 @@ describe('Thread', () => {
       expect(t.messages[1].id).toBe('m2');
       expect(t.drafts[0] instanceof Message).toBe(true);
       expect(t.drafts[0].id).toBe('m3');
+      expect(t.folders[0] instanceof Folder).toBe(true);
+      expect(t.folders[0].id).toBe('f1');
     });
     test('should populate participants', () => {
       const participants = [
