@@ -31,6 +31,28 @@ export default class Thread extends RestfulModel {
   save(params = {}, callback = null) {
     return this._save(params, callback);
   }
+
+  get folder() {
+    process.emitWarning(
+      '"thread.folder" will be deprecated in version 5.0.0. Use "thread.folders" instead.',
+      {
+        code: 'Nylas',
+        type: 'DeprecationWarning',
+      }
+    );
+    return this.folders;
+  }
+
+  set folder(value) {
+    this.folders = value;
+    process.emitWarning(
+      '"thread.folder" will be deprecated in version 5.0.0. Use "thread.folders" instead.',
+      {
+        code: 'Nylas',
+        type: 'DeprecationWarning',
+      }
+    );
+  }
 }
 Thread.collectionName = 'threads';
 Thread.attributes = {
@@ -74,8 +96,8 @@ Thread.attributes = {
     modelKey: 'version',
     jsonKey: 'version',
   }),
-  folder: Attributes.Object({
-    modelKey: 'folder',
+  folders: Attributes.Collection({
+    modelKey: 'folders',
     itemClass: Folder,
     jsonKey: 'folders',
   }),

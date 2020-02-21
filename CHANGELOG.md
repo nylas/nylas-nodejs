@@ -5,6 +5,7 @@
 * Add iCalUID attribute to Event model
 * Update SUPPORTED_API_VERSION to 2.1
 * Allow file streaming uploads
+* Update Thread.folder to use Folder model, and rename to Thread.folders
 
 ### 4.9.0 / 2020-01-24
 
