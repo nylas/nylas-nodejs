@@ -3,6 +3,26 @@ import Attributes from './attributes';
 import EventParticipant from './event-participant';
 
 export default class Event extends RestfulModel {
+  calendarId?: string;
+  iCalUID?: string;
+  messageId?: string;
+  title?: string;
+  description?: string;
+  owner?: string;
+  participants?: EventParticipant[];
+  readOnly?: boolean;
+  location?: string;
+  when?: {
+    start_time?: number;
+    start_date?: string;
+    end_time?: number;
+    end_date?: string;
+    time?: number;
+    object?: string;
+  };
+  busy?: boolean;
+  status?: string;
+
   get start() {
     const start =
       this.when.start_time ||
@@ -21,7 +41,7 @@ export default class Event extends RestfulModel {
     return end;
   }
 
-  set start(val) {
+  set start(val: string | number) {
     if (this.when) {
       if (typeof val === 'number') {
         if (val === this.when.end_time) {
@@ -46,7 +66,7 @@ export default class Event extends RestfulModel {
     }
   }
 
-  set end(val) {
+  set end(val: string | number) {
     if (this.when) {
       if (typeof val === 'number') {
         if (val === this.when.start_time) {
@@ -71,7 +91,7 @@ export default class Event extends RestfulModel {
     }
   }
 
-  deleteRequestQueryString(params) {
+  deleteRequestQueryString(params: { [key: string]: any } = {}) {
     var qs = {};
     if (params.hasOwnProperty('notify_participants')) {
       qs.notify_participants = params.notify_participants;
@@ -83,7 +103,7 @@ export default class Event extends RestfulModel {
     return this._save(params, callback);
   }
 
-  fromJSON(json) {
+  fromJSON(json: { [key: string]: any }) {
     super.fromJSON(json);
 
     if (this.when) {
@@ -92,7 +112,7 @@ export default class Event extends RestfulModel {
     return this;
   }
 
-  rsvp(status, comment, callback) {
+  rsvp(status: string, comment: string, callback: (error: Error | null, data?: Event) => void) {
     return this.connection
       .request({
         method: 'POST',

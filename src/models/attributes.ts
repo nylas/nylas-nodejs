@@ -1,27 +1,32 @@
+import RestfulModel from "./restful-model";
+
 // The Attribute class represents a single model attribute, like 'namespace_id'
 // Subclasses of Attribute like AttributeDateTime know how to covert between
 // the JSON representation of that type and the javascript representation.
 // The Attribute class also exposes convenience methods for generating Matchers.
 
 class Attribute {
+  modelKey?: string;
+  jsonKey?: string;
+
   constructor({ modelKey, jsonKey }) {
     this.modelKey = modelKey;
     this.jsonKey = jsonKey || modelKey;
   }
 
-  toJSON(val) {
+  toJSON(val: any) {
     return val;
   }
-  fromJSON(val, parent) {
+  fromJSON(val: any, parent: any) {
     return val || null;
   }
 }
 
 class AttributeNumber extends Attribute {
-  toJSON(val) {
+  toJSON(val: any) {
     return val;
   }
-  fromJSON(val, parent) {
+  fromJSON(val: any, parent: any) {
     if (!isNaN(val)) {
       return Number(val);
     } else {
@@ -31,34 +36,34 @@ class AttributeNumber extends Attribute {
 }
 
 class AttributeBoolean extends Attribute {
-  toJSON(val) {
+  toJSON(val: any) {
     return val;
   }
-  fromJSON(val, parent) {
+  fromJSON(val: any, parent: any) {
     return val === 'true' || val === true || false;
   }
 }
 
 class AttributeString extends Attribute {
-  toJSON(val) {
+  toJSON(val: any) {
     return val;
   }
-  fromJSON(val, parent) {
+  fromJSON(val: any, parent: any) {
     return val || '';
   }
 }
 
 class AttributeStringList extends Attribute {
-  toJSON(val) {
+  toJSON(val: any) {
     return val;
   }
-  fromJSON(val, parent) {
+  fromJSON(val: any, parent: any) {
     return val || [];
   }
 }
 
 class AttributeDate extends Attribute {
-  toJSON(val) {
+  toJSON(val: any) {
     if (!val) {
       return val;
     }
@@ -72,7 +77,7 @@ class AttributeDate extends Attribute {
     return val.toISOString();
   }
 
-  fromJSON(val, parent) {
+  fromJSON(val: any, parent: any) {
     if (!val) {
       return null;
     }
@@ -81,7 +86,7 @@ class AttributeDate extends Attribute {
 }
 
 class AttributeDateTime extends Attribute {
-  toJSON(val) {
+  toJSON(val: any) {
     if (!val) {
       return null;
     }
@@ -95,7 +100,7 @@ class AttributeDateTime extends Attribute {
     return val.getTime() / 1000.0;
   }
 
-  fromJSON(val, parent) {
+  fromJSON(val: any, parent: any) {
     if (!val) {
       return null;
     }
@@ -104,12 +109,14 @@ class AttributeDateTime extends Attribute {
 }
 
 class AttributeCollection extends Attribute {
+  itemClass?: RestfulModel;
+
   constructor({ modelKey, jsonKey, itemClass }) {
     super(...arguments);
     this.itemClass = itemClass;
   }
 
-  toJSON(vals) {
+  toJSON(vals: any) {
     if (!vals) {
       return [];
     }
@@ -124,7 +131,7 @@ class AttributeCollection extends Attribute {
     return json;
   }
 
-  fromJSON(json, parent) {
+  fromJSON(json: any, parent: any) {
     if (!json || !(json instanceof Array)) {
       return [];
     }

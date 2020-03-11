@@ -2,6 +2,13 @@ import ManagementModel from './management-model';
 import Attributes from './attributes';
 
 export default class ManagementAccount extends ManagementModel {
+  billingState?: string;
+  emailAddress?: string;
+  namespaceId?: string;
+  provider?: string;
+  syncState?: string;
+  trial?: boolean;
+
   upgrade() {
     return this.connection
       .request({
@@ -20,7 +27,7 @@ export default class ManagementAccount extends ManagementModel {
       .catch(err => Promise.reject(err));
   }
 
-  revokeAll(keep_access_token) {
+  revokeAll(keep_access_token?: string) {
     return this.connection
       .request({
         method: 'POST',
@@ -37,7 +44,7 @@ export default class ManagementAccount extends ManagementModel {
       })
       .catch(err => Promise.reject(err));
   }
-  tokenInfo(access_token) {
+  tokenInfo(access_token?: string) {
     return this.connection
       .request({
         method: 'POST',

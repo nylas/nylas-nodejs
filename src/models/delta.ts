@@ -4,15 +4,19 @@ import JSONStream from 'JSONStream';
 import request from 'request';
 import { EventEmitter } from 'events';
 
+import NylasConnection from './nylas-connection';
+
 export default class Delta {
+  connection?: NylasConnection;
+
   constructor(connection) {
     this.connection = connection;
-    if (!(this.connection instanceof require('../nylas-connection'))) {
+    if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
   }
 
-  latestCursor(callback) {
+  latestCursor(callback: (error: Error | null, cursor: string | null) => void) {
     const reqOpts = {
       method: 'POST',
       path: '/delta/latest_cursor',
@@ -35,11 +39,11 @@ export default class Delta {
       });
   }
 
-  startStream(cursor, params = {}) {
+  startStream(cursor: string, params: { [key: string]: any } = {}) {
     return this._startStream(request, cursor, params);
   }
 
-  _startStream(createRequest, cursor, params) {
+  _startStream(createRequest: () => void, cursor: string, params: { [key: string]: any }) {
     const stream = new DeltaStream(
       createRequest,
       this.connection,
@@ -62,19 +66,33 @@ Emits the following events:
 - `info` when the connection status changes
 */
 class DeltaStream extends EventEmitter {
+  createRequest?: any;
+  connection?: NylasConnection;
+  cursor?: string;
+  params?: {
+    includeTypes?: string[],
+    excludeTypes?: string[],
+    expanded?: boolean
+  };
+
   // @param {function} createRequest function to create a request; only present for testability
   // @param {string} cursor Nylas delta API cursor
   // @param {Object} params object contianing query string params to be passed to  the request
   // @param {Array<string>} params.excludeTypes object types to not return deltas for (e.g., {excludeTypes: ['thread']})
   // @param {Array<string>} params.includeTypes object types to exclusively return deltas for (e.g., {includeTypes: ['thread']})
   // @param {boolean} params.expanded boolean to specify wether to request the expanded view
-  constructor(createRequest, connection, cursor, params = {}) {
+  constructor(
+    createRequest,
+    connection: NylasConnection,
+    cursor: string,
+    params: { [key: string]: any } = {}
+  ) {
     super(createRequest, connection, cursor, params);
     this.createRequest = createRequest;
     this.connection = connection;
     this.cursor = cursor;
     this.params = params;
-    if (!(this.connection instanceof require('../nylas-connection'))) {
+    if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
     this.restartBackoff = backoff.exponential({
@@ -89,7 +107,7 @@ class DeltaStream extends EventEmitter {
       .on('fail', () => {
         return this.emit(
           'error',
-          `Nylas DeltaStream failed to reconnect after 
+          `Nylas DeltaStream failed to reconnect after
           ${DeltaStream.MAX_RESTART_RETRIES}
           retries.`
         );
@@ -164,7 +182,7 @@ class DeltaStream extends EventEmitter {
       .on('error', this._onError.bind(this)));
   }
 
-  _onDataReceived(data) {
+  _onDataReceived(data?: any) {
     // Nylas sends a newline heartbeat in the raw data stream once every 5 seconds.
     // Automatically restart the connection if we haven't gotten any data in
     // Delta.streamingTimeoutMs. The connection will restart with the last
@@ -177,12 +195,12 @@ class DeltaStream extends EventEmitter {
     ));
   }
 
-  _onError(err) {
+  _onError(err: Error) {
     this.emit('error', err);
     return this.restartBackoff.reset();
   }
 
-  _restartConnection(n) {
+  _restartConnection(n: number) {
     this.emit(
       'info',
       `Restarting Nylas DeltaStream connection (attempt ${n + 1}): ${

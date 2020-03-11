@@ -2,6 +2,13 @@ import ManagementModel from './management-model';
 import Attributes from './attributes';
 
 export default class Webhook extends ManagementModel {
+  id?: string;
+  applicationId?: string;
+  callbackUrl?: string;
+  state?: string;
+  triggers?: string[];
+  version?: string;
+
   pathPrefix() {
     return `/a/${this.clientId}`;
   }
@@ -19,7 +26,7 @@ export default class Webhook extends ManagementModel {
     }
     return json;
   }
-  save(params = {}, callback = null) {
+  save(params: { [key: string]: any } = {}, callback: () => void = null) {
     return this._save(params, callback);
   }
   toJSON() {

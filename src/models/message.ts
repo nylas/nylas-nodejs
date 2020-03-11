@@ -8,6 +8,24 @@ import EmailParticipant from './email-participant';
 import { Label, Folder } from './folder';
 
 export default class Message extends RestfulModel {
+  subject?: string;
+  from?: EmailParticipant[];
+  replyTo?: EmailParticipant[];
+  to?: EmailParticipant[];
+  cc?: EmailParticipant[];
+  bcc?: EmailParticipant[];
+  date?: Date;
+  threadId?: string;
+  snippet?: string;
+  body?: string;
+  unread?: boolean;
+  starred?: boolean;
+  files?: File[];
+  events?: Event[];
+  folder?: Folder;
+  labels?: Label[];
+  headers?: { [key: string]: string };
+
   constructor() {
     super(...arguments);
     if (!this.body) {
@@ -94,7 +112,7 @@ export default class Message extends RestfulModel {
     return json;
   }
 
-  save(params = {}, callback = null) {
+  save(params: { [key: string]: any } = {}, callback? () => void = null) {
     return this._save(params, callback);
   }
 }

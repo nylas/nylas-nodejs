@@ -1,11 +1,17 @@
+import NylasConnection from './nylas-connection';
+
 export default class Connect {
+  connection?: NylasConnection;
+  clientId?: string;
+  clientSecret?: string;
+
   constructor(connection, clientId, clientSecret) {
     this.connection = connection;
     this.clientId = clientId;
     this.clientSecret = clientSecret;
   }
 
-  authorize(options = {}) {
+  authorize(options: { [key: string]: any } = {}) {
     // https://docs.nylas.com/reference#connectauthorize
     if (!this.clientId) {
       throw new Error(
@@ -26,7 +32,7 @@ export default class Connect {
     });
   }
 
-  token(code) {
+  token(code: string) {
     // https://docs.nylas.com/reference#connecttoken
     if (!this.clientId) {
       throw new Error(

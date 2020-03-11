@@ -2,15 +2,20 @@ import async from 'async';
 import isFunction from 'lodash/isFunction';
 
 import Message from './message';
+import NylasConnection from './nylas-connection';
+import RestfulModel from './restful-model';
 import Thread from './thread';
 
 const REQUEST_CHUNK_SIZE = 100;
 
 export default class RestfulModelCollection {
+  connection?: NylasConnection;
+  modelClass?: RestfulModel;
+
   constructor(modelClass, connection) {
     this.modelClass = modelClass;
     this.connection = connection;
-    if (!(this.connection instanceof require('../nylas-connection'))) {
+    if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
     if (!this.modelClass) {
@@ -18,7 +23,7 @@ export default class RestfulModelCollection {
     }
   }
 
-  forEach(params = {}, eachCallback, completeCallback = null) {
+  forEach(params: { [key: string]: any } = {}, eachCallback?: () => void, completeCallback?: () => void = null) {
     if (params.view == 'count') {
       const err = new Error('forEach() cannot be called with the count view');
       if (callback) {
@@ -52,7 +57,7 @@ export default class RestfulModelCollection {
     );
   }
 
-  count(params = {}, callback = null) {
+  count(params: { [key: string]: any } = {}, callback?: () => void = null) {
     return this.connection
       .request({
         method: 'GET',
@@ -73,7 +78,7 @@ export default class RestfulModelCollection {
       });
   }
 
-  first(params = {}, callback = null) {
+  first(params: { [key: string]: any } = {}, callback?: () => void = null) {
     if (params.view == 'count') {
       const err = new Error('first() cannot be called with the count view');
       if (callback) {
@@ -97,7 +102,7 @@ export default class RestfulModelCollection {
       });
   }
 
-  list(params = {}, callback = null) {
+  list(params: { [key: string]: any } = {}, callback?: () => void = null) {
     if (params.view == 'count') {
       const err = new Error('list() cannot be called with the count view');
       if (callback) {
@@ -111,7 +116,7 @@ export default class RestfulModelCollection {
     return this._range({ params, offset, limit, callback });
   }
 
-  find(id, callback = null, params = {}) {
+  find(id: string, callback?: () => null = null, params: { [key: string]: any } = {}) {
     if (!id) {
       const err = new Error('find() must be called with an item id');
       if (callback) {
@@ -145,7 +150,7 @@ export default class RestfulModelCollection {
       });
   }
 
-  search(query, params = {}, callback = null) {
+  search(query: string, params: { [key: string]: any } = {}, callback: () => void = null) {
     if (this.modelClass != Message && this.modelClass != Thread) {
       const err = new Error(
         'search() can only be called for messages and threads'
@@ -172,7 +177,7 @@ export default class RestfulModelCollection {
     return this._range({ params, offset, limit, path });
   }
 
-  delete(itemOrId, params = {}, callback = null) {
+  delete(itemOrId: string | RestfulModel, params: { [key: string]: any } = {}, callback: () => void = null) {
     if (!itemOrId) {
       const err = new Error('delete() requires an item or an id');
       if (callback) {
@@ -195,7 +200,7 @@ export default class RestfulModelCollection {
     return this.deleteItem(options);
   }
 
-  deleteItem(options) {
+  deleteItem(options: { [key: string]: any }) {
     const item = options.item;
     const callback = options.callback || null;
     const body = options.hasOwnProperty('body')
@@ -226,7 +231,7 @@ export default class RestfulModelCollection {
       });
   }
 
-  build(args) {
+  build(args: { [key: string]: any }) {
     const model = this._createModel({});
     for (const key in args) {
       const val = args[key];
@@ -285,7 +290,7 @@ export default class RestfulModelCollection {
     });
   }
 
-  _getItems(params, offset, limit, path) {
+  _getItems(params: { [key: string]: any }, offset?: number, limit?: number, path?: string) {
     // Items can be either models or ids
 
     if (!path) {
@@ -303,11 +308,11 @@ export default class RestfulModelCollection {
     return this._getModelCollection(params, offset, limit, path);
   }
 
-  _createModel(json) {
+  _createModel(json: { [key: string]: any }) {
     return new this.modelClass(this.connection, json);
   }
 
-  _getModel(id, params = {}) {
+  _getModel(id: string, params: { [key: string]: any } = {}) {
     return this.connection
       .request({
         method: 'GET',
@@ -320,7 +325,7 @@ export default class RestfulModelCollection {
       });
   }
 
-  _getModelCollection(params, offset, limit, path) {
+  _getModelCollection(params: { [key: string]: any }, offset?: number, limit?: number, path?: string) {
     return this.connection
       .request({
         method: 'GET',

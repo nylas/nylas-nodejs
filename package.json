@@ -3,6 +3,7 @@
   "version": "4.10.1",
   "description": "A NodeJS wrapper for the Nylas REST API for email, contacts, and calendar.",
   "main": "lib/nylas.js",
+  "types": "lib/nylas.d.ts",
   "files": [
     "lib"
   ],
@@ -10,11 +11,17 @@
     "test": "jest",
     "lint": "eslint \"./src/**/*.js\"",
     "prettier": "prettier --single-quote --trailing-comma es5 --write \"./src/**/*.js\"",
-    "build": "babel src --out-dir lib",
+    "build": "tsc",
     "prepare": "npm run build",
     "watch": "nodemon -w src --exec npm run build"
   },
   "jest": {
+    "preset": "ts-jest/presets/js-with-ts",
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.test.json"
+      }
+    },
     "coverageThreshold": {
       "global": {
         "functions": 80,
@@ -43,12 +50,15 @@
     "@babel/core": "^7.3.3",
     "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
     "@babel/preset-env": "^7.3.1",
+    "@types/jest": "^25.1.4",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.14.0",
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-prettier": "^3.0.1",
-    "jest": "^24.5.0",
-    "prettier": "^1.16.4"
+    "jest": "^24.9.0",
+    "prettier": "^1.16.4",
+    "ts-jest": "^25.2.1",
+    "typescript": "^3.8.3"
   },
   "repository": {
     "type": "git",

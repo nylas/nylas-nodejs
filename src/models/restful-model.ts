@@ -1,11 +1,17 @@
 import isFunction from 'lodash/isFunction';
 
 import * as Attributes from './attributes';
+import NylasConnection from './nylas-connection';
 
 export default class RestfulModel {
-  constructor(connection, json = null) {
+  accountId?: string;
+  connection?: NylasConnection;
+  id?: string;
+  object?: string;
+
+  constructor(connection, json?: { [key: string]: any } = null) {
     this.connection = connection;
-    if (!(this.connection instanceof require('../nylas-connection'))) {
+    if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
     if (json) {
@@ -17,14 +23,14 @@ export default class RestfulModel {
     return this.constructor.attributes;
   }
 
-  isEqual(other) {
+  isEqual(other: any) {
     return (
       (other ? other.id : undefined) === this.id &&
       (other ? other.constructor : undefined) === this.constructor
     );
   }
 
-  fromJSON(json = {}) {
+  fromJSON(json: { [key: string]: any } = {}) {
     const attributes = this.attributes();
     for (const attrName in attributes) {
       const attr = attributes[attrName];
@@ -62,16 +68,16 @@ export default class RestfulModel {
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
-  deleteRequestQueryString(params) {
+  deleteRequestQueryString(params: { [key: string]: any }) {
     return {};
   }
   // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody(params) {
+  deleteRequestBody(params: { [key: string]: any }) {
     return {};
   }
 
   // deleteRequestOptions is used by delete(). Subclasses should override this method.
-  deleteRequestOptions(params) {
+  deleteRequestOptions(params: { [key: string]: any }) {
     return {
       body: this.deleteRequestBody(params),
       qs: this.deleteRequestQueryString(params),
@@ -85,7 +91,7 @@ export default class RestfulModel {
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
   // They should instead define a save() function which calls _save.
-  _save(params = {}, callback = null) {
+  _save(params: { [key: string]: any } = {}, callback: () => void = null) {
     if (isFunction(params)) {
       callback = params;
       params = {};
@@ -114,7 +120,7 @@ export default class RestfulModel {
       });
   }
 
-  _get(params = {}, callback = null, path_suffix = '') {
+  _get(params: { [key: string]: any } = {}, callback: () => void = null, path_suffix: string = '') {
     return this.connection
       .request({
         method: 'GET',
