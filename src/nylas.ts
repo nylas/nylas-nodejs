@@ -9,12 +9,16 @@ import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
 
 class Nylas {
+  clientId?: string;
+  clientSecret?: string;
+  apiServer?: string;
+
   constructor() {
     this.clientId = null;
     this.clientSecret = null;
   }
 
-  static config({ clientId, clientSecret, apiServer, ...deprecatingParams }) {
+  static config({ clientId?: string, clientSecret?: string, apiServer?:string, ...deprecatingParams }) {
     if (apiServer && apiServer.indexOf('://') === -1) {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
@@ -93,7 +97,7 @@ class Nylas {
     return this.clientId;
   }
 
-  static set appId(value) {
+  static set appId(value: string) {
     this.clientId = value;
     process.emitWarning(
       '"appId" will be deprecated in version 5.0.0. Use "clientId" instead.',
@@ -115,7 +119,7 @@ class Nylas {
     return this.clientSecret;
   }
 
-  static set appSecret(value) {
+  static set appSecret(value: string) {
     this.clientSecret = value;
     process.emitWarning(
       '"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.',
@@ -130,14 +134,14 @@ class Nylas {
     return this.clientId != null && this.clientSecret != null;
   }
 
-  static with(accessToken) {
+  static with(accessToken: string) {
     if (!accessToken) {
       throw new Error('This function requires an access token');
     }
     return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
-  static exchangeCodeForToken(code, callback) {
+  static exchangeCodeForToken(code: string, callback?: () => void) {
     if (!this.clientId || !this.clientSecret) {
       throw new Error(
         'exchangeCodeForToken() cannot be called until you provide a clientId and secret via config()'
@@ -181,7 +185,7 @@ class Nylas {
     });
   }
 
-  static urlForAuthentication(options = {}) {
+  static urlForAuthentication(options: { [key: string]: any } = {}) {
     if (!this.clientId) {
       throw new Error(
         'urlForAuthentication() cannot be called until you provide a clientId via config()'

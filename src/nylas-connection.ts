@@ -22,6 +22,9 @@ const SDK_VERSION = PACKAGE_JSON.version;
 const SUPPORTED_API_VERSION = '2.1';
 
 module.exports = class NylasConnection {
+  accessToken?: string;
+  clientId?: string;
+
   constructor(accessToken, { clientId }) {
     this.accessToken = accessToken;
     this.clientId = clientId;
@@ -38,7 +41,7 @@ module.exports = class NylasConnection {
     this.account = new RestfulModelInstance(Account, this);
   }
 
-  requestOptions(options) {
+  requestOptions(options: { [key: string]: any }) {
     if (!options) {
       options = {};
     }
@@ -99,7 +102,7 @@ module.exports = class NylasConnection {
 
     return options;
   }
-  _getWarningForVersion(sdkApiVersion = null, apiVersion = null) {
+  _getWarningForVersion(sdkApiVersion: string = null, apiVersion: string = null) {
     let warning = '';
 
     if (sdkApiVersion != apiVersion) {
@@ -121,7 +124,7 @@ module.exports = class NylasConnection {
     }
     return warning;
   }
-  request(options) {
+  request(options: { [key: string]: any }) {
     if (!options) {
       options = {};
     }
@@ -158,7 +161,7 @@ module.exports = class NylasConnection {
             error.message = `${body.message}: ${body.missing_fields}`;
           }
           if (body.server_error) {
-            error.message = `${error.message} (Server Error: 
+            error.message = `${error.message} (Server Error:
               ${body.server_error}
             )`;
           }

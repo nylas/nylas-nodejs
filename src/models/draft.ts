@@ -4,6 +4,10 @@ import Contact from './contact';
 import Attributes from './attributes';
 
 export default class Draft extends Message {
+  rawMime?: string;
+  replyToMessageId?: string;
+  version?: number;
+
   constructor(...args) {
     super(...args);
   }
@@ -21,7 +25,7 @@ export default class Draft extends Message {
     return json;
   }
 
-  save(params = {}, callback = null) {
+  save(params: { [key: string]: any } = {}, callback = null) {
     if (this.rawMime) {
       const err = new Error('save() cannot be called for raw MIME drafts');
       if (callback) {
@@ -39,7 +43,7 @@ export default class Draft extends Message {
     return super.saveRequestBody(...arguments);
   }
 
-  deleteRequestBody(params) {
+  deleteRequestBody(params: { [key: string]: any } = {}) {
     var body = {};
     body.version = params.hasOwnProperty('version')
       ? params.version
@@ -51,10 +55,10 @@ export default class Draft extends Message {
     if (this.rawMime) {
       throw Error('toString() cannot be called for raw MIME drafts');
     }
-    super.toString();
+    return super.toString();
   }
 
-  send(callback = null, tracking) {
+  send(callback?: () => void = null, tracking?: { [key: string]: any }) {
     let body = this.rawMime,
       headers = { 'Content-Type': 'message/rfc822' },
       json = false;

@@ -2,6 +2,9 @@ import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
 export class Folder extends RestfulModel {
+  displayName?: string;
+  name?: string;
+
   saveRequestBody() {
     const json = {};
     json['display_name'] = this.displayName;
@@ -9,7 +12,7 @@ export class Folder extends RestfulModel {
     return json;
   }
 
-  save(params = {}, callback = null) {
+  save(params: { [key: string]: any } = {}, callback = null) {
     return this._save(params, callback);
   }
 }

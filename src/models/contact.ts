@@ -2,14 +2,17 @@ import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
 class EmailAddress extends RestfulModel {
+  type?: string;
+  email?: string;
+
   toJSON() {
-    const json = {
+    return {
       type: this.type,
       email: this.email,
     };
-    return json;
   }
 }
+
 EmailAddress.collectionName = 'email_addresses';
 EmailAddress.attributes = {
   ...RestfulModel.attributes,
@@ -22,14 +25,17 @@ EmailAddress.attributes = {
 };
 
 class IMAddress extends RestfulModel {
+  type?: string;
+  imAddress?: string;
+
   toJSON() {
-    const json = {
+    return {
       type: this.type,
       im_address: this.imAddress,
     };
-    return json;
   }
 }
+
 IMAddress.collectionName = 'im_addresses';
 IMAddress.attributes = {
   ...RestfulModel.attributes,
@@ -43,6 +49,15 @@ IMAddress.attributes = {
 };
 
 class PhysicalAddress extends RestfulModel {
+  type?: string;
+  format?: string;
+  address?: string;
+  streetAddress?: string;
+  city?: string;
+  postalCode?: string;
+  state?: string;
+  country?: string;
+
   toJSON() {
     const json = {
       type: this.type,
@@ -60,6 +75,7 @@ class PhysicalAddress extends RestfulModel {
     return json;
   }
 }
+
 PhysicalAddress.collectionName = 'physical_addresses';
 PhysicalAddress.attributes = {
   ...RestfulModel.attributes,
@@ -92,12 +108,14 @@ PhysicalAddress.attributes = {
 };
 
 class PhoneNumber extends RestfulModel {
+  type?: string;
+  number?: string;
+
   toJSON() {
-    const json = {
+    return {
       type: this.type,
       number: this.number,
     };
-    return json;
   }
 }
 
@@ -113,6 +131,9 @@ PhoneNumber.attributes = {
 };
 
 class WebPage extends RestfulModel {
+  type?: string;
+  url?: string;
+
   toJSON() {
     const json = {
       type: this.type,
@@ -121,6 +142,7 @@ class WebPage extends RestfulModel {
     return json;
   }
 }
+
 WebPage.collectionName = 'web_pages';
 WebPage.attributes = {
   ...RestfulModel.attributes,
@@ -133,12 +155,16 @@ WebPage.attributes = {
 };
 
 class Groups extends RestfulModel {
+  type?: string;
+  path?: string;
+
   toJSON() {
     const json = super.toJSON(...arguments);
     json['object'] = 'contact_group';
     return json;
   }
 }
+
 Groups.collectionName = 'groups';
 Groups.attributes = {
   ...RestfulModel.attributes,
@@ -151,14 +177,34 @@ Groups.attributes = {
 };
 
 export default class Contact extends RestfulModel {
-  save(params = {}, callback = null) {
+  givenName?: string;
+  middleName?: string;
+  surname?: string;
+  suffix?: string;
+  nickname?: string;
+  birthday?: string;
+  companyName?: string;
+  jobTitle?: string;
+  officeLocation?: string;
+  notes?: string;
+  pictureUrl?: string;
+  emailAddresses?: EmailAddress[];
+  imAddresses?: IMAddress[];
+  physicalAddresses?: PhysicalAddress[];
+  phoneNumbers?: PhoneNumber[];
+  webPages?: WebPage[];
+  groups?: Groups[];
+  source?: string;
+
+  save(params: { [key: string]: any } = {}, callback = null) {
     return this._save(params, callback);
   }
 
-  getPicture(params = {}, callback = null) {
+  getPicture(params: { [key: string]: any } = {}, callback = null) {
     return this._get(params, callback, '/picture');
   }
 }
+
 Contact.collectionName = 'contacts';
 Contact.attributes = {
   ...RestfulModel.attributes,

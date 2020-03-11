@@ -5,12 +5,30 @@ import EmailParticipant from './email-participant';
 import { Label, Folder } from './folder';
 
 export default class Thread extends RestfulModel {
+  subject?: string;
+  participants?: EmailParticipant[];
+  lastMessageTimestamp?: Date;
+  lastMessageReceivedTimestamp?: Date;
+  lastMessageSentTimestamp?: Date;
+  firstMessageTimestamp?: Date;
+  snippet?: string;
+  unread?: boolean;
+  starred?: boolean;
+  hasAttachments?: boolean;
+  version?: string;
+  folders?: Folder[];
+  labels?: Label[];
+  messageIds?: string[];
+  draftIds?: string[];
+  messages?: Message[];
+  drafts?: Message[];
+
   constructor(...args) {
     super(...args);
     this.fromJSON = this.fromJSON.bind(this);
   }
 
-  fromJSON(json) {
+  fromJSON(json: { [key: string]: any }) {
     super.fromJSON(json);
     return this;
   }
@@ -28,7 +46,7 @@ export default class Thread extends RestfulModel {
     return json;
   }
 
-  save(params = {}, callback = null) {
+  save(params: { [key: string]: any } = {}, callback: () => void = null) {
     return this._save(params, callback);
   }
 
@@ -43,7 +61,7 @@ export default class Thread extends RestfulModel {
     return this.folders;
   }
 
-  set folder(value) {
+  set folder(value: Folders[]) {
     this.folders = value;
     process.emitWarning(
       '"thread.folder" will be deprecated in version 5.0.0. Use "thread.folders" instead.',

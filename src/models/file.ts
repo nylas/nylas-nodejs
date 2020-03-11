@@ -2,13 +2,21 @@ import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
 export default class File extends RestfulModel {
+  contentType?: string;
+  size?: number;
+  fileName?: string;
+  messageIds?: string[];
+  contentId?: string;
+  contentDisposition?: string;
+  data?: any;
+
   constructor(...args) {
     super(...args);
     this.upload = this.upload.bind(this);
     this.download = this.download.bind(this);
   }
 
-  upload(callback = null) {
+  upload(callback?: () => void = null) {
     if (!this.filename) {
       throw new Error('Please define a filename');
     }
@@ -62,7 +70,7 @@ export default class File extends RestfulModel {
       });
   }
 
-  download(callback = null) {
+  download(callback?: () => void = null) {
     if (!this.id) {
       throw new Error('Please provide a File id');
     }
@@ -96,7 +104,7 @@ export default class File extends RestfulModel {
       });
   }
 
-  metadata(callback = null) {
+  metadata(callback?: () => void = null) {
     return this.connection
       .request({
         path: `/files/${this.id}`,
