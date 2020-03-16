@@ -9,9 +9,9 @@ import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
 
 class Nylas {
-  clientId?: string | null = null;
-  clientSecret?: string | null = null;
-  apiServer?: string | null = null;
+  static clientId?: string | null = null;
+  static clientSecret?: string | null = null;
+  static apiServer?: string | null = null;
 
   constructor() {
     this.clientId = null;
@@ -83,7 +83,7 @@ class Nylas {
         this.clientId
       );
     } else {
-      this.accounts = new RestfulModelCollection(Account, conn, this.clientId);
+      this.accounts = new RestfulModelCollection(Account, conn);
     }
 
     return this;
@@ -144,7 +144,10 @@ class Nylas {
     return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
-  static exchangeCodeForToken(code: string, callback?: () => void) {
+  static exchangeCodeForToken(
+    code: string,
+    callback?: (error: Error | null, accessToken?: string) => void
+  ) {
     if (!this.clientId || !this.clientSecret) {
       throw new Error(
         'exchangeCodeForToken() cannot be called until you provide a clientId and secret via config()'
@@ -154,7 +157,7 @@ class Nylas {
       throw new Error('exchangeCodeForToken() must be called with a code');
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const options = {
         method: 'GET',
         json: true,
@@ -188,7 +191,9 @@ class Nylas {
     });
   }
 
-  static urlForAuthentication(options: { [key: string]: any } = {}) {
+  static urlForAuthentication(
+    options: { redirectURI?: string; loginHint?: string; state?: string; scopes?: string[] } = {}
+  ) {
     if (!this.clientId) {
       throw new Error(
         'urlForAuthentication() cannot be called until you provide a clientId via config()'
