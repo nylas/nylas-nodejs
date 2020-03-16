@@ -36,7 +36,7 @@ export default class RestfulModel {
     return this.constructor.attributes;
   }
 
-  isEqual(other: any) {
+  isEqual(other: RestfulModel) {
     return (
       (other ? other.id : undefined) === this.id &&
       (other ? other.constructor : undefined) === this.constructor
@@ -48,18 +48,18 @@ export default class RestfulModel {
     for (const attrName in attributes) {
       const attr = attributes[attrName];
       if (json[attr.jsonKey] !== undefined) {
-        this[attrName] = attr.fromJSON(json[attr.jsonKey], this);
+        (this as any)[attrName] = attr.fromJSON(json[attr.jsonKey], this);
       }
     }
     return this;
   }
 
   toJSON() {
-    const json = {};
+    const json: any = {};
     const attributes = this.attributes();
     for (const attrName in attributes) {
       const attr = attributes[attrName];
-      json[attr.jsonKey] = attr.toJSON(this[attrName]);
+      json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
     }
     json['object'] = this.constructor.name.toLowerCase();
     return json;
@@ -133,11 +133,16 @@ export default class RestfulModel {
       });
   }
 
-  _get(params: { [key: string]: any } = {}, callback: () => void = null, path_suffix: string = '') {
+  _get(
+    params: { [key: string]: any } = {},
+    callback?: (error: Error | null, result?: any) => void,
+    path_suffix: string = ''
+  ) {
+    const collectionName = (this.constructor as any).collectionName;
     return this.connection
       .request({
         method: 'GET',
-        path: `/${this.constructor.collectionName}/${this.id}${path_suffix}`,
+        path: `/${collectionName}/${this.id}${path_suffix}`,
         qs: params,
       })
       .then(response => {
@@ -154,7 +159,7 @@ export default class RestfulModel {
       });
   }
 }
-RestfulModel.attributes = {
+(RestfulModel as any).attributes = {
   id: Attributes.String({
     modelKey: 'id',
   }),
