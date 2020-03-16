@@ -1,15 +1,28 @@
 import isFunction from 'lodash/isFunction';
 
-import * as Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import NylasConnection from './nylas-connection';
 
+export type SaveCallback = (error: Error | null, result?: RestfulModel) => void;
+
+interface RestfulModelJSON {
+  id: string;
+  object: string;
+  accountId: string;
+  [key: string]: any;
+}
+
 export default class RestfulModel {
+  static endpointName: string = ''; // overrridden in subclasses
+  static collectionName: string = ''; // overrridden in subclasses
+  static attributes: { [key: string]: Attribute };
+
   accountId?: string;
   connection?: NylasConnection;
   id?: string;
   object?: string;
 
-  constructor(connection, json?: { [key: string]: any } = null) {
+  constructor(connection, json?: Partial<RestfulModelJSON>) {
     this.connection = connection;
     if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
@@ -30,7 +43,7 @@ export default class RestfulModel {
     );
   }
 
-  fromJSON(json: { [key: string]: any } = {}) {
+  fromJSON(json: Partial<RestfulModelJSON> = {}) {
     const attributes = this.attributes();
     for (const attrName in attributes) {
       const attr = attributes[attrName];
@@ -91,9 +104,9 @@ export default class RestfulModel {
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
   // They should instead define a save() function which calls _save.
-  _save(params: { [key: string]: any } = {}, callback: () => void = null) {
+  _save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     if (isFunction(params)) {
-      callback = params;
+      callback = params as SaveCallback;
       params = {};
     }
     return this.connection
@@ -106,7 +119,7 @@ export default class RestfulModel {
           : `${this.saveEndpoint()}`,
       })
       .then(json => {
-        this.fromJSON(json);
+        this.fromJSON(json as RestfulModelJSON);
         if (callback) {
           callback(null, this);
         }

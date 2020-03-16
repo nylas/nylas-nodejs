@@ -9,7 +9,7 @@ class Attribute {
   modelKey?: string;
   jsonKey?: string;
 
-  constructor({ modelKey, jsonKey }) {
+  constructor({ modelKey, jsonKey }: { modelKey?: string; jsonKey?: string }) {
     this.modelKey = modelKey;
     this.jsonKey = jsonKey || modelKey;
   }
@@ -111,8 +111,8 @@ class AttributeDateTime extends Attribute {
 class AttributeCollection extends Attribute {
   itemClass?: RestfulModel;
 
-  constructor({ modelKey, jsonKey, itemClass }) {
-    super(...arguments);
+  constructor({ modelKey, jsonKey, itemClass }: { modelKey?: string; jsonKey?: string, itemClass?: RestfulModel }) {
+    super({ modelKey, jsonKey });
     this.itemClass = itemClass;
   }
 
@@ -144,37 +144,31 @@ class AttributeCollection extends Attribute {
   }
 }
 
-module.exports = {
-  Number() {
-    return new AttributeNumber(...arguments);
-  },
-  String() {
-    return new AttributeString(...arguments);
-  },
-  StringList() {
-    return new AttributeStringList(...arguments);
-  },
-  DateTime() {
-    return new AttributeDateTime(...arguments);
-  },
-  Date() {
-    return new AttributeDate(...arguments);
-  },
-  Collection() {
-    return new AttributeCollection(...arguments);
-  },
-  Boolean() {
-    return new AttributeBoolean(...arguments);
-  },
-  Object() {
-    return new Attribute(...arguments);
-  },
 
-  AttributeNumber,
-  AttributeString,
-  AttributeStringList,
-  AttributeDateTime,
-  AttributeCollection,
-  AttributeBoolean,
-  AttributeDate,
+const Attributes = {
+  Number(...args: ConstructorParameters<typeof AttributeNumber>) {
+    return new AttributeNumber(...args);
+  },
+  String(...args: ConstructorParameters<typeof AttributeString>) {
+    return new AttributeString(...args);
+  },
+  StringList(...args: ConstructorParameters<typeof AttributeStringList>) {
+    return new AttributeStringList(...args);
+  },
+  DateTime(...args: ConstructorParameters<typeof AttributeDateTime>) {
+    return new AttributeDateTime(...args);
+  },
+  Date(...args: ConstructorParameters<typeof AttributeDate>) {
+    return new AttributeDate(...args);
+  },
+  Collection(...args: ConstructorParameters<typeof AttributeCollection>) {
+    return new AttributeCollection(...args);
+  },
+  Boolean(...args: ConstructorParameters<typeof AttributeBoolean>) {
+    return new AttributeBoolean(...args);
+  },
+  Object(...args: ConstructorParameters<typeof Attribute>) {
+    return new Attribute(...args);
+  }
 };
+export default Attributes;

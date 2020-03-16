@@ -9,31 +9,32 @@ import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
 
 class Nylas {
-  clientId?: string;
-  clientSecret?: string;
-  apiServer?: string;
+  clientId?: string | null = null;
+  clientSecret?: string | null = null;
+  apiServer?: string | null = null;
 
   constructor() {
     this.clientId = null;
     this.clientSecret = null;
   }
 
-  static config({ clientId?: string, clientSecret?: string, apiServer?:string, ...deprecatingParams }) {
+  static config({
+    clientId,
+    clientSecret,
+    apiServer,
+    appId,
+    appSecret
+  } : {
+    clientId: string,
+    clientSecret: string,
+    apiServer:string,
+    appId?: string,
+    appSecret?: string
+  }) {
     if (apiServer && apiServer.indexOf('://') === -1) {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
       );
-    }
-
-    let appId;
-    let appSecret;
-
-    for (const key in deprecatingParams) {
-      if (key === 'appId') {
-        appId = deprecatingParams[key];
-      } else if (key === 'appSecret') {
-        appSecret = deprecatingParams[key];
-      }
     }
 
     if (appId) {
@@ -66,6 +67,8 @@ class Nylas {
     }
     if (apiServer) {
       this.apiServer = apiServer;
+    } else {
+      this.apiServer = 'https://api.nylas.com'
     }
 
     const conn = new NylasConnection(this.clientSecret, {
@@ -207,7 +210,6 @@ class Nylas {
     return url;
   }
 }
-Nylas.apiServer = 'https://api.nylas.com';
 
 // We keep the old `module.exports` syntax for now to ensure that people using
 // `require` don't have to use `.default` to use this package

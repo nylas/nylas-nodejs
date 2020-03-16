@@ -25,20 +25,21 @@ module.exports = class NylasConnection {
   accessToken?: string;
   clientId?: string;
 
-  constructor(accessToken, { clientId }) {
+  threads = new RestfulModelCollection(Thread, this);
+  contacts = new RestfulModelCollection(Contact, this);
+  messages = new RestfulModelCollection(Message, this);
+  drafts = new RestfulModelCollection(Draft, this);
+  files = new RestfulModelCollection(File, this);
+  calendars = new RestfulModelCollection(Calendar, this);
+  events = new RestfulModelCollection(Event, this);
+  deltas = new Delta(this);
+  labels = new RestfulModelCollection(Label, this);
+  folders = new RestfulModelCollection(Folder, this);
+  account = new RestfulModelInstance(Account, this);
+
+  constructor(accessToken: string, { clientId }: { clientId: string}) {
     this.accessToken = accessToken;
     this.clientId = clientId;
-    this.threads = new RestfulModelCollection(Thread, this);
-    this.contacts = new RestfulModelCollection(Contact, this);
-    this.messages = new RestfulModelCollection(Message, this);
-    this.drafts = new RestfulModelCollection(Draft, this);
-    this.files = new RestfulModelCollection(File, this);
-    this.calendars = new RestfulModelCollection(Calendar, this);
-    this.events = new RestfulModelCollection(Event, this);
-    this.deltas = new Delta(this);
-    this.labels = new RestfulModelCollection(Label, this);
-    this.folders = new RestfulModelCollection(Folder, this);
-    this.account = new RestfulModelInstance(Account, this);
   }
 
   requestOptions(options: { [key: string]: any }) {
@@ -102,7 +103,7 @@ module.exports = class NylasConnection {
 
     return options;
   }
-  _getWarningForVersion(sdkApiVersion: string = null, apiVersion: string = null) {
+  _getWarningForVersion(sdkApiVersion?: string, apiVersion?: string) {
     let warning = '';
 
     if (sdkApiVersion != apiVersion) {

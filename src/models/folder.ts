@@ -1,4 +1,4 @@
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 
 export class Folder extends RestfulModel {
@@ -12,7 +12,7 @@ export class Folder extends RestfulModel {
     return json;
   }
 
-  save(params: { [key: string]: any } = {}, callback = null) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
   }
 }
