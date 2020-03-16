@@ -2,6 +2,7 @@ import File from './file';
 import Message from './message';
 import Contact from './contact';
 import Attributes from './attributes';
+import { SaveCallback } from './restful-model';
 
 export default class Draft extends Message {
   rawMime?: string;
@@ -25,7 +26,7 @@ export default class Draft extends Message {
     return json;
   }
 
-  save(params: { [key: string]: any } = {}, callback = null) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     if (this.rawMime) {
       const err = new Error('save() cannot be called for raw MIME drafts');
       if (callback) {

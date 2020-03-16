@@ -1,4 +1,4 @@
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 
 class EmailAddress extends RestfulModel {
@@ -196,7 +196,7 @@ export default class Contact extends RestfulModel {
   groups?: Groups[];
   source?: string;
 
-  save(params: { [key: string]: any } = {}, callback = null) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
   }
 

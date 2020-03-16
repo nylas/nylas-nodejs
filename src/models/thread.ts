@@ -1,6 +1,6 @@
 import Message from './message';
-import RestfulModel from './restful-model';
-import * as Attributes from './attributes';
+import RestfulModel, { SaveCallback } from './restful-model';
+import Attributes from './attributes';
 import EmailParticipant from './email-participant';
 import { Label, Folder } from './folder';
 
@@ -46,7 +46,7 @@ export default class Thread extends RestfulModel {
     return json;
   }
 
-  save(params: { [key: string]: any } = {}, callback: () => void = null) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
   }
 
@@ -61,7 +61,7 @@ export default class Thread extends RestfulModel {
     return this.folders;
   }
 
-  set folder(value: Folders[]) {
+  set folder(value: Folder[]) {
     this.folders = value;
     process.emitWarning(
       '"thread.folder" will be deprecated in version 5.0.0. Use "thread.folders" instead.',
