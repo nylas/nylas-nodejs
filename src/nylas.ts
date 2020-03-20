@@ -12,11 +12,9 @@ class Nylas {
   static clientId?: string | null = null;
   static clientSecret?: string | null = null;
   static apiServer?: string | null = null;
-
-  constructor() {
-    this.clientId = null;
-    this.clientSecret = null;
-  }
+  static accounts?: ManagementModelCollection<ManagementAccount> | RestfulModelCollection<Account>;
+  static connect?: Connect;
+  static webhooks?: ManagementModelCollection<Webhook>;
 
   static config({
     clientId,
@@ -25,9 +23,9 @@ class Nylas {
     appId,
     appSecret
   } : {
-    clientId: string,
-    clientSecret: string,
-    apiServer:string,
+    clientId?: string,
+    clientSecret?: string,
+    apiServer?:string,
     appId?: string,
     appSecret?: string
   }) {
@@ -39,24 +37,18 @@ class Nylas {
 
     if (appId) {
       this.clientId = appId;
-      process.emitWarning(
-        '"appId" will be deprecated in version 5.0.0. Use "clientId" instead.',
-        {
-          code: 'Nylas',
-          type: 'DeprecationWarning',
-        }
-      );
+      const deprecationWarning: any = new Error('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.');
+      deprecationWarning.code = 'Nylas';
+      deprecationWarning.type = 'DeprecationWarning';
+      process.emitWarning(deprecationWarning);
     }
 
     if (appSecret) {
       this.clientSecret = appSecret;
-      process.emitWarning(
-        '"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.',
-        {
-          code: 'Nylas',
-          type: 'DeprecationWarning',
-        }
-      );
+      const deprecationWarning: any = new Error('"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.');
+      deprecationWarning.code = 'Nylas';
+      deprecationWarning.type = 'DeprecationWarning';
+      process.emitWarning(deprecationWarning);
     }
 
     if (clientId) {
@@ -90,47 +82,35 @@ class Nylas {
   }
 
   static get appId() {
-    process.emitWarning(
-      '"appId" will be deprecated in version 5.0.0. Use "clientId" instead.',
-      {
-        code: 'Nylas',
-        type: 'DeprecationWarning',
-      }
-    );
-    return this.clientId;
+    const deprecationWarning: any = new Error('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.');
+    deprecationWarning.code = 'Nylas';
+    deprecationWarning.type = 'DeprecationWarning';
+    process.emitWarning(deprecationWarning);
+    return this.clientId!;
   }
 
   static set appId(value: string) {
     this.clientId = value;
-    process.emitWarning(
-      '"appId" will be deprecated in version 5.0.0. Use "clientId" instead.',
-      {
-        code: 'Nylas',
-        type: 'DeprecationWarning',
-      }
-    );
+    const deprecationWarning: any = new Error('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.');
+    deprecationWarning.code = 'Nylas';
+    deprecationWarning.type = 'DeprecationWarning';
+    process.emitWarning(deprecationWarning);
   }
 
   static get appSecret() {
-    process.emitWarning(
-      '"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.',
-      {
-        code: 'Nylas',
-        type: 'DeprecationWarning',
-      }
-    );
-    return this.clientSecret;
+    const deprecationWarning: any = new Error('"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.');
+    deprecationWarning.code = 'Nylas';
+    deprecationWarning.type = 'DeprecationWarning';
+    process.emitWarning(deprecationWarning);
+    return this.clientSecret!;
   }
 
   static set appSecret(value: string) {
     this.clientSecret = value;
-    process.emitWarning(
-      '"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.',
-      {
-        code: 'Nylas',
-        type: 'DeprecationWarning',
-      }
-    );
+    const deprecationWarning: any = new Error('"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.');
+    deprecationWarning.code = 'Nylas';
+    deprecationWarning.type = 'DeprecationWarning';
+    process.emitWarning(deprecationWarning);
   }
 
   static clientCredentials() {
