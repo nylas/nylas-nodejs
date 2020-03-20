@@ -8,9 +8,9 @@ import Thread from './thread';
 
 const REQUEST_CHUNK_SIZE = 100;
 
-export default class RestfulModelCollection {
+export default class RestfulModelCollection<T extends RestfulModel> {
   connection?: NylasConnection;
-  modelClass?: RestfulModel;
+  modelClass?: typeof RestfulModel;
 
   constructor(modelClass, connection) {
     this.modelClass = modelClass;

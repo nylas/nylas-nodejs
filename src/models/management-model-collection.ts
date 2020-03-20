@@ -1,6 +1,6 @@
 import RestfulModelCollection from './restful-model-collection';
 
-export default class ManagementModelCollection extends RestfulModelCollection {
+export default class ManagementModelCollection<T extends ManagementModel> extends RestfulModelCollection<T> {
   clientId?: string;
 
   constructor(modelClass, connection, clientId) {
