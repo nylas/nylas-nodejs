@@ -1,11 +1,11 @@
-import NylasConnection from './nylas-connection';
+import NylasConnection from '../nylas-connection';
 import RestfulModel from './restful-model';
 
 export default class RestfulModelInstance {
-  connection?: NylasConnection;
-  modelClass?: RestfulModel;
+  connection: NylasConnection;
+  modelClass: typeof RestfulModel;
 
-  constructor(modelClass, connection) {
+  constructor(modelClass: typeof RestfulModel, connection: NylasConnection) {
     this.modelClass = modelClass;
     this.connection = connection;
     if (!(this.connection instanceof NylasConnection)) {

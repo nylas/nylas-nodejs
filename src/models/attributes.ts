@@ -5,11 +5,11 @@ import RestfulModel from "./restful-model";
 // the JSON representation of that type and the javascript representation.
 // The Attribute class also exposes convenience methods for generating Matchers.
 
-class Attribute {
-  modelKey?: string;
-  jsonKey?: string;
+export class Attribute {
+  modelKey: string;
+  jsonKey: string;
 
-  constructor({ modelKey, jsonKey }: { modelKey?: string; jsonKey?: string }) {
+  constructor({ modelKey, jsonKey }: { modelKey: string; jsonKey?: string }) {
     this.modelKey = modelKey;
     this.jsonKey = jsonKey || modelKey;
   }
@@ -109,9 +109,19 @@ class AttributeDateTime extends Attribute {
 }
 
 class AttributeCollection extends Attribute {
-  itemClass?: RestfulModel;
+  itemClass?: typeof RestfulModel;
 
-  constructor({ modelKey, jsonKey, itemClass }: { modelKey?: string; jsonKey?: string, itemClass?: RestfulModel }) {
+  constructor(
+    {
+    modelKey,
+    jsonKey,
+    itemClass
+  }: {
+    modelKey: string;
+    jsonKey?: string;
+    itemClass: typeof RestfulModel;
+  }
+  ) {
     super({ modelKey, jsonKey });
     this.itemClass = itemClass;
   }

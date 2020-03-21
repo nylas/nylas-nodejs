@@ -2,17 +2,17 @@ import async from 'async';
 import isFunction from 'lodash/isFunction';
 
 import Message from './message';
-import NylasConnection from './nylas-connection';
+import NylasConnection from '../nylas-connection';
 import RestfulModel from './restful-model';
 import Thread from './thread';
 
 const REQUEST_CHUNK_SIZE = 100;
 
 export default class RestfulModelCollection<T extends RestfulModel> {
-  connection?: NylasConnection;
-  modelClass?: typeof RestfulModel;
+  connection: NylasConnection;
+  modelClass: typeof RestfulModel;
 
-  constructor(modelClass, connection) {
+  constructor(modelClass: typeof RestfulModel, connection: NylasConnection) {
     this.modelClass = modelClass;
     this.connection = connection;
     if (!(this.connection instanceof NylasConnection)) {
@@ -23,11 +23,14 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     }
   }
 
-  forEach(params: { [key: string]: any } = {}, eachCallback?: () => void, completeCallback?: () => void = null) {
+  forEach(
+    params: { [key: string]: any } = {},
+    eachCallback: (item: T) => void,
+    completeCallback?: (err?: Error | null | undefined) => void) {
     if (params.view == 'count') {
       const err = new Error('forEach() cannot be called with the count view');
-      if (callback) {
-        callback(err);
+      if (completeCallback) {
+        completeCallback(err);
       }
       return Promise.reject(err);
     }
@@ -57,20 +60,23 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     );
   }
 
-  count(params: { [key: string]: any } = {}, callback?: () => void = null) {
+  count(
+    params: { [key: string]: any } = {},
+    callback?: (err: Error | null, num?: number) => void
+  ) {
     return this.connection
       .request({
         method: 'GET',
         path: this.path(),
         qs: { view: 'count', ...params },
       })
-      .then(json => {
+      .then((json: any) => {
         if (callback) {
           callback(null, json.count);
         }
         return Promise.resolve(json.count);
       })
-      .catch(err => {
+      .catch((err: Error) => {
         if (callback) {
           callback(err);
         }
@@ -78,7 +84,10 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       });
   }
 
-  first(params: { [key: string]: any } = {}, callback?: () => void = null) {
+  first(
+    params: { [key: string]: any } = {},
+    callback?: (error: Error | null, model?: T) => void
+  ) {
     if (params.view == 'count') {
       const err = new Error('first() cannot be called with the count view');
       if (callback) {
@@ -102,7 +111,10 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       });
   }
 
-  list(params: { [key: string]: any } = {}, callback?: () => void = null) {
+  list(
+    params: { [key: string]: any } = {},
+    callback?: (error: Error | null, obj?: T[]) => void
+  ) {
     if (params.view == 'count') {
       const err = new Error('list() cannot be called with the count view');
       if (callback) {
@@ -116,7 +128,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return this._range({ params, offset, limit, callback });
   }
 
-  find(id: string, callback?: () => null = null, params: { [key: string]: any } = {}) {
+  find(id: string, callback?: (error: Error | null, model?: T) => void, params: { [key: string]: any } = {}) {
     if (!id) {
       const err = new Error('find() must be called with an item id');
       if (callback) {
@@ -150,7 +162,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       });
   }
 
-  search(query: string, params: { [key: string]: any } = {}, callback: () => void = null) {
+  search(query: string, params: { [key: string]: any } = {}, callback?: (error: Error | null) => void) {
     if (this.modelClass != Message && this.modelClass != Thread) {
       const err = new Error(
         'search() can only be called for messages and threads'
@@ -177,7 +189,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return this._range({ params, offset, limit, path });
   }
 
-  delete(itemOrId: string | RestfulModel, params: { [key: string]: any } = {}, callback: () => void = null) {
+  delete(itemOrId: T | string, params: { [key: string]: any } = {}, callback?: (error: Error | null) => void) {
     if (!itemOrId) {
       const err = new Error('delete() requires an item or an id');
       if (callback) {
@@ -191,9 +203,9 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       params = {};
     }
 
-    const item = itemOrId.id ? itemOrId : this.build({ id: itemOrId });
+    const item = typeof itemOrId === 'string' ? this.build({ id: itemOrId }) : itemOrId;
 
-    const options = item.deleteRequestOptions(params);
+    const options: { [key: string]: any } = item.deleteRequestOptions(params);
     options.item = item;
     options.callback = callback;
 
@@ -202,7 +214,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
 
   deleteItem(options: { [key: string]: any }) {
     const item = options.item;
-    const callback = options.callback || null;
+    const callback = options.callback;
     const body = options.hasOwnProperty('body')
       ? options.body
       : item.deleteRequestBody({});
@@ -223,7 +235,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         }
         return Promise.resolve();
       })
-      .catch(err => {
+      .catch((err: Error) => {
         if (callback) {
           callback(err);
         }
@@ -235,7 +247,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     const model = this._createModel({});
     for (const key in args) {
       const val = args[key];
-      model[key] = val;
+      (model as any)[key] = val;
     }
     return model;
   }
@@ -248,11 +260,17 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     params = {},
     offset = 0,
     limit = 100,
-    callback = null,
-    path = null,
+    callback,
+    path,
+  }: {
+    params?: { [key: string]: any };
+    offset?: number;
+    limit?: number;
+    callback?: (error: Error | null, results?: T[]) => void;
+    path?: string;
   }) {
-    return new Promise((resolve, reject) => {
-      let accumulated = [];
+    return new Promise<T[]>((resolve, reject) => {
+      let accumulated: T[] = [];
       let finished = false;
 
       return async.until(
@@ -290,7 +308,12 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     });
   }
 
-  _getItems(params: { [key: string]: any }, offset?: number, limit?: number, path?: string) {
+  _getItems(
+    params: { [key: string]: any },
+    offset: number,
+    limit: number,
+    path?: string
+  ): Promise<T[]> {
     // Items can be either models or ids
 
     if (!path) {
@@ -309,31 +332,36 @@ export default class RestfulModelCollection<T extends RestfulModel> {
   }
 
   _createModel(json: { [key: string]: any }) {
-    return new this.modelClass(this.connection, json);
+    return new this.modelClass(this.connection, json) as T;
   }
 
-  _getModel(id: string, params: { [key: string]: any } = {}) {
+  _getModel(id: string, params: { [key: string]: any } = {}): Promise<T> {
     return this.connection
       .request({
         method: 'GET',
         path: `${this.path()}/${id}`,
         qs: params,
       })
-      .then(json => {
+      .then((json: any) => {
         const model = this._createModel(json);
         return Promise.resolve(model);
       });
   }
 
-  _getModelCollection(params: { [key: string]: any }, offset?: number, limit?: number, path?: string) {
+  _getModelCollection(
+    params: { [key: string]: any },
+    offset?: number,
+    limit?: number,
+    path?: string
+  ): Promise<T[]> {
     return this.connection
       .request({
         method: 'GET',
         path,
         qs: { ...params, offset, limit },
       })
-      .then(jsonArray => {
-        const models = jsonArray.map(json => {
+      .then((jsonArray: any) => {
+        const models = jsonArray.map((json: any) => {
           return this._createModel(json);
         });
         return Promise.resolve(models);
