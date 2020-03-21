@@ -31,7 +31,7 @@ export default class Webhook extends ManagementModel {
     return this._save(params, callback);
   }
   toJSON() {
-    const json = super.toJSON(...arguments);
+    const json = super.toJSON();
     delete json['object'];
     return json;
   }

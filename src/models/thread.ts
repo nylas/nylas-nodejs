@@ -23,22 +23,17 @@ export default class Thread extends RestfulModel {
   messages?: Message[];
   drafts?: Message[];
 
-  constructor(...args) {
-    super(...args);
-    this.fromJSON = this.fromJSON.bind(this);
-  }
-
   fromJSON(json: { [key: string]: any }) {
     super.fromJSON(json);
     return this;
   }
 
   saveRequestBody() {
-    const json = {};
+    const json: { [key: string]: any } = {};
     if (this.labels) {
       json['label_ids'] = this.labels.map(label => label.id);
-    } else if (this.folder) {
-      json['folder_id'] = this.folder.id;
+    } else if (this.folders && this.folders.length === 1) {
+      json['folder_id'] = this.folders[0].id;
     }
 
     json['starred'] = this.starred;
@@ -51,25 +46,19 @@ export default class Thread extends RestfulModel {
   }
 
   get folder() {
-    process.emitWarning(
-      '"thread.folder" will be deprecated in version 5.0.0. Use "thread.folders" instead.',
-      {
-        code: 'Nylas',
-        type: 'DeprecationWarning',
-      }
-    );
-    return this.folders;
+    const deprecationWarning: any = new Error('"thread.folder" will be deprecated in version 5.0.0. Use "thread.folders" instead.');
+    deprecationWarning.code = 'Nylas';
+    deprecationWarning.type = 'DeprecationWarning';
+    process.emitWarning(deprecationWarning);
+    return this.folders!;
   }
 
   set folder(value: Folder[]) {
     this.folders = value;
-    process.emitWarning(
-      '"thread.folder" will be deprecated in version 5.0.0. Use "thread.folders" instead.',
-      {
-        code: 'Nylas',
-        type: 'DeprecationWarning',
-      }
-    );
+    const deprecationWarning: any = new Error('"thread.folder" will be deprecated in version 5.0.0. Use "thread.folders" instead.');
+    deprecationWarning.code = 'Nylas';
+    deprecationWarning.type = 'DeprecationWarning';
+    process.emitWarning(deprecationWarning);
   }
 }
 Thread.collectionName = 'threads';

@@ -1,7 +1,7 @@
 import isFunction from 'lodash/isFunction';
 
 import Attributes, { Attribute } from './attributes';
-import NylasConnection from './nylas-connection';
+import NylasConnection from '../nylas-connection';
 
 export type SaveCallback = (error: Error | null, result?: RestfulModel) => void;
 
@@ -18,11 +18,11 @@ export default class RestfulModel {
   static attributes: { [key: string]: Attribute };
 
   accountId?: string;
-  connection?: NylasConnection;
+  connection: NylasConnection;
   id?: string;
   object?: string;
 
-  constructor(connection, json?: Partial<RestfulModelJSON>) {
+  constructor(connection: NylasConnection, json?: Partial<RestfulModelJSON>) {
     this.connection = connection;
     if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
@@ -32,8 +32,8 @@ export default class RestfulModel {
     }
   }
 
-  attributes() {
-    return this.constructor.attributes;
+  attributes(): { [key: string]: Attribute } {
+    return (this.constructor as any).attributes;
   }
 
   isEqual(other: RestfulModel) {
