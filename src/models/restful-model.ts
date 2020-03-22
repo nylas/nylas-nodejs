@@ -71,7 +71,8 @@ export default class RestfulModel {
   }
 
   saveEndpoint() {
-    return `${this.pathPrefix()}/${this.constructor.collectionName}`;
+    const collectionName = (this.constructor as any).collectionName;
+    return `${this.pathPrefix()}/${collectionName}`;
   }
 
   // saveRequestBody is used by save(). It returns a JSON dict containing only the

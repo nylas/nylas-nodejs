@@ -21,7 +21,7 @@ export default class Webhook extends ManagementModel {
     } else {
       json['callback_url'] = this.callbackUrl;
       json['state'] = this.state ? this.state : 'active';
-      json['triggers'] = this.constructor.attributes.triggers.toJSON(
+      json['triggers'] = Webhook.attributes.triggers.toJSON(
         this.triggers
       );
     }

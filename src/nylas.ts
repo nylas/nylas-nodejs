@@ -23,8 +23,8 @@ class Nylas {
     appId,
     appSecret
   } : {
-    clientId?: string,
-    clientSecret?: string,
+    clientId: string,
+    clientSecret: string,
     apiServer?:string,
     appId?: string,
     appSecret?: string
@@ -67,12 +67,12 @@ class Nylas {
       clientId: this.clientId,
     });
     this.connect = new Connect(conn, this.clientId, this.clientSecret);
-    this.webhooks = new ManagementModelCollection(Webhook, conn, this.clientId);
+    this.webhooks = new ManagementModelCollection(Webhook, conn, this.clientId!);
     if (this.clientCredentials()) {
       this.accounts = new ManagementModelCollection(
         ManagementAccount,
         conn,
-        this.clientId
+        this.clientId!
       );
     } else {
       this.accounts = new RestfulModelCollection(Account, conn);
