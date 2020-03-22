@@ -22,6 +22,25 @@ export class Attribute {
   }
 }
 
+class AttributeObject extends Attribute {
+  itemClass?: typeof RestfulModel;
+
+  constructor(
+    {
+    modelKey,
+    jsonKey,
+    itemClass
+  }: {
+    modelKey: string;
+    jsonKey?: string;
+    itemClass?: typeof RestfulModel;
+  }
+  ) {
+    super({ modelKey, jsonKey });
+    this.itemClass = itemClass;
+  }
+}
+
 class AttributeNumber extends Attribute {
   toJSON(val: any) {
     return val;
@@ -177,8 +196,8 @@ const Attributes = {
   Boolean(...args: ConstructorParameters<typeof AttributeBoolean>) {
     return new AttributeBoolean(...args);
   },
-  Object(...args: ConstructorParameters<typeof Attribute>) {
-    return new Attribute(...args);
+  Object(...args: ConstructorParameters<typeof AttributeObject>) {
+    return new AttributeObject(...args);
   }
 };
 export default Attributes;
