@@ -13,7 +13,7 @@ export default class ManagementAccount extends ManagementModel {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.clientId}/${this.constructor.collectionName}/${this.id}/upgrade`,
+        path: `/a/${this.clientId}/${(this.constructor as any).collectionName}/${this.id}/upgrade`,
       })
       .catch(err => Promise.reject(err));
   }
@@ -22,7 +22,7 @@ export default class ManagementAccount extends ManagementModel {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.clientId}/${this.constructor.collectionName}/${this.id}/downgrade`,
+        path: `/a/${this.clientId}/${(this.constructor as any).collectionName}/${this.id}/downgrade`,
       })
       .catch(err => Promise.reject(err));
   }
@@ -31,7 +31,7 @@ export default class ManagementAccount extends ManagementModel {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.clientId}/${this.constructor.collectionName}/${this.id}/revoke-all`,
+        path: `/a/${this.clientId}/${(this.constructor as any).collectionName}/${this.id}/revoke-all`,
         body: { keep_access_token: keep_access_token },
       })
       .catch(err => Promise.reject(err));
@@ -48,7 +48,7 @@ export default class ManagementAccount extends ManagementModel {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.clientId}/${this.constructor.collectionName}/${this.id}/token-info`,
+        path: `/a/${this.clientId}/${(this.constructor as any).collectionName}/${this.id}/token-info`,
         body: {
           access_token: access_token,
         },

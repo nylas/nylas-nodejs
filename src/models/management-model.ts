@@ -1,9 +1,14 @@
 import RestfulModel from './restful-model';
+import NylasConnection from '../nylas-connection';
 
 export default class ManagementModel extends RestfulModel {
-  clientId?: string;
+  clientId: string;
 
-  constructor(connection, clientId, json?: { [key: string]: any } = null) {
+  constructor(
+    connection: NylasConnection,
+    clientId: string,
+    json: { [key: string]: any }
+  ) {
     super(connection, json);
     this.clientId = clientId;
   }

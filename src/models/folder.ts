@@ -6,7 +6,7 @@ export class Folder extends RestfulModel {
   name?: string;
 
   saveRequestBody() {
-    const json = {};
+    const json: { [key: string]: any } = {};
     json['display_name'] = this.displayName;
     json['name'] = this.name;
     return json;
