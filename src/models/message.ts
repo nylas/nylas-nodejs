@@ -6,18 +6,19 @@ import File from './file';
 import Event from './event';
 import EmailParticipant from './email-participant';
 import { Label, Folder } from './folder';
+import _ from 'lodash';
 
 export default class Message extends RestfulModel {
-  subject?: string;
+  subject?: string = '';
   from?: EmailParticipant[];
   replyTo?: EmailParticipant[];
-  to?: EmailParticipant[];
-  cc?: EmailParticipant[];
-  bcc?: EmailParticipant[];
+  to?: EmailParticipant[] = [];
+  cc?: EmailParticipant[] = [];
+  bcc?: EmailParticipant[] = [];
   date?: Date;
   threadId?: string;
   snippet?: string;
-  body?: string;
+  body?: string = '';
   unread?: boolean;
   starred?: boolean;
   files?: File[];
@@ -26,48 +27,17 @@ export default class Message extends RestfulModel {
   labels?: Label[];
   headers?: { [key: string]: string };
 
-  constructor() {
-    super(...arguments);
-    if (!this.body) {
-      this.body = '';
-    }
-    if (!this.subject) {
-      this.subject = '';
-    }
-    if (!this.to) {
-      this.to = [];
-    }
-    if (!this.cc) {
-      this.cc = [];
-    }
-    if (!this.bcc) {
-      this.bcc = [];
-    }
-  }
-
   // We calculate the list of participants instead of grabbing it from
   // a parent because it is a better source of ground truth, and saves us
   // from more dependencies.
   participants() {
-    const participants = {};
+    const participants: { [key: string]: EmailParticipant } = {};
     const contacts = union(this.to, this.cc, this.from);
     for (const contact of contacts) {
-      if (contact && (contact.email ? contact.email.length : undefined) > 0) {
+      if (contact && (contact.email ? contact.email.length : '') > 0) {
         if (contact) {
           participants[
-            `${((contact ? contact.email : undefined) != null
-              ? contact
-                ? contact.email
-                : undefined
-              : ''
-            )
-              .toLowerCase()
-              .trim()} ${((contact ? contact.name : undefined) != null
-              ? contact
-                ? contact.name
-                : undefined
-              : ''
-            )
+            `${contact.email || ''.toLowerCase().trim()} ${(contact.name || '')
               .toLowerCase()
               .trim()}`
           ] = contact;
@@ -88,7 +58,7 @@ export default class Message extends RestfulModel {
         headers: {
           Accept: 'message/rfc822',
         },
-        path: `/${this.constructor.collectionName}/${this.id}`,
+        path: `/${Message.collectionName}/${this.id}`,
       })
       .catch(err => Promise.reject(err));
   }
@@ -96,11 +66,11 @@ export default class Message extends RestfulModel {
   saveRequestBody() {
     // It's possible to update most of the fields of a draft.
     if (this.constructor.name === 'Draft') {
-      return super.saveRequestBody(...arguments);
+      return super.saveRequestBody();
     }
 
     // Messages are more limited, though.
-    const json = {};
+    const json: { [key: string]: any } = {};
     if (this.labels) {
       json['label_ids'] = Array.from(this.labels).map(label => label.id);
     } else if (this.folder) {
