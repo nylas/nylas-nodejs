@@ -59,7 +59,7 @@ class PhysicalAddress extends RestfulModel {
   country?: string;
 
   toJSON() {
-    const json = {
+    const json: { [key: string]: any } = {
       type: this.type,
       format: this.format,
     };
@@ -159,7 +159,7 @@ class Groups extends RestfulModel {
   path?: string;
 
   toJSON() {
-    const json = super.toJSON(...arguments);
+    const json = super.toJSON();
     json['object'] = 'contact_group';
     return json;
   }
@@ -200,7 +200,10 @@ export default class Contact extends RestfulModel {
     return this._save(params, callback);
   }
 
-  getPicture(params: { [key: string]: any } = {}, callback = null) {
+  getPicture(
+    params: { [key: string]: any } = {},
+    callback?: (error: Error | null, result?: any) => void
+  ) {
     return this._get(params, callback, '/picture');
   }
 }

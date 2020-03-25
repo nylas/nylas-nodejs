@@ -4,15 +4,15 @@ import JSONStream from 'JSONStream';
 import request, { ResponseRequest } from 'request';
 import { EventEmitter } from 'events';
 
-import NylasConnection from './nylas-connection';
+import NylasConnection from '../nylas-connection';
 
 type CreateRequestType = typeof request;
 
 export default class Delta {
-  connection?: NylasConnection;
-  streamingTimeoutMs = 15000;
+  connection: NylasConnection;
+  static streamingTimeoutMs = 15000;
 
-  constructor(connection) {
+  constructor(connection: NylasConnection) {
     this.connection = connection;
     if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
@@ -27,7 +27,7 @@ export default class Delta {
 
     return this.connection
       .request(reqOpts)
-      .then(response => {
+      .then((response: any) => {
         const { cursor } = response;
         if (callback) {
           callback(null, cursor);
@@ -70,11 +70,11 @@ Emits the following events:
 class DeltaStream extends EventEmitter {
   // Max number of times to retry a connection if we receive no data heartbeats
   // from the Nylas server.
-  MAX_RESTART_RETRIES = 5;
+  static MAX_RESTART_RETRIES = 5;
   createRequest: CreateRequestType;
-  connection?: NylasConnection;
+  connection: NylasConnection;
   cursor?: string;
-  params?: {
+  params: {
     includeTypes?: string[],
     excludeTypes?: string[],
     expanded?: boolean
@@ -100,7 +100,7 @@ class DeltaStream extends EventEmitter {
     cursor: string,
     params: { [key: string]: any } = {}
   ) {
-    super(createRequest, connection, cursor, params);
+    super();
     this.createRequest = createRequest;
     this.connection = connection;
     this.cursor = cursor;
@@ -139,7 +139,7 @@ class DeltaStream extends EventEmitter {
     const includeTypes =
       this.params.includeTypes != null ? this.params.includeTypes : [];
 
-    const queryObj = {
+    const queryObj: { [key: string]: any } = {
       ...omit(this.params, ['excludeTypes', 'includeTypes']),
       cursor: this.cursor,
     };
@@ -178,7 +178,7 @@ class DeltaStream extends EventEmitter {
             // Each data block received may not be a complete JSON object. Pipe through
             // JSONStream.parse(), which handles converting data blocks to JSON objects.
             .pipe(JSONStream.parse())
-            .on('data', obj => {
+            .on('data', (obj: any) => {
               if (obj.cursor) {
                 this.cursor = obj.cursor;
               }
@@ -196,10 +196,10 @@ class DeltaStream extends EventEmitter {
     // received cursor.
     clearTimeout(this.timeoutId);
     this.restartBackoff.reset();
-    return (this.timeoutId = setTimeout(
+    this.timeoutId = setTimeout(
       this.restartBackoff.backoff.bind(this.restartBackoff),
       Delta.streamingTimeoutMs
-    ));
+    ) as any;
   }
 
   _onError(err: Error) {

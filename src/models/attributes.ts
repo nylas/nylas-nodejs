@@ -128,7 +128,7 @@ class AttributeDateTime extends Attribute {
 }
 
 class AttributeCollection extends Attribute {
-  itemClass?: typeof RestfulModel;
+  itemClass: typeof RestfulModel;
 
   constructor(
     {

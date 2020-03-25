@@ -1,11 +1,15 @@
-import NylasConnection from './nylas-connection';
+import NylasConnection from '../nylas-connection';
 
 export default class Connect {
-  connection?: NylasConnection;
-  clientId?: string;
-  clientSecret?: string;
+  connection: NylasConnection;
+  clientId: string;
+  clientSecret: string;
 
-  constructor(connection, clientId, clientSecret) {
+  constructor(
+    connection: NylasConnection,
+    clientId: string,
+    clientSecret: string
+  ) {
     this.connection = connection;
     this.clientId = clientId;
     this.clientSecret = clientSecret;

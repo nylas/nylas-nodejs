@@ -19,6 +19,6 @@ export default class ManagementModelCollection<T extends ManagementModel> extend
   }
 
   _createModel(json: { [key: string]: any }) {
-    return new this.modelClass(this.connection, this.clientId, json);
+    return new (this.modelClass as any)(this.connection, this.clientId, json);
   }
 }

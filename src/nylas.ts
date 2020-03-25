@@ -9,8 +9,8 @@ import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
 
 class Nylas {
-  static clientId?: string | null = null;
-  static clientSecret?: string | null = null;
+  static clientId: string = "";
+  static clientSecret: string = "";
   static apiServer?: string | null = null;
   static accounts?: ManagementModelCollection<ManagementAccount> | RestfulModelCollection<Account>;
   static connect?: Connect;
