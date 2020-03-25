@@ -6,7 +6,7 @@ export default class EmailParticipant extends RestfulModel {
   email?: string;
 
   toJSON() {
-    const json = super.toJSON(...arguments);
+    const json = super.toJSON();
     if (!json['name']) {
       json['name'] = json['email'];
     }

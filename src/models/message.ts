@@ -26,6 +26,7 @@ export default class Message extends RestfulModel {
   folder?: Folder;
   labels?: Label[];
   headers?: { [key: string]: string };
+  failures?: any;
 
   // We calculate the list of participants instead of grabbing it from
   // a parent because it is a better source of ground truth, and saves us
