@@ -14,10 +14,11 @@ export default class Event extends RestfulModel {
   location?: string;
   when?: {
     start_time?: number;
-    start_date?: string;
     end_time?: number;
-    end_date?: string;
     time?: number;
+    start_date?: string;
+    end_date?: string;
+    date?: string;
     object?: string;
   };
   busy?: boolean;
@@ -25,23 +26,23 @@ export default class Event extends RestfulModel {
 
   get start() {
     const start =
-      this.when.start_time ||
-      this.when.start_date ||
-      this.when.time ||
-      this.when.date;
+      this.when?.start_time ||
+      this.when?.start_date ||
+      this.when?.time ||
+      this.when?.date;
     return start;
   }
 
   get end() {
     const end =
-      this.when.end_time ||
-      this.when.end_date ||
-      this.when.time ||
-      this.when.date;
+      this.when?.end_time ||
+      this.when?.end_date ||
+      this.when?.time ||
+      this.when?.date;
     return end;
   }
 
-  set start(val: string | number) {
+  set start(val: string | number | undefined) {
     if (this.when) {
       if (typeof val === 'number') {
         if (val === this.when.end_time) {
@@ -66,7 +67,7 @@ export default class Event extends RestfulModel {
     }
   }
 
-  set end(val: string | number) {
+  set end(val: string | number | undefined) {
     if (this.when) {
       if (typeof val === 'number') {
         if (val === this.when.start_time) {
@@ -92,7 +93,7 @@ export default class Event extends RestfulModel {
   }
 
   deleteRequestQueryString(params: { [key: string]: any } = {}) {
-    var qs = {};
+    var qs: { [key: string]: any } = {};
     if (params.hasOwnProperty('notify_participants')) {
       qs.notify_participants = params.notify_participants;
     }

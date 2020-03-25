@@ -9,19 +9,13 @@ export default class Draft extends Message {
   replyToMessageId?: string;
   version?: number;
 
-  constructor(...args) {
-    super(...args);
-  }
-
   toJSON() {
     if (this.rawMime) {
       throw Error('toJSON() cannot be called for raw MIME drafts');
     }
-    const json = super.toJSON(...arguments);
+    const json = super.toJSON();
     json.file_ids = this.fileIds();
-    if (this.draft) {
-      json.object = 'draft';
-    }
+    json.object = 'draft';
 
     return json;
   }
@@ -41,11 +35,11 @@ export default class Draft extends Message {
     if (this.rawMime) {
       throw Error('saveRequestBody() cannot be called for raw MIME drafts');
     }
-    return super.saveRequestBody(...arguments);
+    return super.saveRequestBody();
   }
 
   deleteRequestBody(params: { [key: string]: any } = {}) {
-    var body = {};
+    var body: { [key: string]: any } = {};
     body.version = params.hasOwnProperty('version')
       ? params.version
       : this.version;
@@ -59,9 +53,12 @@ export default class Draft extends Message {
     return super.toString();
   }
 
-  send(callback?: () => void = null, tracking?: { [key: string]: any }) {
-    let body = this.rawMime,
-      headers = { 'Content-Type': 'message/rfc822' },
+  send(
+    callback?: (err: Error | null, json?: { [key: string]: any }) => void,
+    tracking?: { [key: string]: any }
+  ) {
+    let body: any = this.rawMime,
+      headers: { [key: string]: any } = { 'Content-Type': 'message/rfc822' },
       json = false;
 
     if (!this.rawMime) {
