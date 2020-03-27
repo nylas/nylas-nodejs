@@ -7,6 +7,7 @@ import Connect from './models/connect';
 import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
+import DeprecationError from './errors';
 
 class Nylas {
   static clientId: string = "";
@@ -33,22 +34,6 @@ class Nylas {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
       );
-    }
-
-    if (appId) {
-      this.clientId = appId;
-      const deprecationWarning: any = new Error('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.');
-      deprecationWarning.code = 'Nylas';
-      deprecationWarning.type = 'DeprecationWarning';
-      process.emitWarning(deprecationWarning);
-    }
-
-    if (appSecret) {
-      this.clientSecret = appSecret;
-      const deprecationWarning: any = new Error('"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.');
-      deprecationWarning.code = 'Nylas';
-      deprecationWarning.type = 'DeprecationWarning';
-      process.emitWarning(deprecationWarning);
     }
 
     if (clientId) {
@@ -79,38 +64,6 @@ class Nylas {
     }
 
     return this;
-  }
-
-  static get appId() {
-    const deprecationWarning: any = new Error('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.');
-    deprecationWarning.code = 'Nylas';
-    deprecationWarning.type = 'DeprecationWarning';
-    process.emitWarning(deprecationWarning);
-    return this.clientId!;
-  }
-
-  static set appId(value: string) {
-    this.clientId = value;
-    const deprecationWarning: any = new Error('"appId" will be deprecated in version 5.0.0. Use "clientId" instead.');
-    deprecationWarning.code = 'Nylas';
-    deprecationWarning.type = 'DeprecationWarning';
-    process.emitWarning(deprecationWarning);
-  }
-
-  static get appSecret() {
-    const deprecationWarning: any = new Error('"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.');
-    deprecationWarning.code = 'Nylas';
-    deprecationWarning.type = 'DeprecationWarning';
-    process.emitWarning(deprecationWarning);
-    return this.clientSecret!;
-  }
-
-  static set appSecret(value: string) {
-    this.clientSecret = value;
-    const deprecationWarning: any = new Error('"appSecret" will be deprecated in version 5.0.0. Use "clientSecret" instead.');
-    deprecationWarning.code = 'Nylas';
-    deprecationWarning.type = 'DeprecationWarning';
-    process.emitWarning(deprecationWarning);
   }
 
   static clientCredentials() {

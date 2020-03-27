@@ -2,6 +2,7 @@ import Message from './message';
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import EmailParticipant from './email-participant';
+import DeprecationError from '../errors';
 import { Label, Folder } from './folder';
 
 export default class Thread extends RestfulModel {
@@ -45,21 +46,6 @@ export default class Thread extends RestfulModel {
     return this._save(params, callback);
   }
 
-  get folder() {
-    const deprecationWarning: any = new Error('"thread.folder" will be deprecated in version 5.0.0. Use "thread.folders" instead.');
-    deprecationWarning.code = 'Nylas';
-    deprecationWarning.type = 'DeprecationWarning';
-    process.emitWarning(deprecationWarning);
-    return this.folders!;
-  }
-
-  set folder(value: Folder[]) {
-    this.folders = value;
-    const deprecationWarning: any = new Error('"thread.folder" will be deprecated in version 5.0.0. Use "thread.folders" instead.');
-    deprecationWarning.code = 'Nylas';
-    deprecationWarning.type = 'DeprecationWarning';
-    process.emitWarning(deprecationWarning);
-  }
 }
 Thread.collectionName = 'threads';
 Thread.attributes = {

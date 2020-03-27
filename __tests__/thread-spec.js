@@ -45,7 +45,7 @@ describe('Thread', () => {
     test('should do a PUT with folder if folder is defined', () => {
       const label = new Label(testContext.connection);
       label.id = 'label_id';
-      testContext.thread.folder = label;
+      testContext.thread.folders = [label];
       testContext.thread.save();
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'PUT',
