@@ -7,11 +7,10 @@ import Connect from './models/connect';
 import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
-import DeprecationError from './errors';
 
 class Nylas {
-  static clientId: string = "";
-  static clientSecret: string = "";
+  static clientId = '';
+  static clientSecret = '';
   static apiServer?: string | null = null;
   static accounts?: ManagementModelCollection<ManagementAccount> | RestfulModelCollection<Account>;
   static connect?: Connect;
@@ -151,4 +150,4 @@ class Nylas {
 
 // We keep the old `module.exports` syntax for now to ensure that people using
 // `require` don't have to use `.default` to use this package
-module.exports = Nylas;
+export = Nylas;

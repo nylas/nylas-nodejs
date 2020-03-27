@@ -2,7 +2,6 @@ import Message from './message';
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import EmailParticipant from './email-participant';
-import DeprecationError from '../errors';
 import { Label, Folder } from './folder';
 
 export default class Thread extends RestfulModel {

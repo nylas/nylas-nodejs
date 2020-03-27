@@ -1,5 +1,11 @@
 # Changelog
 
+### Unreleased
+
+* [BREAKING] remove `appId` and `appSecret`. Please use `clientId` and `clientSecret`.
+* [BREAKING] remove `Thread.folder`. Please use `Thread.folders`.
+* Migrate to Typescript
+
 ### 4.10.1 / 2020-05-06
 
 * Update `exchangeCodeForToken` to reject when no `access_token` is returned.

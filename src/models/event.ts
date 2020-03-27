@@ -33,15 +33,6 @@ export default class Event extends RestfulModel {
     return start;
   }
 
-  get end() {
-    const end =
-      this.when?.end_time ||
-      this.when?.end_date ||
-      this.when?.time ||
-      this.when?.date;
-    return end;
-  }
-
   set start(val: string | number | undefined) {
     if (this.when) {
       if (typeof val === 'number') {
@@ -65,6 +56,15 @@ export default class Event extends RestfulModel {
         }
       }
     }
+  }
+
+  get end() {
+    const end =
+      this.when?.end_time ||
+      this.when?.end_date ||
+      this.when?.time ||
+      this.when?.date;
+    return end;
   }
 
   set end(val: string | number | undefined) {
@@ -93,7 +93,7 @@ export default class Event extends RestfulModel {
   }
 
   deleteRequestQueryString(params: { [key: string]: any } = {}) {
-    var qs: { [key: string]: any } = {};
+    const qs: { [key: string]: any } = {};
     if (params.hasOwnProperty('notify_participants')) {
       qs.notify_participants = params.notify_participants;
     }

@@ -39,7 +39,7 @@ export default class Draft extends Message {
   }
 
   deleteRequestBody(params: { [key: string]: any } = {}) {
-    var body: { [key: string]: any } = {};
+    const body: { [key: string]: any } = {};
     body.version = params.hasOwnProperty('version')
       ? params.version
       : this.version;
