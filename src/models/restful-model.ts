@@ -13,8 +13,8 @@ interface RestfulModelJSON {
 }
 
 export default class RestfulModel {
-  static endpointName: string = ''; // overrridden in subclasses
-  static collectionName: string = ''; // overrridden in subclasses
+  static endpointName = ''; // overrridden in subclasses
+  static collectionName = ''; // overrridden in subclasses
   static attributes: { [key: string]: Attribute };
 
   accountId?: string;
@@ -137,7 +137,7 @@ export default class RestfulModel {
   _get(
     params: { [key: string]: any } = {},
     callback?: (error: Error | null, result?: any) => void,
-    path_suffix: string = ''
+    path_suffix = ''
   ) {
     const collectionName = (this.constructor as any).collectionName;
     return this.connection
