@@ -148,6 +148,4 @@ class Nylas {
   }
 }
 
-// We keep the old `module.exports` syntax for now to ensure that people using
-// `require` don't have to use `.default` to use this package
 export = Nylas;
