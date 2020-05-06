@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Fix unhandled error when response is undefined.
 * Fix get contact picture request to correctly use callback, if provided.
 
 ### 4.10.0 / 2020-02-24
