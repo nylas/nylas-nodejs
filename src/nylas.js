@@ -161,6 +161,11 @@ class Nylas {
       };
 
       return request(options, (error, response, body) => {
+        if (!body || !body['access_token']) {
+          let errorMessage = 'No access token in response';
+          if (body && body.message) errorMessage = body.message;
+          error = error ? error : new Error(errorMessage);
+        }
         if (error) {
           reject(error);
           if (callback) {
