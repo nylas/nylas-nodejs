@@ -120,6 +120,25 @@ describe('Nylas', () => {
       });
     });
 
+    test('should reject with the api error', done => {
+      const apiError = { message: 'Unable to associate credentials', type: 'api_error' };
+      request.Request = jest.fn(options => options.callback(null, null, apiError));
+
+      Nylas.exchangeCodeForToken('code-from-server').catch(returnedError => {
+        expect(returnedError.message).toBe(apiError.message);
+        done();
+      });
+    });
+
+    test('should reject with default error', done => {
+      request.Request = jest.fn(options => options.callback(null, null, null));
+
+      Nylas.exchangeCodeForToken('code-from-server').catch(returnedError => {
+        expect(returnedError.message).toBe('No access token in response');
+        done();
+      });
+    });
+
     describe('when provided an optional callback', () => {
       test('should call it with the returned access_token', done => {
         request.Request = jest.fn(options =>

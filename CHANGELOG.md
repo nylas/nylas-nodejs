@@ -2,6 +2,7 @@
 
 ### Unreleased
 
+* Update `exchangeCodeForToken` to reject when no `access_token` is returned.
 * Fix unhandled error when response is undefined.
 * Fix get contact picture request to correctly use callback, if provided.
 
