@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 4.10.1 / 2020-05-06
 
 * Update `exchangeCodeForToken` to reject when no `access_token` is returned.
 * Fix unhandled error when response is undefined.
