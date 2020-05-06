@@ -130,7 +130,7 @@ module.exports = class NylasConnection {
     return new Promise((resolve, reject) => {
       return request(options, (error, response, body = {}) => {
         if (typeof response === 'undefined') {
-          error = new Error('Response is undefined');
+          error = error || new Error('No response');
           return reject(error);
         }
         // node headers are lowercase so this refers to `Nylas-Api-Version`
