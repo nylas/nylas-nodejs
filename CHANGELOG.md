@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 4.10.1 / 2020-05-06
 
 * Fix unhandled error when response is undefined.
 * Fix get contact picture request to correctly use callback, if provided.
