@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 5.0.0 / 2020-05-07
 
 * [BREAKING] remove `appId` and `appSecret`. Please use `clientId` and `clientSecret`.
 * [BREAKING] remove `Thread.folder`. Please use `Thread.folders`.
