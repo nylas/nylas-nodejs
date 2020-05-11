@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Support recurring events.
+
 ### 5.0.0 / 2020-05-07
 
 * [BREAKING] remove `appId` and `appSecret`. Please use `clientId` and `clientSecret`.

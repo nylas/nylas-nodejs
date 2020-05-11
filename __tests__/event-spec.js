@@ -93,6 +93,39 @@ describe('Event', () => {
       });
     });
 
+    test('should create recurring event if recurrence is defined', done => {
+      const recurrence = {
+        "rrule": [
+          "RRULE:FREQ=WEEKLY;BYDAY=MO"
+        ],
+        "timezone": "America/New_York"
+      }
+      testContext.event.recurrence = recurrence;
+      testContext.event.save().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'event',
+            account_id: undefined,
+            calendar_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            location: undefined,
+            when: undefined,
+            _start: undefined,
+            _end: undefined,
+            participants: [],
+            recurrence: recurrence
+          },
+          qs: {},
+          path: '/events',
+        });
+        done();
+      });
+    });
+
     test('should create event with time when start and end are the same UNIX timestamp', done => {
       testContext.event.when = {};
       testContext.event.start = 1408875644;
