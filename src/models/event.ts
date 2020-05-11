@@ -23,6 +23,10 @@ export default class Event extends RestfulModel {
   };
   busy?: boolean;
   status?: string;
+  recurrence?: {
+    rrule: string[];
+    timezone: string;
+  };
 
   get start() {
     const start =
@@ -179,4 +183,7 @@ Event.attributes = {
   status: Attributes.String({
     modelKey: 'status',
   }),
+  recurrence: Attributes.Object({
+    modelKey: 'recurrence',
+  })
 };
