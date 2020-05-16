@@ -3,6 +3,7 @@ import request, { UrlOptions, CoreOptions } from 'request';
 
 import RestfulModel from './models/restful-model';
 import RestfulModelCollection from './models/restful-model-collection';
+import CalendarRestfulModelCollection from './models/calendar-restful-model-collection'
 import RestfulModelInstance from './models/restful-model-instance';
 import Account from './models/account';
 import ManagementAccount from './models/management-account';
@@ -30,7 +31,7 @@ export default class NylasConnection {
   messages = new RestfulModelCollection(Message, this);
   drafts = new RestfulModelCollection(Draft, this);
   files = new RestfulModelCollection(File, this);
-  calendars = new RestfulModelCollection(Calendar, this);
+  calendars = new CalendarRestfulModelCollection(this);
   events = new RestfulModelCollection(Event, this);
   deltas = new Delta(this);
   labels = new RestfulModelCollection(Label, this);

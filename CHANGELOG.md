@@ -2,6 +2,8 @@
 
 ### Unreleased
 * Support recurring events.
+* Implement list & update application details endpoints.
+* Support free-busy endpoint on Calendars collection.
 
 ### 5.0.0 / 2020-05-07
 
