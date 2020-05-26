@@ -223,4 +223,49 @@ describe('Nylas', () => {
       );
     });
   });
+
+  describe('application', () => {
+    beforeEach(() =>
+      Nylas.config({
+        clientId: 'myId',
+        clientSecret: 'mySecret',
+      })
+    );
+
+    test('should throw an exception if the client id has not been configured', () => {
+      Nylas.clientId = undefined;
+      expect(() => Nylas.application()).toThrow();
+    });
+
+    test('should throw an exception if the client secret has not been configured', () => {
+      Nylas.clientSecret = undefined;
+      expect(() => Nylas.application()).toThrow();
+    });
+
+    test('should make a GET request to /a/<clientId> when options are not provided', () => {
+      request.Request = jest.fn(options => {
+        expect(options.url).toEqual('https://api.nylas.com/a/myId');
+        expect(options.auth.user).toEqual('mySecret');
+        expect(options.method).toEqual('GET');
+      });
+      Nylas.application();
+    });
+
+    test('should make a PUT request to /a/<clientId> when options are provided', () => {
+      request.Request = jest.fn(options => {
+        expect(options.url).toEqual('https://api.nylas.com/a/myId');
+        expect(options.auth.user).toEqual('mySecret');
+        expect(options.method).toEqual('PUT');
+        expect(options.body).toEqual({
+          application_name: 'newName',
+          redirect_uris: ['newURIs']
+        });
+      });
+      Nylas.application({
+        applicationName: 'newName',
+        redirectUris: ['newURIs']
+      });
+    });
+
+  });
 });

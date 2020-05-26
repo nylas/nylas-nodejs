@@ -76,6 +76,33 @@ class Nylas {
     return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
+  static application(options?: {
+    application_name?: string,
+    redirect_uris?: string[],
+    applicationName?: string,
+    redirectUris?: string[]
+   }) {
+    if (!this.clientId) {
+      throw new Error('This function requires a clientId');
+    }
+
+    if (!this.clientSecret) {
+      throw new Error('This function requires a clientSecret');
+    }
+
+    const connection = new NylasConnection(null, { clientId: this.clientId });
+    const requestOptions: { [key: string]: any } = { path: `/a/${this.clientId}` };
+
+    if (options) {
+      requestOptions.body = {
+        application_name: options.applicationName || options.application_name,
+        redirect_uris: options.redirectUris || options.redirect_uris
+      };
+      requestOptions.method = 'PUT';
+    }
+    return connection.request(requestOptions);
+  }
+
   static exchangeCodeForToken(
     code: string,
     callback?: (error: Error | null, accessToken?: string) => void
