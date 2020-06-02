@@ -1,4 +1,5 @@
 import union from 'lodash/union';
+import values from 'lodash/values';
 
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
@@ -6,7 +7,6 @@ import File from './file';
 import Event from './event';
 import EmailParticipant from './email-participant';
 import { Label, Folder } from './folder';
-import _ from 'lodash';
 
 export default class Message extends RestfulModel {
   subject?: string;
@@ -45,7 +45,7 @@ export default class Message extends RestfulModel {
         }
       }
     }
-    return _.values(participants);
+    return values(participants);
   }
 
   fileIds() {
