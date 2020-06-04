@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 5.1.0 / 2020-06-04
 * Fix bug which was overwriting properties on message objects.
 * Support recurring events.
 * Implement list & update application details endpoints.
