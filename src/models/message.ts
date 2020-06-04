@@ -9,16 +9,16 @@ import { Label, Folder } from './folder';
 import _ from 'lodash';
 
 export default class Message extends RestfulModel {
-  subject?: string = '';
+  subject?: string;
   from?: EmailParticipant[];
   replyTo?: EmailParticipant[];
-  to?: EmailParticipant[] = [];
-  cc?: EmailParticipant[] = [];
-  bcc?: EmailParticipant[] = [];
+  to?: EmailParticipant[];
+  cc?: EmailParticipant[];
+  bcc?: EmailParticipant[];
   date?: Date;
   threadId?: string;
   snippet?: string;
-  body: string;
+  body?: string;
   unread?: boolean;
   starred?: boolean;
   files?: File[];
