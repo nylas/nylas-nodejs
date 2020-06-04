@@ -15,6 +15,8 @@ describe('Message', () => {
     testContext.connection = new NylasConnection('123', { clientId: 'foo' });
     testContext.message = new Message(testContext.connection);
     testContext.message.id = '4333';
+    testContext.message.subject = 'foo';
+    testContext.message.body = 'bar';
     testContext.message.starred = true;
     testContext.message.unread = false;
     testContext.message.to = [{"email": "foo", "name": "bar"}];
@@ -75,6 +77,8 @@ describe('Message', () => {
     test('should resolve with the message object', done => {
       testContext.message.save().then(message => {
         expect(message.id).toBe('4333');
+        expect(message.body).toBe('bar');
+        expect(message.subject).toBe('foo');
         let toParticipant = message.to[0];
         expect(toParticipant.toJSON()).toEqual(
           {'email': 'foo', 'name': 'bar'});
