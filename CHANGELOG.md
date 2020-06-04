@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Fix bug which was overwriting properties on message objects.
 * Support recurring events.
 * Implement list & update application details endpoints.
 * Support free-busy endpoint on Calendars collection.
