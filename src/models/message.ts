@@ -18,7 +18,7 @@ export default class Message extends RestfulModel {
   date?: Date;
   threadId?: string;
   snippet?: string;
-  body?: string = '';
+  body: string;
   unread?: boolean;
   starred?: boolean;
   files?: File[];
