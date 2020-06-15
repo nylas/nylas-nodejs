@@ -1,6 +1,6 @@
 import File from './file';
 import Message from './message';
-import Contact from './contact';
+import { Contact } from './contact';
 import Attributes from './attributes';
 import { SaveCallback } from './restful-model';
 

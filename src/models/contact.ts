@@ -154,7 +154,7 @@ WebPage.attributes = {
   }),
 };
 
-class Groups extends RestfulModel {
+export class Groups extends RestfulModel {
   type?: string;
   path?: string;
 
@@ -176,7 +176,7 @@ Groups.attributes = {
   }),
 };
 
-export default class Contact extends RestfulModel {
+export class Contact extends RestfulModel {
   givenName?: string;
   middleName?: string;
   surname?: string;

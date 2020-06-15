@@ -1,6 +1,6 @@
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
-import Contact from '../src/models/contact';
+import { Contact } from '../src/models/contact';
 
 describe('Contact', () => {
   let testContext;
