@@ -1,4 +1,4 @@
-import { Contact, Groups } from './contact';
+import { Contact, Group } from './contact';
 import NylasConnection from '../nylas-connection';
 import RestfulModel from './restful-model';
 import RestfulModelCollection from './restful-model-collection';
@@ -20,11 +20,11 @@ export default class ContactRestfulModelCollection<Contact> extends RestfulModel
         path: `/contacts/groups`
       })
       .then(json => {
-        const group = new Groups(this.connection, json);
+        const groups = json.map((group: { [key: string]: any }) => { return new Group(this.connection, group); });
         if (callback) {
-          callback(null, group);
+          callback(null, groups);
         }
-        return Promise.resolve(group);
+        return Promise.resolve(groups);
       })
       .catch(err => {
         if (callback) {
