@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Implement support for GET /contacts/groups
+
 ### 5.1.0 / 2020-06-04
 * Fix bug which was overwriting properties on message objects.
 * Support recurring events.

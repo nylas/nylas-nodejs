@@ -154,7 +154,7 @@ WebPage.attributes = {
   }),
 };
 
-export class Groups extends RestfulModel {
+export class Group extends RestfulModel {
   type?: string;
   path?: string;
 
@@ -165,8 +165,8 @@ export class Groups extends RestfulModel {
   }
 }
 
-Groups.collectionName = 'groups';
-Groups.attributes = {
+Group.collectionName = 'groups';
+Group.attributes = {
   ...RestfulModel.attributes,
   name: Attributes.String({
     modelKey: 'name',
@@ -193,7 +193,7 @@ export class Contact extends RestfulModel {
   physicalAddresses?: PhysicalAddress[];
   phoneNumbers?: PhoneNumber[];
   webPages?: WebPage[];
-  groups?: Groups[];
+  groups?: Group[];
   source?: string;
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
@@ -281,7 +281,7 @@ Contact.attributes = {
   }),
   groups: Attributes.Collection({
     modelKey: 'groups',
-    itemClass: Groups,
+    itemClass: Group,
   }),
   source: Attributes.String({
     modelKey: 'source',
