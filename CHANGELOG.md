@@ -2,6 +2,8 @@
 
 ### Unreleased
 * Implement support for GET /contacts/groups
+* Update lodash import
+* Support GET /resources
 
 ### 5.1.0 / 2020-06-04
 * Fix bug which was overwriting properties on message objects.
