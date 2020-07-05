@@ -229,9 +229,9 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         body: body,
         path: `${this.path()}/${item.id}`,
       })
-      .then(() => {
+      .then((data) => {
         if (callback) {
-          callback(null);
+          callback(null, data);
         }
         return Promise.resolve();
       })
