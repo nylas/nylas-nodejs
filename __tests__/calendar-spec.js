@@ -10,45 +10,96 @@ describe('Calendar', () => {
   beforeEach(() => {
     testContext = {};
     testContext.connection = new NylasConnection('123', { clientId: 'foo' });
-    testContext.connection.request = jest.fn(() => Promise.resolve());
-    testContext.calendar = new Calendar(testContext.connection);
-    testContext.calendar.name = 'Holidays';
-    testContext.calendar.description = 'All the holidays';
+    const calendarJSON = {
+      account_id: "eof2wrhqkl7kdwhy9hylpv9o9",
+      description: "All the holidays",
+      id: "8e570s302fdazx9zqwiuk9jqn",
+      is_primary: false,
+      job_status_id: "48pp6ijzrxpw9jors9ylnsxnf",
+      location: "Santa Monica, CA",
+      name: "Holidays",
+      object: "calendar",
+      read_only: false,
+      timezone: "America/Los_Angeles"
+    };
+    testContext.connection.request = jest.fn(() => Promise.resolve(calendarJSON));
+    testContext.calendar = testContext.connection.calendars.build(calendarJSON);
   });
 
-  test('should do a POST request if the calendar has no id', done => {
+  test('[SAVE] should do a POST request if the calendar has no id', done => {
+    expect.assertions(10);
     testContext.calendar.id = undefined;
-    testContext.calendar.save().then(() => {
+    testContext.calendar.save().then((calendar) => {
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'POST',
         body: {
           name: 'Holidays',
           description: 'All the holidays',
-          location: undefined,
-          timezone: undefined
+          location: 'Santa Monica, CA',
+          timezone: 'America/Los_Angeles'
         },
         qs: {},
         path: '/calendars',
       });
+      expect(calendar.id).toEqual('8e570s302fdazx9zqwiuk9jqn');
+      expect(calendar.accountId).toEqual('eof2wrhqkl7kdwhy9hylpv9o9');
+      expect(calendar.description).toEqual('All the holidays');
+      expect(calendar.isPrimary).toEqual(false);
+      expect(calendar.location).toEqual('Santa Monica, CA');
+      expect(calendar.name).toEqual('Holidays');
+      expect(calendar.object).toEqual('calendar');
+      expect(calendar.timezone).toEqual('America/Los_Angeles');
+      expect(calendar.readOnly).toEqual(false);
       done();
     });
   });
 
-  test('should do a PUT request if the event has an id', done => {
-    testContext.calendar.id = 'id-1234';
+  test('[SAVE] should do a PUT request if the event has an id', done => {
+    expect.assertions(10);
+    testContext.calendar.id = '8e570s302fdazx9zqwiuk9jqn';
     testContext.calendar.description = 'Updated description';
-    testContext.calendar.save().then(() => {
+    testContext.calendar.save().then((calendar) => {
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'PUT',
         body: {
           name: 'Holidays',
           description: 'Updated description',
-          location: undefined,
-          timezone: undefined
+          location: 'Santa Monica, CA',
+          timezone: 'America/Los_Angeles'
         },
         qs: {},
-        path: '/calendars/id-1234',
+        path: '/calendars/8e570s302fdazx9zqwiuk9jqn',
       });
+      expect(calendar.id).toEqual('8e570s302fdazx9zqwiuk9jqn');
+      expect(calendar.accountId).toEqual('eof2wrhqkl7kdwhy9hylpv9o9');
+      expect(calendar.description).toEqual('All the holidays');
+      expect(calendar.isPrimary).toEqual(false);
+      expect(calendar.location).toEqual('Santa Monica, CA');
+      expect(calendar.name).toEqual('Holidays');
+      expect(calendar.object).toEqual('calendar');
+      expect(calendar.timezone).toEqual('America/Los_Angeles');
+      expect(calendar.readOnly).toEqual(false);
+      done();
+    });
+  });
+
+  test('[FIND] should use correct method and route', done => {
+    expect.assertions(10);
+    testContext.connection.calendars.find('8e570s302fdazx9zqwiuk9jqn').then((calendar) => {
+      expect(testContext.connection.request).toHaveBeenCalledWith({
+        method: 'GET',
+        qs: {},
+        path: '/calendars/8e570s302fdazx9zqwiuk9jqn',
+      });
+      expect(calendar.id).toEqual('8e570s302fdazx9zqwiuk9jqn');
+      expect(calendar.accountId).toEqual('eof2wrhqkl7kdwhy9hylpv9o9');
+      expect(calendar.description).toEqual('All the holidays');
+      expect(calendar.isPrimary).toEqual(false);
+      expect(calendar.location).toEqual('Santa Monica, CA');
+      expect(calendar.name).toEqual('Holidays');
+      expect(calendar.object).toEqual('calendar');
+      expect(calendar.timezone).toEqual('America/Los_Angeles');
+      expect(calendar.readOnly).toEqual(false);
       done();
     });
   });
