@@ -5,6 +5,9 @@ export default class Calendar extends RestfulModel {
   name?: string;
   description?: string;
   readOnly?: boolean;
+  location?: string;
+  timezone?: string;
+  isPrimary?: boolean;
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
@@ -33,5 +36,15 @@ Calendar.attributes = {
   readOnly: Attributes.Boolean({
     modelKey: 'readOnly',
     jsonKey: 'read_only',
+  }),
+  location: Attributes.String({
+    modelKey: 'location',
+  }),
+  timezone: Attributes.String({
+    modelKey: 'timezone',
+  }),
+  isPrimary: Attributes.Boolean({
+    modelKey: 'isPrimary',
+    jsonKey: 'is_primary',
   }),
 };

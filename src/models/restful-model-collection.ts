@@ -233,7 +233,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         if (callback) {
           callback(null, data);
         }
-        return Promise.resolve();
+        return Promise.resolve(data);
       })
       .catch((err: Error) => {
         if (callback) {
