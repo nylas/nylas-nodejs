@@ -1,4 +1,3 @@
-import omit from 'lodash/omit';
 import backoff from 'backoff';
 import JSONStream from 'JSONStream';
 import request, { ResponseRequest } from 'request';
@@ -46,7 +45,11 @@ export default class Delta {
     return this._startStream(request, cursor, params);
   }
 
-  _startStream(createRequest: CreateRequestType, cursor: string, params: { [key: string]: any }) {
+  _startStream(
+    createRequest: CreateRequestType,
+    cursor: string,
+    params: { [key: string]: any }
+  ) {
     const stream = new DeltaStream(
       createRequest,
       this.connection,
@@ -75,9 +78,9 @@ class DeltaStream extends EventEmitter {
   connection: NylasConnection;
   cursor?: string;
   params: {
-    includeTypes?: string[],
-    excludeTypes?: string[],
-    expanded?: boolean
+    includeTypes?: string[];
+    excludeTypes?: string[];
+    expanded?: boolean;
   };
   request?: ResponseRequest;
   restartBackoff = backoff.exponential({
@@ -134,13 +137,10 @@ class DeltaStream extends EventEmitter {
   open() {
     this.close();
     const path = '/delta/streaming';
-    const excludeTypes =
-      this.params.excludeTypes != null ? this.params.excludeTypes : [];
-    const includeTypes =
-      this.params.includeTypes != null ? this.params.includeTypes : [];
+    const { excludeTypes = [], includeTypes = [], ...params } = this.params;
 
     const queryObj: { [key: string]: any } = {
-      ...omit(this.params, ['excludeTypes', 'includeTypes']),
+      ...params,
       cursor: this.cursor,
     };
     if (excludeTypes.length > 0) {

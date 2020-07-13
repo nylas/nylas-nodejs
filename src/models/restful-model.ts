@@ -1,5 +1,3 @@
-import isFunction from 'lodash/isFunction';
-
 import Attributes, { Attribute } from './attributes';
 import NylasConnection from '../nylas-connection';
 
@@ -106,7 +104,7 @@ export default class RestfulModel {
   // do shouldn't have to reimplement the same boilerplate.
   // They should instead define a save() function which calls _save.
   _save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    if (isFunction(params)) {
+    if (typeof params === 'function') {
       callback = params as SaveCallback;
       params = {};
     }
