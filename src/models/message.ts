@@ -1,6 +1,3 @@
-import union from 'lodash/union';
-import values from 'lodash/values';
-
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import File from './file';
@@ -33,7 +30,10 @@ export default class Message extends RestfulModel {
   // from more dependencies.
   participants() {
     const participants: { [key: string]: EmailParticipant } = {};
-    const contacts = union(this.to, this.cc, this.from);
+    const to = this.to || [];
+    const cc = this.cc || [];
+    const from = this.from || [];
+    const contacts = Array.from(new Set([...to, ...cc, ...from]));
     for (const contact of contacts) {
       if (contact && (contact.email ? contact.email.length : '') > 0) {
         if (contact) {
@@ -45,7 +45,7 @@ export default class Message extends RestfulModel {
         }
       }
     }
-    return values(participants);
+    return Object.values(participants);
   }
 
   fileIds() {

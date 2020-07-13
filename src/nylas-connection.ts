@@ -1,4 +1,3 @@
-import clone from 'lodash/clone';
 import request, { UrlOptions, CoreOptions } from 'request';
 
 import RestfulModel from './models/restful-model';
@@ -41,7 +40,10 @@ export default class NylasConnection {
   folders = new RestfulModelCollection(Folder, this);
   account = new RestfulModelInstance(Account, this);
 
-  constructor(accessToken: string | null | undefined, { clientId }: { clientId: string | null | undefined}) {
+  constructor(
+    accessToken: string | null | undefined,
+    { clientId }: { clientId: string | null | undefined }
+  ) {
     this.accessToken = accessToken;
     this.clientId = clientId;
   }
@@ -50,7 +52,7 @@ export default class NylasConnection {
     if (!options) {
       options = {};
     }
-    options = clone(options);
+    options = { ...options };
     const Nylas = require('./nylas');
     if (!options.method) {
       options.method = 'GET';
@@ -142,7 +144,9 @@ export default class NylasConnection {
           return reject(error);
         }
         // node headers are lowercase so this refers to `Nylas-Api-Version`
-        const apiVersion = response.headers['nylas-api-version'] as string | undefined;
+        const apiVersion = response.headers['nylas-api-version'] as
+          | string
+          | undefined;
 
         const warning = this._getWarningForVersion(
           SUPPORTED_API_VERSION,
@@ -184,4 +188,4 @@ export default class NylasConnection {
       });
     });
   }
-};
+}

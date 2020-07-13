@@ -1,5 +1,4 @@
 import async from 'async';
-import isFunction from 'lodash/isFunction';
 
 import Message from './message';
 import NylasConnection from '../nylas-connection';
@@ -26,7 +25,8 @@ export default class RestfulModelCollection<T extends RestfulModel> {
   forEach(
     params: { [key: string]: any } = {},
     eachCallback: (item: T) => void,
-    completeCallback?: (err?: Error | null | undefined) => void) {
+    completeCallback?: (err?: Error | null | undefined) => void
+  ) {
     if (params.view == 'count') {
       const err = new Error('forEach() cannot be called with the count view');
       if (completeCallback) {
@@ -128,7 +128,11 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return this._range({ params, offset, limit, callback });
   }
 
-  find(id: string, callback?: (error: Error | null, model?: T) => void, params: { [key: string]: any } = {}) {
+  find(
+    id: string,
+    callback?: (error: Error | null, model?: T) => void,
+    params: { [key: string]: any } = {}
+  ) {
     if (!id) {
       const err = new Error('find() must be called with an item id');
       if (callback) {
@@ -162,7 +166,11 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       });
   }
 
-  search(query: string, params: { [key: string]: any } = {}, callback?: (error: Error | null) => void) {
+  search(
+    query: string,
+    params: { [key: string]: any } = {},
+    callback?: (error: Error | null) => void
+  ) {
     if (this.modelClass != Message && this.modelClass != Thread) {
       const err = new Error(
         'search() can only be called for messages and threads'
@@ -189,7 +197,11 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     return this._range({ params, offset, limit, path });
   }
 
-  delete(itemOrId: T | string, params: { [key: string]: any } = {}, callback?: (error: Error | null) => void) {
+  delete(
+    itemOrId: T | string,
+    params: { [key: string]: any } = {},
+    callback?: (error: Error | null) => void
+  ) {
     if (!itemOrId) {
       const err = new Error('delete() requires an item or an id');
       if (callback) {
@@ -198,12 +210,13 @@ export default class RestfulModelCollection<T extends RestfulModel> {
       return Promise.reject(err);
     }
 
-    if (isFunction(params)) {
-      callback = params;
+    if (typeof params === 'function') {
+      callback = params as (error: Error | null) => void;
       params = {};
     }
 
-    const item = typeof itemOrId === 'string' ? this.build({ id: itemOrId }) : itemOrId;
+    const item =
+      typeof itemOrId === 'string' ? this.build({ id: itemOrId }) : itemOrId;
 
     const options: { [key: string]: any } = item.deleteRequestOptions(params);
     options.item = item;
