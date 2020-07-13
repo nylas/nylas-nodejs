@@ -1,5 +1,3 @@
-import async from 'async';
-
 import Message from './message';
 import NylasConnection from '../nylas-connection';
 import RestfulModel from './restful-model';
@@ -36,23 +34,27 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     }
 
     let offset = 0;
-    let finished = false;
 
-    return async.until(
-      () => finished,
-      callback => {
-        return this._getItems(params, offset, REQUEST_CHUNK_SIZE).then(
-          items => {
-            for (const item of items) {
-              eachCallback(item);
-            }
-            offset += items.length;
-            finished = items.length < REQUEST_CHUNK_SIZE;
-            return callback();
-          }
-        );
+    const iteratee = (): Promise<void> => {
+      return this._getItems(params, offset, REQUEST_CHUNK_SIZE).then(items => {
+        for (const item of items) {
+          eachCallback(item);
+        }
+        offset += items.length;
+        const finished = items.length < REQUEST_CHUNK_SIZE;
+        if (finished === false) {
+          return iteratee();
+        }
+      });
+    };
+
+    iteratee().then(
+      () => {
+        if (completeCallback) {
+          completeCallback();
+        }
       },
-      err => {
+      (err: Error) => {
         if (completeCallback) {
           return completeCallback(err);
         }
@@ -282,43 +284,42 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     callback?: (error: Error | null, results?: T[]) => void;
     path?: string;
   }) {
-    return new Promise<T[]>((resolve, reject) => {
-      let accumulated: T[] = [];
-      let finished = false;
+    let accumulated: T[] = [];
 
-      return async.until(
-        () => finished,
-        chunkCallback => {
-          const chunkOffset = offset + accumulated.length;
-          const chunkLimit = Math.min(
-            REQUEST_CHUNK_SIZE,
-            limit - accumulated.length
-          );
-          return this._getItems(params, chunkOffset, chunkLimit, path)
-            .then(items => {
-              accumulated = accumulated.concat(items);
-              finished =
-                items.length < REQUEST_CHUNK_SIZE ||
-                accumulated.length >= limit;
-              return chunkCallback();
-            })
-            .catch(err => reject(err));
-        },
-        err => {
-          if (err) {
-            if (callback) {
-              callback(err);
-            }
-            return reject(err);
-          } else {
-            if (callback) {
-              callback(null, accumulated);
-            }
-            return resolve(accumulated);
+    const iteratee = (): Promise<void> => {
+      const chunkOffset = offset + accumulated.length;
+      const chunkLimit = Math.min(
+        REQUEST_CHUNK_SIZE,
+        limit - accumulated.length
+      );
+      return this._getItems(params, chunkOffset, chunkLimit, path).then(
+        items => {
+          accumulated = accumulated.concat(items);
+          const finished =
+            items.length < REQUEST_CHUNK_SIZE || accumulated.length >= limit;
+          if (finished === false) {
+            return iteratee();
           }
         }
       );
-    });
+    };
+
+    // do not return rejected promise when callback is provided
+    // to prevent unhandled rejection warning
+    return iteratee().then(
+      () => {
+        if (callback) {
+          return callback(null, accumulated);
+        }
+        return accumulated;
+      },
+      (err: Error) => {
+        if (callback) {
+          return callback(err);
+        }
+        throw err;
+      }
+    );
   }
 
   _getItems(
