@@ -5,6 +5,7 @@
 * Update lodash import
 * Support GET /resources
 * Support POST, PUT and DELETE for calendars, and add location, timezone and isPrimary attributes.
+* Add `object` attribute to `event.when` object
 
 ### 5.1.0 / 2020-06-04
 * Fix bug which was overwriting properties on message objects.

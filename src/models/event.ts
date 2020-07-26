@@ -108,15 +108,6 @@ export default class Event extends RestfulModel {
     return this._save(params, callback);
   }
 
-  fromJSON(json: { [key: string]: any }) {
-    super.fromJSON(json);
-
-    if (this.when) {
-      delete this.when.object;
-    }
-    return this;
-  }
-
   rsvp(status: string, comment: string, callback: (error: Error | null, data?: Event) => void) {
     return this.connection
       .request({
