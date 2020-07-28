@@ -14,7 +14,7 @@ export default class Draft extends Message {
       throw Error('toJSON() cannot be called for raw MIME drafts');
     }
     const json = super.toJSON();
-    json.file_ids = this.fileIds();
+    json.file_ids = this.fileIds;
     json.object = 'draft';
 
     return json;
