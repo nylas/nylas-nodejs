@@ -23,11 +23,11 @@ describe('Calendar', () => {
       timezone: "America/Los_Angeles"
     };
     testContext.connection.request = jest.fn(() => Promise.resolve(calendarJSON));
-    testContext.calendar = testContext.connection.calendars.build(calendarJSON);
+    testContext.calendar = new Calendar(testContext.connection, calendarJSON);
   });
 
   test('[SAVE] should do a POST request if the calendar has no id', done => {
-    expect.assertions(10);
+    expect.assertions(11);
     testContext.calendar.id = undefined;
     testContext.calendar.save().then((calendar) => {
       expect(testContext.connection.request).toHaveBeenCalledWith({
@@ -50,6 +50,7 @@ describe('Calendar', () => {
       expect(calendar.object).toEqual('calendar');
       expect(calendar.timezone).toEqual('America/Los_Angeles');
       expect(calendar.readOnly).toEqual(false);
+      expect(calendar.jobStatusId).toEqual('48pp6ijzrxpw9jors9ylnsxnf')
       done();
     });
   });
@@ -100,6 +101,28 @@ describe('Calendar', () => {
       expect(calendar.object).toEqual('calendar');
       expect(calendar.timezone).toEqual('America/Los_Angeles');
       expect(calendar.readOnly).toEqual(false);
+      done();
+    });
+  });
+
+  test('[GET job status] should use correct method and route', done => {
+    expect.assertions(1);
+    testContext.calendar.getJobStatus().then(calendar => {
+      expect(testContext.connection.request).toHaveBeenCalledWith({
+        method: 'GET',
+        qs: {},
+        path: '/job-statuses/48pp6ijzrxpw9jors9ylnsxnf',
+      });
+      done();
+    });
+  });
+
+  test('[GET job status] should error without job status id', done => {
+    expect.assertions(1);
+    const error = new Error('jobStatusId must be defined');
+    testContext.calendar.jobStatusId = undefined;
+    testContext.calendar.getJobStatus().catch(err => {
+      expect(err).toEqual(error);
       done();
     });
   });

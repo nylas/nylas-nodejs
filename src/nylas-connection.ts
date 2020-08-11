@@ -15,6 +15,7 @@ import Draft from './models/draft';
 import File from './models/file';
 import Calendar from './models/calendar';
 import Event from './models/event';
+import JobStatus from './models/job-status';
 import Resource from './models/resource';
 import Delta from './models/delta';
 import { Label, Folder } from './models/folder';
@@ -33,6 +34,7 @@ export default class NylasConnection {
   drafts = new RestfulModelCollection(Draft, this);
   files = new RestfulModelCollection(File, this);
   calendars = new CalendarRestfulModelCollection(this);
+  jobStatuses = new RestfulModelCollection(JobStatus, this);
   events = new RestfulModelCollection(Event, this);
   resources = new RestfulModelCollection(Resource, this);
   deltas = new Delta(this);
