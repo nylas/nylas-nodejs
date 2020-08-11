@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add JobStatus model and collection
+
 ### 5.2.0 / 2020-07-27
 * Implement support for GET /contacts/groups
 * Update lodash import

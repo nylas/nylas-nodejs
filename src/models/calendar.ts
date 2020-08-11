@@ -1,4 +1,5 @@
 import RestfulModel, { SaveCallback } from './restful-model';
+import JobStatus from './job-status';
 import Attributes from './attributes';
 
 export default class Calendar extends RestfulModel {
@@ -8,6 +9,7 @@ export default class Calendar extends RestfulModel {
   location?: string;
   timezone?: string;
   isPrimary?: boolean;
+  jobStatusId?: string;
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
@@ -21,6 +23,17 @@ export default class Calendar extends RestfulModel {
       location: calendarJSON.location,
       timezone: calendarJSON.timezone
     };
+  }
+
+  getJobStatus(callback?: (error: Error | null, model?: JobStatus) => void) {
+    if ( typeof this.jobStatusId === 'undefined' ) {
+      const err = new Error('jobStatusId must be defined');
+      if (callback) {
+        callback(err);
+      }
+      return Promise.reject(err);
+    }
+    return this.connection.jobStatuses.find(this.jobStatusId, callback);
   }
 }
 
@@ -47,4 +60,8 @@ Calendar.attributes = {
     modelKey: 'isPrimary',
     jsonKey: 'is_primary',
   }),
+  jobStatusId: Attributes.String({
+    modelKey: 'jobStatusId',
+    jsonKey: 'job_status_id'
+  })
 };
