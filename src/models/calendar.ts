@@ -1,4 +1,5 @@
 import RestfulModel, { SaveCallback } from './restful-model';
+import { GetCallback } from './restful-model-collection';
 import JobStatus from './job-status';
 import Attributes from './attributes';
 
@@ -25,7 +26,7 @@ export default class Calendar extends RestfulModel {
     };
   }
 
-  getJobStatus(callback?: (error: Error | null, model?: JobStatus) => void) {
+  getJobStatus(callback?: GetCallback) {
     if ( typeof this.jobStatusId === 'undefined' ) {
       const err = new Error('jobStatusId must be defined');
       if (callback) {

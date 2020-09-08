@@ -7,6 +7,8 @@ import Thread from './thread';
 
 const REQUEST_CHUNK_SIZE = 100;
 
+export type GetCallback = (error: Error | null, result?: RestfulModel) => void;
+
 export default class RestfulModelCollection<T extends RestfulModel> {
   connection: NylasConnection;
   modelClass: typeof RestfulModel;
@@ -130,9 +132,25 @@ export default class RestfulModelCollection<T extends RestfulModel> {
 
   find(
     id: string,
-    callback?: (error: Error | null, model?: T) => void,
-    params: { [key: string]: any } = {}
+    paramsArg?: { [key: string]: any } | GetCallback | null,
+    callbackArg?: GetCallback | { [key: string]: any } | null
   ) {
+
+    // callback used to be the second argument, and params was the third
+    let callback: GetCallback | undefined;
+    if (typeof callbackArg === 'function') {
+      callback = callbackArg as GetCallback;
+    } else if (typeof paramsArg === 'function') {
+      callback = paramsArg as GetCallback;
+    }
+
+    let params: { [key: string]: any } = {};
+    if (paramsArg && typeof paramsArg === 'object') {
+      params = paramsArg;
+    } else if (callbackArg && typeof callbackArg === 'object') {
+      params = callbackArg;
+    }
+
     if (!id) {
       const err = new Error('find() must be called with an item id');
       if (callback) {
@@ -220,14 +238,17 @@ export default class RestfulModelCollection<T extends RestfulModel> {
 
     const options: { [key: string]: any } = item.deleteRequestOptions(params);
     options.item = item;
-    options.callback = callback;
 
-    return this.deleteItem(options);
+    return this.deleteItem(options, callback);
   }
 
-  deleteItem(options: { [key: string]: any }) {
+  deleteItem(
+    options: { [key: string]: any },
+    callbackArg?: (error: Error | null) => void
+  ) {
     const item = options.item;
-    const callback = options.callback;
+    // callback used to be in the options object
+    const callback = options.callback ? options.callback : callbackArg;
     const body = options.hasOwnProperty('body')
       ? options.body
       : item.deleteRequestBody({});

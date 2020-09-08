@@ -4,6 +4,8 @@ import { Contact } from './contact';
 import Attributes from './attributes';
 import { SaveCallback } from './restful-model';
 
+export type SendCallback = (err: Error | null, json?: { [key: string]: any }) => void;
+
 export default class Draft extends Message {
   rawMime?: string;
   replyToMessageId?: string;
@@ -54,9 +56,24 @@ export default class Draft extends Message {
   }
 
   send(
-    callback?: (err: Error | null, json?: { [key: string]: any }) => void,
-    tracking?: { [key: string]: any }
+    trackingArg?: { [key: string]: any } | SendCallback | null,
+    callbackArg?: SendCallback | { [key: string]: any } | null
   ) {
+
+    // callback used to be the first argument, and tracking was the second
+    let callback: SendCallback | undefined;
+    if (typeof callbackArg === 'function') {
+      callback = callbackArg as SendCallback;
+    } else if (typeof trackingArg === 'function') {
+      callback = trackingArg as SendCallback;
+    }
+    let tracking: { [key: string]: any } | undefined;
+    if (trackingArg && typeof trackingArg === 'object') {
+      tracking = trackingArg;
+    } else if (callbackArg && typeof callbackArg === 'object') {
+      tracking = callbackArg;
+    }
+
     let body: any = this.rawMime,
       headers: { [key: string]: any } = { 'Content-Type': 'message/rfc822' },
       json = false;

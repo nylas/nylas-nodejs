@@ -201,10 +201,88 @@ describe('Draft', () => {
       });
     });
 
-    test('should send the draft JSON if the draft has no id and has a tracking object passed in as a parameter', done => {
+    test('should send the draft JSON if the draft has no id and has a tracking object passed in as the second parameter', done => {
       testContext.draft.id = undefined;
       testContext.draft.subject = 'Test Subject';
       testContext.draft.send(null, {"opens": true}).then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'draft',
+            account_id: undefined,
+            to: [],
+            cc: [],
+            bcc: [],
+            from: [],
+            date: null,
+            body: undefined,
+            files: [],
+            events: [],
+            unread: undefined,
+            snippet: undefined,
+            thread_id: undefined,
+            subject: 'Test Subject',
+            version: undefined,
+            folder: undefined,
+            labels: [],
+            file_ids: [],
+            headers: undefined,
+            reply_to: [],
+            reply_to_message_id: undefined,
+            tracking: {"opens": true}
+          },
+          path: '/send',
+          headers: {},
+          json: true,
+        });
+        done();
+      });
+    });
+
+    test('should send the draft JSON if the draft has a tracking object as the only parameter', done => {
+      testContext.draft.id = undefined;
+      testContext.draft.subject = 'Test Subject';
+      testContext.draft.send({"opens": true}).then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'draft',
+            account_id: undefined,
+            to: [],
+            cc: [],
+            bcc: [],
+            from: [],
+            date: null,
+            body: undefined,
+            files: [],
+            events: [],
+            unread: undefined,
+            snippet: undefined,
+            thread_id: undefined,
+            subject: 'Test Subject',
+            version: undefined,
+            folder: undefined,
+            labels: [],
+            file_ids: [],
+            headers: undefined,
+            reply_to: [],
+            reply_to_message_id: undefined,
+            tracking: {"opens": true}
+          },
+          path: '/send',
+          headers: {},
+          json: true,
+        });
+        done();
+      });
+    });
+
+    test('should send the draft JSON if the draft has no id and has a tracking object passed in as the first parameter', done => {
+      testContext.draft.id = undefined;
+      testContext.draft.subject = 'Test Subject';
+      testContext.draft.send({"opens": true}, (err, data) => {}).then(() => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
@@ -296,6 +374,26 @@ Would you like to grab coffee @ 2pm this Thursday?`;
           expect(message).toBeInstanceOf(Message);
           done();
         });
+      });
+
+      test('should call the callback when tracking object is passed as first argument', done => {
+        testContext.draft.send({"opens": true}, (err, message) => {
+          expect(err).toBe(null);
+          expect(message.id).toBe('id-1234');
+          expect(message.threadId).toBe('new-thread-id');
+          expect(message).toBeInstanceOf(Message);
+          done();
+        });
+      });
+
+      test('should call the callback when tracking object is passed as second argument', done => {
+        testContext.draft.send((err, message) => {
+          expect(err).toBe(null);
+          expect(message.id).toBe('id-1234');
+          expect(message.threadId).toBe('new-thread-id');
+          expect(message).toBeInstanceOf(Message);
+          done();
+        }, {"opens": true});
       });
     });
 
