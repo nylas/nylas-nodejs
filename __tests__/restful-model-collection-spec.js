@@ -312,8 +312,38 @@ describe('RestfulModelCollection', () => {
       done();
     });
 
-    test('should pass any additional params to the request', done => {
+    test('should pass additional params as third argument to the request when callback is null', done => {
       testContext.collection.find('123', null, { param: 1 });
+      expect(testContext.connection.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/threads/123',
+        qs: { param: 1 },
+      });
+      done();
+    });
+
+    test('should pass additional params as second argument to the request', done => {
+      testContext.collection.find('123', { param: 1 });
+      expect(testContext.connection.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/threads/123',
+        qs: { param: 1 },
+      });
+      done();
+    });
+
+    test('should pass additional params as second argument to the request when callback is null', done => {
+      testContext.collection.find('123', { param: 1 }, null);
+      expect(testContext.connection.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/threads/123',
+        qs: { param: 1 },
+      });
+      done();
+    });
+
+    test('should pass additional params as second argument to the request when callback is provided', done => {
+      testContext.collection.find('123', { param: 1 }, (err, data) => {});
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'GET',
         path: '/threads/123',
@@ -344,6 +374,22 @@ describe('RestfulModelCollection', () => {
           expect(item.id).toBe('123');
           done();
         });
+      });
+
+      test('should call the optional callback with the first item when params provided as second arg', done => {
+        testContext.collection.find('123', { param: 1 }, (err, item) => {
+          expect(item instanceof Thread).toBe(true);
+          expect(item.id).toBe('123');
+          done();
+        });
+      });
+
+      test('should call the optional callback with the first item when params provided as third arg', done => {
+        testContext.collection.find('123', (err, item) => {
+          expect(item instanceof Thread).toBe(true);
+          expect(item.id).toBe('123');
+          done();
+        }, { param: 1 });
       });
     });
 
