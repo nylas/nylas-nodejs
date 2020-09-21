@@ -386,6 +386,43 @@ describe('Event', () => {
       });
     });
 
+    test('setting event.start should create event.when if it does does not exist', done => {
+      delete testContext.event.when;
+      testContext.event.start = '1815-12-10';
+      testContext.event.end = '1852-11-27';
+      expect(testContext.event.when).toEqual({
+        start_date: '1815-12-10',
+        end_date: '1852-11-27',
+      });
+      testContext.event.save().then(event => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'event',
+            account_id: undefined,
+            calendar_id: undefined,
+            message_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            owner: undefined,
+            location: undefined,
+            when: {
+              start_date: '1815-12-10',
+              end_date: '1852-11-27',
+            },
+            participants: [],
+            read_only: undefined,
+            status: undefined,
+          },
+          qs: {},
+          path: '/events',
+        });
+        done();
+      });
+    });
+
     describe('when the request succeeds', () => {
       beforeEach(() => {
         testContext.connection.request = jest.fn(() => {

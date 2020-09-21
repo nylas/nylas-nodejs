@@ -38,26 +38,27 @@ export default class Event extends RestfulModel {
   }
 
   set start(val: string | number | undefined) {
-    if (this.when) {
-      if (typeof val === 'number') {
-        if (val === this.when.end_time) {
-          this.when = { time: val };
-        } else {
-          delete this.when.time;
-          delete this.when.start_date;
-          delete this.when.date;
-          this.when.start_time = val;
-        }
+    if (!this.when) {
+      this.when = {};
+    }
+    if (typeof val === 'number') {
+      if (val === this.when.end_time) {
+        this.when = { time: val };
+      } else {
+        delete this.when.time;
+        delete this.when.start_date;
+        delete this.when.date;
+        this.when.start_time = val;
       }
-      if (typeof val === 'string') {
-        if (val === this.when.end_date) {
-          this.when = { date: val };
-        } else {
-          delete this.when.date;
-          delete this.when.start_time;
-          delete this.when.time;
-          this.when.start_date = val;
-        }
+    }
+    if (typeof val === 'string') {
+      if (val === this.when.end_date) {
+        this.when = { date: val };
+      } else {
+        delete this.when.date;
+        delete this.when.start_time;
+        delete this.when.time;
+        this.when.start_date = val;
       }
     }
   }
@@ -72,26 +73,27 @@ export default class Event extends RestfulModel {
   }
 
   set end(val: string | number | undefined) {
-    if (this.when) {
-      if (typeof val === 'number') {
-        if (val === this.when.start_time) {
-          this.when = { time: val };
-        } else {
-          delete this.when.time;
-          delete this.when.end_date;
-          delete this.when.date;
-          this.when.end_time = val;
-        }
+    if (!this.when) {
+      this.when = {};
+    }
+    if (typeof val === 'number') {
+      if (val === this.when.start_time) {
+        this.when = { time: val };
+      } else {
+        delete this.when.time;
+        delete this.when.end_date;
+        delete this.when.date;
+        this.when.end_time = val;
       }
-      if (typeof val === 'string') {
-        if (val === this.when.start_date) {
-          this.when = { date: val };
-        } else {
-          delete this.when.date;
-          delete this.when.time;
-          delete this.when.end_time;
-          this.when.end_date = val;
-        }
+    }
+    if (typeof val === 'string') {
+      if (val === this.when.start_date) {
+        this.when = { date: val };
+      } else {
+        delete this.when.date;
+        delete this.when.time;
+        delete this.when.end_time;
+        this.when.end_date = val;
       }
     }
   }
