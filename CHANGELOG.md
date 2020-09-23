@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 5.3.0 / 2020-09-23
 * Fix bug where setting event.start and event.end did not set event.when if event.when didn't exist
 * Refactor parameter ordering in `find()` and `draft.send()` methods [backwards compatible]
 * Add JobStatus model and collection
