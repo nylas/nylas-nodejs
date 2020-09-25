@@ -1,5 +1,5 @@
 import request from 'request';
-
+import * as config from './config';
 import NylasConnection from './nylas-connection';
 import ManagementAccount from './models/management-account';
 import Account from './models/account';
@@ -10,9 +10,21 @@ import Webhook from './models/webhook';
 
 class Nylas {
   static clientId = '';
-  static clientSecret = '';
-  static apiServer?: string | null = null;
-  static accounts?: ManagementModelCollection<ManagementAccount> | RestfulModelCollection<Account>;
+  static get clientSecret(): string {
+    return config.clientSecret;
+  }
+  static set clientSecret(newClientSecret: string) {
+    config.setClientSecret(newClientSecret);
+  }
+  static get apiServer(): string | null {
+    return config.apiServer;
+  }
+  static set apiServer(newApiServer: string | null) {
+    config.setApiServer(newApiServer);
+  }
+  static accounts?:
+    | ManagementModelCollection<ManagementAccount>
+    | RestfulModelCollection<Account>;
   static connect?: Connect;
   static webhooks?: ManagementModelCollection<Webhook>;
 
@@ -20,14 +32,10 @@ class Nylas {
     clientId,
     clientSecret,
     apiServer,
-    appId,
-    appSecret
-  } : {
-    clientId: string,
-    clientSecret: string,
-    apiServer?:string,
-    appId?: string,
-    appSecret?: string
+  }: {
+    clientId: string;
+    clientSecret: string;
+    apiServer?: string;
   }) {
     if (apiServer && apiServer.indexOf('://') === -1) {
       throw new Error(
@@ -44,14 +52,18 @@ class Nylas {
     if (apiServer) {
       this.apiServer = apiServer;
     } else {
-      this.apiServer = 'https://api.nylas.com'
+      this.apiServer = 'https://api.nylas.com';
     }
 
     const conn = new NylasConnection(this.clientSecret, {
       clientId: this.clientId,
     });
     this.connect = new Connect(conn, this.clientId, this.clientSecret);
-    this.webhooks = new ManagementModelCollection(Webhook, conn, this.clientId!);
+    this.webhooks = new ManagementModelCollection(
+      Webhook,
+      conn,
+      this.clientId!
+    );
     if (this.clientCredentials()) {
       this.accounts = new ManagementModelCollection(
         ManagementAccount,
@@ -77,11 +89,11 @@ class Nylas {
   }
 
   static application(options?: {
-    application_name?: string,
-    redirect_uris?: string[],
-    applicationName?: string,
-    redirectUris?: string[]
-   }) {
+    application_name?: string;
+    redirect_uris?: string[];
+    applicationName?: string;
+    redirectUris?: string[];
+  }) {
     if (!this.clientId) {
       throw new Error('This function requires a clientId');
     }
@@ -91,12 +103,14 @@ class Nylas {
     }
 
     const connection = new NylasConnection(null, { clientId: this.clientId });
-    const requestOptions: { [key: string]: any } = { path: `/a/${this.clientId}` };
+    const requestOptions: { [key: string]: any } = {
+      path: `/a/${this.clientId}`,
+    };
 
     if (options) {
       requestOptions.body = {
         application_name: options.applicationName || options.application_name,
-        redirect_uris: options.redirectUris || options.redirect_uris
+        redirect_uris: options.redirectUris || options.redirect_uris,
       };
       requestOptions.method = 'PUT';
     }
@@ -151,7 +165,12 @@ class Nylas {
   }
 
   static urlForAuthentication(
-    options: { redirectURI?: string; loginHint?: string; state?: string; scopes?: string[] } = {}
+    options: {
+      redirectURI?: string;
+      loginHint?: string;
+      state?: string;
+      scopes?: string[];
+    } = {}
   ) {
     if (!this.clientId) {
       throw new Error(

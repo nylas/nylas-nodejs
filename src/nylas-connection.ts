@@ -1,5 +1,6 @@
 import request, { UrlOptions, CoreOptions } from 'request';
 
+import * as config from './config';
 import RestfulModel from './models/restful-model';
 import RestfulModelCollection from './models/restful-model-collection';
 import CalendarRestfulModelCollection from './models/calendar-restful-model-collection';
@@ -55,13 +56,12 @@ export default class NylasConnection {
       options = {};
     }
     options = { ...options };
-    const Nylas = require('./nylas');
     if (!options.method) {
       options.method = 'GET';
     }
     if (options.path) {
       if (!options.url) {
-        options.url = `${Nylas.apiServer}${options.path}`;
+        options.url = `${config.apiServer}${options.path}`;
       }
     }
     if (!options.formData) {
@@ -87,7 +87,7 @@ export default class NylasConnection {
 
     const user =
       options.path.substr(0, 3) === '/a/'
-        ? Nylas.clientSecret
+        ? config.clientSecret
         : this.accessToken;
 
     if (user) {
