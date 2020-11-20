@@ -1,5 +1,10 @@
 # Changelog
 
+### 5.3.1 / 2020-11-20
+* Drop async dependency for smaller package fingerprint. Async is replaced with promises.
+* Remove circular dependency in nylas-connection.ts
+* Update readme with syntax highlighting
+
 ### 5.3.0 / 2020-09-23
 * Fix bug where setting event.start and event.end did not set event.when if event.when didn't exist
 * Refactor parameter ordering in `find()` and `draft.send()` methods [backwards compatible]
