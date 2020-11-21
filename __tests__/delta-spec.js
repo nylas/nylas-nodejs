@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import { PassThrough } from 'stream';
 
+import * as config from '../src/config.ts';
 import Delta from '../src/models/delta';
 import NylasConnection from '../src/nylas-connection';
 
@@ -43,7 +44,7 @@ describe('Delta', () => {
       const { request } = stream;
 
       expect(request.origOpts.method).toBe('GET');
-      expect(request.origOpts.path).toBe('/delta/streaming');
+      expect(request.origOpts.url).toBe(`${config.apiServer}/delta/streaming`);
       expect(request.origOpts.qs).toEqual({ cursor: 'deltacursor0' });
 
       const response = createResponse(200);
@@ -72,7 +73,7 @@ describe('Delta', () => {
       const { request } = stream;
 
       expect(request.origOpts.method).toBe('GET');
-      expect(request.origOpts.path).toBe('/delta/streaming');
+      expect(request.origOpts.url).toBe(`${config.apiServer}/delta/streaming`);
       expect(request.origOpts.qs).toEqual({
         cursor: 'deltacursor0',
         view: 'expanded',
@@ -179,7 +180,9 @@ describe('Delta', () => {
       expect(request.abort.mock.calls.length).toEqual(1);
       expect(stream.request).not.toBe(request);
       // The new request should be using the last delta cursor received prior to timeout.
-      expect(stream.request.origOpts.path).toBe('/delta/streaming');
+      expect(stream.request.origOpts.url).toBe(
+        `${config.apiServer}/delta/streaming`
+      );
       expect(stream.request.origOpts.qs).toEqual({ cursor: 'deltacursor1' });
 
       stream.close();

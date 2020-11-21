@@ -34,8 +34,8 @@ export default class File extends RestfulModel {
     return this.connection
       .request({
         method: 'POST',
-        json: false,
         path: `/${File.collectionName}`,
+        json: false,
         formData: {
           file: {
             value: this.data,
@@ -73,7 +73,6 @@ export default class File extends RestfulModel {
     return this.connection
       .request({
         path: `/files/${this.id}/download`,
-        encoding: null,
         downloadRequest: true,
       })
       .then(response => {

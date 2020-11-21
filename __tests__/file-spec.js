@@ -160,7 +160,6 @@ describe('File', () => {
       testContext.file.download().catch(() => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           path: '/files/fileId/download',
-          encoding: null,
           downloadRequest: true,
         });
         done();
