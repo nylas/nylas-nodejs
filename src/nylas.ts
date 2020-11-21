@@ -1,6 +1,6 @@
 import request from 'request';
 import * as config from './config';
-import NylasConnection from './nylas-connection';
+import NylasConnection, { RequestOptions } from './nylas-connection';
 import ManagementAccount from './models/management-account';
 import Account from './models/account';
 import Connect from './models/connect';
@@ -103,7 +103,7 @@ class Nylas {
     }
 
     const connection = new NylasConnection(null, { clientId: this.clientId });
-    const requestOptions: { [key: string]: any } = {
+    const requestOptions: RequestOptions = {
       path: `/a/${this.clientId}`,
     };
 

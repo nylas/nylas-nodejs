@@ -385,9 +385,9 @@ export default class RestfulModelCollection<T extends RestfulModel> {
 
   _getModelCollection(
     params: { [key: string]: any },
-    offset?: number,
-    limit?: number,
-    path?: string
+    offset: number,
+    limit: number,
+    path: string
   ): Promise<T[]> {
     return this.connection
       .request({

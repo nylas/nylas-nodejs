@@ -25,6 +25,17 @@ const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
 const SUPPORTED_API_VERSION = '2.1';
 
+export type RequestOptions = {
+  path: string;
+  method?: string;
+  headers?: { [key: string]: string };
+  qs?: { [key: string]: any };
+  downloadRequest?: boolean;
+  json?: boolean;
+  formData?: any;
+  body?: any;
+};
+
 export default class NylasConnection {
   accessToken: string | null | undefined;
   clientId: string | null | undefined;
@@ -51,66 +62,60 @@ export default class NylasConnection {
     this.clientId = clientId;
   }
 
-  requestOptions(options: { [key: string]: any }) {
-    if (!options) {
-      options = {};
+  requestOptions(options: RequestOptions) {
+    const newOptions: CoreOptions & UrlOptions = {
+      method: options.method || 'GET',
+      url: `${config.apiServer}${options.path}`,
+      headers: options.headers || {},
+      json: options.json == null ? true : options.json,
+    };
+
+    if (options.downloadRequest) {
+      newOptions.encoding = null;
     }
-    options = { ...options };
-    if (!options.method) {
-      options.method = 'GET';
-    }
-    if (options.path) {
-      if (!options.url) {
-        options.url = `${config.apiServer}${options.path}`;
-      }
-    }
-    if (!options.formData) {
-      if (!options.body) {
-        options.body = {};
-      }
-    }
-    if (options.json == null) {
-      options.json = true;
-    }
-    if (!options.downloadRequest) {
-      options.downloadRequest = false;
+
+    if (options.formData) {
+      newOptions.formData = options.formData;
+    } else {
+      newOptions.body = options.body || {};
     }
 
     // For convenience, If `expanded` param is provided, convert to view:
     // 'expanded' api option
-    if (options.qs && options.qs.expanded) {
-      if (options.qs.expanded === true) {
-        options.qs.view = 'expanded';
+    if (options.qs) {
+      newOptions.qs = { ...options.qs };
+      if (newOptions.qs.expanded) {
+        if (newOptions.qs.expanded === true) {
+          newOptions.qs.view = 'expanded';
+        }
+        delete newOptions.qs.expanded;
       }
-      delete options.qs.expanded;
     }
 
     const user =
       options.path.substr(0, 3) === '/a/'
         ? config.clientSecret
         : this.accessToken;
-
     if (user) {
-      options.auth = {
+      newOptions.auth = {
         user: user,
         pass: '',
         sendImmediately: true,
       };
     }
 
-    if (options.headers == null) {
-      options.headers = {};
-    }
-    if (options.headers['User-Agent'] == null) {
-      options.headers['User-Agent'] = `Nylas Node SDK v${SDK_VERSION}`;
+    if (newOptions.headers) {
+      if (newOptions.headers['User-Agent'] == null) {
+        newOptions.headers['User-Agent'] = `Nylas Node SDK v${SDK_VERSION}`;
+      }
+      newOptions.headers['Nylas-API-Version'] = SUPPORTED_API_VERSION;
+      newOptions.headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
+      newOptions.headers['X-Nylas-Client-Id'] = this.clientId;
     }
 
-    options.headers['Nylas-API-Version'] = SUPPORTED_API_VERSION;
-    options.headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
-    options.headers['X-Nylas-Client-Id'] = this.clientId;
-
-    return options as (CoreOptions & UrlOptions & { downloadRequest: boolean });
+    return newOptions;
   }
+
   _getWarningForVersion(sdkApiVersion?: string, apiVersion?: string) {
     let warning = '';
 
@@ -133,10 +138,8 @@ export default class NylasConnection {
     }
     return warning;
   }
-  request(options?: Parameters<this['requestOptions']>[0]) {
-    if (!options) {
-      options = {};
-    }
+
+  request(options: RequestOptions) {
     const resolvedOptions = this.requestOptions(options);
 
     return new Promise<any>((resolve, reject) => {
@@ -181,7 +184,7 @@ export default class NylasConnection {
           }
           return reject(error);
         } else {
-          if (resolvedOptions.downloadRequest) {
+          if (options.downloadRequest) {
             return resolve(response);
           } else {
             return resolve(body);
