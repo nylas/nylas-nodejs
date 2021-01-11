@@ -29,18 +29,18 @@ export default class NylasConnection {
   accessToken: string | null | undefined;
   clientId: string | null | undefined;
 
-  threads = new RestfulModelCollection(Thread, this);
-  contacts = new ContactRestfulModelCollection(this);
-  messages = new RestfulModelCollection(Message, this);
-  drafts = new RestfulModelCollection(Draft, this);
-  files = new RestfulModelCollection(File, this);
-  calendars = new CalendarRestfulModelCollection(this);
-  jobStatuses = new RestfulModelCollection(JobStatus, this);
-  events = new RestfulModelCollection(Event, this);
-  resources = new RestfulModelCollection(Resource, this);
+  threads: RestfulModelCollection<Thread> = new RestfulModelCollection(Thread, this);
+  contacts: ContactRestfulModelCollection<Contact> = new ContactRestfulModelCollection(this);
+  messages: RestfulModelCollection<Message> = new RestfulModelCollection(Message, this);
+  drafts: RestfulModelCollection<Draft> = new RestfulModelCollection(Draft, this);
+  files: RestfulModelCollection<File> = new RestfulModelCollection(File, this);
+  calendars: CalendarRestfulModelCollection<Calendar> = new CalendarRestfulModelCollection(this);
+  jobStatuses: RestfulModelCollection<JobStatus> = new RestfulModelCollection(JobStatus, this);
+  events: RestfulModelCollection<Event> = new RestfulModelCollection(Event, this);
+  resources: RestfulModelCollection<Resource> = new RestfulModelCollection(Resource, this);
   deltas = new Delta(this);
-  labels = new RestfulModelCollection(Label, this);
-  folders = new RestfulModelCollection(Folder, this);
+  labels: RestfulModelCollection<Label> = new RestfulModelCollection(Label, this);
+  folders: RestfulModelCollection<Folder> = new RestfulModelCollection(Folder, this);
   account = new RestfulModelInstance(Account, this);
 
   constructor(
