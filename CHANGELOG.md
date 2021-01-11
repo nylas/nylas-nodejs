@@ -1,5 +1,8 @@
 # Changelog
 
+### 5.3.2 / 2020-01-11
+* Typing fixes to nylas.drafts and other RestfulModelCollections
+
 ### 5.3.1 / 2020-11-20
 * Drop async dependency for smaller package fingerprint. Async is replaced with promises.
 * Remove circular dependency in nylas-connection.ts
