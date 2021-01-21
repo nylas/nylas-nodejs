@@ -1,5 +1,14 @@
-import request from 'request';
+jest.mock('node-fetch', () => {
+  const { Response } = jest.requireActual('node-fetch');
+  const fetch = jest.fn();
+  fetch.Response = Response;
+  return fetch;
+});
 
+// TODO since node 10 URL is global
+import { URL } from 'url';
+import request from 'request';
+import fetch, { Response } from 'node-fetch';
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 
@@ -76,73 +85,72 @@ describe('Nylas', () => {
     test('should throw an exception if the client id and secret have not been configured', () => {
       Nylas.clientId = undefined;
       Nylas.clientSecret = undefined;
-      expect(() => Nylas.exchangeCodeForToken('code-from-server')).toThrow();
+      expect(() => Nylas.exchangeCodeForToken('code-from-server')).toThrow(
+        'cannot be called until you provide a clientId and secret'
+      );
     });
 
     test('should return a promise', () => {
+      fetch.mockImplementation(() =>
+        Promise.resolve(new Response('{"access_token":"12345"}'))
+      );
       const p = Nylas.exchangeCodeForToken('code-from-server');
       expect(p).toBeInstanceOf(Promise);
     });
 
-    test('should make a request to /oauth/token with the correct grant_type and client params', () => {
-      request.Request = jest.fn(options => {
-        expect(options.url).toEqual('https://api.nylas.com/oauth/token');
-        expect(options.qs).toEqual({
-          client_id: 'newId',
-          client_secret: 'newSecret',
-          grant_type: 'authorization_code',
-          code: 'code-from-server',
-        });
-      });
-      Nylas.exchangeCodeForToken('code-from-server');
-    });
-
-    test('should resolve with the returned access_token', done => {
-      request.Request = jest.fn(options =>
-        options.callback(null, null, { access_token: '12345' })
+    test('should make a request to /oauth/token with the correct grant_type and client params', async () => {
+      fetch.mockImplementation(() =>
+        Promise.resolve(new Response('{"access_token":"12345"}'))
       );
-
-      Nylas.exchangeCodeForToken('code-from-server')
-        .then(accessToken => {
-          expect(accessToken).toEqual('12345');
-          done();
-        })
-        .catch(() => {});
+      await Nylas.exchangeCodeForToken('code-from-server');
+      const search =
+        'client_id=newId&client_secret=newSecret&grant_type=authorization_code&code=code-from-server';
+      const url = new URL(`https://api.nylas.com/oauth/token?${search}`);
+      expect(fetch).lastCalledWith(url);
     });
 
-    test('should reject with the request error', done => {
+    test('should resolve with the returned access_token', async () => {
+      fetch.mockImplementation(() =>
+        Promise.resolve(new Response('{"access_token":"12345"}'))
+      );
+      const accessToken = await Nylas.exchangeCodeForToken('code-from-server');
+      expect(accessToken).toEqual('12345');
+    });
+
+    test('should reject with the request error', async () => {
       const error = new Error('network error');
-      request.Request = jest.fn(options => options.callback(error, null, null));
-
-      Nylas.exchangeCodeForToken('code-from-server').catch(returnedError => {
-        expect(returnedError).toBe(error);
-        done();
-      });
+      fetch.mockImplementation(() => Promise.reject(error));
+      await expect(
+        Nylas.exchangeCodeForToken('code-from-server')
+      ).rejects.toThrow(error.message);
     });
 
-    test('should reject with the api error', done => {
-      const apiError = { message: 'Unable to associate credentials', type: 'api_error' };
-      request.Request = jest.fn(options => options.callback(null, null, apiError));
-
-      Nylas.exchangeCodeForToken('code-from-server').catch(returnedError => {
-        expect(returnedError.message).toBe(apiError.message);
-        done();
-      });
+    test('should reject with the api error', async () => {
+      const apiError = {
+        message: 'Unable to associate credentials',
+        type: 'api_error',
+      };
+      fetch.mockImplementation(() =>
+        Promise.resolve(new Response(JSON.stringify(apiError)))
+      );
+      await expect(
+        Nylas.exchangeCodeForToken('code-from-server')
+      ).rejects.toThrow(apiError.message);
     });
 
-    test('should reject with default error', done => {
-      request.Request = jest.fn(options => options.callback(null, null, null));
-
-      Nylas.exchangeCodeForToken('code-from-server').catch(returnedError => {
-        expect(returnedError.message).toBe('No access token in response');
-        done();
-      });
+    test('should reject with default error', async () => {
+      fetch.mockImplementation(() =>
+        Promise.resolve(new Response(JSON.stringify(null)))
+      );
+      await expect(
+        Nylas.exchangeCodeForToken('code-from-server')
+      ).rejects.toThrow('No access token in response');
     });
 
     describe('when provided an optional callback', () => {
       test('should call it with the returned access_token', done => {
-        request.Request = jest.fn(options =>
-          options.callback(null, null, { access_token: '12345' })
+        fetch.mockImplementation(() =>
+          Promise.resolve(new Response('{"access_token":"12345"}'))
         );
         Nylas.exchangeCodeForToken(
           'code-from-server',
@@ -150,22 +158,19 @@ describe('Nylas', () => {
             expect(accessToken).toBe('12345');
             done();
           }
-        ).catch(() => {});
+        );
       });
 
       test('should call it with the request error', done => {
         const error = new Error('network error');
-        request.Request = jest.fn(options =>
-          options.callback(error, null, null)
-        );
-
+        fetch.mockImplementation(() => Promise.reject(error));
         Nylas.exchangeCodeForToken(
           'code-from-server',
           (returnedError, accessToken) => {
             expect(returnedError).toBe(error);
             done();
           }
-        ).catch(() => {});
+        );
       });
     });
   });
@@ -258,14 +263,13 @@ describe('Nylas', () => {
         expect(options.method).toEqual('PUT');
         expect(options.body).toEqual({
           application_name: 'newName',
-          redirect_uris: ['newURIs']
+          redirect_uris: ['newURIs'],
         });
       });
       Nylas.application({
         applicationName: 'newName',
-        redirectUris: ['newURIs']
+        redirectUris: ['newURIs'],
       });
     });
-
   });
 });

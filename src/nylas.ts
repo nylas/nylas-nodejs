@@ -1,4 +1,6 @@
-import request from 'request';
+// TODO since node 10 URL is global
+import { URL } from 'url';
+import fetch from 'node-fetch';
 import * as config from './config';
 import NylasConnection, { RequestOptions } from './nylas-connection';
 import ManagementAccount from './models/management-account';
@@ -130,38 +132,36 @@ class Nylas {
       throw new Error('exchangeCodeForToken() must be called with a code');
     }
 
-    return new Promise<string>((resolve, reject) => {
-      const options = {
-        method: 'GET',
-        json: true,
-        url: `${this.apiServer}/oauth/token`,
-        qs: {
-          client_id: this.clientId,
-          client_secret: this.clientSecret,
-          grant_type: 'authorization_code',
-          code: code,
+    const url = new URL(`${this.apiServer}/oauth/token`);
+    url.searchParams.set('client_id', this.clientId);
+    url.searchParams.set('client_secret', this.clientSecret);
+    url.searchParams.set('grant_type', 'authorization_code');
+    url.searchParams.set('code', code);
+    return fetch(url)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then(
+        body => {
+          if (!body || !body['access_token']) {
+            let errorMessage = 'No access token in response';
+            if (body && body.message) errorMessage = body.message;
+            throw new Error(errorMessage);
+          }
+          if (callback) {
+            callback(null, body['access_token']);
+          }
+          return body['access_token'];
         },
-      };
-
-      return request(options, (error, response, body) => {
-        if (!body || !body['access_token']) {
-          let errorMessage = 'No access token in response';
-          if (body && body.message) errorMessage = body.message;
-          error = error ? error : new Error(errorMessage);
-        }
-        if (error) {
-          reject(error);
+        error => {
           if (callback) {
-            return callback(error);
+            callback(error);
           }
-        } else {
-          resolve(body['access_token']);
-          if (callback) {
-            return callback(null, body['access_token']);
-          }
+          throw error;
         }
-      });
-    });
+      );
   }
 
   static urlForAuthentication(
