@@ -156,10 +156,11 @@ class Nylas {
           return body['access_token'];
         },
         error => {
+          const newError = new Error(error.message);
           if (callback) {
-            callback(error);
+            callback(newError);
           }
-          throw error;
+          throw newError;
         }
       );
   }
