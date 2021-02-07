@@ -1,11 +1,10 @@
 import backoff from 'backoff';
 import JSONStream from 'JSONStream';
-import request, { ResponseRequest } from 'request';
+import AbortController from 'abort-controller';
+import fetch, { Request } from 'node-fetch';
 import { EventEmitter } from 'events';
 
 import NylasConnection from '../nylas-connection';
-
-type CreateRequestType = typeof request;
 
 export default class Delta {
   connection: NylasConnection;
@@ -41,22 +40,13 @@ export default class Delta {
       });
   }
 
-  startStream(cursor: string, params: { [key: string]: any } = {}) {
-    return this._startStream(request, cursor, params);
-  }
-
-  _startStream(
-    createRequest: CreateRequestType,
-    cursor: string,
-    params: { [key: string]: any }
-  ) {
+  async startStream(cursor: string, params: { [key: string]: any } = {}) {
     const stream = new DeltaStream(
-      createRequest,
       this.connection,
       cursor,
       params
     );
-    stream.open();
+    await stream.open();
     return stream;
   }
 }
@@ -74,7 +64,6 @@ class DeltaStream extends EventEmitter {
   // Max number of times to retry a connection if we receive no data heartbeats
   // from the Nylas server.
   static MAX_RESTART_RETRIES = 5;
-  createRequest: CreateRequestType;
   connection: NylasConnection;
   cursor?: string;
   params: {
@@ -82,7 +71,10 @@ class DeltaStream extends EventEmitter {
     excludeTypes?: string[];
     expanded?: boolean;
   };
-  request?: ResponseRequest;
+  requestInfo?: {
+    request: Request,
+    controller: AbortController
+  };
   restartBackoff = backoff.exponential({
     randomisationFactor: 0.5,
     initialDelay: 250,
@@ -91,20 +83,17 @@ class DeltaStream extends EventEmitter {
   });
   timeoutId?: number;
 
-  // @param {function} createRequest function to create a request; only present for testability
   // @param {string} cursor Nylas delta API cursor
   // @param {Object} params object contianing query string params to be passed to  the request
   // @param {Array<string>} params.excludeTypes object types to not return deltas for (e.g., {excludeTypes: ['thread']})
   // @param {Array<string>} params.includeTypes object types to exclusively return deltas for (e.g., {includeTypes: ['thread']})
   // @param {boolean} params.expanded boolean to specify wether to request the expanded view
   constructor(
-    createRequest: CreateRequestType,
     connection: NylasConnection,
     cursor: string,
     params: { [key: string]: any } = {}
   ) {
     super();
-    this.createRequest = createRequest;
     this.connection = connection;
     this.cursor = cursor;
     this.params = params;
@@ -128,13 +117,13 @@ class DeltaStream extends EventEmitter {
     clearTimeout(this.timeoutId);
     delete this.timeoutId;
     this.restartBackoff.reset();
-    if (this.request) {
-      this.request.abort();
+    if (this.requestInfo) {
+      this.requestInfo.controller.abort();
     }
-    delete this.request;
+    delete this.requestInfo;
   }
 
-  open() {
+  async open() {
     this.close();
     const path = '/delta/streaming';
     const { excludeTypes = [], includeTypes = [], ...params } = this.params;
@@ -150,43 +139,48 @@ class DeltaStream extends EventEmitter {
       queryObj.include_types = includeTypes.join(',');
     }
 
-    const reqOpts = this.connection.requestOptions({
+    const request = this.connection.getRequest({
       method: 'GET',
       path,
       qs: queryObj,
     });
-
-    return (this.request = this.createRequest(reqOpts)
-      .on('response', response => {
-        if (response.statusCode !== 200) {
-          response.on('data', data => {
-            let err = data;
-            try {
-              err = JSON.parse(err);
-            } catch (e) {}
-            // Do nothing, keep err as string.
-            return this._onError(err);
-          });
-          return;
-        }
-        // Successfully established connection
-        this.emit('response', response);
-        this._onDataReceived();
-        return (
-          response
-            .on('data', this._onDataReceived.bind(this))
-            // Each data block received may not be a complete JSON object. Pipe through
-            // JSONStream.parse(), which handles converting data blocks to JSON objects.
-            .pipe(JSONStream.parse())
-            .on('data', (obj: any) => {
-              if (obj.cursor) {
-                this.cursor = obj.cursor;
-              }
-              return this.emit('delta', obj);
-            })
-        );
-      })
-      .on('error', this._onError.bind(this)));
+    try {
+      const controller = new AbortController()
+      this.requestInfo = {
+        request,
+        controller,
+      }
+      const response = await fetch(request, { signal: controller.signal });
+      if (response.status !== 200) {
+        response.body.on('data', (data: any) => {
+          let err = data;
+          try {
+            err = JSON.parse(err);
+          } catch (e) {}
+          // Do nothing, keep err as string.
+          return this._onError(err);
+        });
+        return;
+      }
+      // Successfully established connection
+      this.emit('response', response);
+      this._onDataReceived();
+      return (
+        response.body
+          .on('data', this._onDataReceived.bind(this))
+          // Each data block received may not be a complete JSON object. Pipe through
+          // JSONStream.parse(), which handles converting data blocks to JSON objects.
+          .pipe(JSONStream.parse())
+          .on('data', (obj: any) => {
+            if (obj.cursor) {
+              this.cursor = obj.cursor;
+            }
+            return this.emit('delta', obj);
+          })
+      );
+    } catch (error) {
+      this._onError(error)
+    }
   }
 
   _onDataReceived(data?: any) {
@@ -211,7 +205,7 @@ class DeltaStream extends EventEmitter {
     this.emit(
       'info',
       `Restarting Nylas DeltaStream connection (attempt ${n + 1}): ${
-        this.request != null ? this.request.href : undefined
+        this.requestInfo != null ? this.requestInfo.request.url : undefined
       }`
     );
     this.close();
