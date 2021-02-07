@@ -167,7 +167,7 @@ describe('Nylas', () => {
         Nylas.exchangeCodeForToken(
           'code-from-server',
           (returnedError, accessToken) => {
-            expect(returnedError).toBe(error);
+            expect(returnedError).toEqual(error);
             done();
           }
         );
