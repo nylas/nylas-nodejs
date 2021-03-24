@@ -159,6 +159,9 @@ module.exports = class NylasConnection {
           }
           if (response.statusCode) {
             error.statusCode = response.statusCode;
+            if (!error.hasOwnProperty('message')) {
+              error.message = response.body;
+            }
           }
           return reject(error);
         } else {
