@@ -1,11 +1,28 @@
-import isFunction from 'lodash/isFunction';
+import Attributes, { Attribute } from './attributes';
+import NylasConnection from '../nylas-connection';
 
-import * as Attributes from './attributes';
+export type SaveCallback = (error: Error | null, result?: RestfulModel) => void;
+
+interface RestfulModelJSON {
+  id: string;
+  object: string;
+  accountId: string;
+  [key: string]: any;
+}
 
 export default class RestfulModel {
-  constructor(connection, json = null) {
+  static endpointName = ''; // overrridden in subclasses
+  static collectionName = ''; // overrridden in subclasses
+  static attributes: { [key: string]: Attribute };
+
+  accountId?: string;
+  connection: NylasConnection;
+  id?: string;
+  object?: string;
+
+  constructor(connection: NylasConnection, json?: Partial<RestfulModelJSON>) {
     this.connection = connection;
-    if (!(this.connection instanceof require('../nylas-connection'))) {
+    if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
     if (json) {
@@ -13,34 +30,34 @@ export default class RestfulModel {
     }
   }
 
-  attributes() {
-    return this.constructor.attributes;
+  attributes(): { [key: string]: Attribute } {
+    return (this.constructor as any).attributes;
   }
 
-  isEqual(other) {
+  isEqual(other: RestfulModel) {
     return (
       (other ? other.id : undefined) === this.id &&
       (other ? other.constructor : undefined) === this.constructor
     );
   }
 
-  fromJSON(json = {}) {
+  fromJSON(json: Partial<RestfulModelJSON> = {}) {
     const attributes = this.attributes();
     for (const attrName in attributes) {
       const attr = attributes[attrName];
       if (json[attr.jsonKey] !== undefined) {
-        this[attrName] = attr.fromJSON(json[attr.jsonKey], this);
+        (this as any)[attrName] = attr.fromJSON(json[attr.jsonKey], this);
       }
     }
     return this;
   }
 
   toJSON() {
-    const json = {};
+    const json: any = {};
     const attributes = this.attributes();
     for (const attrName in attributes) {
       const attr = attributes[attrName];
-      json[attr.jsonKey] = attr.toJSON(this[attrName]);
+      json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
     }
     json['object'] = this.constructor.name.toLowerCase();
     return json;
@@ -52,7 +69,8 @@ export default class RestfulModel {
   }
 
   saveEndpoint() {
-    return `${this.pathPrefix()}/${this.constructor.collectionName}`;
+    const collectionName = (this.constructor as any).collectionName;
+    return `${this.pathPrefix()}/${collectionName}`;
   }
 
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
@@ -62,16 +80,16 @@ export default class RestfulModel {
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
-  deleteRequestQueryString(params) {
+  deleteRequestQueryString(params: { [key: string]: any }) {
     return {};
   }
   // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody(params) {
+  deleteRequestBody(params: { [key: string]: any }) {
     return {};
   }
 
   // deleteRequestOptions is used by delete(). Subclasses should override this method.
-  deleteRequestOptions(params) {
+  deleteRequestOptions(params: { [key: string]: any }) {
     return {
       body: this.deleteRequestBody(params),
       qs: this.deleteRequestQueryString(params),
@@ -85,9 +103,9 @@ export default class RestfulModel {
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
   // They should instead define a save() function which calls _save.
-  _save(params = {}, callback = null) {
-    if (isFunction(params)) {
-      callback = params;
+  _save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+    if (typeof params === 'function') {
+      callback = params as SaveCallback;
       params = {};
     }
     return this.connection
@@ -100,7 +118,7 @@ export default class RestfulModel {
           : `${this.saveEndpoint()}`,
       })
       .then(json => {
-        this.fromJSON(json);
+        this.fromJSON(json as RestfulModelJSON);
         if (callback) {
           callback(null, this);
         }
@@ -114,19 +132,33 @@ export default class RestfulModel {
       });
   }
 
-  _get(params = {}, callback = null, path_suffix = '') {
+  _get(
+    params: { [key: string]: any } = {},
+    callback?: (error: Error | null, result?: any) => void,
+    path_suffix = ''
+  ) {
+    const collectionName = (this.constructor as any).collectionName;
     return this.connection
       .request({
         method: 'GET',
-        path: `/${this.constructor.collectionName}/${this.id}${path_suffix}`,
+        path: `/${collectionName}/${this.id}${path_suffix}`,
         qs: params,
       })
       .then(response => {
+        if (callback) {
+          callback(null, response);
+        }
         return Promise.resolve(response);
+      })
+      .catch(err => {
+        if (callback) {
+          callback(err);
+        }
+        return Promise.reject(err);
       });
   }
 }
-RestfulModel.attributes = {
+(RestfulModel as any).attributes = {
   id: Attributes.String({
     modelKey: 'id',
   }),

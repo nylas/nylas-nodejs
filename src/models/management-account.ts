@@ -2,11 +2,18 @@ import ManagementModel from './management-model';
 import Attributes from './attributes';
 
 export default class ManagementAccount extends ManagementModel {
+  billingState?: string;
+  emailAddress?: string;
+  namespaceId?: string;
+  provider?: string;
+  syncState?: string;
+  trial?: boolean;
+
   upgrade() {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.clientId}/${this.constructor.collectionName}/${this.id}/upgrade`,
+        path: `/a/${this.clientId}/${(this.constructor as any).collectionName}/${this.id}/upgrade`,
       })
       .catch(err => Promise.reject(err));
   }
@@ -15,16 +22,16 @@ export default class ManagementAccount extends ManagementModel {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.clientId}/${this.constructor.collectionName}/${this.id}/downgrade`,
+        path: `/a/${this.clientId}/${(this.constructor as any).collectionName}/${this.id}/downgrade`,
       })
       .catch(err => Promise.reject(err));
   }
 
-  revokeAll(keep_access_token) {
+  revokeAll(keep_access_token?: string) {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.clientId}/${this.constructor.collectionName}/${this.id}/revoke-all`,
+        path: `/a/${this.clientId}/${(this.constructor as any).collectionName}/${this.id}/revoke-all`,
         body: { keep_access_token: keep_access_token },
       })
       .catch(err => Promise.reject(err));
@@ -37,11 +44,11 @@ export default class ManagementAccount extends ManagementModel {
       })
       .catch(err => Promise.reject(err));
   }
-  tokenInfo(access_token) {
+  tokenInfo(access_token?: string) {
     return this.connection
       .request({
         method: 'POST',
-        path: `/a/${this.clientId}/${this.constructor.collectionName}/${this.id}/token-info`,
+        path: `/a/${this.clientId}/${(this.constructor as any).collectionName}/${this.id}/token-info`,
         body: {
           access_token: access_token,
         },

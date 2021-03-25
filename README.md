@@ -25,7 +25,7 @@ Alternatively, if you prefer to use [Yarn](https://yarnpkg.com/en/), you can ins
 
 To install this package from source, clone this repo and run `npm install` from inside the project directory.
 
-```
+```bash
 git clone https://github.com/nylas/nylas-nodejs.git
 cd nylas-nodejs
 npm install
@@ -34,7 +34,7 @@ npm install
 
 Every resource (i.e., messages, events, contacts) is accessed via an instance of `Nylas`. Before making any requests, be sure to call `config` and initialize the `Nylas` instance with your `clientId` and `clientSecret`. Then, call `with` and pass it your `accessToken`. The `accessToken` allows `Nylas` to make requests for a given account's resources.
 
-```
+```javascript
 const Nylas = require('nylas');
 
 Nylas.config({
@@ -46,7 +46,7 @@ const nylas = Nylas.with(ACCESS_TOKEN);
 ```
 
 Then, you can use Nylas to access information about a user's account:
-```
+```javascript
 nylas.threads.list({}).then(threads => {
   console.log(threads.length);
 });

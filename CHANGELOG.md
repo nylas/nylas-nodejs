@@ -1,5 +1,56 @@
 # Changelog
 
+### 5.3.2 / 2020-01-11
+* Typing fixes to nylas.drafts and other RestfulModelCollections
+
+### 5.3.1 / 2020-11-20
+* Drop async dependency for smaller package fingerprint. Async is replaced with promises.
+* Remove circular dependency in nylas-connection.ts
+* Update readme with syntax highlighting
+
+### 5.3.0 / 2020-09-23
+* Fix bug where setting event.start and event.end did not set event.when if event.when didn't exist
+* Refactor parameter ordering in `find()` and `draft.send()` methods [backwards compatible]
+* Add JobStatus model and collection
+
+### 5.2.0 / 2020-07-27
+* Implement support for GET /contacts/groups
+* Update lodash import
+* Support GET /resources
+* Support POST, PUT and DELETE for calendars, and add location, timezone and isPrimary attributes.
+* Add `object` attribute to `event.when` object
+
+### 5.1.0 / 2020-06-04
+* Fix bug which was overwriting properties on message objects.
+* Support recurring events.
+* Implement list & update application details endpoints.
+* Support free-busy endpoint on Calendars collection.
+
+### 5.0.0 / 2020-05-07
+
+* [BREAKING] remove `appId` and `appSecret`. Please use `clientId` and `clientSecret`.
+* [BREAKING] remove `Thread.folder`. Please use `Thread.folders`.
+* Migrate to Typescript
+
+### 4.10.1 / 2020-05-06
+
+* Update `exchangeCodeForToken` to reject when no `access_token` is returned.
+* Fix unhandled error when response is undefined.
+* Fix get contact picture request to correctly use callback, if provided.
+
+### 4.10.0 / 2020-02-24
+
+* Add iCalUID attribute to Event model
+* Update SUPPORTED_API_VERSION to 2.1
+* Allow file streaming uploads
+* Update Thread.folder to use Folder model, and rename to Thread.folders
+
+### 4.9.0 / 2020-01-24
+
+* Remove error handling in /connect models
+* Update Thread participants to use EmailParticipant
+* Bump handlebars version
+
 ### 4.8.0 / 2019-10-09
 
 * Add support for `/connect/token` endpoint

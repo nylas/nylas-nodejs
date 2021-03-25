@@ -1,7 +1,15 @@
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
-export default class Account extends RestfulModel {}
+export default class Account extends RestfulModel {
+  name?: string;
+  emailAddress?: string;
+  provider?: string;
+  organizationUnit?: string;
+  syncState?: string;
+  billingState?: string;
+  linkedAt?: Date;
+}
 Account.collectionName = 'accounts';
 Account.endpointName = 'account';
 Account.attributes = {

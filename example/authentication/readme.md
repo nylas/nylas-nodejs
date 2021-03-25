@@ -74,7 +74,7 @@ Add your google and nylas client id's and secrets to a new file `config.js`.
 See `config.js.template` for an example.
 
 Then install dependencies with:
-```
+```bash
 npm install
 ```
 

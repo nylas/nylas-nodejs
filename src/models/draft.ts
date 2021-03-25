@@ -1,27 +1,28 @@
 import File from './file';
 import Message from './message';
-import Contact from './contact';
+import { Contact } from './contact';
 import Attributes from './attributes';
+import { SaveCallback } from './restful-model';
+
+export type SendCallback = (err: Error | null, json?: { [key: string]: any }) => void;
 
 export default class Draft extends Message {
-  constructor(...args) {
-    super(...args);
-  }
+  rawMime?: string;
+  replyToMessageId?: string;
+  version?: number;
 
   toJSON() {
     if (this.rawMime) {
       throw Error('toJSON() cannot be called for raw MIME drafts');
     }
-    const json = super.toJSON(...arguments);
+    const json = super.toJSON();
     json.file_ids = this.fileIds();
-    if (this.draft) {
-      json.object = 'draft';
-    }
+    json.object = 'draft';
 
     return json;
   }
 
-  save(params = {}, callback = null) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     if (this.rawMime) {
       const err = new Error('save() cannot be called for raw MIME drafts');
       if (callback) {
@@ -36,11 +37,11 @@ export default class Draft extends Message {
     if (this.rawMime) {
       throw Error('saveRequestBody() cannot be called for raw MIME drafts');
     }
-    return super.saveRequestBody(...arguments);
+    return super.saveRequestBody();
   }
 
-  deleteRequestBody(params) {
-    var body = {};
+  deleteRequestBody(params: { [key: string]: any } = {}) {
+    const body: { [key: string]: any } = {};
     body.version = params.hasOwnProperty('version')
       ? params.version
       : this.version;
@@ -51,12 +52,30 @@ export default class Draft extends Message {
     if (this.rawMime) {
       throw Error('toString() cannot be called for raw MIME drafts');
     }
-    super.toString();
+    return super.toString();
   }
 
-  send(callback = null, tracking) {
-    let body = this.rawMime,
-      headers = { 'Content-Type': 'message/rfc822' },
+  send(
+    trackingArg?: { [key: string]: any } | SendCallback | null,
+    callbackArg?: SendCallback | { [key: string]: any } | null
+  ) {
+
+    // callback used to be the first argument, and tracking was the second
+    let callback: SendCallback | undefined;
+    if (typeof callbackArg === 'function') {
+      callback = callbackArg as SendCallback;
+    } else if (typeof trackingArg === 'function') {
+      callback = trackingArg as SendCallback;
+    }
+    let tracking: { [key: string]: any } | undefined;
+    if (trackingArg && typeof trackingArg === 'object') {
+      tracking = trackingArg;
+    } else if (callbackArg && typeof callbackArg === 'object') {
+      tracking = callbackArg;
+    }
+
+    let body: any = this.rawMime,
+      headers: { [key: string]: any } = { 'Content-Type': 'message/rfc822' },
       json = false;
 
     if (!this.rawMime) {

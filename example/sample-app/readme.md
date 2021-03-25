@@ -27,7 +27,7 @@ http://localhost:3000/oauth/callback
 <br>
 
 Install dependencies with:
-```
+```bash
 npm install
 ```
 
@@ -35,7 +35,7 @@ npm install
 
 Run the express app.
 
-```
+```bash
 npm start
 ```
 

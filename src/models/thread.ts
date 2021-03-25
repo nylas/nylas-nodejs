@@ -1,26 +1,39 @@
 import Message from './message';
-import RestfulModel from './restful-model';
-import Contact from './contact';
-import * as Attributes from './attributes';
+import RestfulModel, { SaveCallback } from './restful-model';
+import Attributes from './attributes';
+import EmailParticipant from './email-participant';
 import { Label, Folder } from './folder';
 
 export default class Thread extends RestfulModel {
-  constructor(...args) {
-    super(...args);
-    this.fromJSON = this.fromJSON.bind(this);
-  }
+  subject?: string;
+  participants?: EmailParticipant[];
+  lastMessageTimestamp?: Date;
+  lastMessageReceivedTimestamp?: Date;
+  lastMessageSentTimestamp?: Date;
+  firstMessageTimestamp?: Date;
+  snippet?: string;
+  unread?: boolean;
+  starred?: boolean;
+  hasAttachments?: boolean;
+  version?: string;
+  folders?: Folder[];
+  labels?: Label[];
+  messageIds?: string[];
+  draftIds?: string[];
+  messages?: Message[];
+  drafts?: Message[];
 
-  fromJSON(json) {
+  fromJSON(json: { [key: string]: any }) {
     super.fromJSON(json);
     return this;
   }
 
   saveRequestBody() {
-    const json = {};
+    const json: { [key: string]: any } = {};
     if (this.labels) {
       json['label_ids'] = this.labels.map(label => label.id);
-    } else if (this.folder) {
-      json['folder_id'] = this.folder.id;
+    } else if (this.folders && this.folders.length === 1) {
+      json['folder_id'] = this.folders[0].id;
     }
 
     json['starred'] = this.starred;
@@ -28,9 +41,10 @@ export default class Thread extends RestfulModel {
     return json;
   }
 
-  save(params = {}, callback = null) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
   }
+
 }
 Thread.collectionName = 'threads';
 Thread.attributes = {
@@ -40,7 +54,7 @@ Thread.attributes = {
   }),
   participants: Attributes.Collection({
     modelKey: 'participants',
-    itemClass: Contact,
+    itemClass: EmailParticipant,
   }),
   lastMessageTimestamp: Attributes.DateTime({
     modelKey: 'lastMessageTimestamp',
@@ -74,8 +88,8 @@ Thread.attributes = {
     modelKey: 'version',
     jsonKey: 'version',
   }),
-  folder: Attributes.Object({
-    modelKey: 'folder',
+  folders: Attributes.Collection({
+    modelKey: 'folders',
     itemClass: Folder,
     jsonKey: 'folders',
   }),

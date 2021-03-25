@@ -93,6 +93,39 @@ describe('Event', () => {
       });
     });
 
+    test('should create recurring event if recurrence is defined', done => {
+      const recurrence = {
+        "rrule": [
+          "RRULE:FREQ=WEEKLY;BYDAY=MO"
+        ],
+        "timezone": "America/New_York"
+      }
+      testContext.event.recurrence = recurrence;
+      testContext.event.save().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'event',
+            account_id: undefined,
+            calendar_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            location: undefined,
+            when: undefined,
+            _start: undefined,
+            _end: undefined,
+            participants: [],
+            recurrence: recurrence
+          },
+          qs: {},
+          path: '/events',
+        });
+        done();
+      });
+    });
+
     test('should create event with time when start and end are the same UNIX timestamp', done => {
       testContext.event.when = {};
       testContext.event.start = 1408875644;
@@ -353,16 +386,54 @@ describe('Event', () => {
       });
     });
 
+    test('setting event.start should create event.when if it does does not exist', done => {
+      delete testContext.event.when;
+      testContext.event.start = '1815-12-10';
+      testContext.event.end = '1852-11-27';
+      expect(testContext.event.when).toEqual({
+        start_date: '1815-12-10',
+        end_date: '1852-11-27',
+      });
+      testContext.event.save().then(event => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'event',
+            account_id: undefined,
+            calendar_id: undefined,
+            message_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            owner: undefined,
+            location: undefined,
+            when: {
+              start_date: '1815-12-10',
+              end_date: '1852-11-27',
+            },
+            participants: [],
+            read_only: undefined,
+            status: undefined,
+          },
+          qs: {},
+          path: '/events',
+        });
+        done();
+      });
+    });
+
     describe('when the request succeeds', () => {
       beforeEach(() => {
         testContext.connection.request = jest.fn(() => {
           const eventJSON = {
             id: 'id-1234',
             title: 'test event',
-            when: { time: 1409594400 },
+            when: { time: 1409594400, object: 'time' },
             participants: [
               {'name': 'foo', 'email': 'bar', 'status': 'noreply'}
             ],
+            ical_uid: 'id-5678'
           };
           return Promise.resolve(eventJSON);
         });
@@ -373,6 +444,8 @@ describe('Event', () => {
           expect(event.id).toBe('id-1234');
           expect(event.title).toBe('test event');
           expect(event.when.time).toEqual(1409594400);
+          expect(event.when.object).toEqual('time');
+          expect(event.iCalUID).toBe('id-5678');
           let participant = event.participants[0];
           expect(participant.toJSON()).toEqual(
             {'name': 'foo', 'email': 'bar', 'status': 'noreply'});

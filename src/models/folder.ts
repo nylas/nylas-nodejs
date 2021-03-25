@@ -1,15 +1,18 @@
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 
 export class Folder extends RestfulModel {
+  displayName?: string;
+  name?: string;
+
   saveRequestBody() {
-    const json = {};
+    const json: { [key: string]: any } = {};
     json['display_name'] = this.displayName;
     json['name'] = this.name;
     return json;
   }
 
-  save(params = {}, callback = null) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
   }
 }

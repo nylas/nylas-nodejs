@@ -1,6 +1,16 @@
+jest.mock('node-fetch', () => {
+  const { Request, Response, Headers } = jest.requireActual('node-fetch');
+  const fetch = jest.fn();
+  fetch.Request = Request;
+  fetch.Response = Response;
+  fetch.Headers = Headers;
+  return fetch;
+});
+
 import { EventEmitter } from 'events';
 import { PassThrough } from 'stream';
-
+import fetch, { Response } from 'node-fetch';
+import * as config from '../src/config.ts';
 import Delta from '../src/models/delta';
 import NylasConnection from '../src/nylas-connection';
 
@@ -15,18 +25,7 @@ describe('Delta', () => {
   });
 
   describe('startStream (delta streaming)', () => {
-    const createRequest = requestOpts => {
-      const request = new EventEmitter();
-      request.origOpts = requestOpts;
-      request.abort = jest.fn();
-      return request;
-    };
-
-    const createResponse = statusCode => {
-      const response = new PassThrough();
-      response.statusCode = statusCode;
-      return response;
-    };
+    config.setApiServer('http://nylas.com');
 
     // Listens to the 'delta' event on the stream and pushes them to the returned array.
     const observeDeltas = stream => {
@@ -35,62 +34,57 @@ describe('Delta', () => {
       return deltas;
     };
 
-    test('start and close stream', () => {
-      const stream = testContext.delta._startStream(
-        createRequest,
-        'deltacursor0'
+    test('start and close stream', async () => {
+      fetch.mockImplementation(() =>
+        Promise.resolve(new Response(new PassThrough(), { status: 200 }))
       );
-      const { request } = stream;
+      const stream = await testContext.delta.startStream('deltacursor0');
+      const { request, controller } = stream.requestInfo;
 
-      expect(request.origOpts.method).toBe('GET');
-      expect(request.origOpts.path).toBe('/delta/streaming');
-      expect(request.origOpts.qs).toEqual({ cursor: 'deltacursor0' });
+      expect(request.method).toBe('GET');
+      expect(request.url).toBe(
+        `${config.apiServer}/delta/streaming?cursor=deltacursor0`
+      );
 
-      const response = createResponse(200);
-      request.emit('response', response);
-
-      expect(request.abort.mock.calls.length).toEqual(0);
+      expect(controller.signal.aborted).toEqual(false);
       stream.close();
-      expect(request.abort.mock.calls.length).toEqual(1);
-      expect(stream.request).toEqual(undefined);
+      expect(controller.signal.aborted).toEqual(true);
+      expect(stream.requestInfo).toEqual(undefined);
 
       // Make sure the stream doesn't auto-restart if explicitly closed.
       jest.runTimersToTime(Delta.streamingTimeoutMs + 500);
-      expect(stream.request).toEqual(undefined);
+      expect(stream.requestInfo).toEqual(undefined);
     });
 
-    test('passes the correct params to the request', () => {
-      const stream = testContext.delta._startStream(
-        createRequest,
-        'deltacursor0',
-        {
-          expanded: true,
-          includeTypes: ['thread', 'message'],
-          excludeTypes: ['event'],
-        }
+    test('passes the correct params to the request', async () => {
+      fetch.mockImplementation(() =>
+        Promise.resolve(new Response(new PassThrough(), { status: 200 }))
       );
-      const { request } = stream;
-
-      expect(request.origOpts.method).toBe('GET');
-      expect(request.origOpts.path).toBe('/delta/streaming');
-      expect(request.origOpts.qs).toEqual({
-        cursor: 'deltacursor0',
-        view: 'expanded',
-        include_types: 'thread,message',
-        exclude_types: 'event',
+      const stream = await testContext.delta.startStream('deltacursor0', {
+        expanded: true,
+        includeTypes: ['thread', 'message'],
+        excludeTypes: ['event'],
       });
+      const { request } = stream.requestInfo;
+
+      expect(request.method).toBe('GET');
+      const search = [
+        'view=expanded',
+        'cursor=deltacursor0',
+        'exclude_types=event',
+        `include_types=thread%2Cmessage`,
+      ].join('&');
+      expect(request.url).toBe(`${config.apiServer}/delta/streaming?${search}`);
     });
 
-    test('stream response parsing', () => {
-      const stream = testContext.delta._startStream(
-        createRequest,
+    test('stream response parsing', async () => {
+      const response = new Response(new PassThrough(), { status: 200 });
+      fetch.mockImplementation(() => Promise.resolve(response));
+      const stream = await testContext.delta.startStream(
         'deltacursor0'
       );
-      const { request } = stream;
       const deltas = observeDeltas(stream);
 
-      const response = createResponse(200);
-      request.emit('response', response);
       expect(deltas).toEqual([]);
       expect(stream.cursor).toEqual('deltacursor0');
 
@@ -102,23 +96,21 @@ describe('Delta', () => {
         id: 'deltaid1',
       };
 
-      response.write(JSON.stringify(delta1));
+      response.body.write(JSON.stringify(delta1));
       expect(deltas).toEqual([delta1]);
       expect(stream.cursor).toEqual('deltacursor1');
 
       stream.close();
     });
 
-    test('stream response parsing, delta split across data packets', () => {
-      const stream = testContext.delta._startStream(
-        createRequest,
+    test('stream response parsing, delta split across data packets', async () => {
+      const response = new Response(new PassThrough(), { status: 200 });
+      fetch.mockImplementation(() => Promise.resolve(response));
+      const stream = await testContext.delta.startStream(
         'deltacursor0'
       );
-      const { request } = stream;
       const deltas = observeDeltas(stream);
 
-      const response = createResponse(200);
-      request.emit('response', response);
       expect(deltas).toEqual([]);
       expect(stream.cursor).toEqual('deltacursor0');
 
@@ -132,55 +124,53 @@ describe('Delta', () => {
       const deltaStr = JSON.stringify(delta1);
 
       // Partial data packet will not result in a delta yet...
-      response.write(deltaStr.substring(0, 20));
+      response.body.write(deltaStr.substring(0, 20));
       expect(deltas).toEqual([]);
       expect(stream.cursor).toEqual('deltacursor0');
 
       // ...now the rest of the delta comes in, and there should be a delta object.
-      response.write(deltaStr.substring(20));
+      response.body.write(deltaStr.substring(20));
       expect(deltas).toEqual([delta1]);
       expect(stream.cursor).toEqual('deltacursor1');
 
       stream.close();
     });
 
-    test('stream timeout and auto-restart', () => {
-      const stream = testContext.delta._startStream(
-        createRequest,
+    test('stream timeout and auto-restart', async () => {
+      const response = new Response(new PassThrough(), { status: 200 });
+      fetch.mockImplementation(() => Promise.resolve(response));
+      const stream = await testContext.delta.startStream(
         'deltacursor0'
       );
-      const { request } = stream;
+      const requestInfo = stream.requestInfo
+      const { request, controller } = requestInfo;
 
-      const response = createResponse(200);
-      request.emit('response', response);
       expect(stream.cursor).toEqual('deltacursor0');
 
-      const expectRequestNotAborted = request =>
-        expect(request.abort.calls.length).toEqual(0);
-
       // Server sends a heartbeat every 5 seconds.
-      response.write('\n');
+      response.body.write('\n');
       jest.runTimersToTime(5000);
-      expect(request.abort.mock.calls.length).toEqual(0);
-      response.write('\n');
-      expect(request.abort.mock.calls.length).toEqual(0);
+      expect(controller.signal.aborted).toEqual(false);
+      response.body.write('\n');
+      expect(controller.signal.aborted).toEqual(false);
 
       // Actual response packets also reset the timeout.
       jest.runTimersToTime(5000);
       const delta1 = { cursor: 'deltacursor1' };
-      response.write(JSON.stringify(delta1));
+      response.body.write(JSON.stringify(delta1));
       expect(stream.cursor).toEqual('deltacursor1');
       jest.runTimersToTime(5500);
-      expect(request.abort.mock.calls.length).toEqual(0);
+      expect(controller.signal.aborted).toEqual(false);
 
       // If the timeout has elapsed since the last data received, the stream is restarted.
       jest.runTimersToTime(Delta.streamingTimeoutMs);
       // The old request should have been aborted, and a new request created.
-      expect(request.abort.mock.calls.length).toEqual(1);
-      expect(stream.request).not.toBe(request);
+      expect(controller.signal.aborted).toEqual(true);
+      expect(stream.requestInfo).not.toBe(requestInfo);
       // The new request should be using the last delta cursor received prior to timeout.
-      expect(stream.request.origOpts.path).toBe('/delta/streaming');
-      expect(stream.request.origOpts.qs).toEqual({ cursor: 'deltacursor1' });
+      expect(stream.requestInfo.request.url).toBe(
+        `${config.apiServer}/delta/streaming?cursor=deltacursor1`
+      );
 
       stream.close();
     });
