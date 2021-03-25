@@ -159,7 +159,10 @@ module.exports = class NylasConnection {
           }
           if (response.statusCode) {
             error.statusCode = response.statusCode;
-            if (!error.hasOwnProperty('message') && typeof response.body === 'string') {
+            if (
+              !error.hasOwnProperty('message') &&
+              typeof response.body === 'string'
+            ) {
               error.message = response.body;
             }
           }
