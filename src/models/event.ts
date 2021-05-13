@@ -27,6 +27,7 @@ export default class Event extends RestfulModel {
     rrule: string[];
     timezone: string;
   };
+  metadata?: object;
 
   get start() {
     const start =
@@ -178,5 +179,8 @@ Event.attributes = {
   }),
   recurrence: Attributes.Object({
     modelKey: 'recurrence',
+  }),
+  metadata: Attributes.Object({
+    modelKey: 'metadata',
   })
 };
