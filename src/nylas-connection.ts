@@ -70,6 +70,7 @@ export default class NylasConnection {
       url: `${config.apiServer}${options.path}`,
       headers: options.headers || {},
       json: options.json == null ? true : options.json,
+      useQuerystring: true,
     };
 
     if (options.downloadRequest) {
