@@ -1,6 +1,3 @@
-import request from 'request';
-
-import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import Event from '../src/models/event';
 
@@ -415,6 +412,33 @@ describe('Event', () => {
             participants: [],
             read_only: undefined,
             status: undefined,
+          },
+          qs: {},
+          path: '/events',
+        });
+        done();
+      });
+    });
+
+    test('should create an event with a metadata object', done => {
+      testContext.event.metadata = {'hello': 'world'};
+      testContext.event.save().then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            id: undefined,
+            object: 'event',
+            account_id: undefined,
+            calendar_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            location: undefined,
+            when: undefined,
+            _start: undefined,
+            _end: undefined,
+            participants: [],
+            metadata: {'hello': 'world'}
           },
           qs: {},
           path: '/events',
