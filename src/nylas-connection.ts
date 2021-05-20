@@ -93,6 +93,16 @@ export default class NylasConnection {
         }
         delete newOptions.qs.expanded;
       }
+
+      // The API understands a metadata_pair filter in the form of:
+      // <key>:<value>
+      if (newOptions.qs.metadata_pair != null) {
+        const new_metadata_pair = []
+        for (const item in newOptions.qs.metadata_pair) {
+          new_metadata_pair.push(`${item}:${newOptions.qs.metadata_pair[item]}`)
+        }
+        newOptions.qs.metadata_pair = new_metadata_pair;
+      }
     }
 
     const user =
