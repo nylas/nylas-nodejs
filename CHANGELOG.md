@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+- Add `metadata` field in the Event model to support new event metadata
+- Add support for filtering `metadata` using `metadata_key`, `metadata_value`, and `metadata_pair`
+
 ### 5.3.2 / 2020-01-11
 * Typing fixes to nylas.drafts and other RestfulModelCollections
 
