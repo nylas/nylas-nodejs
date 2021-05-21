@@ -1,21 +1,27 @@
 # Changelog
 
-### Unreleased
-- Add `metadata` field in the Event model to support new event metadata
-- Add support for filtering `metadata` using `metadata_key`, `metadata_value`, and `metadata_pair`
+### 5.4.0 / 2020-05-21
+* Add `metadata` field in the Event model to support new Event metadata feature
+* Add support for filtering `metadata` using `metadata_key`, `metadata_value`, and `metadata_pair`
+* Updated dependencies `lodash`, `y18n`, and `pug` to the latest stable version
+
+### 5.3.3 / 2020-03-26
+* Pass error message from the API to the SDK user
+* Migrate `delta` streaming to `node-fetch`
+* Migrate `exchangeCodeForToken` to `node-fetch`
 
 ### 5.3.2 / 2020-01-11
-* Typing fixes to nylas.drafts and other RestfulModelCollections
+* Typing fixes to `nylas.drafts` and other `RestfulModelCollections`
 
 ### 5.3.1 / 2020-11-20
 * Drop async dependency for smaller package fingerprint. Async is replaced with promises.
-* Remove circular dependency in nylas-connection.ts
+* Remove circular dependency in `nylas-connection.ts`
 * Update readme with syntax highlighting
 
 ### 5.3.0 / 2020-09-23
-* Fix bug where setting event.start and event.end did not set event.when if event.when didn't exist
+* Fix bug where setting `event.start` and `event.end` did not set `event.when` if `event.when` didn't exist
 * Refactor parameter ordering in `find()` and `draft.send()` methods [backwards compatible]
-* Add JobStatus model and collection
+* Add `JobStatus` model and collection
 
 ### 5.2.0 / 2020-07-27
 * Implement support for GET /contacts/groups
