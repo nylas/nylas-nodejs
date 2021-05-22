@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix bug where saving a `draft` object with an undefined `filesIds` would throw an error
+
 ### 5.4.0 / 2020-05-21
 * Add `metadata` field in the Event model to support new Event metadata feature
 * Add support for filtering `metadata` using `metadata_key`, `metadata_value`, and `metadata_pair`
