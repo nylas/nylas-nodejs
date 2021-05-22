@@ -49,7 +49,7 @@ export default class Message extends RestfulModel {
   }
 
   fileIds() {
-    return (this.files || []).map(file => file.id);
+    return this.files ? this.files.map(file => file.id) : [];
   }
 
   getRaw() {
