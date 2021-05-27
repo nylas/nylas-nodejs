@@ -1,18 +1,14 @@
 // TODO since node 10 URL is global
-import { URL } from 'url';
-import request, { UrlOptions, CoreOptions } from 'request';
-import { Request, Headers } from 'node-fetch';
+import {URL} from 'url';
+import fetch, {Headers, Request} from 'node-fetch';
 import * as config from './config';
-import RestfulModel from './models/restful-model';
 import RestfulModelCollection from './models/restful-model-collection';
 import CalendarRestfulModelCollection from './models/calendar-restful-model-collection';
 import ContactRestfulModelCollection from './models/contact-restful-model-collection';
 import RestfulModelInstance from './models/restful-model-instance';
 import Account from './models/account';
-import ManagementAccount from './models/management-account';
-import ManagementModelCollection from './models/management-model-collection';
 import Thread from './models/thread';
-import { Contact } from './models/contact';
+import {Contact} from './models/contact';
 import Message from './models/message';
 import Draft from './models/draft';
 import File from './models/file';
@@ -21,7 +17,7 @@ import Event from './models/event';
 import JobStatus from './models/job-status';
 import Resource from './models/resource';
 import Delta from './models/delta';
-import { Label, Folder } from './models/folder';
+import {Folder, Label} from './models/folder';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -36,6 +32,7 @@ export type RequestOptions = {
   json?: boolean;
   formData?: any;
   body?: any;
+  url?: URL;
 };
 
 export default class NylasConnection {
@@ -64,69 +61,61 @@ export default class NylasConnection {
     this.clientId = clientId;
   }
 
-  requestOptions(options: RequestOptions) {
-    const newOptions: CoreOptions & UrlOptions = {
-      method: options.method || 'GET',
-      url: `${config.apiServer}${options.path}`,
-      headers: options.headers || {},
-      json: options.json == null ? true : options.json,
-      useQuerystring: true,
-    };
-
-    if (options.downloadRequest) {
-      newOptions.encoding = null;
+  requestOptions(options: RequestOptions): RequestOptions {
+    const url = new URL(`${config.apiServer}${options.path}`);
+    // map querystring to search params
+    if (options.qs) {
+      for (const [key, value] of Object.entries(options.qs)) {
+        // For convenience, If `expanded` param is provided, convert to view:
+        // 'expanded' api option
+        if (key === 'expanded') {
+          if (value === true) {
+            url.searchParams.set('view', 'expanded');
+          }
+        } else if (key == 'metadata_pair') {
+          // The API understands a metadata_pair filter in the form of:
+          // <key>:<value>
+          for (const item in value) {
+            url.searchParams.set('metadata_pair', `${item}:${value[item]}`)
+          }
+        } else if (Array.isArray(value)) {
+          for (const item of value) {
+            url.searchParams.append(key, item);
+          }
+        } else {
+          url.searchParams.set(key, value);
+        }
+      }
     }
+    options.url = url;
+
+    // const headers: HeadersInit = new Headers(options.headers);
+    const headers = {...options.headers}
+    const user =
+        options.path.substr(0, 3) === '/a/'
+            ? config.clientSecret
+            : this.accessToken;
+    if (user) {
+      headers['authorization'] = 'Basic ' + Buffer.from(`${user}:`, 'utf8').toString('base64');
+    }
+    if (!headers['User-Agent']) {
+      headers['User-Agent'] = `Nylas Node SDK v${SDK_VERSION}`;
+    }
+    headers['Nylas-API-Version'] = SUPPORTED_API_VERSION;
+    headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
+    if (this.clientId != null) {
+      // headers.set('X-Nylas-Client-Id', this.clientId);
+      headers['X-Nylas-Client-Id'] = this.clientId;
+    }
+    options.headers = headers;
 
     if (options.formData) {
-      newOptions.formData = options.formData;
-    } else {
-      newOptions.body = options.body || {};
+      options.body = options.formData;
+    } else if (options.body) {
+      options.body = JSON.stringify(options.body);
     }
 
-    // For convenience, If `expanded` param is provided, convert to view:
-    // 'expanded' api option
-    if (options.qs) {
-      newOptions.qs = { ...options.qs };
-      if (newOptions.qs.expanded) {
-        if (newOptions.qs.expanded === true) {
-          newOptions.qs.view = 'expanded';
-        }
-        delete newOptions.qs.expanded;
-      }
-
-      // The API understands a metadata_pair filter in the form of:
-      // <key>:<value>
-      if (newOptions.qs.metadata_pair != null) {
-        const new_metadata_pair = []
-        for (const item in newOptions.qs.metadata_pair) {
-          new_metadata_pair.push(`${item}:${newOptions.qs.metadata_pair[item]}`)
-        }
-        newOptions.qs.metadata_pair = new_metadata_pair;
-      }
-    }
-
-    const user =
-      options.path.substr(0, 3) === '/a/'
-        ? config.clientSecret
-        : this.accessToken;
-    if (user) {
-      newOptions.auth = {
-        user: user,
-        pass: '',
-        sendImmediately: true,
-      };
-    }
-
-    if (newOptions.headers) {
-      if (newOptions.headers['User-Agent'] == null) {
-        newOptions.headers['User-Agent'] = `Nylas Node SDK v${SDK_VERSION}`;
-      }
-      newOptions.headers['Nylas-API-Version'] = SUPPORTED_API_VERSION;
-      newOptions.headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
-      newOptions.headers['X-Nylas-Client-Id'] = this.clientId;
-    }
-
-    return newOptions;
+    return options;
   }
 
   getRequest(options: RequestOptions): Request {
@@ -203,63 +192,52 @@ export default class NylasConnection {
   }
 
   request(options: RequestOptions) {
-    const resolvedOptions = this.requestOptions(options);
+    const newOptions = this.requestOptions(options);
 
+    const req = new Request(newOptions.url || '', {
+      method: newOptions.method || 'GET',
+      headers: newOptions.headers,
+      body: newOptions.body,
+    });
     return new Promise<any>((resolve, reject) => {
-      return request(resolvedOptions, (error, response, body = {}) => {
+      return fetch(req).then(response => {
         if (typeof response === 'undefined') {
-          error = error || new Error('No response');
-          return reject(error);
+          return reject(new Error('No response'));
         }
-        // node headers are lowercase so this refers to `Nylas-Api-Version`
-        const apiVersion = response.headers['nylas-api-version'] as
-          | string
-          | undefined;
+        // node headers are lowercaser so this refers to `Nylas-Api-Version`
+        const apiVersion = response.headers.get('nylas-api-version') as
+            | string
+            | undefined;
 
         const warning = this._getWarningForVersion(
-          SUPPORTED_API_VERSION,
-          apiVersion
+            SUPPORTED_API_VERSION,
+            apiVersion
         );
         if (warning) {
           console.warn(warning);
         }
 
-        // raw MIMI emails have json === false and the body is a string so
-        // we need to turn into JSON before we can access fields
-        if (resolvedOptions.json === false) {
-          body = JSON.parse(body);
-        }
-
-        if (error || response.statusCode > 299) {
-          if (!error) {
-            error = new Error(body.message);
-          }
-          if (body.missing_fields) {
-            error.message = `${body.message}: ${body.missing_fields}`;
-          }
-          if (body.server_error) {
-            error.message = `${error.message} (Server Error:
+        if (response.status > 299) {
+          return response.json().then(body => {
+            const error = new Error(body.message);
+            if (body.missing_fields) {
+              error.message = `${body.message}: ${body.missing_fields}`;
+            }
+            if (body.server_error) {
+              error.message = `${error.message} (Server Error:
               ${body.server_error}
             )`;
-          }
-          if (response.statusCode) {
-            error.statusCode = response.statusCode;
-            if (
-              !error.hasOwnProperty('message') &&
-              typeof response.body === 'string'
-            ) {
-              error.message = response.body;
             }
-          }
-          return reject(error);
+            return reject(error);
+          });
         } else {
           if (options.downloadRequest) {
-            return resolve(response);
+            return resolve(response.body);
           } else {
-            return resolve(body);
+            return resolve(response.json());
           }
         }
-      });
+      })
     });
   }
 }
