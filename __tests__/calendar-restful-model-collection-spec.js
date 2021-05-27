@@ -1,11 +1,14 @@
-import request from 'request';
+import fetch from 'node-fetch';
 
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import RestfulModelCollection from '../src/models/restful-model-collection';
 
+jest.useFakeTimers();
+
 describe('CalendarRestfulModelCollection', () => {
   let testContext;
+  const testAccessToken = 'test-access-token';
 
   beforeEach(() => {
     Nylas.config({
@@ -13,7 +16,7 @@ describe('CalendarRestfulModelCollection', () => {
       clientSecret: 'myClientSecret',
     });
     testContext = {};
-    testContext.connection = new NylasConnection('test-access-token', {
+    testContext.connection = new NylasConnection(testAccessToken, {
       clientId: 'myClientId',
     });
   });
@@ -25,15 +28,15 @@ describe('CalendarRestfulModelCollection', () => {
       emails: ['jane@email.com']
     };
 
-    request.Request = jest.fn(options => {
-      expect(options.url).toEqual('https://api.nylas.com/calendars/free-busy');
+    fetch.Request = jest.fn((url, options) => {
+      expect(url.toString()).toEqual('https://api.nylas.com/calendars/free-busy');
       expect(options.method).toEqual('POST');
-      expect(options.body).toEqual({
+      expect(JSON.parse(options.body)).toEqual({
         start_time: '1590454800',
         end_time: '1590780800',
         emails: [ 'jane@email.com' ]
       });
-      expect(options.auth.user).toEqual('test-access-token');
+      expect(options.headers['authorization']).toEqual(`Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`);
     });
 
     testContext.connection.calendars.freeBusy(params);
@@ -46,15 +49,15 @@ describe('CalendarRestfulModelCollection', () => {
       emails: ['jane@email.com']
     };
 
-    request.Request = jest.fn(options => {
-      expect(options.url).toEqual('https://api.nylas.com/calendars/free-busy');
+    fetch.Request = jest.fn((url, options) => {
+      expect(url.toString()).toEqual('https://api.nylas.com/calendars/free-busy');
       expect(options.method).toEqual('POST');
-      expect(options.body).toEqual({
+      expect(JSON.parse(options.body)).toEqual({
         start_time: '1590454800',
         end_time: '1590780800',
         emails: [ 'jane@email.com' ]
       });
-      expect(options.auth.user).toEqual('test-access-token');
+      expect(options.headers['authorization']).toEqual(`Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`);
     });
 
     testContext.connection.calendars.freeBusy(params);
@@ -63,10 +66,10 @@ describe('CalendarRestfulModelCollection', () => {
   test('[DELETE] should use correct route, method and auth', done => {
     expect.assertions(3);
     const calendarId = 'id123';
-    request.Request = jest.fn(options => {
-      expect(options.url).toEqual(`https://api.nylas.com/calendars/${calendarId}`);
+    fetch.Request = jest.fn((url, options) => {
+      expect(url.toString()).toEqual(`https://api.nylas.com/calendars/${calendarId}`);
       expect(options.method).toEqual('DELETE');
-      expect(options.auth.user).toEqual('test-access-token');
+      expect(options.headers['authorization']).toEqual(`Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`);
     });
 
     testContext.connection.calendars.delete(calendarId);
