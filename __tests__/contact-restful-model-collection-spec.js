@@ -1,4 +1,4 @@
-import request from 'request';
+import fetch from 'node-fetch';
 
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
@@ -7,6 +7,7 @@ import { Group } from '../src/models/contact';
 
 describe('RestfulModelCollection', () => {
   let testContext;
+  const testAccessToken = 'test-access-token';
 
   beforeEach(() => {
     Nylas.config({
@@ -14,7 +15,7 @@ describe('RestfulModelCollection', () => {
       clientSecret: 'myClientSecret',
     });
     testContext = {};
-    testContext.connection = new NylasConnection('test-access-token', {
+    testContext.connection = new NylasConnection(testAccessToken, {
       clientId: 'foo',
     });
     testContext.apiResponse = [{
@@ -30,10 +31,10 @@ describe('RestfulModelCollection', () => {
     test('should call API with correct authentication', done => {
       expect.assertions(3);
 
-      request.Request = jest.fn(options => {
-        expect(options.url).toEqual('https://api.nylas.com/contacts/groups');
+      fetch.Request = jest.fn((url, options) => {
+        expect(url.toString()).toEqual('https://api.nylas.com/contacts/groups');
         expect(options.method).toEqual('GET');
-        expect(options.auth.user).toEqual('test-access-token');
+        expect(options.headers['authorization']).toEqual(`Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`);
         done();
       });
 

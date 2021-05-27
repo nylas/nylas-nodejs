@@ -1,4 +1,4 @@
-import request from 'request';
+import fetch from 'node-fetch';
 
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
@@ -6,14 +6,16 @@ import Resource from '../src/models/resource';
 
 describe('Resource', () => {
   let testContext;
+  const testAccessToken = 'test-access-token';
 
   beforeEach(() => {
     Nylas.config({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
+      apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = new NylasConnection('test-access-token', {
+    testContext.connection = new NylasConnection(testAccessToken, {
       clientId: 'myClientId',
     });
     testContext.apiResponse = [{
@@ -30,11 +32,12 @@ describe('Resource', () => {
   describe('list resources', () => {
     test('should call API with correct authentication', done => {
       expect.assertions(3);
+      const defaultParams = "?offset=0&limit=100"
 
-      request.Request = jest.fn(options => {
-        expect(options.url).toEqual('https://api.nylas.com/resources');
+      fetch.Request = jest.fn((url, options) => {
+        expect(url.toString()).toEqual('https://api.nylas.com/resources' + defaultParams);
         expect(options.method).toEqual('GET');
-        expect(options.auth.user).toEqual('test-access-token');
+        expect(options.headers['authorization']).toEqual(`Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`);
         done();
       });
 
