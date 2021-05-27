@@ -1,4 +1,4 @@
-import request from 'request';
+import fetch from 'node-fetch';
 
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
@@ -6,14 +6,16 @@ import JobStatus from '../src/models/job-status';
 
 describe('Job Status', () => {
   let testContext;
+  const testAccessToken = 'test-access-token';
 
   beforeEach(() => {
     Nylas.config({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
+      apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = new NylasConnection('test-access-token', {
+    testContext.connection = new NylasConnection(testAccessToken, {
       clientId: 'myClientId',
     });
     testContext.listApiResponse = [{
@@ -47,11 +49,12 @@ describe('Job Status', () => {
   describe('list job statuses', () => {
     test('should call API with correct authentication', done => {
       expect.assertions(3);
+      const defaultParams = "?offset=0&limit=100"
 
-      request.Request = jest.fn(options => {
-        expect(options.url).toEqual('https://api.nylas.com/job-statuses');
+      fetch.Request = jest.fn((url, options) => {
+        expect(url.toString()).toEqual('https://api.nylas.com/job-statuses' + defaultParams);
         expect(options.method).toEqual('GET');
-        expect(options.auth.user).toEqual('test-access-token');
+        expect(options.headers['authorization']).toEqual(`Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`);
         done();
       });
 
@@ -80,10 +83,10 @@ describe('Job Status', () => {
     test('should call API with correct authentication', done => {
       expect.assertions(3);
 
-      request.Request = jest.fn(options => {
-        expect(options.url).toEqual('https://api.nylas.com/job-statuses/a1b2c3');
+      fetch.Request = jest.fn((url, options) => {
+        expect(url.toString()).toEqual('https://api.nylas.com/job-statuses/a1b2c3');
         expect(options.method).toEqual('GET');
-        expect(options.auth.user).toEqual('test-access-token');
+        expect(options.headers['authorization']).toEqual(`Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`);
         done();
       });
 

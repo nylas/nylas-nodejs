@@ -1,5 +1,5 @@
 import NylasConnection from '../src/nylas-connection';
-
+import * as config from '../src/config.ts';
 import PACKAGE_JSON from '../package.json';
 const SDK_VERSION = PACKAGE_JSON.version;
 
@@ -11,6 +11,7 @@ describe('NylasConnection', () => {
     testContext.connection = new NylasConnection('test-access-token', {
       clientId: 'foo',
     });
+    config.setApiServer("http://nylas.com")
   });
 
   describe('requestOptions', () => {
@@ -21,8 +22,9 @@ describe('NylasConnection', () => {
         qs: { expanded: true },
       };
       const result = testContext.connection.requestOptions(options);
-      expect(result.qs.expanded).toBeUndefined();
-      expect(result.qs.view).toEqual('expanded');
+      const params = result.url.searchParams;
+      expect(params.has("expanded")).toEqual(false);
+      expect(params.get("view")).toEqual('expanded');
       expect(result.headers['User-Agent']).toEqual(
         `Nylas Node SDK v${SDK_VERSION}`
       );
