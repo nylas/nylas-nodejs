@@ -139,7 +139,7 @@ class DeltaStream extends EventEmitter {
       queryObj.include_types = includeTypes.join(',');
     }
 
-    const request = this.connection.getRequest({
+    const request = this.connection.newRequest({
       method: 'GET',
       path,
       qs: queryObj,
