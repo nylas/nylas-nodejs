@@ -118,53 +118,13 @@ export default class NylasConnection {
     return options;
   }
 
-  getRequest(options: RequestOptions): Request {
-    const url = new URL(`${config.apiServer}${options.path}`);
-    // map querystring to search params
-    if (options.qs) {
-      for (const [key, value] of Object.entries(options.qs)) {
-        // For convenience, If `expanded` param is provided, convert to view:
-        // 'expanded' api option
-        if (key === 'expanded') {
-          if (value === true) {
-            url.searchParams.set('view', 'expanded');
-          }
-        } else if (Array.isArray(value)) {
-          for (const item of value) {
-            url.searchParams.append(key, item);
-          }
-        } else {
-          url.searchParams.set(key, value);
-        }
-      }
-    }
-    const headers = new Headers(options.headers);
-    const user =
-      options.path.substr(0, 3) === '/a/'
-        ? config.clientSecret
-        : this.accessToken;
-    if (user) {
-      const header = 'Basic ' + Buffer.from(`${user}:`, 'utf8').toString('base64');
-      headers.set('authorization', header);
-    }
-    if (!headers.has('User-Agent')) {
-      headers.set('User-Agent', `Nylas Node SDK v${SDK_VERSION}`);
-    }
-    headers.set('Nylas-API-Version', SUPPORTED_API_VERSION);
-    headers.set('Nylas-SDK-API-Version', SUPPORTED_API_VERSION);
-    if (this.clientId != null) {
-      headers.set('X-Nylas-Client-Id', this.clientId);
-    }
-    let body;
-    if (options.formData) {
-      body = options.formData;
-    } else if (options.body) {
-      body = JSON.stringify(options.body);
-    }
-    return new Request(url, {
-      method: options.method || 'GET',
-      headers,
-      body,
+  newRequest(options: RequestOptions): Request {
+    const newOptions = this.requestOptions(options);
+
+    return new Request(newOptions.url || '', {
+      method: newOptions.method || 'GET',
+      headers: newOptions.headers,
+      body: newOptions.body,
     });
   }
 
@@ -192,13 +152,7 @@ export default class NylasConnection {
   }
 
   request(options: RequestOptions) {
-    const newOptions = this.requestOptions(options);
-
-    const req = new Request(newOptions.url || '', {
-      method: newOptions.method || 'GET',
-      headers: newOptions.headers,
-      body: newOptions.body,
-    });
+    const req = this.newRequest(options);
     return new Promise<any>((resolve, reject) => {
       return fetch(req).then(response => {
         if (typeof response === 'undefined') {
