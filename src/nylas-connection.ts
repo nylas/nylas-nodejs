@@ -18,6 +18,7 @@ import JobStatus from './models/job-status';
 import Resource from './models/resource';
 import Delta from './models/delta';
 import {Folder, Label} from './models/folder';
+import FormData, {AppendOptions} from "form-data";
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -30,10 +31,15 @@ export type RequestOptions = {
   qs?: { [key: string]: any };
   downloadRequest?: boolean;
   json?: boolean;
-  formData?: any;
+  formData?: { [key: string]: FormDataType };
   body?: any;
   url?: URL;
 };
+
+export type FormDataType = {
+  value: any;
+  options?: { [key: string]: any } | AppendOptions;
+}
 
 export default class NylasConnection {
   accessToken: string | null | undefined;
@@ -110,7 +116,15 @@ export default class NylasConnection {
     options.headers = headers;
 
     if (options.formData) {
-      options.body = options.formData;
+      const fd = new FormData();
+      for(const [key, obj] of Object.entries(options.formData)) {
+        if(obj.options) {
+          fd.append(key, obj.value, obj.options);
+        } else {
+          fd.append(key, obj.value);
+        }
+      }
+      options.body = fd;
     } else if (options.body) {
       options.body = JSON.stringify(options.body);
     }
