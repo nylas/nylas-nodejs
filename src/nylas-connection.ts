@@ -41,6 +41,14 @@ export type FormDataType = {
   options?: { [key: string]: any } | AppendOptions;
 }
 
+export type NylasApiError = {
+  status_code: number;
+  type: string;
+  message: string;
+  missing_fields?: string[];
+  server_error?: string;
+}
+
 export default class NylasConnection {
   accessToken: string | null | undefined;
   clientId: string | null | undefined;
@@ -187,14 +195,16 @@ export default class NylasConnection {
 
         if (response.status > 299) {
           return response.json().then(body => {
-            const error = new Error(body.message);
+            const error: NylasApiError = {
+              status_code: response.status,
+              type: body.type,
+              message: body.message
+            }
             if (body.missing_fields) {
-              error.message = `${body.message}: ${body.missing_fields}`;
+              error.missing_fields = body.missing_fields;
             }
             if (body.server_error) {
-              error.message = `${error.message} (Server Error:
-              ${body.server_error}
-            )`;
+              error.server_error = body.server_error;
             }
             return reject(error);
           });
