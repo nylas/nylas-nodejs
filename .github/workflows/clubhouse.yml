@@ -1,0 +1,60 @@
+on:
+  pull_request:
+    types: [opened, closed, labeled]
+
+jobs:
+  clubhouse:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.draft == false }}
+    steps:
+      - uses: singingwolfboy/create-linked-clubhouse-story@v1.7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          clubhouse-token: ${{ secrets.CLUBHOUSE_TOKEN }}
+          project-name: Engineering
+          opened-state-name: Reviewing
+          merged-state-name: Merged
+          closed-state-name: Won't Pursue
+          ignored-users: dependabot
+          label-iteration-group-map: |
+            {
+              "Team Citadel": {
+                "groupId": "5fb68610-2b02-4e26-a5e1-f2ec20d6e176",
+                "excludeName": "Backlog"
+              }
+            }
+          user-map: |
+            {
+              "AaronDDM": "5f622398-b918-4e0a-8f87-495cbfb63682",
+              "BahramKouhestani: "5fa31422-7ab3-46c6-89ef-fbde9120a640",
+              "bengotow": "5d659cde-7f97-4da0-88c5-50c5c0c0053e",
+              "BenLloydPearson": "5d260325-a60e-4a03-99ee-3b614b1cedfd",
+              "benjaminwhtan": "5d89014d-8fda-49a1-8f8c-ce8c72cd1b96",
+              "billwjo": "5d2372c8-2f19-4409-a86c-97462c626d10",
+              "chorrell": "5f0dd62e-bd28-4eac-aec6-526c7a96b19c",
+              "danielliu": "607ddce2-652a-48a5-ae5f-0d42811ede81",
+              "davidting": "5e0e4200-3c79-4755-aab9-a4a16f8ddcf1",
+              "dominicj-nylas": "5e947e4e-d40e-477e-85d0-21f2b323c069",
+              "dtom90": "604fa1a5-f5ce-4c4e-908a-3a87c15db98d",
+	            "aiirwiick": "60ab71f2-b85d-4317-9018-df3e48e89dab",
+              "sammywen": "607da402-9bee-4ca4-80d5-b8f833840732",
+              "jesmarcannao": "5e441a1c-a7b5-40c8-8634-ef9f0bcce5c1",
+              "jhatch28": "5d0a9c4e-48a5-419b-a9b4-68fa672b96c9",
+              "jieunsharonkim": "5d03a446-3f70-4747-8bfd-af099463b4a4",
+              "jonafato": "5e9f1493-a9b5-436f-9c8b-c933631bbf8a",
+              "jseller": "604625a6-1d18-428e-a825-09233513387a",
+              "khamidou": "5d0ab326-3910-4ae8-b2f2-37bf2465d296",
+              "kdoby": "5d769b41-2f29-42a0-ac47-73ad93682db4",
+              "lkaileh": "5d23983d-49b8-4481-a947-87ff2bc56066",
+              "Gerdie": "5e1d52c6-7e82-4015-ab26-a59c357cfd4a",
+              "maxwell-schwartz": "5d48497f-0016-46f1-9a3c-149806c3599a",
+              "mypile": "60465c2b-1a8b-42dc-a467-d6d084d8f4f8",
+              "pfista": "5d0d0771-c540-4206-94b1-47e9fbef88b0",
+              "pengfeiye": "5d1533b0-fa0e-4557-a6fc-80e97923d817",
+              "peterdemarzio": "5e138a88-26cf-4814-b9fe-0c1f0ddcb8c0",
+              "philrenaud": "5e9f7a55-876b-453f-b137-b8677727fb81",
+              "spang": "5d13f026-00a6-4a9c-ba80-0048f43427f4",
+              "yusra-ahmed": "5d237850-e39b-4e75-8c52-89003602a59a",
+              "nylas-marcus": "5fc55708-44b9-41e8-aec0-004c3af90e69",
+              "mrashed-dev": "60b95d59-c018-48c0-8859-f7201ed502ae"
+            }
