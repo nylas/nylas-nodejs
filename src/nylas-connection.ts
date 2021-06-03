@@ -19,6 +19,7 @@ import Resource from './models/resource';
 import Delta from './models/delta';
 import {Folder, Label} from './models/folder';
 import FormData, {AppendOptions} from "form-data";
+import NylasApiError from "./models/NylasApiError";
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -39,14 +40,6 @@ export type RequestOptions = {
 export type FormDataType = {
   value: any;
   options?: { [key: string]: any } | AppendOptions;
-}
-
-export type NylasApiError = {
-  status_code: number;
-  type: string;
-  message: string;
-  missing_fields?: string[];
-  server_error?: string;
 }
 
 export default class NylasConnection {
@@ -195,16 +188,12 @@ export default class NylasConnection {
 
         if (response.status > 299) {
           return response.json().then(body => {
-            const error: NylasApiError = {
-              status_code: response.status,
-              type: body.type,
-              message: body.message
-            }
+            const error = new NylasApiError(response.status, body.type, body.message);
             if (body.missing_fields) {
-              error.missing_fields = body.missing_fields;
+              error.missingFields = body.missing_fields;
             }
             if (body.server_error) {
-              error.server_error = body.server_error;
+              error.serverError = body.server_error;
             }
             return reject(error);
           });
