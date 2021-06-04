@@ -17,7 +17,7 @@ export default class Calendar extends RestfulModel {
   }
 
   saveRequestBody() {
-    const calendarJSON = this.toJSON();
+    const calendarJSON = super.saveRequestBody();
     return {
       name: calendarJSON.name,
       description: calendarJSON.description,
