@@ -8,10 +8,12 @@ import RestfulModel from "./restful-model";
 export class Attribute {
   modelKey: string;
   jsonKey: string;
+  readOnly: boolean;
 
-  constructor({ modelKey, jsonKey }: { modelKey: string; jsonKey?: string }) {
+  constructor({ modelKey, jsonKey, readOnly }: { modelKey: string; jsonKey?: string; readOnly?: boolean }) {
     this.modelKey = modelKey;
     this.jsonKey = jsonKey || modelKey;
+    this.readOnly = readOnly || false;
   }
 
   toJSON(val: any) {
@@ -29,14 +31,16 @@ class AttributeObject extends Attribute {
     {
     modelKey,
     jsonKey,
-    itemClass
+    itemClass,
+    readOnly
   }: {
     modelKey: string;
     jsonKey?: string;
     itemClass?: typeof RestfulModel;
+    readOnly?: boolean;
   }
   ) {
-    super({ modelKey, jsonKey });
+    super({ modelKey, jsonKey, readOnly });
     this.itemClass = itemClass;
   }
 }
@@ -134,14 +138,16 @@ class AttributeCollection extends Attribute {
     {
     modelKey,
     jsonKey,
-    itemClass
+    itemClass,
+    readOnly
   }: {
     modelKey: string;
     jsonKey?: string;
     itemClass: typeof RestfulModel;
+    readOnly?: boolean;
   }
   ) {
-    super({ modelKey, jsonKey });
+    super({ modelKey, jsonKey, readOnly });
     this.itemClass = itemClass;
   }
 

@@ -56,8 +56,10 @@ export default class RestfulModel {
     const json: any = {};
     const attributes = this.attributes();
     for (const attrName in attributes) {
-      const attr = attributes[attrName];
-      json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
+      if (!attributes[attrName].readOnly) {
+        const attr = attributes[attrName];
+        json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
+      }
     }
     json['object'] = this.constructor.name.toLowerCase();
     return json;
