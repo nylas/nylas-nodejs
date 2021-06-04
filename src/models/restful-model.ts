@@ -163,6 +163,7 @@ export default class RestfulModel {
 (RestfulModel as any).attributes = {
   id: Attributes.String({
     modelKey: 'id',
+    readOnly: true,
   }),
   object: Attributes.String({
     modelKey: 'object',
@@ -170,5 +171,6 @@ export default class RestfulModel {
   accountId: Attributes.String({
     modelKey: 'accountId',
     jsonKey: 'account_id',
+    readOnly: true,
   }),
 };

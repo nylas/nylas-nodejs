@@ -136,6 +136,7 @@ Message.attributes = {
   files: Attributes.Collection({
     modelKey: 'files',
     itemClass: File,
+    readOnly: true
   }),
   events: Attributes.Collection({
     modelKey: 'events',
