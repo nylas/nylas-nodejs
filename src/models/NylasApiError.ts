@@ -45,16 +45,4 @@ export default class NylasApiError extends Error {
         this.name = this.errorMapping[statusCode];
         this.type = type;
     }
-
-    toString = () => {
-        return {
-            name: this.name,
-            message: this.message,
-            statusCode: this.statusCode,
-            type: this.type,
-            missingFields: this.missingFields,
-            serverError: this.serverError,
-            stack: this.stack
-        }
-    }
 }
