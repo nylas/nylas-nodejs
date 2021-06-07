@@ -11,7 +11,6 @@ export default class EventParticipant extends RestfulModel {
     if (!json['name']) {
       json['name'] = json['email'];
     }
-    delete json['object'];
     return json;
   }
 }

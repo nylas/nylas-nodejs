@@ -10,7 +10,6 @@ export default class EmailParticipant extends RestfulModel {
     if (!json['name']) {
       json['name'] = json['email'];
     }
-    delete json['object'];
     return json;
   }
 }

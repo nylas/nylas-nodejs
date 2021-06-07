@@ -61,7 +61,6 @@ export default class RestfulModel {
         json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
       }
     }
-    json['object'] = this.constructor.name.toLowerCase();
     return json;
   }
 
@@ -167,6 +166,7 @@ export default class RestfulModel {
   }),
   object: Attributes.String({
     modelKey: 'object',
+    readOnly: true,
   }),
   accountId: Attributes.String({
     modelKey: 'accountId',

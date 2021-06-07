@@ -8,18 +8,13 @@ export default class Resource extends RestfulModel {
   building?: string;
   floorName?: string;
   floorNumber?: string;
-
-  toJSON() {
-    const json = super.toJSON();
-    json['object'] = 'room_resource';
-    return json;
-  }
 }
 
 Resource.collectionName = 'resources';
 Resource.attributes = {
   object: Attributes.String({
     modelKey: 'object',
+    readOnly: true
   }),
   email: Attributes.String({
     modelKey: 'email',
