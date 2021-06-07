@@ -21,9 +21,6 @@ describe('Contact', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'contact',
-            account_id: undefined,
             given_name: undefined,
             middle_name: undefined,
             surname: undefined,
@@ -42,6 +39,7 @@ describe('Contact', () => {
             phone_numbers: [],
             web_pages: [],
             groups:[],
+            source: undefined,
           },
           qs: {},
           path: '/contacts',
@@ -55,9 +53,6 @@ describe('Contact', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'PUT',
           body: {
-            id: '1257',
-            object: 'contact',
-            account_id: undefined,
             given_name: undefined,
             middle_name: undefined,
             surname: undefined,
@@ -76,6 +71,7 @@ describe('Contact', () => {
             phone_numbers: [],
             web_pages: [],
             groups:[],
+            source: undefined,
           },
           qs: {},
           path: '/contacts/1257',

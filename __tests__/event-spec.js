@@ -18,17 +18,12 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             busy: undefined,
             title: undefined,
             description: undefined,
             location: undefined,
             when: undefined,
-            _start: undefined,
-            _end: undefined,
             participants: [],
           },
           qs: {},
@@ -44,17 +39,12 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'PUT',
           body: {
-            id: 'id-1234',
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             busy: undefined,
             title: undefined,
             description: undefined,
             location: undefined,
             when: undefined,
-            _start: undefined,
-            _end: undefined,
             participants: [],
           },
           qs: {},
@@ -69,16 +59,12 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             busy: undefined,
             title: undefined,
             description: undefined,
             location: undefined,
             when: undefined,
-            _start: undefined,
-            _end: undefined,
             participants: [],
           },
           qs: {
@@ -102,17 +88,12 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             busy: undefined,
             title: undefined,
             description: undefined,
             location: undefined,
             when: undefined,
-            _start: undefined,
-            _end: undefined,
             participants: [],
             recurrence: recurrence
           },
@@ -131,9 +112,6 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             message_id: undefined,
             busy: undefined,
@@ -163,9 +141,6 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             message_id: undefined,
             busy: undefined,
@@ -196,9 +171,6 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             message_id: undefined,
             busy: undefined,
@@ -228,9 +200,6 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             message_id: undefined,
             busy: undefined,
@@ -259,9 +228,6 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             message_id: undefined,
             busy: undefined,
@@ -291,9 +257,6 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             message_id: undefined,
             busy: undefined,
@@ -324,9 +287,6 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             message_id: undefined,
             busy: undefined,
@@ -356,9 +316,6 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             message_id: undefined,
             busy: undefined,
@@ -395,9 +352,6 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             message_id: undefined,
             busy: undefined,
@@ -426,9 +380,6 @@ describe('Event', () => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           body: {
-            id: undefined,
-            object: 'event',
-            account_id: undefined,
             calendar_id: undefined,
             busy: undefined,
             title: undefined,
