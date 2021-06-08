@@ -56,7 +56,7 @@ export default class NylasConnection {
   deltas = new Delta(this);
   labels: RestfulModelCollection<Label> = new RestfulModelCollection(Label, this);
   folders: RestfulModelCollection<Folder> = new RestfulModelCollection(Folder, this);
-  account = new RestfulModelInstance(Account, this);
+  account: RestfulModelInstance<Account> =  new RestfulModelInstance(Account, this);
 
   constructor(
     accessToken: string | null | undefined,

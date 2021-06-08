@@ -1,7 +1,7 @@
 import NylasConnection from '../nylas-connection';
 import RestfulModel from './restful-model';
 
-export default class RestfulModelInstance {
+export default class RestfulModelInstance<T extends RestfulModel> {
   connection: NylasConnection;
   modelClass: typeof RestfulModel;
 
@@ -20,7 +20,7 @@ export default class RestfulModelInstance {
     return `/${this.modelClass.endpointName}`;
   }
 
-  get(params: { [key: string]: any } = {}) {
+  get(params: { [key: string]: any } = {}): Promise<T> {
     return this.connection
       .request({
         method: 'GET',
@@ -28,7 +28,7 @@ export default class RestfulModelInstance {
         qs: params,
       })
       .then(json => {
-        const model = new this.modelClass(this.connection, json);
+        const model = new this.modelClass(this.connection, json) as T;
         return Promise.resolve(model);
       });
   }
