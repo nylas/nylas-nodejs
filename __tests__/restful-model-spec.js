@@ -201,5 +201,17 @@ describe('RestfulModel', () => {
       });
       expect(() => testContext.model.toJSON()).toThrow();
     });
+
+    test('if enforceReadOnly is set to true, ignore read only values', () => {
+      const model = new RestfulModel(testContext.connection, {
+        object: 'thread',
+        id: '123',
+        accountId: '123abc'
+      });
+      const json = model.toJSON(true);
+      expect(json.id).toBeUndefined();
+      expect(json.object).toBeUndefined();
+      expect(json.account_id).toBeUndefined();
+    })
   });
 });
