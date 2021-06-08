@@ -3,7 +3,7 @@ import NylasConnection from '../nylas-connection';
 import RestfulModel from './restful-model';
 import RestfulModelCollection from './restful-model-collection';
 
-export default class ContactRestfulModelCollection<Contact> extends RestfulModelCollection<RestfulModel> {
+export default class ContactRestfulModelCollection extends RestfulModelCollection<Contact> {
   connection: NylasConnection;
   modelClass: typeof Contact;
 

@@ -8,11 +8,9 @@ import ContactRestfulModelCollection from './models/contact-restful-model-collec
 import RestfulModelInstance from './models/restful-model-instance';
 import Account from './models/account';
 import Thread from './models/thread';
-import {Contact} from './models/contact';
 import Message from './models/message';
 import Draft from './models/draft';
 import File from './models/file';
-import Calendar from './models/calendar';
 import Event from './models/event';
 import JobStatus from './models/job-status';
 import Resource from './models/resource';
@@ -47,11 +45,11 @@ export default class NylasConnection {
   clientId: string | null | undefined;
 
   threads: RestfulModelCollection<Thread> = new RestfulModelCollection(Thread, this);
-  contacts: ContactRestfulModelCollection<Contact> = new ContactRestfulModelCollection(this);
+  contacts: ContactRestfulModelCollection = new ContactRestfulModelCollection(this);
   messages: RestfulModelCollection<Message> = new RestfulModelCollection(Message, this);
   drafts: RestfulModelCollection<Draft> = new RestfulModelCollection(Draft, this);
   files: RestfulModelCollection<File> = new RestfulModelCollection(File, this);
-  calendars: CalendarRestfulModelCollection<Calendar> = new CalendarRestfulModelCollection(this);
+  calendars: CalendarRestfulModelCollection = new CalendarRestfulModelCollection(this);
   jobStatuses: RestfulModelCollection<JobStatus> = new RestfulModelCollection(JobStatus, this);
   events: RestfulModelCollection<Event> = new RestfulModelCollection(Event, this);
   resources: RestfulModelCollection<Resource> = new RestfulModelCollection(Resource, this);

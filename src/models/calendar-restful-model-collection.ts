@@ -3,7 +3,7 @@ import NylasConnection from '../nylas-connection';
 import RestfulModel from './restful-model';
 import RestfulModelCollection from './restful-model-collection';
 
-export default class CalendarRestfulModelCollection<Calendar> extends RestfulModelCollection<RestfulModel> {
+export default class CalendarRestfulModelCollection extends RestfulModelCollection<Calendar> {
   connection: NylasConnection;
   modelClass: typeof Calendar;
 
