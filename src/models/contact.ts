@@ -157,12 +157,6 @@ WebPage.attributes = {
 export class Group extends RestfulModel {
   type?: string;
   path?: string;
-
-  toJSON() {
-    const json = super.toJSON();
-    json['object'] = 'contact_group';
-    return json;
-  }
 }
 
 Group.collectionName = 'groups';

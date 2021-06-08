@@ -1,6 +1,6 @@
 import ManagementModel from './management-model';
 import Attributes from './attributes';
-import { SaveCallback } from './restful-model';
+import {SaveCallback} from './restful-model';
 
 export default class Webhook extends ManagementModel {
   id?: string;
@@ -29,11 +29,6 @@ export default class Webhook extends ManagementModel {
   }
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
-  }
-  toJSON() {
-    const json = super.toJSON();
-    delete json['object'];
-    return json;
   }
 }
 

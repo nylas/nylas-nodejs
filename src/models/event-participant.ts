@@ -6,12 +6,11 @@ export default class EventParticipant extends RestfulModel {
   email?: string;
   status?: string;
 
-  toJSON() {
-    const json = super.toJSON();
+  toJSON(enforceReadOnly?: boolean) {
+    const json = super.toJSON(enforceReadOnly);
     if (!json['name']) {
       json['name'] = json['email'];
     }
-    delete json['object'];
     return json;
   }
 }

@@ -11,13 +11,12 @@ export default class Draft extends Message {
   replyToMessageId?: string;
   version?: number;
 
-  toJSON() {
+  toJSON(enforceReadOnly?: boolean) {
     if (this.rawMime) {
       throw Error('toJSON() cannot be called for raw MIME drafts');
     }
-    const json = super.toJSON();
+    const json = super.toJSON(enforceReadOnly);
     json.file_ids = super.fileIds();
-    json.object = 'draft';
 
     return json;
   }

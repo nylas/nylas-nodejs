@@ -52,14 +52,15 @@ export default class RestfulModel {
     return this;
   }
 
-  toJSON() {
+  toJSON(enforceReadOnly?: boolean) {
     const json: any = {};
     const attributes = this.attributes();
     for (const attrName in attributes) {
-      const attr = attributes[attrName];
-      json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
+      if (!enforceReadOnly || !attributes[attrName].readOnly) {
+        const attr = attributes[attrName];
+        json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
+      }
     }
-    json['object'] = this.constructor.name.toLowerCase();
     return json;
   }
 
@@ -76,7 +77,7 @@ export default class RestfulModel {
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
   // fields the API allows updating. Subclasses should override this method.
   saveRequestBody() {
-    return this.toJSON();
+    return this.toJSON(true);
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
@@ -161,12 +162,15 @@ export default class RestfulModel {
 (RestfulModel as any).attributes = {
   id: Attributes.String({
     modelKey: 'id',
+    readOnly: true,
   }),
   object: Attributes.String({
     modelKey: 'object',
+    readOnly: true,
   }),
   accountId: Attributes.String({
     modelKey: 'accountId',
     jsonKey: 'account_id',
+    readOnly: true,
   }),
 };
