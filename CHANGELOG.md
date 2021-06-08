@@ -4,6 +4,9 @@
 * Fix bug where saving a `draft` object with an undefined `filesIds` would throw an error
 * Replaced deprecated `request` library with `node-fetch`
 * Add custom error class `NylasApiError` to add more error details returned from the API
+* Add support for read only fields
+* Enabled Nylas API v2.2 support
+* Fix typings for classes that extend `RestfulModelCollection` or `RestfulModelInstance`
 
 ### 5.4.0 / 2020-05-21
 * Add `metadata` field in the Event model to support new Event metadata feature
