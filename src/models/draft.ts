@@ -17,7 +17,6 @@ export default class Draft extends Message {
     }
     const json = super.toJSON(enforceReadOnly);
     json.file_ids = super.fileIds();
-    json.object = 'draft';
 
     return json;
   }
