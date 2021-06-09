@@ -17,7 +17,7 @@ import Resource from './models/resource';
 import Delta from './models/delta';
 import {Folder, Label} from './models/folder';
 import FormData, {AppendOptions} from "form-data";
-import NylasApiError from "./models/NylasApiError";
+import NylasApiError from "./models/nylas-api-error";
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;

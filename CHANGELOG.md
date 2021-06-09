@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 5.5.0 / 2020-05-21
 * Fix bug where saving a `draft` object with an undefined `filesIds` would throw an error
 * Replaced deprecated `request` library with `node-fetch`
 * Add custom error class `NylasApiError` to add more error details returned from the API
