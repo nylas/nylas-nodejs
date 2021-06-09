@@ -1,6 +1,6 @@
 # Changelog
 
-### 5.5.0 / 2020-05-21
+### 5.5.0 / 2021-06-09]
 * Fix bug where saving a `draft` object with an undefined `filesIds` would throw an error
 * Replaced deprecated `request` library with `node-fetch`
 * Add custom error class `NylasApiError` to add more error details returned from the API
@@ -8,17 +8,17 @@
 * Enabled Nylas API v2.2 support
 * Fix typings for classes that extend `RestfulModelCollection` or `RestfulModelInstance`
 
-### 5.4.0 / 2020-05-21
+### 5.4.0 / 2021-05-21
 * Add `metadata` field in the Event model to support new Event metadata feature
 * Add support for filtering `metadata` using `metadata_key`, `metadata_value`, and `metadata_pair`
 * Updated dependencies `lodash`, `y18n`, and `pug` to the latest stable version
 
-### 5.3.3 / 2020-03-26
+### 5.3.3 / 2021-03-26
 * Pass error message from the API to the SDK user
 * Migrate `delta` streaming to `node-fetch`
 * Migrate `exchangeCodeForToken` to `node-fetch`
 
-### 5.3.2 / 2020-01-11
+### 5.3.2 / 2021-01-11
 * Typing fixes to `nylas.drafts` and other `RestfulModelCollections`
 
 ### 5.3.1 / 2020-11-20
