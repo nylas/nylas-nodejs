@@ -57,7 +57,6 @@
     "@types/backoff": "^2.5.1",
     "@types/jest": "^25.1.4",
     "@types/node-fetch": "^2.5.8",
-    "@types/request": "^2.48.4",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
     "babel-eslint": "^10.0.1",
@@ -67,7 +66,6 @@
     "jest": "^24.9.0",
     "prettier": "^1.16.4",
     "pretty-format": "^25.2.6",
-    "request": "^2.88.0",
     "ts-jest": "^25.2.1",
     "typescript": "^3.8.3"
   },
