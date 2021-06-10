@@ -1,7 +1,7 @@
 # Changelog
 
 ### Unreleased
-* Fix tracking object not being added to an pre-existing `draft` object
+* Fix tracking object not being added to a pre-existing `draft` object
 
 ### 5.5.0 / 2021-06-09
 * Fix bug where saving a `draft` object with an undefined `filesIds` would throw an error
