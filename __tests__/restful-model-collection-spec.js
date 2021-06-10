@@ -1,5 +1,3 @@
-import request from 'request';
-
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import RestfulModelCollection from '../src/models/restful-model-collection';

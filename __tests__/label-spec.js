@@ -1,5 +1,3 @@
-import request from 'request';
-
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import Message from '../src/models/message';
