@@ -155,6 +155,25 @@ describe('Draft', () => {
       });
     });
 
+    test('should send the draft JSON with the tracking object if the draft has an id and has a tracking object passed in', done => {
+      testContext.draft.id = 'id-1234';
+      testContext.draft.version = 2;
+      testContext.draft.send({"opens": true}).then(() => {
+        expect(testContext.connection.request).toHaveBeenCalledWith({
+          method: 'POST',
+          body: {
+            draft_id: 'id-1234',
+            version: 2,
+            tracking: {"opens": true}
+          },
+          path: '/send',
+          headers: {},
+          json: true,
+        });
+        done();
+      });
+    });
+
     test('should send the draft JSON if the draft has no id', done => {
       testContext.draft.id = undefined;
       testContext.draft.subject = 'Test Subject';
@@ -190,7 +209,7 @@ describe('Draft', () => {
       });
     });
 
-    test('should send the draft JSON if the draft has no id and has a tracking object passed in as the second parameter', done => {
+    test('should send the draft JSON with the tracking object if the draft has no id and has a tracking object passed in as the second parameter', done => {
       testContext.draft.id = undefined;
       testContext.draft.subject = 'Test Subject';
       testContext.draft.send(null, {"opens": true}).then(() => {
@@ -226,7 +245,7 @@ describe('Draft', () => {
       });
     });
 
-    test('should send the draft JSON if the draft has a tracking object as the only parameter', done => {
+    test('should send the draft JSON with the tracking object if the draft has a tracking object as the only parameter', done => {
       testContext.draft.id = undefined;
       testContext.draft.subject = 'Test Subject';
       testContext.draft.send({"opens": true}).then(() => {
@@ -262,7 +281,7 @@ describe('Draft', () => {
       });
     });
 
-    test('should send the draft JSON if the draft has no id and has a tracking object passed in as the first parameter', done => {
+    test('should send the draft JSON with the tracking object if the draft has no id and has a tracking object passed in as the first parameter', done => {
       testContext.draft.id = undefined;
       testContext.draft.subject = 'Test Subject';
       testContext.draft.send({"opens": true}, (err, data) => {}).then(() => {

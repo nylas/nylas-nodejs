@@ -1,6 +1,10 @@
 # Changelog
 
-### 5.5.0 / 2021-06-09]
+### Unreleased
+* Fix tracking object not being added to a pre-existing `draft` object
+* Removed `request` dependency and related import statements
+
+### 5.5.0 / 2021-06-09
 * Fix bug where saving a `draft` object with an undefined `filesIds` would throw an error
 * Replaced deprecated `request` library with `node-fetch`
 * Add custom error class `NylasApiError` to add more error details returned from the API

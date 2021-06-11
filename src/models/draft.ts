@@ -87,9 +87,9 @@ export default class Draft extends Message {
         };
       } else {
         body = this.saveRequestBody();
-        if (tracking) {
-          body['tracking'] = tracking;
-        }
+      }
+      if (tracking) {
+        body['tracking'] = tracking;
       }
     }
 
