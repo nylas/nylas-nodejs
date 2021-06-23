@@ -94,7 +94,6 @@ export default class NylasConnection {
     }
     options.url = url;
 
-    // const headers: HeadersInit = new Headers(options.headers);
     const headers = {...options.headers}
     const user =
         options.path.substr(0, 3) === '/a/'
@@ -109,7 +108,6 @@ export default class NylasConnection {
     headers['Nylas-API-Version'] = SUPPORTED_API_VERSION;
     headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
     if (this.clientId != null) {
-      // headers.set('X-Nylas-Client-Id', this.clientId);
       headers['X-Nylas-Client-Id'] = this.clientId;
     }
     options.headers = headers;
