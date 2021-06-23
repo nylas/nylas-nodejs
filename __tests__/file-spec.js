@@ -1,14 +1,49 @@
-import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import File from '../src/models/file';
+import fetch from "node-fetch";
+import Nylas from "../src/nylas";
+
+jest.mock('node-fetch', () => {
+  const { Request, Response } = jest.requireActual('node-fetch');
+  const fetch = jest.fn();
+  fetch.Request = Request;
+  fetch.Response = Response;
+  return fetch;
+});
 
 describe('File', () => {
   let testContext;
 
   beforeEach(() => {
+    Nylas.config({
+      clientId: 'myClientId',
+      clientSecret: 'myClientSecret',
+      apiServer: 'https://api.nylas.com',
+    });
     testContext = {};
     testContext.connection = new NylasConnection('123', { clientId: 'foo' });
-    testContext.connection.request = jest.fn(() => Promise.resolve());
+    jest.spyOn(testContext.connection, 'request');
+
+    const headers = new Map();
+    headers.set("header1", "1");
+    headers.set("header2", "2");
+    const response = {
+      status: 200,
+      buffer: () => {
+        return Promise.resolve("body");
+      },
+      json: () => {
+        return Promise.resolve(JSON.stringify({
+          body: "body"
+        }));
+      },
+      headers: headers
+    };
+
+    fetch.mockImplementation(() =>
+        Promise.resolve(response)
+    );
+
     testContext.file = new File(testContext.connection);
     testContext.file.data = 'Sample data';
     testContext.file.contentType = 'text/plain';
@@ -42,43 +77,47 @@ describe('File', () => {
     });
 
     test('should do a POST request', done => {
-      testContext.file.upload().catch(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          json: false,
-          path: '/files',
-          formData: {
-            file: {
-              value: 'Sample data',
-              options: {
-                filename: 'sample.txt',
-                contentType: 'text/plain',
-              },
+      testContext.file.upload().then(() => {
+        const callParams = testContext.connection.request.mock.calls[0][0];
+        const expectedFormData = {
+          file: {
+            value: 'Sample data',
+                options: {
+              filename: 'sample.txt',
+                  contentType: 'text/plain',
             },
           },
-        });
+        };
+
+        expect(callParams['method']).toEqual("POST");
+        expect(callParams['json']).toBe(false);
+        expect(callParams['path']).toEqual("/files");
+        expect(callParams['formData']).toEqual(expectedFormData);
+        expect(typeof callParams['body']).toBe("object");
         done();
       });
     });
 
     test('should add knownLength to the request formData', done => {
       testContext.file.size = 12345;
-      testContext.file.upload().catch(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          json: false,
-          path: '/files',
-          formData: {
-            file: {
-              value: 'Sample data',
-              options: {
-                filename: 'sample.txt',
-                contentType: 'text/plain',
-                knownLength: 12345
-              },
+      testContext.file.upload().then(() => {
+        const callParams = testContext.connection.request.mock.calls[0][0];
+        const expectedFormData = {
+          file: {
+            value: 'Sample data',
+            options: {
+              filename: 'sample.txt',
+              contentType: 'text/plain',
+              knownLength: 12345
             },
           },
-        });
+        };
+
+        expect(callParams['method']).toEqual("POST");
+        expect(callParams['json']).toBe(false);
+        expect(callParams['path']).toEqual("/files");
+        expect(callParams['formData']).toEqual(expectedFormData);
+        expect(typeof callParams['body']).toBe("object");
         done();
       });
     });
@@ -147,38 +186,23 @@ describe('File', () => {
             expect(err).toBe(testContext.error);
             expect(file).toBe(undefined);
             done();
-          })
-          .catch(() => {});
+          });
       });
     });
   });
 
   describe('download', () => {
     test('should do a GET request', done => {
-      testContext.file.download().catch(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          path: '/files/fileId/download',
-          downloadRequest: true,
-        });
+      testContext.file.download().then(() => {
+        const callParams = testContext.connection.request.mock.calls[0][0];
+
+        expect(callParams['downloadRequest']).toBe(true);
+        expect(callParams['path']).toBe('/files/fileId/download');
         done();
       });
     });
 
     describe('when the request succeeds', () => {
-      beforeEach(() => {
-        testContext.connection.request = jest.fn(() => {
-          const response = {
-            headers: {
-              header1: '1',
-              header2: '2',
-            },
-            body: 'body',
-            otherField: 'other',
-          };
-          return Promise.resolve(response);
-        });
-      });
-
       test('should resolve with the file information', done => {
         testContext.file.download().then(file => {
           const fileInfo = {
@@ -226,17 +250,16 @@ describe('File', () => {
             expect(err).toBe(testContext.error);
             expect(file).toBe(undefined);
             done();
-          })
-          .catch(() => {});
+          });
       });
     });
   });
 
   describe('metadata', () => {
     test('should do a GET request', () => {
-      testContext.file.metadata();
-      expect(testContext.connection.request).toHaveBeenCalledWith({
-        path: '/files/fileId',
+      testContext.file.metadata().then(() => {
+        const callParams = testContext.connection.request.mock.calls[0][0];
+        expect(callParams['path']).toEqual('/files/fileId/download');
       });
     });
 
@@ -311,8 +334,7 @@ describe('File', () => {
             expect(err).toBe(testContext.error);
             expect(file).toBe(undefined);
             done();
-          })
-          .catch(() => {});
+          });
       });
     });
   });
