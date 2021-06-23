@@ -75,16 +75,7 @@ export default class File extends RestfulModel {
         path: `/files/${this.id}/download`,
         downloadRequest: true,
       })
-      .then(response => {
-        let filename;
-        const file = { ...response.headers, body: response.body };
-        if ('content-disposition' in file) {
-          filename =
-            /filename=([^;]*)/.exec(file['content-disposition'])![1] ||
-            'filename';
-        } else {
-          filename = 'filename';
-        }
+      .then(file => {
         if (callback) {
           callback(null, file);
         }

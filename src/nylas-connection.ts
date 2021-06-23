@@ -197,7 +197,17 @@ export default class NylasConnection {
           });
         } else {
           if (options.downloadRequest) {
-            return resolve(response.body);
+            response.buffer().then(buffer => {
+              // Return an object with the headers and the body as a buffer
+              const fileDetails: { [key: string]: any } = {};
+              response.headers.forEach((v, k) => {
+                fileDetails[k] = v;
+              });
+              fileDetails['body'] = buffer;
+              return resolve(fileDetails);
+            }).catch(e => {
+              return reject(e);
+            })
           } else {
             return resolve(response.json());
           }
