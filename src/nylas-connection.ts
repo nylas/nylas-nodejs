@@ -94,7 +94,6 @@ export default class NylasConnection {
     }
     options.url = url;
 
-    // const headers: HeadersInit = new Headers(options.headers);
     const headers = {...options.headers}
     const user =
         options.path.substr(0, 3) === '/a/'
@@ -109,7 +108,6 @@ export default class NylasConnection {
     headers['Nylas-API-Version'] = SUPPORTED_API_VERSION;
     headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
     if (this.clientId != null) {
-      // headers.set('X-Nylas-Client-Id', this.clientId);
       headers['X-Nylas-Client-Id'] = this.clientId;
     }
     options.headers = headers;
@@ -197,7 +195,17 @@ export default class NylasConnection {
           });
         } else {
           if (options.downloadRequest) {
-            return resolve(response.body);
+            response.buffer().then(buffer => {
+              // Return an object with the headers and the body as a buffer
+              const fileDetails: { [key: string]: any } = {};
+              response.headers.forEach((v, k) => {
+                fileDetails[k] = v;
+              });
+              fileDetails['body'] = buffer;
+              return resolve(fileDetails);
+            }).catch(e => {
+              return reject(e);
+            })
           } else {
             return resolve(response.json());
           }
