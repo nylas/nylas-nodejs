@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 5.5.1 / 2021-06-24
 * Fix tracking object not being added to a pre-existing `draft` object
 * Removed `request` dependency and related import statements
 * Fix `undefined` response when downloading file
