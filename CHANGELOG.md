@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+* Fixed Jest test cases not respecting async methods
+* Fixed issue with parsing raw MIME emails
+
 ### 5.5.1 / 2021-06-24
 * Fix tracking object not being added to a pre-existing `draft` object
 * Removed `request` dependency and related import statements
