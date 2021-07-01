@@ -206,6 +206,8 @@ export default class NylasConnection {
             }).catch(e => {
               return reject(e);
             })
+          } else if(response.headers.get('message/rfc822')) {
+            return resolve(response.text());
           } else {
             return resolve(response.json());
           }

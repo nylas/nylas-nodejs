@@ -1,6 +1,4 @@
-import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
-import Account from '../src/models/account';
 
 describe('account', () => {
   let testContext;
@@ -35,14 +33,14 @@ describe('account', () => {
   });
 
   test('account attributes should resolve', done => {
-    testContext.connection.account.get().then(function(account) {
+     testContext.connection.account.get().then(function(account) {
       expect(account.id).toBe('hecea680y4sborshkiraj17c');
       expect(account.emailAddress).toBe('jeremy@emmerge.com');
       expect(account.organizationUnit).toBe('folder');
       expect(account.provider).toBe('eas');
       expect(account.syncState).toBe('running');
       expect(account.linkedAt).toEqual(new Date(linkedAtNum * 1000));
+      done();
     });
-    done();
   });
 });

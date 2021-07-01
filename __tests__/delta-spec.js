@@ -1,3 +1,9 @@
+import { PassThrough } from 'stream';
+import fetch, { Response } from 'node-fetch';
+import * as config from '../src/config.ts';
+import Delta from '../src/models/delta';
+import NylasConnection from '../src/nylas-connection';
+
 jest.mock('node-fetch', () => {
   const { Request, Response, Headers } = jest.requireActual('node-fetch');
   const fetch = jest.fn();
@@ -6,13 +12,6 @@ jest.mock('node-fetch', () => {
   fetch.Headers = Headers;
   return fetch;
 });
-
-import { EventEmitter } from 'events';
-import { PassThrough } from 'stream';
-import fetch, { Response } from 'node-fetch';
-import * as config from '../src/config.ts';
-import Delta from '../src/models/delta';
-import NylasConnection from '../src/nylas-connection';
 
 describe('Delta', () => {
   let testContext;
@@ -25,7 +24,7 @@ describe('Delta', () => {
   });
 
   describe('startStream (delta streaming)', () => {
-    config.setApiServer('http://nylas.com');
+    config.setApiServer('https://api.nylas.com');
 
     // Listens to the 'delta' event on the stream and pushes them to the returned array.
     const observeDeltas = stream => {
@@ -177,29 +176,33 @@ describe('Delta', () => {
   });
 
   describe('latestCursor', () => {
-    test('returns a cursor', () => {
+    test('returns a cursor', done => {
       testContext.connection.request = jest.fn(() =>
         Promise.resolve({ cursor: 'abcdefg' })
       );
 
-      testContext.delta.latestCursor((err, cursor) =>
-        expect(cursor).toEqual('abcdefg')
+      return testContext.delta.latestCursor(() => {
+        // do nothing.
+      }).then(cursor => {
+          expect(cursor).toEqual('abcdefg');
+          expect(testContext.connection.request).toHaveBeenCalledWith({
+            method: 'POST',
+            path: '/delta/latest_cursor',
+          });
+          done();
+        }
       );
-
-      expect(testContext.connection.request).toHaveBeenCalledWith({
-        method: 'POST',
-        path: '/delta/latest_cursor',
-      });
     });
 
-    test('returns a null cursor in case of an error', () => {
+    test('returns a null cursor in case of an error', done => {
       testContext.connection.request = jest.fn(() => Promise.reject('Error.'));
-      testContext.delta
-        .latestCursor((err, cursor) => {
-          expect(err).toEqual('Error.');
-          expect(cursor).toEqual(null);
-        })
-        .catch(err => {});
+      return testContext.delta
+        .latestCursor(() => {
+          // do nothing.
+        }).catch(e => {
+          expect(e).toEqual('Error.');
+          done();
+        });
     });
   });
 });

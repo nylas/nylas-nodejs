@@ -35,7 +35,7 @@ export default class File extends RestfulModel {
       .request({
         method: 'POST',
         path: `/${File.collectionName}`,
-        json: false,
+        json: true,
         formData: {
           file: {
             value: this.data,
