@@ -17,6 +17,10 @@ describe('Nylas', () => {
     Nylas.clientId = undefined;
     Nylas.clientSecret = undefined;
     Nylas.apiServer = 'https://api.nylas.com';
+
+    fetch.mockImplementation(() =>
+        Promise.resolve(new Response('{"access_token":"12345"}'))
+    );
   });
 
   describe('config', () => {
@@ -91,17 +95,11 @@ describe('Nylas', () => {
     });
 
     test('should return a promise', () => {
-      fetch.mockImplementation(() =>
-        Promise.resolve(new Response('{"access_token":"12345"}'))
-      );
       const p = Nylas.exchangeCodeForToken('code-from-server');
       expect(p).toBeInstanceOf(Promise);
     });
 
     test('should make a request to /oauth/token with the correct grant_type and client params', async () => {
-      fetch.mockImplementation(() =>
-        Promise.resolve(new Response('{"access_token":"12345"}'))
-      );
       await Nylas.exchangeCodeForToken('code-from-server');
       const search =
         'client_id=newId&client_secret=newSecret&grant_type=authorization_code&code=code-from-server';
@@ -110,9 +108,6 @@ describe('Nylas', () => {
     });
 
     test('should resolve with the returned access_token', async () => {
-      fetch.mockImplementation(() =>
-        Promise.resolve(new Response('{"access_token":"12345"}'))
-      );
       const accessToken = await Nylas.exchangeCodeForToken('code-from-server');
       expect(accessToken).toEqual('12345');
     });
@@ -170,7 +165,9 @@ describe('Nylas', () => {
             expect(returnedError).toEqual(error);
             done();
           }
-        );
+        ).catch(() => {
+          // do nothing
+        });
       });
     });
   });

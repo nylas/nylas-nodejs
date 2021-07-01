@@ -27,21 +27,26 @@ describe('File', () => {
     const headers = new Map();
     headers.set("header1", "1");
     headers.set("header2", "2");
-    const response = {
-      status: 200,
-      buffer: () => {
-        return Promise.resolve("body");
-      },
-      json: () => {
-        return Promise.resolve(JSON.stringify({
-          body: "body"
-        }));
-      },
-      headers: headers
+    const response = receivedBody => {
+      return {
+        status: 200,
+        buffer: () => {
+          return Promise.resolve("body");
+        },
+        json: () => {
+          // Just a placeholder so that we can mimic returning data after uploading
+          // This data is not used
+          if(receivedBody === null || receivedBody.constructor.name === 'FormData') {
+            return Promise.resolve([JSON.stringify(testContext.file.toJSON())]);
+          }
+          return Promise.resolve(receivedBody);
+        },
+        headers: headers
+      }
     };
 
-    fetch.mockImplementation(() =>
-        Promise.resolve(response)
+    fetch.mockImplementation(req =>
+        Promise.resolve(response(req.body))
     );
 
     testContext.file = new File(testContext.connection);
@@ -77,7 +82,7 @@ describe('File', () => {
     });
 
     test('should do a POST request', done => {
-      testContext.file.upload().then(() => {
+      return testContext.file.upload().then(() => {
         const callParams = testContext.connection.request.mock.calls[0][0];
         const expectedFormData = {
           file: {
@@ -90,7 +95,7 @@ describe('File', () => {
         };
 
         expect(callParams['method']).toEqual("POST");
-        expect(callParams['json']).toBe(false);
+        expect(callParams['json']).toBe(true);
         expect(callParams['path']).toEqual("/files");
         expect(callParams['formData']).toEqual(expectedFormData);
         expect(typeof callParams['body']).toBe("object");
@@ -100,7 +105,7 @@ describe('File', () => {
 
     test('should add knownLength to the request formData', done => {
       testContext.file.size = 12345;
-      testContext.file.upload().then(() => {
+      return testContext.file.upload().then(() => {
         const callParams = testContext.connection.request.mock.calls[0][0];
         const expectedFormData = {
           file: {
@@ -114,7 +119,7 @@ describe('File', () => {
         };
 
         expect(callParams['method']).toEqual("POST");
-        expect(callParams['json']).toBe(false);
+        expect(callParams['json']).toBe(true);
         expect(callParams['path']).toEqual("/files");
         expect(callParams['formData']).toEqual(expectedFormData);
         expect(typeof callParams['body']).toBe("object");
@@ -140,7 +145,7 @@ describe('File', () => {
       });
 
       test('should resolve with the file object', done => {
-        testContext.file.upload().then(file => {
+        return testContext.file.upload().then(file => {
           expect(file.accountId).toBe('aid-5678');
           expect(file.contentType).toBe('text/plain');
           expect(file.filename).toBe('sample.txt');
@@ -152,7 +157,7 @@ describe('File', () => {
       });
 
       test('should call the callback with the file object', done => {
-        testContext.file.upload((err, file) => {
+        return testContext.file.upload((err, file) => {
           expect(err).toBe(null);
           expect(file.accountId).toBe('aid-5678');
           expect(file.contentType).toBe('text/plain');
@@ -174,18 +179,22 @@ describe('File', () => {
       });
 
       test('should reject with the error', done => {
-        testContext.file.upload().catch(err => {
+        return testContext.file.upload().catch(err => {
           expect(err).toBe(testContext.error);
           done();
+        }).catch(() => {
+          // do nothing
         });
       });
 
       test('should call the callback with the error', done => {
-        testContext.file
+        return testContext.file
           .upload((err, file) => {
             expect(err).toBe(testContext.error);
             expect(file).toBe(undefined);
             done();
+          }).catch(() => {
+            // do nothing
           });
       });
     });
@@ -193,7 +202,7 @@ describe('File', () => {
 
   describe('download', () => {
     test('should do a GET request', done => {
-      testContext.file.download().then(() => {
+      return testContext.file.download().then(() => {
         const callParams = testContext.connection.request.mock.calls[0][0];
 
         expect(callParams['downloadRequest']).toBe(true);
@@ -204,7 +213,7 @@ describe('File', () => {
 
     describe('when the request succeeds', () => {
       test('should resolve with the file information', done => {
-        testContext.file.download().then(file => {
+        return testContext.file.download().then(file => {
           const fileInfo = {
             body: 'body',
             header1: '1',
@@ -216,7 +225,7 @@ describe('File', () => {
       });
 
       test('should call the callback with the file object', done => {
-        testContext.file.download((err, file) => {
+        return testContext.file.download((err, file) => {
           const fileInfo = {
             body: 'body',
             header1: '1',
@@ -238,28 +247,33 @@ describe('File', () => {
       });
 
       test('should reject with the error', done => {
-        testContext.file.download().catch(err => {
+        return testContext.file.download().catch(err => {
           expect(err).toBe(testContext.error);
           done();
+        }).catch(() => {
+          // do nothing
         });
       });
 
       test('should call the callback with the error', done => {
-        testContext.file
+        return testContext.file
           .download((err, file) => {
             expect(err).toBe(testContext.error);
             expect(file).toBe(undefined);
             done();
+          }).catch(() => {
+            // do nothing
           });
       });
     });
   });
 
   describe('metadata', () => {
-    test('should do a GET request', () => {
-      testContext.file.metadata().then(() => {
+    test('should do a GET request', done => {
+      return testContext.file.metadata().then(() => {
         const callParams = testContext.connection.request.mock.calls[0][0];
-        expect(callParams['path']).toEqual('/files/fileId/download');
+        expect(callParams['path']).toEqual('/files/fileId');
+        done();
       });
     });
 
@@ -280,7 +294,7 @@ describe('File', () => {
       });
 
       test('should resolve with the file information', done => {
-        testContext.file.metadata().then(response => {
+        return testContext.file.metadata().then(response => {
           const fileInfo = {
             content_type: 'image/jpeg',
             filename: 'sailing_photo.jpg',
@@ -296,7 +310,7 @@ describe('File', () => {
       });
 
       test('should call the callback with the file object', done => {
-        testContext.file.metadata((err, response) => {
+        return testContext.file.metadata((err, response) => {
           const fileInfo = {
             content_type: 'image/jpeg',
             filename: 'sailing_photo.jpg',
@@ -322,18 +336,22 @@ describe('File', () => {
       });
 
       test('should reject with the error', done => {
-        testContext.file.metadata().catch(err => {
+        return testContext.file.metadata().catch(err => {
           expect(err).toBe(testContext.error);
           done();
+        }).catch(() => {
+          // do nothing
         });
       });
 
       test('should call the callback with the error', done => {
-        testContext.file
+        return testContext.file
           .metadata((err, file) => {
             expect(err).toBe(testContext.error);
             expect(file).toBe(undefined);
             done();
+          }).catch(() => {
+            // do nothing
           });
       });
     });

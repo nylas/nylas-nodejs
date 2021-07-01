@@ -4,14 +4,46 @@ import Thread from '../src/models/thread';
 import Message from '../src/models/message';
 import { Folder, Label } from '../src/models/folder';
 import EmailParticipant from '../src/models/email-participant';
+import fetch from "node-fetch";
+
+jest.mock('node-fetch', () => {
+  const { Request, Response } = jest.requireActual('node-fetch');
+  const fetch = jest.fn();
+  fetch.Request = Request;
+  fetch.Response = Response;
+  return fetch;
+});
 
 describe('Thread', () => {
   let testContext;
 
   beforeEach(() => {
+    Nylas.config({
+      clientId: 'myClientId',
+      clientSecret: 'myClientSecret',
+      apiServer: 'https://api.nylas.com',
+    });
     testContext = {};
     testContext.connection = new NylasConnection('123', { clientId: 'foo' });
-    testContext.connection.request = jest.fn(() => Promise.resolve());
+    jest.spyOn(testContext.connection, 'request');
+
+    const response = receivedBody => {
+      return {
+        status: 200,
+        buffer: () => {
+          return Promise.resolve("body");
+        },
+        json: () => {
+          return Promise.resolve(receivedBody);
+        },
+        headers: new Map()
+      }
+    };
+
+    fetch.mockImplementation(req =>
+        Promise.resolve(response(req.body))
+    );
+
     testContext.thread = new Thread(testContext.connection);
     testContext.thread.id = '4333';
     testContext.thread.starred = true;
@@ -19,41 +51,37 @@ describe('Thread', () => {
   });
 
   describe('save', () => {
-    test('should do a PUT request with labels if labels is defined', () => {
+    test('should do a PUT request with labels if labels is defined', done => {
       const label = new Label(testContext.connection);
       label.id = 'label_id';
       testContext.thread.labels = [label];
-      testContext.thread
-        .save()
-        .then(() =>
-          expect(testContext.connection.request).toHaveBeenCalledWith({
-            method: 'PUT',
-            body: {
-              label_ids: ['label_id'],
-              starred: true,
-              unread: false,
-            },
-            qs: {},
-            path: '/threads/4333',
-          })
-        )
-        .catch(() => {});
+      testContext.thread.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/threads/4333');
+        expect(options.method).toEqual('PUT');
+        expect(JSON.parse(options.body)).toEqual({
+          label_ids: ['label_id'],
+          starred: true,
+          unread: false,
+        });
+        done();
+      });
     });
 
-    test('should do a PUT with folder if folder is defined', () => {
+    test('should do a PUT with folder if folder is defined', done => {
       const label = new Label(testContext.connection);
       label.id = 'label_id';
       testContext.thread.folders = [label];
-      testContext.thread.save();
-      expect(testContext.connection.request).toHaveBeenCalledWith({
-        method: 'PUT',
-        body: {
+      testContext.thread.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/threads/4333');
+        expect(options.method).toEqual('PUT');
+        expect(JSON.parse(options.body)).toEqual({
           folder_id: 'label_id',
           starred: true,
           unread: false,
-        },
-        qs: {},
-        path: '/threads/4333',
+        });
+        done();
       });
     });
   });
