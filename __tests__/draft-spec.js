@@ -28,8 +28,8 @@ describe('Draft', () => {
     const response = receivedBody => {
       return {
         status: 200,
-        buffer: () => {
-          return Promise.resolve("body");
+        text: () => {
+          return Promise.resolve(receivedBody);
         },
         json: () => {
           return Promise.resolve(receivedBody);
@@ -306,7 +306,7 @@ Would you like to grab coffee @ 2pm this Thursday?`;
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/send');
         expect(options.method).toEqual('POST');
-        expect(JSON.parse(options.body)).toEqual(msg);
+        expect(options.body).toEqual(msg);
         expect(options.headers['Content-Type']).toEqual('message/rfc822');
         expect(options.json).toBe(false);
         done();
