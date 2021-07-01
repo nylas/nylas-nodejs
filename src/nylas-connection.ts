@@ -122,7 +122,7 @@ export default class NylasConnection {
         }
       }
       options.body = fd;
-    } else if (options.body) {
+    } else if (options.body && options.json !== false) {
       options.body = JSON.stringify(options.body);
     }
 
