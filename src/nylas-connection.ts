@@ -207,7 +207,12 @@ export default class NylasConnection {
               return reject(e);
             })
           } else {
-            return resolve(response.json());
+            response.json().then(json => {
+              if(options.json === false) {
+                return resolve(JSON.parse(json));
+              }
+              return resolve(json);
+            })
           }
         }
       })
