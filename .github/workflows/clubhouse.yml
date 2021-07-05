@@ -4,6 +4,7 @@ on:
 
 jobs:
   clubhouse:
+    name: Linked Clubhouse Story
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.draft == false }}
     steps:
