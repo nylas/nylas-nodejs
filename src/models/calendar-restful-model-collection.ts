@@ -1,9 +1,10 @@
 import Calendar from './calendar';
 import NylasConnection from '../nylas-connection';
-import RestfulModel from './restful-model';
 import RestfulModelCollection from './restful-model-collection';
 
-export default class CalendarRestfulModelCollection extends RestfulModelCollection<Calendar> {
+export default class CalendarRestfulModelCollection extends RestfulModelCollection<
+  Calendar
+> {
   connection: NylasConnection;
   modelClass: typeof Calendar;
 
@@ -13,14 +14,16 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     this.modelClass = Calendar;
   }
 
-  freeBusy(options: {
-    start_time?: string,
-    startTime?: string,
-    end_time?: string,
-    endTime?: string,
-    emails: string[]
-  }, callback?: (error: Error | null, data?: { [key: string]: any }) => void) {
-
+  freeBusy(
+    options: {
+      start_time?: string;
+      startTime?: string;
+      end_time?: string;
+      endTime?: string;
+      emails: string[];
+    },
+    callback?: (error: Error | null, data?: { [key: string]: any }) => void
+  ) {
     return this.connection
       .request({
         method: 'POST',
@@ -28,8 +31,8 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
         body: {
           start_time: options.startTime || options.start_time,
           end_time: options.endTime || options.end_time,
-          emails: options.emails
-        }
+          emails: options.emails,
+        },
       })
       .then(json => {
         if (callback) {

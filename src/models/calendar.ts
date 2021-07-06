@@ -1,6 +1,5 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import { GetCallback } from './restful-model-collection';
-import JobStatus from './job-status';
 import Attributes from './attributes';
 
 export default class Calendar extends RestfulModel {
@@ -22,12 +21,12 @@ export default class Calendar extends RestfulModel {
       name: calendarJSON.name,
       description: calendarJSON.description,
       location: calendarJSON.location,
-      timezone: calendarJSON.timezone
+      timezone: calendarJSON.timezone,
     };
   }
 
   getJobStatus(callback?: GetCallback) {
-    if ( typeof this.jobStatusId === 'undefined' ) {
+    if (typeof this.jobStatusId === 'undefined') {
       const err = new Error('jobStatusId must be defined');
       if (callback) {
         callback(err);
@@ -63,6 +62,6 @@ Calendar.attributes = {
   }),
   jobStatusId: Attributes.String({
     modelKey: 'jobStatusId',
-    jsonKey: 'job_status_id'
-  })
+    jsonKey: 'job_status_id',
+  }),
 };

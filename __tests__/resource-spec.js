@@ -26,15 +26,18 @@ describe('Resource', () => {
     testContext.connection = new NylasConnection(testAccessToken, {
       clientId: 'myClientId',
     });
-    testContext.apiResponse = [{
-      object: 'room_resource',
-      name: 'training room',
-      email: 'training_room@google.com'
-    }, {
-      object: 'room_resource',
-      name: 'cafeteria',
-      email: 'cafeteria@google.com'
-    }];
+    testContext.apiResponse = [
+      {
+        object: 'room_resource',
+        name: 'training room',
+        email: 'training_room@google.com',
+      },
+      {
+        object: 'room_resource',
+        name: 'cafeteria',
+        email: 'cafeteria@google.com',
+      },
+    ];
 
     jest.spyOn(testContext.connection, 'request');
 
@@ -42,30 +45,34 @@ describe('Resource', () => {
       return {
         status: 200,
         buffer: () => {
-          return Promise.resolve("body");
+          return Promise.resolve('body');
         },
         json: () => {
           return Promise.resolve(testContext.apiResponse);
         },
-        headers: new Map()
-      }
+        headers: new Map(),
+      };
     };
 
-    fetch.mockImplementation(() =>
-        Promise.resolve(response())
-    );
+    fetch.mockImplementation(() => Promise.resolve(response()));
   });
 
   describe('list resources', () => {
     test('should call API with correct authentication', done => {
       expect.assertions(3);
-      const defaultParams = "?offset=0&limit=100"
+      const defaultParams = '?offset=0&limit=100';
 
       return testContext.connection.resources.list().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/resources' + defaultParams);
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/resources' + defaultParams
+        );
         expect(options.method).toEqual('GET');
-        expect(options.headers['authorization']).toEqual(`Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`);
+        expect(options.headers['authorization']).toEqual(
+          `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString(
+            'base64'
+          )}`
+        );
         done();
       });
     });

@@ -1,5 +1,4 @@
 import Attributes from './attributes';
-import NylasConnection from '../nylas-connection';
 import RestfulModel from './restful-model';
 
 export default class File extends RestfulModel {
@@ -22,7 +21,7 @@ export default class File extends RestfulModel {
       throw new Error('Please define a content-type');
     }
 
-    const formOptions: { [key: string]: any} = {
+    const formOptions: { [key: string]: any } = {
       filename: this.filename,
       contentType: this.contentType,
     };
@@ -65,7 +64,12 @@ export default class File extends RestfulModel {
       });
   }
 
-  download(callback?: (error: Error | null, file?: { body: any; [key: string]: any }) => void) {
+  download(
+    callback?: (
+      error: Error | null,
+      file?: { body: any; [key: string]: any }
+    ) => void
+  ) {
     if (!this.id) {
       throw new Error('Please provide a File id');
     }
@@ -89,7 +93,9 @@ export default class File extends RestfulModel {
       });
   }
 
-  metadata(callback?: (error: Error | null, data?: { [key: string]: any }) => void) {
+  metadata(
+    callback?: (error: Error | null, data?: { [key: string]: any }) => void
+  ) {
     return this.connection
       .request({
         path: `/files/${this.id}`,

@@ -2,7 +2,9 @@ import ManagementModel from './management-model';
 import NylasConnection from '../nylas-connection';
 import RestfulModelCollection from './restful-model-collection';
 
-export default class ManagementModelCollection<T extends ManagementModel> extends RestfulModelCollection<T> {
+export default class ManagementModelCollection<
+  T extends ManagementModel
+> extends RestfulModelCollection<T> {
   clientId: string;
 
   constructor(

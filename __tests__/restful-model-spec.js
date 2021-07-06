@@ -1,4 +1,3 @@
-import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import RestfulModel from '../src/models/restful-model';
 import Attributes from '../src/models/attributes';
@@ -107,7 +106,7 @@ describe('RestfulModel', () => {
       const testNumberFromJSON =
         RestfulSubclassAttributes.attributes.testNumber.fromJSON;
       RestfulSubclassAttributes.attributes.testNumber.fromJSON = jest.fn(
-        json => 'inflated value!'
+        () => 'inflated value!'
       );
       testContext.m.fromJSON(testContext.json);
       expect(
@@ -184,7 +183,7 @@ describe('RestfulModel', () => {
 
     test('should return a JSON object and call attribute toJSON functions to map values', () => {
       RestfulModel.attributes.accountId.toJSON = jest.fn(
-        json => 'inflated value!'
+        () => 'inflated value!'
       );
 
       const json = testContext.model.toJSON();
@@ -194,7 +193,7 @@ describe('RestfulModel', () => {
     });
 
     test('should surface any exception one of the attribute toJSON functions raises', () => {
-      RestfulModel.attributes.accountId.toJSON = jest.fn(json => {
+      RestfulModel.attributes.accountId.toJSON = jest.fn(() => {
         throw new Error("Can't convert value into JSON format");
       });
       expect(() => testContext.model.toJSON()).toThrow();
@@ -204,12 +203,12 @@ describe('RestfulModel', () => {
       const model = new RestfulModel(testContext.connection, {
         object: 'thread',
         id: '123',
-        accountId: '123abc'
+        accountId: '123abc',
       });
       const json = model.toJSON(true);
       expect(json.id).toBeUndefined();
       expect(json.object).toBeUndefined();
       expect(json.account_id).toBeUndefined();
-    })
+    });
   });
 });

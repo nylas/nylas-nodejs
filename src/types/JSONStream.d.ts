@@ -1,1 +1,1 @@
-declare module 'JSONStream'
+declare module 'JSONStream';

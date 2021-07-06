@@ -1,7 +1,7 @@
 import NylasConnection from '../src/nylas-connection';
 import { Label } from '../src/models/folder';
-import fetch from "node-fetch";
-import Nylas from "../src/nylas";
+import fetch from 'node-fetch';
+import Nylas from '../src/nylas';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -28,18 +28,16 @@ describe('Label', () => {
       return {
         status: 200,
         buffer: () => {
-          return Promise.resolve("body");
+          return Promise.resolve('body');
         },
         json: () => {
           return Promise.resolve(receivedBody);
         },
-        headers: new Map()
-      }
+        headers: new Map(),
+      };
     };
 
-    fetch.mockImplementation(req =>
-        Promise.resolve(response(req.body))
-    );
+    fetch.mockImplementation(req => Promise.resolve(response(req.body)));
     testContext.label = new Label(testContext.connection);
     testContext.label.displayName = 'Label name';
     testContext.label.name = 'Longer label name';
@@ -62,11 +60,13 @@ describe('Label', () => {
       testContext.label.id = 'label_id';
       return testContext.label.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/labels/label_id');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/labels/label_id'
+        );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
           display_name: 'Label name',
-        })
+        });
         done();
       });
     });

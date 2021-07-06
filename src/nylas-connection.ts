@@ -1,6 +1,6 @@
 // TODO since node 10 URL is global
-import {URL} from 'url';
-import fetch, {Headers, Request} from 'node-fetch';
+import { URL } from 'url';
+import fetch, { Request } from 'node-fetch';
 import * as config from './config';
 import RestfulModelCollection from './models/restful-model-collection';
 import CalendarRestfulModelCollection from './models/calendar-restful-model-collection';
@@ -15,9 +15,9 @@ import Event from './models/event';
 import JobStatus from './models/job-status';
 import Resource from './models/resource';
 import Delta from './models/delta';
-import {Folder, Label} from './models/folder';
-import FormData, {AppendOptions} from "form-data";
-import NylasApiError from "./models/nylas-api-error";
+import { Folder, Label } from './models/folder';
+import FormData, { AppendOptions } from 'form-data';
+import NylasApiError from './models/nylas-api-error';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -38,25 +38,56 @@ export type RequestOptions = {
 export type FormDataType = {
   value: any;
   options?: { [key: string]: any } | AppendOptions;
-}
+};
 
 export default class NylasConnection {
   accessToken: string | null | undefined;
   clientId: string | null | undefined;
 
-  threads: RestfulModelCollection<Thread> = new RestfulModelCollection(Thread, this);
-  contacts: ContactRestfulModelCollection = new ContactRestfulModelCollection(this);
-  messages: RestfulModelCollection<Message> = new RestfulModelCollection(Message, this);
-  drafts: RestfulModelCollection<Draft> = new RestfulModelCollection(Draft, this);
+  threads: RestfulModelCollection<Thread> = new RestfulModelCollection(
+    Thread,
+    this
+  );
+  contacts: ContactRestfulModelCollection = new ContactRestfulModelCollection(
+    this
+  );
+  messages: RestfulModelCollection<Message> = new RestfulModelCollection(
+    Message,
+    this
+  );
+  drafts: RestfulModelCollection<Draft> = new RestfulModelCollection(
+    Draft,
+    this
+  );
   files: RestfulModelCollection<File> = new RestfulModelCollection(File, this);
-  calendars: CalendarRestfulModelCollection = new CalendarRestfulModelCollection(this);
-  jobStatuses: RestfulModelCollection<JobStatus> = new RestfulModelCollection(JobStatus, this);
-  events: RestfulModelCollection<Event> = new RestfulModelCollection(Event, this);
-  resources: RestfulModelCollection<Resource> = new RestfulModelCollection(Resource, this);
+  calendars: CalendarRestfulModelCollection = new CalendarRestfulModelCollection(
+    this
+  );
+  jobStatuses: RestfulModelCollection<JobStatus> = new RestfulModelCollection(
+    JobStatus,
+    this
+  );
+  events: RestfulModelCollection<Event> = new RestfulModelCollection(
+    Event,
+    this
+  );
+  resources: RestfulModelCollection<Resource> = new RestfulModelCollection(
+    Resource,
+    this
+  );
   deltas = new Delta(this);
-  labels: RestfulModelCollection<Label> = new RestfulModelCollection(Label, this);
-  folders: RestfulModelCollection<Folder> = new RestfulModelCollection(Folder, this);
-  account: RestfulModelInstance<Account> =  new RestfulModelInstance(Account, this);
+  labels: RestfulModelCollection<Label> = new RestfulModelCollection(
+    Label,
+    this
+  );
+  folders: RestfulModelCollection<Folder> = new RestfulModelCollection(
+    Folder,
+    this
+  );
+  account: RestfulModelInstance<Account> = new RestfulModelInstance(
+    Account,
+    this
+  );
 
   constructor(
     accessToken: string | null | undefined,
@@ -81,7 +112,7 @@ export default class NylasConnection {
           // The API understands a metadata_pair filter in the form of:
           // <key>:<value>
           for (const item in value) {
-            url.searchParams.set('metadata_pair', `${item}:${value[item]}`)
+            url.searchParams.set('metadata_pair', `${item}:${value[item]}`);
           }
         } else if (Array.isArray(value)) {
           for (const item of value) {
@@ -94,13 +125,14 @@ export default class NylasConnection {
     }
     options.url = url;
 
-    const headers = {...options.headers}
+    const headers = { ...options.headers };
     const user =
-        options.path.substr(0, 3) === '/a/'
-            ? config.clientSecret
-            : this.accessToken;
+      options.path.substr(0, 3) === '/a/'
+        ? config.clientSecret
+        : this.accessToken;
     if (user) {
-      headers['authorization'] = 'Basic ' + Buffer.from(`${user}:`, 'utf8').toString('base64');
+      headers['authorization'] =
+        'Basic ' + Buffer.from(`${user}:`, 'utf8').toString('base64');
     }
     if (!headers['User-Agent']) {
       headers['User-Agent'] = `Nylas Node SDK v${SDK_VERSION}`;
@@ -114,8 +146,8 @@ export default class NylasConnection {
 
     if (options.formData) {
       const fd = new FormData();
-      for(const [key, obj] of Object.entries(options.formData)) {
-        if(obj.options) {
+      for (const [key, obj] of Object.entries(options.formData)) {
+        if (obj.options) {
           fd.append(key, obj.value, obj.options);
         } else {
           fd.append(key, obj.value);
@@ -171,12 +203,12 @@ export default class NylasConnection {
         }
         // node headers are lowercaser so this refers to `Nylas-Api-Version`
         const apiVersion = response.headers.get('nylas-api-version') as
-            | string
-            | undefined;
+          | string
+          | undefined;
 
         const warning = this._getWarningForVersion(
-            SUPPORTED_API_VERSION,
-            apiVersion
+          SUPPORTED_API_VERSION,
+          apiVersion
         );
         if (warning) {
           console.warn(warning);
@@ -184,7 +216,11 @@ export default class NylasConnection {
 
         if (response.status > 299) {
           return response.json().then(body => {
-            const error = new NylasApiError(response.status, body.type, body.message);
+            const error = new NylasApiError(
+              response.status,
+              body.type,
+              body.message
+            );
             if (body.missing_fields) {
               error.missingFields = body.missing_fields;
             }
@@ -195,24 +231,29 @@ export default class NylasConnection {
           });
         } else {
           if (options.downloadRequest) {
-            response.buffer().then(buffer => {
-              // Return an object with the headers and the body as a buffer
-              const fileDetails: { [key: string]: any } = {};
-              response.headers.forEach((v, k) => {
-                fileDetails[k] = v;
+            response
+              .buffer()
+              .then(buffer => {
+                // Return an object with the headers and the body as a buffer
+                const fileDetails: { [key: string]: any } = {};
+                response.headers.forEach((v, k) => {
+                  fileDetails[k] = v;
+                });
+                fileDetails['body'] = buffer;
+                return resolve(fileDetails);
+              })
+              .catch(e => {
+                return reject(e);
               });
-              fileDetails['body'] = buffer;
-              return resolve(fileDetails);
-            }).catch(e => {
-              return reject(e);
-            })
-          } else if(response.headers.get('Content-Type') === 'message/rfc822') {
+          } else if (
+            response.headers.get('Content-Type') === 'message/rfc822'
+          ) {
             return resolve(response.text());
           } else {
             return resolve(response.json());
           }
         }
-      })
+      });
     });
   }
 }
