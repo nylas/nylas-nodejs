@@ -4,6 +4,7 @@ on:
 
 jobs:
   clubhouse:
+    name: Linked Clubhouse Story
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.draft == false }}
     steps:
@@ -11,9 +12,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           clubhouse-token: ${{ secrets.CLUBHOUSE_TOKEN }}
-          project-name: Engineering
+          project-name: Node SDK
           opened-state-name: Reviewing
-          merged-state-name: Merged
+          merged-state-name: Done
           closed-state-name: Won't Pursue
           ignored-users: dependabot
           label-iteration-group-map: |
@@ -56,5 +57,5 @@ jobs:
               "spang": "5d13f026-00a6-4a9c-ba80-0048f43427f4",
               "yusra-ahmed": "5d237850-e39b-4e75-8c52-89003602a59a",
               "nylas-marcus": "5fc55708-44b9-41e8-aec0-004c3af90e69",
-              "mrashed-dev": "60b95d59-c018-48c0-8859-f7201ed502ae"
+              "mrashed-dev": "609964df-eb6c-4d74-8799-e33b7d503a09"
             }
