@@ -15,7 +15,7 @@ jobs:
     name: Lint and Prettier check
     steps:
       - uses: actions/checkout@v2
-      - name: Setup Nodejs 14.x
+      - name: Setup Nodejs
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
