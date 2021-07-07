@@ -10,23 +10,7 @@ on:
       - main
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    name: Lint and Prettier check
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Nodejs
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-
-      - name: Run lint checks
-        run: npm run lint:ci
-
-      - name: Run prettier checks
-        run: npm run lint:prettier:check
-
-  jest:
+  checks:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -41,6 +25,12 @@ jobs:
 
       - name: Install dependencies and build
         run: npm install
+
+      - name: Run lint checks
+        run: npm run lint:ci
+
+      - name: Run prettier checks
+        run: npm run lint:prettier:check
 
       - name: Run tests
         run: npm run test
