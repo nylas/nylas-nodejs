@@ -1,7 +1,7 @@
 import NylasConnection from '../src/nylas-connection';
 import Event from '../src/models/event';
-import Nylas from "../src/nylas";
-import fetch from "node-fetch";
+import Nylas from '../src/nylas';
+import fetch from 'node-fetch';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -28,18 +28,16 @@ describe('Event', () => {
       return {
         status: 200,
         buffer: () => {
-          return Promise.resolve("body");
+          return Promise.resolve('body');
         },
         json: () => {
           return Promise.resolve(receivedBody);
         },
-        headers: new Map()
-      }
+        headers: new Map(),
+      };
     };
 
-    fetch.mockImplementation(req =>
-        Promise.resolve(response(req.body))
-    );
+    fetch.mockImplementation(req => Promise.resolve(response(req.body)));
 
     testContext.event = new Event(testContext.connection);
   });
@@ -68,7 +66,9 @@ describe('Event', () => {
       testContext.event.id = 'id-1234';
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events/id-1234');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/events/id-1234'
+        );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: undefined,
@@ -87,7 +87,9 @@ describe('Event', () => {
       return testContext.event.save({ notify_participants: true }).then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.qs['notify_participants']).toEqual(true);
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events?notify_participants=true');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/events?notify_participants=true'
+        );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: undefined,
@@ -104,11 +106,9 @@ describe('Event', () => {
 
     test('should create recurring event if recurrence is defined', done => {
       const recurrence = {
-        "rrule": [
-          "RRULE:FREQ=WEEKLY;BYDAY=MO"
-        ],
-        "timezone": "America/New_York"
-      }
+        rrule: ['RRULE:FREQ=WEEKLY;BYDAY=MO'],
+        timezone: 'America/New_York',
+      };
       testContext.event.recurrence = recurrence;
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
@@ -122,7 +122,7 @@ describe('Event', () => {
           location: undefined,
           when: undefined,
           participants: [],
-          recurrence: recurrence
+          recurrence: recurrence,
         });
         done();
       });
@@ -157,8 +157,8 @@ describe('Event', () => {
 
     test('should create event with start_time and end_time when start and end are different UNIX timestamps', done => {
       testContext.event.when = {};
-      testContext.event.start = 1409594400
-      testContext.event.end = 1409598000
+      testContext.event.start = 1409594400;
+      testContext.event.end = 1409598000;
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
@@ -320,7 +320,10 @@ describe('Event', () => {
     });
 
     test('should create event with start_date and end_date when the event param `when` is updated with start_date and end_date', done => {
-      testContext.event.when = { start_date: '1815-12-10', end_date: '1852-11-27' };
+      testContext.event.when = {
+        start_date: '1815-12-10',
+        end_date: '1852-11-27',
+      };
       return testContext.event.save().then(event => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
@@ -380,7 +383,7 @@ describe('Event', () => {
     });
 
     test('should create an event with a metadata object', done => {
-      testContext.event.metadata = {'hello': 'world'};
+      testContext.event.metadata = { hello: 'world' };
       testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
@@ -395,7 +398,7 @@ describe('Event', () => {
           _start: undefined,
           _end: undefined,
           participants: [],
-          metadata: {'hello': 'world'}
+          metadata: { hello: 'world' },
         });
         done();
       });
@@ -408,10 +411,8 @@ describe('Event', () => {
             id: 'id-1234',
             title: 'test event',
             when: { time: 1409594400, object: 'time' },
-            participants: [
-              {'name': 'foo', 'email': 'bar', 'status': 'noreply'}
-            ],
-            ical_uid: 'id-5678'
+            participants: [{ name: 'foo', email: 'bar', status: 'noreply' }],
+            ical_uid: 'id-5678',
           };
           return Promise.resolve(eventJSON);
         });
@@ -425,8 +426,11 @@ describe('Event', () => {
           expect(event.when.object).toEqual('time');
           expect(event.iCalUID).toBe('id-5678');
           const participant = event.participants[0];
-          expect(participant.toJSON()).toEqual(
-            {'name': 'foo', 'email': 'bar', 'status': 'noreply'});
+          expect(participant.toJSON()).toEqual({
+            name: 'foo',
+            email: 'bar',
+            status: 'noreply',
+          });
           done();
         });
       });
@@ -475,7 +479,9 @@ describe('Event', () => {
       testContext.event.id = 'public_id';
       return testContext.event.rsvp('yes', 'I will come.').then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/send-rsvp');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/send-rsvp'
+        );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           event_id: 'public_id',

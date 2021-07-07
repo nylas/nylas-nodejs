@@ -1,7 +1,7 @@
 import NylasConnection from '../src/nylas-connection';
 import File from '../src/models/file';
-import fetch from "node-fetch";
-import Nylas from "../src/nylas";
+import fetch from 'node-fetch';
+import Nylas from '../src/nylas';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -25,29 +25,30 @@ describe('File', () => {
     jest.spyOn(testContext.connection, 'request');
 
     const headers = new Map();
-    headers.set("header1", "1");
-    headers.set("header2", "2");
+    headers.set('header1', '1');
+    headers.set('header2', '2');
     const response = receivedBody => {
       return {
         status: 200,
         buffer: () => {
-          return Promise.resolve("body");
+          return Promise.resolve('body');
         },
         json: () => {
           // Just a placeholder so that we can mimic returning data after uploading
           // This data is not used
-          if(receivedBody === null || receivedBody.constructor.name === 'FormData') {
+          if (
+            receivedBody === null ||
+            receivedBody.constructor.name === 'FormData'
+          ) {
             return Promise.resolve([JSON.stringify(testContext.file.toJSON())]);
           }
           return Promise.resolve(receivedBody);
         },
-        headers: headers
-      }
+        headers: headers,
+      };
     };
 
-    fetch.mockImplementation(req =>
-        Promise.resolve(response(req.body))
-    );
+    fetch.mockImplementation(req => Promise.resolve(response(req.body)));
 
     testContext.file = new File(testContext.connection);
     testContext.file.data = 'Sample data';
@@ -87,18 +88,18 @@ describe('File', () => {
         const expectedFormData = {
           file: {
             value: 'Sample data',
-                options: {
+            options: {
               filename: 'sample.txt',
-                  contentType: 'text/plain',
+              contentType: 'text/plain',
             },
           },
         };
 
-        expect(callParams['method']).toEqual("POST");
+        expect(callParams['method']).toEqual('POST');
         expect(callParams['json']).toBe(true);
-        expect(callParams['path']).toEqual("/files");
+        expect(callParams['path']).toEqual('/files');
         expect(callParams['formData']).toEqual(expectedFormData);
-        expect(typeof callParams['body']).toBe("object");
+        expect(typeof callParams['body']).toBe('object');
         done();
       });
     });
@@ -113,16 +114,16 @@ describe('File', () => {
             options: {
               filename: 'sample.txt',
               contentType: 'text/plain',
-              knownLength: 12345
+              knownLength: 12345,
             },
           },
         };
 
-        expect(callParams['method']).toEqual("POST");
+        expect(callParams['method']).toEqual('POST');
         expect(callParams['json']).toBe(true);
-        expect(callParams['path']).toEqual("/files");
+        expect(callParams['path']).toEqual('/files');
         expect(callParams['formData']).toEqual(expectedFormData);
-        expect(typeof callParams['body']).toBe("object");
+        expect(typeof callParams['body']).toBe('object');
         done();
       });
     });
@@ -137,7 +138,7 @@ describe('File', () => {
               filename: 'sample.txt',
               id: 'id-1234',
               object: 'file',
-              size: 123
+              size: 123,
             },
           ];
           return Promise.resolve(fileJSON);
@@ -179,12 +180,15 @@ describe('File', () => {
       });
 
       test('should reject with the error', done => {
-        return testContext.file.upload().catch(err => {
-          expect(err).toBe(testContext.error);
-          done();
-        }).catch(() => {
-          // do nothing
-        });
+        return testContext.file
+          .upload()
+          .catch(err => {
+            expect(err).toBe(testContext.error);
+            done();
+          })
+          .catch(() => {
+            // do nothing
+          });
       });
 
       test('should call the callback with the error', done => {
@@ -193,7 +197,8 @@ describe('File', () => {
             expect(err).toBe(testContext.error);
             expect(file).toBe(undefined);
             done();
-          }).catch(() => {
+          })
+          .catch(() => {
             // do nothing
           });
       });
@@ -247,12 +252,15 @@ describe('File', () => {
       });
 
       test('should reject with the error', done => {
-        return testContext.file.download().catch(err => {
-          expect(err).toBe(testContext.error);
-          done();
-        }).catch(() => {
-          // do nothing
-        });
+        return testContext.file
+          .download()
+          .catch(err => {
+            expect(err).toBe(testContext.error);
+            done();
+          })
+          .catch(() => {
+            // do nothing
+          });
       });
 
       test('should call the callback with the error', done => {
@@ -261,7 +269,8 @@ describe('File', () => {
             expect(err).toBe(testContext.error);
             expect(file).toBe(undefined);
             done();
-          }).catch(() => {
+          })
+          .catch(() => {
             // do nothing
           });
       });
@@ -336,12 +345,15 @@ describe('File', () => {
       });
 
       test('should reject with the error', done => {
-        return testContext.file.metadata().catch(err => {
-          expect(err).toBe(testContext.error);
-          done();
-        }).catch(() => {
-          // do nothing
-        });
+        return testContext.file
+          .metadata()
+          .catch(err => {
+            expect(err).toBe(testContext.error);
+            done();
+          })
+          .catch(() => {
+            // do nothing
+          });
       });
 
       test('should call the callback with the error', done => {
@@ -350,7 +362,8 @@ describe('File', () => {
             expect(err).toBe(testContext.error);
             expect(file).toBe(undefined);
             done();
-          }).catch(() => {
+          })
+          .catch(() => {
             // do nothing
           });
       });

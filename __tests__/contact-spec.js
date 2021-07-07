@@ -1,7 +1,7 @@
 import NylasConnection from '../src/nylas-connection';
 import { Contact } from '../src/models/contact';
-import Nylas from "../src/nylas";
-import fetch from "node-fetch";
+import Nylas from '../src/nylas';
+import fetch from 'node-fetch';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -28,18 +28,16 @@ describe('Contact', () => {
       return {
         status: 200,
         buffer: () => {
-          return Promise.resolve("body");
+          return Promise.resolve('body');
         },
         json: () => {
           return Promise.resolve(receivedBody);
         },
-        headers: new Map()
-      }
+        headers: new Map(),
+      };
     };
 
-    fetch.mockImplementation(req =>
-        Promise.resolve(response(req.body))
-    );
+    fetch.mockImplementation(req => Promise.resolve(response(req.body)));
     testContext.contact = new Contact(testContext.connection);
   });
 
@@ -48,7 +46,9 @@ describe('Contact', () => {
       testContext.contact.id = undefined;
       return testContext.contact.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/contacts');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/contacts'
+        );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           given_name: undefined,
@@ -68,7 +68,7 @@ describe('Contact', () => {
           physical_addresses: [],
           phone_numbers: [],
           web_pages: [],
-          groups:[],
+          groups: [],
           source: undefined,
         });
         done();
@@ -78,7 +78,9 @@ describe('Contact', () => {
       testContext.contact.id = '1257';
       return testContext.contact.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/contacts/1257');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/contacts/1257'
+        );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
           given_name: undefined,
@@ -98,7 +100,7 @@ describe('Contact', () => {
           physical_addresses: [],
           phone_numbers: [],
           web_pages: [],
-          groups:[],
+          groups: [],
           source: undefined,
         });
         done();
@@ -111,7 +113,9 @@ describe('Contact', () => {
       testContext.contact.id = 'a_pic_url';
       return testContext.contact.getPicture().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/contacts/a_pic_url/picture');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/contacts/a_pic_url/picture'
+        );
         expect(options.method).toEqual('GET');
         expect(options.body).toBeUndefined();
         done();
@@ -121,30 +125,38 @@ describe('Contact', () => {
 
   describe('when the request succeeds', () => {
     beforeEach(() => {
-        const contactJSON = {
-          id: '1257',
-          object: 'contact',
-          account_id: '1234',
-          given_name: 'John',
-          middle_name: 'Jacob',
-          surname: 'Jingleheimer Schmidt',
-          suffix: 'II',
-          nickname: 'John',
-          birthday: '2019-07-01',
-          company_name: 'Life',
-          job_title: 'artist',
-          manager_name: 'April',
-          office_location: 'SF, CA, USA',
-          notes: 'lalala',
-          picture_url: 'example.com',
-          emails: [{type: 'work', email: 'john@test.com'}],
-          im_addresses: [{type: 'yahoo', im_address: 'jjj'}],
-          physical_addresses: [{type: 'home', city: 'Boston'}],
-          phone_numbers: [{type: 'mobile', number: '555-444-3333'}],
-          web_pages: [{type: 'blog', url: 'johnblogs.com'}],
-          groups: [{id: '123', object: 'contact_group', account_id: '1234', name: 'Fam', path: 'Fam'}],
-          source: 'inbox',
-        };
+      const contactJSON = {
+        id: '1257',
+        object: 'contact',
+        account_id: '1234',
+        given_name: 'John',
+        middle_name: 'Jacob',
+        surname: 'Jingleheimer Schmidt',
+        suffix: 'II',
+        nickname: 'John',
+        birthday: '2019-07-01',
+        company_name: 'Life',
+        job_title: 'artist',
+        manager_name: 'April',
+        office_location: 'SF, CA, USA',
+        notes: 'lalala',
+        picture_url: 'example.com',
+        emails: [{ type: 'work', email: 'john@test.com' }],
+        im_addresses: [{ type: 'yahoo', im_address: 'jjj' }],
+        physical_addresses: [{ type: 'home', city: 'Boston' }],
+        phone_numbers: [{ type: 'mobile', number: '555-444-3333' }],
+        web_pages: [{ type: 'blog', url: 'johnblogs.com' }],
+        groups: [
+          {
+            id: '123',
+            object: 'contact_group',
+            account_id: '1234',
+            name: 'Fam',
+            path: 'Fam',
+          },
+        ],
+        source: 'inbox',
+      };
       testContext.contact = new Contact(testContext.connection, contactJSON);
     });
 
@@ -165,12 +177,33 @@ describe('Contact', () => {
         expect(contact.officeLocation).toBe('SF, CA, USA');
         expect(contact.notes).toBe('lalala');
         expect(contact.pictureUrl).toBe('example.com');
-        expect(contact.emailAddresses[0].toJSON()).toEqual({type: 'work', email: 'john@test.com'});
-        expect(contact.imAddresses[0].toJSON()).toEqual({type: 'yahoo', im_address: 'jjj'});
-        expect(contact.physicalAddresses[0].toJSON()).toEqual({type: 'home', city: 'Boston'});
-        expect(contact.phoneNumbers[0].toJSON()).toEqual({type: 'mobile', number: '555-444-3333'});
-        expect(contact.webPages[0].toJSON()).toEqual({type: 'blog', url: 'johnblogs.com'});
-        expect(contact.groups[0].toJSON()).toEqual({id: '123', object: 'contact_group', account_id: '1234', name: 'Fam', path: 'Fam'});
+        expect(contact.emailAddresses[0].toJSON()).toEqual({
+          type: 'work',
+          email: 'john@test.com',
+        });
+        expect(contact.imAddresses[0].toJSON()).toEqual({
+          type: 'yahoo',
+          im_address: 'jjj',
+        });
+        expect(contact.physicalAddresses[0].toJSON()).toEqual({
+          type: 'home',
+          city: 'Boston',
+        });
+        expect(contact.phoneNumbers[0].toJSON()).toEqual({
+          type: 'mobile',
+          number: '555-444-3333',
+        });
+        expect(contact.webPages[0].toJSON()).toEqual({
+          type: 'blog',
+          url: 'johnblogs.com',
+        });
+        expect(contact.groups[0].toJSON()).toEqual({
+          id: '123',
+          object: 'contact_group',
+          account_id: '1234',
+          name: 'Fam',
+          path: 'Fam',
+        });
         expect(contact.source).toBe('inbox');
         done();
       });

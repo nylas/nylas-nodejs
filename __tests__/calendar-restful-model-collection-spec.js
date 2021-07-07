@@ -30,51 +30,59 @@ describe('CalendarRestfulModelCollection', () => {
     const response = {
       status: 200,
       buffer: () => {
-        return Promise.resolve("body");
+        return Promise.resolve('body');
       },
       json: () => {
-        return Promise.resolve(JSON.stringify({
-          body: "body"
-        }));
+        return Promise.resolve(
+          JSON.stringify({
+            body: 'body',
+          })
+        );
       },
-      headers: new Map()
+      headers: new Map(),
     };
 
-    fetch.mockImplementation(() =>
-        Promise.resolve(response)
-    );
+    fetch.mockImplementation(() => Promise.resolve(response));
   });
 
   const evaluateFreeBusy = () => {
     const options = testContext.connection.request.mock.calls[0][0];
-    expect(options.url.toString()).toEqual('https://api.nylas.com/calendars/free-busy');
+    expect(options.url.toString()).toEqual(
+      'https://api.nylas.com/calendars/free-busy'
+    );
     expect(options.method).toEqual('POST');
     expect(JSON.parse(options.body)).toEqual({
       start_time: '1590454800',
       end_time: '1590780800',
-      emails: [ 'jane@email.com' ]
+      emails: ['jane@email.com'],
     });
-    expect(options.headers['authorization']).toEqual(`Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`);
-  }
+    expect(options.headers['authorization']).toEqual(
+      `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
+    );
+  };
 
   test('[FREE BUSY] should fetch results with snakecase params', () => {
     const params = {
       start_time: '1590454800',
       end_time: '1590780800',
-      emails: ['jane@email.com']
+      emails: ['jane@email.com'],
     };
 
-    return testContext.connection.calendars.freeBusy(params).then(evaluateFreeBusy);
+    return testContext.connection.calendars
+      .freeBusy(params)
+      .then(evaluateFreeBusy);
   });
 
   test('[FREE BUSY] should fetch results with camelcase params', () => {
     const params = {
       startTime: '1590454800',
       endTime: '1590780800',
-      emails: ['jane@email.com']
+      emails: ['jane@email.com'],
     };
 
-    return testContext.connection.calendars.freeBusy(params).then(evaluateFreeBusy);
+    return testContext.connection.calendars
+      .freeBusy(params)
+      .then(evaluateFreeBusy);
   });
 
   test('[DELETE] should use correct route, method and auth', done => {
@@ -82,11 +90,14 @@ describe('CalendarRestfulModelCollection', () => {
 
     return testContext.connection.calendars.delete(calendarId).then(() => {
       const options = testContext.connection.request.mock.calls[0][0];
-      expect(options.url.toString()).toEqual(`https://api.nylas.com/calendars/${calendarId}`);
+      expect(options.url.toString()).toEqual(
+        `https://api.nylas.com/calendars/${calendarId}`
+      );
       expect(options.method).toEqual('DELETE');
-      expect(options.headers['authorization']).toEqual(`Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`);
+      expect(options.headers['authorization']).toEqual(
+        `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
+      );
       done();
     });
   });
-
 });

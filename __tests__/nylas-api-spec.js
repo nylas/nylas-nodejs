@@ -19,7 +19,7 @@ describe('Nylas', () => {
     Nylas.apiServer = 'https://api.nylas.com';
 
     fetch.mockImplementation(() =>
-        Promise.resolve(new Response('{"access_token":"12345"}'))
+      Promise.resolve(new Response('{"access_token":"12345"}'))
     );
   });
 
@@ -159,13 +159,10 @@ describe('Nylas', () => {
       test('should call it with the request error', done => {
         const error = new Error('network error');
         fetch.mockImplementation(() => Promise.reject(error));
-        Nylas.exchangeCodeForToken(
-          'code-from-server',
-          (returnedError, accessToken) => {
-            expect(returnedError).toEqual(error);
-            done();
-          }
-        ).catch(() => {
+        Nylas.exchangeCodeForToken('code-from-server', returnedError => {
+          expect(returnedError).toEqual(error);
+          done();
+        }).catch(() => {
           // do nothing
         });
       });

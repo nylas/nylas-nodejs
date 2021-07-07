@@ -14,7 +14,7 @@ Resource.collectionName = 'resources';
 Resource.attributes = {
   object: Attributes.String({
     modelKey: 'object',
-    readOnly: true
+    readOnly: true,
   }),
   email: Attributes.String({
     modelKey: 'email',

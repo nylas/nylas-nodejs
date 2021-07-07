@@ -4,7 +4,7 @@ import Thread from '../src/models/thread';
 import Message from '../src/models/message';
 import { Folder, Label } from '../src/models/folder';
 import EmailParticipant from '../src/models/email-participant';
-import fetch from "node-fetch";
+import fetch from 'node-fetch';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -31,18 +31,16 @@ describe('Thread', () => {
       return {
         status: 200,
         buffer: () => {
-          return Promise.resolve("body");
+          return Promise.resolve('body');
         },
         json: () => {
           return Promise.resolve(receivedBody);
         },
-        headers: new Map()
-      }
+        headers: new Map(),
+      };
     };
 
-    fetch.mockImplementation(req =>
-        Promise.resolve(response(req.body))
-    );
+    fetch.mockImplementation(req => Promise.resolve(response(req.body)));
 
     testContext.thread = new Thread(testContext.connection);
     testContext.thread.id = '4333';
@@ -57,7 +55,9 @@ describe('Thread', () => {
       testContext.thread.labels = [label];
       testContext.thread.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/threads/4333');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/threads/4333'
+        );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
           label_ids: ['label_id'],
@@ -74,7 +74,9 @@ describe('Thread', () => {
       testContext.thread.folders = [label];
       testContext.thread.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/threads/4333');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/threads/4333'
+        );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
           folder_id: 'label_id',
@@ -104,15 +106,15 @@ describe('Thread', () => {
         to: [{ name: 'Bob', email: 'bob@gmail.com' }],
       };
       const folder = {
-        'display_name': 'Inbox',
-        'id': 'f1',
-        'name': 'inbox'
+        display_name: 'Inbox',
+        id: 'f1',
+        name: 'inbox',
       };
 
       const t = testContext.thread.fromJSON({
         messages: [m1, m2],
         drafts: [draft],
-        folders: [folder]
+        folders: [folder],
       });
 
       expect(t.messages).toBeDefined();
@@ -128,10 +130,10 @@ describe('Thread', () => {
     test('should populate participants', () => {
       const participants = [
         {
-          "email": "anna@yahoo.com",
-          "name": "Anna"
-        }
-      ]
+          email: 'anna@yahoo.com',
+          name: 'Anna',
+        },
+      ];
       const t = testContext.thread.fromJSON({
         participants: participants,
       });

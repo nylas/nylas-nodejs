@@ -79,9 +79,7 @@ describe('Delta', () => {
     test('stream response parsing', async () => {
       const response = new Response(new PassThrough(), { status: 200 });
       fetch.mockImplementation(() => Promise.resolve(response));
-      const stream = await testContext.delta.startStream(
-        'deltacursor0'
-      );
+      const stream = await testContext.delta.startStream('deltacursor0');
       const deltas = observeDeltas(stream);
 
       expect(deltas).toEqual([]);
@@ -105,9 +103,7 @@ describe('Delta', () => {
     test('stream response parsing, delta split across data packets', async () => {
       const response = new Response(new PassThrough(), { status: 200 });
       fetch.mockImplementation(() => Promise.resolve(response));
-      const stream = await testContext.delta.startStream(
-        'deltacursor0'
-      );
+      const stream = await testContext.delta.startStream('deltacursor0');
       const deltas = observeDeltas(stream);
 
       expect(deltas).toEqual([]);
@@ -138,11 +134,9 @@ describe('Delta', () => {
     test('stream timeout and auto-restart', async () => {
       const response = new Response(new PassThrough(), { status: 200 });
       fetch.mockImplementation(() => Promise.resolve(response));
-      const stream = await testContext.delta.startStream(
-        'deltacursor0'
-      );
-      const requestInfo = stream.requestInfo
-      const { request, controller } = requestInfo;
+      const stream = await testContext.delta.startStream('deltacursor0');
+      const requestInfo = stream.requestInfo;
+      const { controller } = requestInfo;
 
       expect(stream.cursor).toEqual('deltacursor0');
 
@@ -181,17 +175,18 @@ describe('Delta', () => {
         Promise.resolve({ cursor: 'abcdefg' })
       );
 
-      return testContext.delta.latestCursor(() => {
-        // do nothing.
-      }).then(cursor => {
+      return testContext.delta
+        .latestCursor(() => {
+          // do nothing.
+        })
+        .then(cursor => {
           expect(cursor).toEqual('abcdefg');
           expect(testContext.connection.request).toHaveBeenCalledWith({
             method: 'POST',
             path: '/delta/latest_cursor',
           });
           done();
-        }
-      );
+        });
     });
 
     test('returns a null cursor in case of an error', done => {
@@ -199,7 +194,8 @@ describe('Delta', () => {
       return testContext.delta
         .latestCursor(() => {
           // do nothing.
-        }).catch(e => {
+        })
+        .catch(e => {
           expect(e).toEqual('Error.');
           done();
         });

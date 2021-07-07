@@ -1,4 +1,4 @@
-import RestfulModel from "./restful-model";
+import RestfulModel from './restful-model';
 
 // The Attribute class represents a single model attribute, like 'namespace_id'
 // Subclasses of Attribute like AttributeDateTime know how to covert between
@@ -10,7 +10,15 @@ export class Attribute {
   jsonKey: string;
   readOnly: boolean;
 
-  constructor({ modelKey, jsonKey, readOnly }: { modelKey: string; jsonKey?: string; readOnly?: boolean }) {
+  constructor({
+    modelKey,
+    jsonKey,
+    readOnly,
+  }: {
+    modelKey: string;
+    jsonKey?: string;
+    readOnly?: boolean;
+  }) {
     this.modelKey = modelKey;
     this.jsonKey = jsonKey || modelKey;
     this.readOnly = readOnly || false;
@@ -19,7 +27,7 @@ export class Attribute {
   toJSON(val: any) {
     return val;
   }
-  fromJSON(val: any, parent: any) {
+  fromJSON(val: any, _parent: any) {
     return val || null;
   }
 }
@@ -27,19 +35,17 @@ export class Attribute {
 class AttributeObject extends Attribute {
   itemClass?: typeof RestfulModel;
 
-  constructor(
-    {
+  constructor({
     modelKey,
     jsonKey,
     itemClass,
-    readOnly
+    readOnly,
   }: {
     modelKey: string;
     jsonKey?: string;
     itemClass?: typeof RestfulModel;
     readOnly?: boolean;
-  }
-  ) {
+  }) {
     super({ modelKey, jsonKey, readOnly });
     this.itemClass = itemClass;
   }
@@ -49,7 +55,7 @@ class AttributeNumber extends Attribute {
   toJSON(val: any) {
     return val;
   }
-  fromJSON(val: any, parent: any) {
+  fromJSON(val: any, _parent: any) {
     if (!isNaN(val)) {
       return Number(val);
     } else {
@@ -62,7 +68,7 @@ class AttributeBoolean extends Attribute {
   toJSON(val: any) {
     return val;
   }
-  fromJSON(val: any, parent: any) {
+  fromJSON(val: any, _parent: any) {
     return val === 'true' || val === true || false;
   }
 }
@@ -71,7 +77,7 @@ class AttributeString extends Attribute {
   toJSON(val: any) {
     return val;
   }
-  fromJSON(val: any, parent: any) {
+  fromJSON(val: any, _parent: any) {
     return val || '';
   }
 }
@@ -80,7 +86,7 @@ class AttributeStringList extends Attribute {
   toJSON(val: any) {
     return val;
   }
-  fromJSON(val: any, parent: any) {
+  fromJSON(val: any, _parent: any) {
     return val || [];
   }
 }
@@ -100,7 +106,7 @@ class AttributeDate extends Attribute {
     return val.toISOString();
   }
 
-  fromJSON(val: any, parent: any) {
+  fromJSON(val: any, _parent: any) {
     if (!val) {
       return null;
     }
@@ -123,7 +129,7 @@ class AttributeDateTime extends Attribute {
     return val.getTime() / 1000.0;
   }
 
-  fromJSON(val: any, parent: any) {
+  fromJSON(val: any, _parent: any) {
     if (!val) {
       return null;
     }
@@ -134,19 +140,17 @@ class AttributeDateTime extends Attribute {
 class AttributeCollection extends Attribute {
   itemClass: typeof RestfulModel;
 
-  constructor(
-    {
+  constructor({
     modelKey,
     jsonKey,
     itemClass,
-    readOnly
+    readOnly,
   }: {
     modelKey: string;
     jsonKey?: string;
     itemClass: typeof RestfulModel;
     readOnly?: boolean;
-  }
-  ) {
+  }) {
     super({ modelKey, jsonKey, readOnly });
     this.itemClass = itemClass;
   }
@@ -166,19 +170,18 @@ class AttributeCollection extends Attribute {
     return json;
   }
 
-  fromJSON(json: any, parent: any) {
+  fromJSON(json: any, _parent: any) {
     if (!json || !(json instanceof Array)) {
       return [];
     }
     const objs = [];
     for (const objJSON of json) {
-      const obj = new this.itemClass(parent.connection, objJSON);
+      const obj = new this.itemClass(_parent.connection, objJSON);
       objs.push(obj);
     }
     return objs;
   }
 }
-
 
 const Attributes = {
   Number(...args: ConstructorParameters<typeof AttributeNumber>) {
@@ -204,6 +207,6 @@ const Attributes = {
   },
   Object(...args: ConstructorParameters<typeof AttributeObject>) {
     return new AttributeObject(...args);
-  }
+  },
 };
 export default Attributes;

@@ -33,7 +33,7 @@ describe('account', () => {
   });
 
   test('account attributes should resolve', done => {
-     testContext.connection.account.get().then(function(account) {
+    testContext.connection.account.get().then(function(account) {
       expect(account.id).toBe('hecea680y4sborshkiraj17c');
       expect(account.emailAddress).toBe('jeremy@emmerge.com');
       expect(account.organizationUnit).toBe('folder');
