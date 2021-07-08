@@ -245,7 +245,7 @@ describe('Neural', () => {
           account_id: 'account123',
           body: 'This is a body',
           categorizer: {
-            categorized_at: '2021-06-24T17:28:09.549266',
+            categorized_at: '2021-06-24T21:28:09.549Z',
             category: 'feed',
             model_version: '6194f733',
             subcategories: ['ooo'],
@@ -282,8 +282,8 @@ describe('Neural', () => {
           const categorizer = message.categorizer;
           expect(categorizer).toBeDefined();
           expect(categorizer.category).toEqual('feed');
-          expect(categorizer.categorizedAt.toUTCString()).toEqual(
-            new Date('2021-06-24T21:28:09.549Z').toUTCString()
+          expect(categorizer.categorizedAt).toEqual(
+            new Date('2021-06-24T21:28:09.549Z')
           );
           expect(categorizer.modelVersion).toEqual('6194f733');
           expect(categorizer.subcategories.length).toEqual(1);
