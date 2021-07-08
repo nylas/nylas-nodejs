@@ -137,7 +137,6 @@ export default class RestfulModelCollection<T extends RestfulModel> {
     paramsArg?: { [key: string]: any } | GetCallback | null,
     callbackArg?: GetCallback | { [key: string]: any } | null
   ) {
-
     // callback used to be the second argument, and params was the third
     let callback: GetCallback | undefined;
     if (typeof callbackArg === 'function') {
@@ -265,7 +264,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         body: body,
         path: `${this.path()}/${item.id}`,
       })
-      .then((data) => {
+      .then(data => {
         if (callback) {
           callback(null, data);
         }

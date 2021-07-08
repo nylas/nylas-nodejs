@@ -16,11 +16,11 @@ JobStatus.attributes = {
   }),
   createdAt: Attributes.DateTime({
     modelKey: 'createdAt',
-    jsonKey: 'created_at'
+    jsonKey: 'created_at',
   }),
   jobStatusId: Attributes.String({
     modelKey: 'jobStatusId',
-    jsonKey: 'job_status_id'
+    jsonKey: 'job_status_id',
   }),
   status: Attributes.String({
     modelKey: 'status',

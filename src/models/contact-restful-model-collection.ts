@@ -1,9 +1,10 @@
 import { Contact, Group } from './contact';
 import NylasConnection from '../nylas-connection';
-import RestfulModel from './restful-model';
 import RestfulModelCollection from './restful-model-collection';
 
-export default class ContactRestfulModelCollection extends RestfulModelCollection<Contact> {
+export default class ContactRestfulModelCollection extends RestfulModelCollection<
+  Contact
+> {
   connection: NylasConnection;
   modelClass: typeof Contact;
 
@@ -13,14 +14,18 @@ export default class ContactRestfulModelCollection extends RestfulModelCollectio
     this.modelClass = Contact;
   }
 
-  groups(callback?: (error: Error | null, data?: { [key: string]: any }) => void) {
+  groups(
+    callback?: (error: Error | null, data?: { [key: string]: any }) => void
+  ) {
     return this.connection
       .request({
         method: 'GET',
-        path: `/contacts/groups`
+        path: `/contacts/groups`,
       })
       .then(json => {
-        const groups = json.map((group: { [key: string]: any }) => { return new Group(this.connection, group); });
+        const groups = json.map((group: { [key: string]: any }) => {
+          return new Group(this.connection, group);
+        });
         if (callback) {
           callback(null, groups);
         }

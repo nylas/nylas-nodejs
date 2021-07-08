@@ -90,6 +90,7 @@ class Nylas {
     return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
+  //TODO::Deprecate the camel case property in the next major release
   static application(options?: {
     application_name?: string;
     redirect_uris?: string[];

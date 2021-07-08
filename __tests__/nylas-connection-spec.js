@@ -11,7 +11,7 @@ describe('NylasConnection', () => {
     testContext.connection = new NylasConnection('test-access-token', {
       clientId: 'foo',
     });
-    config.setApiServer("http://nylas.com")
+    config.setApiServer('http://nylas.com');
   });
 
   describe('requestOptions', () => {
@@ -23,8 +23,8 @@ describe('NylasConnection', () => {
       };
       const result = testContext.connection.requestOptions(options);
       const params = result.url.searchParams;
-      expect(params.has("expanded")).toEqual(false);
-      expect(params.get("view")).toEqual('expanded');
+      expect(params.has('expanded')).toEqual(false);
+      expect(params.get('view')).toEqual('expanded');
       expect(result.headers['User-Agent']).toEqual(
         `Nylas Node SDK v${SDK_VERSION}`
       );

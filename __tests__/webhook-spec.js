@@ -9,7 +9,7 @@ describe('Webhook', () => {
     callback_url: 'https://wwww.myapp.com/webhook',
     state: 'active',
     triggers: ['message.opened', 'message.link_clicked'],
-    version: '2.0'
+    version: '2.0',
   };
   beforeEach(() => {
     Nylas.config({
@@ -24,17 +24,16 @@ describe('Webhook', () => {
       Nylas.webhooks.connection.request = jest.fn(() =>
         Promise.resolve([webhookJSON])
       );
-      Nylas.webhooks
-        .list({}, (err, webhooks) => {
-          expect(webhooks.length).toEqual(1);
-          expect(webhooks[0].id).toEqual(WEBHOOK_ID);
-          expect(Nylas.webhooks.connection.request).toHaveBeenCalledWith({
-            method: 'GET',
-            qs: { limit: 100, offset: 0 },
-            path: `/a/${CLIENT_ID}/webhooks`,
-          });
-          done();
-        })
+      return Nylas.webhooks.list({}, (err, webhooks) => {
+        expect(webhooks.length).toEqual(1);
+        expect(webhooks[0].id).toEqual(WEBHOOK_ID);
+        expect(Nylas.webhooks.connection.request).toHaveBeenCalledWith({
+          method: 'GET',
+          qs: { limit: 100, offset: 0 },
+          path: `/a/${CLIENT_ID}/webhooks`,
+        });
+        done();
+      });
     });
   });
 
@@ -44,15 +43,15 @@ describe('Webhook', () => {
       Nylas.webhooks.connection.request = jest.fn(() =>
         Promise.resolve(webhookJSON)
       );
-      Nylas.webhooks.find(WEBHOOK_ID).then(webhookResp => {
+      return Nylas.webhooks.find(WEBHOOK_ID).then(webhookResp => {
         expect(webhookResp.toJSON()).toEqual(webhookJSON);
         expect(Nylas.webhooks.connection.request).toHaveBeenCalledWith({
           method: 'GET',
           path: `/a/${CLIENT_ID}/webhooks/${WEBHOOK_ID}`,
-          qs: {}
+          qs: {},
         });
         done();
-        })
+      });
     });
   });
 
@@ -67,9 +66,9 @@ describe('Webhook', () => {
         callbackUrl: 'https://wwww.myapp.com/webhook',
         state: 'active',
         triggers: ['message.opened', 'message.link_clicked'],
-        version: '2.0'
+        version: '2.0',
       });
-      webhook.save().then(webhookResp => {
+      return webhook.save().then(webhookResp => {
         expect(webhookResp.toJSON()).toEqual(webhookJSON);
         expect(Nylas.webhooks.connection.request).toHaveBeenCalledWith({
           method: 'POST',
@@ -82,7 +81,7 @@ describe('Webhook', () => {
           },
         });
         done();
-        })
+      });
     });
   });
 
@@ -98,36 +97,34 @@ describe('Webhook', () => {
         callbackUrl: 'https://wwww.myapp.com/webhook',
         state: 'active',
         triggers: ['message.opened', 'message.link_clicked'],
-        version: '2.0'
+        version: '2.0',
       });
-      webhook.save().then(webhookResp => {
+      return webhook.save().then(webhookResp => {
         expect(webhookResp.toJSON()).toEqual(webhookJSON);
         expect(Nylas.webhooks.connection.request).toHaveBeenCalledWith({
           method: 'PUT',
           path: `/a/${CLIENT_ID}/webhooks/${WEBHOOK_ID}`,
           qs: {},
-          body: {state: 'active'},
+          body: { state: 'active' },
         });
         done();
-        })
+      });
     });
   });
 
   describe('Delete an existing webhook', () => {
     test('Should do a DELETE request to /a/<client_id>/webhooks/<id>', done => {
       expect.assertions(1);
-      Nylas.webhooks.connection.request = jest.fn(() =>
-        Promise.resolve(null)
-      );
+      Nylas.webhooks.connection.request = jest.fn(() => Promise.resolve(null));
       const webhook = Nylas.webhooks.build({
         id: WEBHOOK_ID,
         applicationId: CLIENT_ID,
         callbackUrl: 'https://wwww.myapp.com/webhook',
         state: 'active',
         triggers: ['message.opened', 'message.link_clicked'],
-        version: '2.0'
+        version: '2.0',
       });
-      Nylas.webhooks.delete(webhook).then(webhookResp => {
+      return Nylas.webhooks.delete(webhook).then(() => {
         expect(Nylas.webhooks.connection.request).toHaveBeenCalledWith({
           method: 'DELETE',
           path: `/a/${CLIENT_ID}/webhooks/${WEBHOOK_ID}`,
@@ -135,15 +132,13 @@ describe('Webhook', () => {
           body: {},
         });
         done();
-        })
+      });
     });
 
     test('Should DELETE webhook by ID', done => {
       expect.assertions(1);
-      Nylas.webhooks.connection.request = jest.fn(() =>
-        Promise.resolve(null)
-      );
-      Nylas.webhooks.delete(WEBHOOK_ID).then(webhookResp => {
+      Nylas.webhooks.connection.request = jest.fn(() => Promise.resolve(null));
+      return Nylas.webhooks.delete(WEBHOOK_ID).then(() => {
         expect(Nylas.webhooks.connection.request).toHaveBeenCalledWith({
           method: 'DELETE',
           path: `/a/${CLIENT_ID}/webhooks/${WEBHOOK_ID}`,
@@ -151,7 +146,7 @@ describe('Webhook', () => {
           body: {},
         });
         done();
-        })
+      });
     });
   });
 });

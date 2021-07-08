@@ -1,8 +1,14 @@
 # Changelog
 
 ### Unreleased
+* Fixed Jest test cases not respecting async methods
+* Fixed issue with parsing raw MIME emails
+* Added linting, enabled and set up eslint and prettier
+
+### 5.5.1 / 2021-06-24
 * Fix tracking object not being added to a pre-existing `draft` object
 * Removed `request` dependency and related import statements
+* Fix `undefined` response when downloading file
 
 ### 5.5.0 / 2021-06-09
 * Fix bug where saving a `draft` object with an undefined `filesIds` would throw an error

@@ -1,0 +1,36 @@
+name: Pull Request
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 8.x, 14.x ]
+    name: Nodejs ${{ matrix.node-version }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Nodejs ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies and build
+        run: npm install
+
+      - name: Run lint checks
+        run: npm run lint:ci
+
+      - name: Run prettier checks
+        run: npm run lint:prettier:check
+
+      - name: Run tests
+        run: npm run test

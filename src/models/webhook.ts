@@ -1,6 +1,6 @@
 import ManagementModel from './management-model';
 import Attributes from './attributes';
-import {SaveCallback} from './restful-model';
+import { SaveCallback } from './restful-model';
 
 export default class Webhook extends ManagementModel {
   id?: string;
@@ -14,16 +14,14 @@ export default class Webhook extends ManagementModel {
     return `/a/${this.clientId}`;
   }
   saveRequestBody() {
-    const json: {[key: string]:any} = {};
+    const json: { [key: string]: any } = {};
     // We can only update the state of an existing webhook
     if (this.id) {
       json['state'] = this.state;
     } else {
       json['callback_url'] = this.callbackUrl;
       json['state'] = this.state ? this.state : 'active';
-      json['triggers'] = Webhook.attributes.triggers.toJSON(
-        this.triggers
-      );
+      json['triggers'] = Webhook.attributes.triggers.toJSON(this.triggers);
     }
     return json;
   }

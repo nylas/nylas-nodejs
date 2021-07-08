@@ -54,22 +54,18 @@ describe('RestfulModelCollection', () => {
         threadsResponses.push(response);
       }
 
-      testContext.collection._getModelCollection = jest.fn(
-        (params, offset, limit) =>
-          Promise.resolve(threadsResponses[offset / 100])
+      testContext.collection._getModelCollection = jest.fn((params, offset) =>
+        Promise.resolve(threadsResponses[offset / 100])
       );
     });
 
     test('should fetch models with the given params', () => {
       const params = { from: 'ben@nylas.com' };
-      const threads = [
-        {
-          id: '123',
-          account_id: undefined,
-          subject: 'A',
-        },
-      ];
-      testContext.collection.forEach(params, () => {}, () => {});
+      testContext.collection.forEach(
+        params,
+        () => {},
+        () => {}
+      );
       expect(testContext.collection._getModelCollection).toHaveBeenCalledWith(
         params,
         0,
@@ -185,7 +181,7 @@ describe('RestfulModelCollection', () => {
 
       test('should call the optional callback with any error', done => {
         testContext.collection
-          .count({ from: 'ben@nylas.com' }, (callbackError, count) => {
+          .count({ from: 'ben@nylas.com' }, callbackError => {
             expect(callbackError).toBe(testContext.error);
             done();
           })
@@ -271,7 +267,7 @@ describe('RestfulModelCollection', () => {
 
       test('should call the optional callback with the underlying error', done => {
         testContext.collection
-          .first({ from: 'ben@nylas.com' }, (err, item) => {
+          .first({ from: 'ben@nylas.com' }, err => {
             expect(err).toBe(testContext.error);
             done();
           })
@@ -341,7 +337,7 @@ describe('RestfulModelCollection', () => {
     });
 
     test('should pass additional params as second argument to the request when callback is provided', done => {
-      testContext.collection.find('123', { param: 1 }, (err, data) => {});
+      testContext.collection.find('123', { param: 1 }, () => {});
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'GET',
         path: '/threads/123',
@@ -383,11 +379,15 @@ describe('RestfulModelCollection', () => {
       });
 
       test('should call the optional callback with the first item when params provided as third arg', done => {
-        testContext.collection.find('123', (err, item) => {
-          expect(item instanceof Thread).toBe(true);
-          expect(item.id).toBe('123');
-          done();
-        }, { param: 1 });
+        testContext.collection.find(
+          '123',
+          (err, item) => {
+            expect(item instanceof Thread).toBe(true);
+            expect(item.id).toBe('123');
+            done();
+          },
+          { param: 1 }
+        );
       });
     });
 
@@ -408,7 +408,7 @@ describe('RestfulModelCollection', () => {
 
       test('should call the optional callback with the underlying error', done => {
         testContext.collection
-          .find('123', (err, item) => {
+          .find('123', err => {
             expect(err).toBe(testContext.error);
             done();
           })
@@ -503,7 +503,7 @@ describe('RestfulModelCollection', () => {
 
       test('should call the optional callback with the underlying error', done => {
         testContext.collection
-          .search('Jackie', {}, (err, item) => {
+          .search('Jackie', {}, err => {
             expect(err).toBe(testContext.error);
           })
           .catch(() => {
@@ -525,7 +525,9 @@ describe('RestfulModelCollection', () => {
     });
 
     test('should populate qs if params passed in', done => {
-      testContext.collection.delete(testContext.item, { notify_participants: false });
+      testContext.collection.delete(testContext.item, {
+        notify_participants: false,
+      });
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
         qs: { notify_participants: false },
@@ -536,7 +538,9 @@ describe('RestfulModelCollection', () => {
     });
 
     test('should accept an object id as the first parameter', done => {
-      testContext.collection.delete(testContext.item.id, { notify_participants: true });
+      testContext.collection.delete(testContext.item.id, {
+        notify_participants: true,
+      });
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
         qs: { notify_participants: true },
@@ -558,7 +562,7 @@ describe('RestfulModelCollection', () => {
     });
 
     test('should work with extraneous params', done => {
-      testContext.collection.delete(testContext.item, {'foo': 'bar'});
+      testContext.collection.delete(testContext.item, { foo: 'bar' });
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
         qs: {},
@@ -614,12 +618,13 @@ describe('RestfulModelCollection', () => {
         testContext.connection
       );
       testContext.item = new Draft(testContext.connection, {
-        id: '123', version: 0,
+        id: '123',
+        version: 0,
       });
     });
 
-    test('should populate body with draft object\'s version if version param not provided', () => {
-      testContext.collection.deleteItem({item: testContext.item});
+    test("should populate body with draft object's version if version param not provided", () => {
+      testContext.collection.deleteItem({ item: testContext.item });
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
         qs: {},
@@ -629,7 +634,10 @@ describe('RestfulModelCollection', () => {
     });
 
     test('should override draft version if it was passed in', () => {
-      testContext.collection.deleteItem({item: testContext.item, body: { version: 2 }});
+      testContext.collection.deleteItem({
+        item: testContext.item,
+        body: { version: 2 },
+      });
       expect(testContext.connection.request).toHaveBeenCalledWith({
         method: 'DELETE',
         qs: {},
@@ -640,7 +648,9 @@ describe('RestfulModelCollection', () => {
 
     describe('when the api request is successful', () => {
       test('should resolve', done => {
-        testContext.collection.deleteItem({item: testContext.item}).then(() => done());
+        testContext.collection
+          .deleteItem({ item: testContext.item })
+          .then(() => done());
       });
 
       test('should call its callback with no error', done => {
@@ -648,7 +658,10 @@ describe('RestfulModelCollection', () => {
           expect(err).toBe(null);
           done();
         }
-        testContext.collection.deleteItem({item: testContext.item, callback: callback});
+        testContext.collection.deleteItem({
+          item: testContext.item,
+          callback: callback,
+        });
       });
     });
 
@@ -661,10 +674,12 @@ describe('RestfulModelCollection', () => {
       });
 
       test('should reject', done => {
-        testContext.collection.deleteItem({item: testContext.item}).catch(err => {
-          expect(err).toBe(testContext.error);
-          done();
-        });
+        testContext.collection
+          .deleteItem({ item: testContext.item })
+          .catch(err => {
+            expect(err).toBe(testContext.error);
+            done();
+          });
       });
 
       test('should call its callback with the error', done => {
@@ -673,7 +688,7 @@ describe('RestfulModelCollection', () => {
           done();
         }
         testContext.collection
-          .deleteItem({item: testContext.item, callback: callback})
+          .deleteItem({ item: testContext.item, callback: callback })
           .catch(() => {});
       });
     });
@@ -723,21 +738,13 @@ describe('RestfulModelCollection', () => {
         threadsResponses.push(response);
       }
 
-      testContext.collection._getModelCollection = jest.fn(
-        (params, offset, limit) =>
-          Promise.resolve(threadsResponses[offset / 100])
+      testContext.collection._getModelCollection = jest.fn((params, offset) =>
+        Promise.resolve(threadsResponses[offset / 100])
       );
     });
 
     test('should fetch once if fewer than one page of models are requested', () => {
       const params = { from: 'ben@nylas.com' };
-      const threads = [
-        {
-          id: '123',
-          account_id: undefined,
-          subject: 'A',
-        },
-      ];
       testContext.collection._range({ params, offset: 0, limit: 50 });
       expect(testContext.collection._getModelCollection).toHaveBeenCalledWith(
         params,
@@ -749,13 +756,6 @@ describe('RestfulModelCollection', () => {
 
     test('should fetch repeatedly until the requested number of models have been returned', () => {
       const params = { from: 'ben@nylas.com' };
-      const threads = [
-        {
-          id: '123',
-          account_id: undefined,
-          subject: 'A',
-        },
-      ];
       const callback = () => {
         expect(
           testContext.collection._getModelCollection.mock.calls[0]

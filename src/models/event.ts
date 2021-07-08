@@ -111,7 +111,11 @@ export default class Event extends RestfulModel {
     return this._save(params, callback);
   }
 
-  rsvp(status: string, comment: string, callback: (error: Error | null, data?: Event) => void) {
+  rsvp(
+    status: string,
+    comment: string,
+    callback?: (error: Error | null, data?: Event) => void
+  ) {
     return this.connection
       .request({
         method: 'POST',
@@ -182,5 +186,5 @@ Event.attributes = {
   }),
   metadata: Attributes.Object({
     modelKey: 'metadata',
-  })
+  }),
 };

@@ -1,33 +1,62 @@
 import NylasConnection from '../src/nylas-connection';
 import Event from '../src/models/event';
+import Nylas from '../src/nylas';
+import fetch from 'node-fetch';
+
+jest.mock('node-fetch', () => {
+  const { Request, Response } = jest.requireActual('node-fetch');
+  const fetch = jest.fn();
+  fetch.Request = Request;
+  fetch.Response = Response;
+  return fetch;
+});
 
 describe('Event', () => {
   let testContext;
 
   beforeEach(() => {
+    Nylas.config({
+      clientId: 'myClientId',
+      clientSecret: 'myClientSecret',
+      apiServer: 'https://api.nylas.com',
+    });
     testContext = {};
     testContext.connection = new NylasConnection('123', { clientId: 'foo' });
-    testContext.connection.request = jest.fn(() => Promise.resolve());
+    jest.spyOn(testContext.connection, 'request');
+
+    const response = receivedBody => {
+      return {
+        status: 200,
+        buffer: () => {
+          return Promise.resolve('body');
+        },
+        json: () => {
+          return Promise.resolve(receivedBody);
+        },
+        headers: new Map(),
+      };
+    };
+
+    fetch.mockImplementation(req => Promise.resolve(response(req.body)));
+
     testContext.event = new Event(testContext.connection);
   });
 
   describe('save', () => {
     test('should do a POST request if the event has no id', done => {
       testContext.event.id = undefined;
-      testContext.event.save().then(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            location: undefined,
-            when: undefined,
-            participants: [],
-          },
-          qs: {},
-          path: '/events',
+      return testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: undefined,
+          participants: [],
         });
         done();
       });
@@ -35,42 +64,41 @@ describe('Event', () => {
 
     test('should do a PUT request if the event has an id', done => {
       testContext.event.id = 'id-1234';
-      testContext.event.save().then(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'PUT',
-          body: {
-            calendar_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            location: undefined,
-            when: undefined,
-            participants: [],
-          },
-          qs: {},
-          path: '/events/id-1234',
+      return testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/events/id-1234'
+        );
+        expect(options.method).toEqual('PUT');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: undefined,
+          participants: [],
         });
         done();
       });
     });
 
     test('should include params in the request if they were passed in', done => {
-      testContext.event.save({ notify_participants: true }).then(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            location: undefined,
-            when: undefined,
-            participants: [],
-          },
-          qs: {
-            notify_participants: true,
-          },
-          path: '/events',
+      return testContext.event.save({ notify_participants: true }).then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.qs['notify_participants']).toEqual(true);
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/events?notify_participants=true'
+        );
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: undefined,
+          participants: [],
         });
         done();
       });
@@ -78,27 +106,23 @@ describe('Event', () => {
 
     test('should create recurring event if recurrence is defined', done => {
       const recurrence = {
-        "rrule": [
-          "RRULE:FREQ=WEEKLY;BYDAY=MO"
-        ],
-        "timezone": "America/New_York"
-      }
+        rrule: ['RRULE:FREQ=WEEKLY;BYDAY=MO'],
+        timezone: 'America/New_York',
+      };
       testContext.event.recurrence = recurrence;
-      testContext.event.save().then(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            location: undefined,
-            when: undefined,
-            participants: [],
-            recurrence: recurrence
-          },
-          qs: {},
-          path: '/events',
+      return testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: undefined,
+          participants: [],
+          recurrence: recurrence,
         });
         done();
       });
@@ -108,26 +132,24 @@ describe('Event', () => {
       testContext.event.when = {};
       testContext.event.start = 1408875644;
       testContext.event.end = 1408875644;
-      testContext.event.save().then(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            message_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            owner: undefined,
-            location: undefined,
-            when: {
-              time: 1408875644,
-            },
-            participants: [],
-            read_only: undefined,
-            status: undefined,
+      return testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          message_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          owner: undefined,
+          location: undefined,
+          when: {
+            time: 1408875644,
           },
-          qs: {},
-          path: '/events',
+          participants: [],
+          read_only: undefined,
+          status: undefined,
         });
         done();
       });
@@ -135,29 +157,27 @@ describe('Event', () => {
 
     test('should create event with start_time and end_time when start and end are different UNIX timestamps', done => {
       testContext.event.when = {};
-      testContext.event.start = 1409594400
-      testContext.event.end = 1409598000
-      testContext.event.save().then(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            message_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            owner: undefined,
-            location: undefined,
-            when: {
-              start_time: 1409594400,
-              end_time: 1409598000,
-            },
-            participants: [],
-            read_only: undefined,
-            status: undefined,
+      testContext.event.start = 1409594400;
+      testContext.event.end = 1409598000;
+      return testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          message_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          owner: undefined,
+          location: undefined,
+          when: {
+            start_time: 1409594400,
+            end_time: 1409598000,
           },
-          qs: {},
-          path: '/events',
+          participants: [],
+          read_only: undefined,
+          status: undefined,
         });
         done();
       });
@@ -167,26 +187,24 @@ describe('Event', () => {
       testContext.event.when = {};
       testContext.event.start = '1912-06-23';
       testContext.event.end = '1912-06-23';
-      testContext.event.save().then(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            message_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            owner: undefined,
-            location: undefined,
-            when: {
-              date: '1912-06-23',
-            },
-            participants: [],
-            read_only: undefined,
-            status: undefined,
+      return testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          message_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          owner: undefined,
+          location: undefined,
+          when: {
+            date: '1912-06-23',
           },
-          qs: {},
-          path: '/events',
+          participants: [],
+          read_only: undefined,
+          status: undefined,
         });
         done();
       });
@@ -196,27 +214,24 @@ describe('Event', () => {
       testContext.event.when = {};
       testContext.event.start = '1815-12-10';
       testContext.event.end = '1852-11-27';
-      testContext.event.save().then(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            message_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            owner: undefined,
-            location: undefined,
-            when: {
-              start_date: '1815-12-10',
-              end_date: '1852-11-27',
-            },
-            participants: [],
-            read_only: undefined,
-            status: undefined,
+      return testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          message_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          owner: undefined,
+          location: undefined,
+          when: {
+            start_date: '1815-12-10',
+            end_date: '1852-11-27',
           },
-          qs: {},
-          path: '/events',
+          participants: [],
+          read_only: undefined,
         });
         done();
       });
@@ -224,26 +239,24 @@ describe('Event', () => {
 
     test('should create event with time when event param `when` is updated with time', done => {
       testContext.event.when = { time: 1408875644 };
-      testContext.event.save().then(event => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            message_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            owner: undefined,
-            location: undefined,
-            when: {
-              time: 1408875644,
-            },
-            participants: [],
-            read_only: undefined,
-            status: undefined,
+      return testContext.event.save().then(event => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          message_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          owner: undefined,
+          location: undefined,
+          when: {
+            time: 1408875644,
           },
-          qs: {},
-          path: '/events',
+          participants: [],
+          read_only: undefined,
+          status: undefined,
         });
         expect(event.start).toBe(1408875644);
         expect(event.end).toBe(1408875644);
@@ -253,27 +266,25 @@ describe('Event', () => {
 
     test('should create event with start_time and end_time when event param `when` is updated with start_time and end_time', done => {
       testContext.event.when = { start_time: 1409594400, end_time: 1409598000 };
-      testContext.event.save().then(event => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            message_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            owner: undefined,
-            location: undefined,
-            when: {
-              start_time: 1409594400,
-              end_time: 1409598000,
-            },
-            participants: [],
-            read_only: undefined,
-            status: undefined,
+      return testContext.event.save().then(event => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          message_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          owner: undefined,
+          location: undefined,
+          when: {
+            start_time: 1409594400,
+            end_time: 1409598000,
           },
-          qs: {},
-          path: '/events',
+          participants: [],
+          read_only: undefined,
+          status: undefined,
         });
         expect(event.start).toBe(1409594400);
         expect(event.end).toBe(1409598000);
@@ -283,26 +294,24 @@ describe('Event', () => {
 
     test('should create event with date when the event param `when` is updated with date', done => {
       testContext.event.when = { date: '1912-06-23' };
-      testContext.event.save().then(event => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            message_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            owner: undefined,
-            location: undefined,
-            when: {
-              date: '1912-06-23',
-            },
-            participants: [],
-            read_only: undefined,
-            status: undefined,
+      return testContext.event.save().then(event => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          message_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          owner: undefined,
+          location: undefined,
+          when: {
+            date: '1912-06-23',
           },
-          qs: {},
-          path: '/events',
+          participants: [],
+          read_only: undefined,
+          status: undefined,
         });
         expect(event.start).toBe('1912-06-23');
         expect(event.end).toBe('1912-06-23');
@@ -311,28 +320,29 @@ describe('Event', () => {
     });
 
     test('should create event with start_date and end_date when the event param `when` is updated with start_date and end_date', done => {
-      testContext.event.when = { start_date: '1815-12-10', end_date: '1852-11-27' };
-      testContext.event.save().then(event => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            message_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            owner: undefined,
-            location: undefined,
-            when: {
-              start_date: '1815-12-10',
-              end_date: '1852-11-27',
-            },
-            participants: [],
-            read_only: undefined,
-            status: undefined,
+      testContext.event.when = {
+        start_date: '1815-12-10',
+        end_date: '1852-11-27',
+      };
+      return testContext.event.save().then(event => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          message_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          owner: undefined,
+          location: undefined,
+          when: {
+            start_date: '1815-12-10',
+            end_date: '1852-11-27',
           },
-          qs: {},
-          path: '/events',
+          participants: [],
+          read_only: undefined,
+          status: undefined,
         });
         expect(event.start).toBe('1815-12-10');
         expect(event.end).toBe('1852-11-27');
@@ -348,51 +358,47 @@ describe('Event', () => {
         start_date: '1815-12-10',
         end_date: '1852-11-27',
       });
-      testContext.event.save().then(event => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            message_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            owner: undefined,
-            location: undefined,
-            when: {
-              start_date: '1815-12-10',
-              end_date: '1852-11-27',
-            },
-            participants: [],
-            read_only: undefined,
-            status: undefined,
+      return testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          message_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          owner: undefined,
+          location: undefined,
+          when: {
+            start_date: '1815-12-10',
+            end_date: '1852-11-27',
           },
-          qs: {},
-          path: '/events',
+          participants: [],
+          read_only: undefined,
+          status: undefined,
         });
         done();
       });
     });
 
     test('should create an event with a metadata object', done => {
-      testContext.event.metadata = {'hello': 'world'};
+      testContext.event.metadata = { hello: 'world' };
       testContext.event.save().then(() => {
-        expect(testContext.connection.request).toHaveBeenCalledWith({
-          method: 'POST',
-          body: {
-            calendar_id: undefined,
-            busy: undefined,
-            title: undefined,
-            description: undefined,
-            location: undefined,
-            when: undefined,
-            _start: undefined,
-            _end: undefined,
-            participants: [],
-            metadata: {'hello': 'world'}
-          },
-          qs: {},
-          path: '/events',
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: undefined,
+          _start: undefined,
+          _end: undefined,
+          participants: [],
+          metadata: { hello: 'world' },
         });
         done();
       });
@@ -405,31 +411,32 @@ describe('Event', () => {
             id: 'id-1234',
             title: 'test event',
             when: { time: 1409594400, object: 'time' },
-            participants: [
-              {'name': 'foo', 'email': 'bar', 'status': 'noreply'}
-            ],
-            ical_uid: 'id-5678'
+            participants: [{ name: 'foo', email: 'bar', status: 'noreply' }],
+            ical_uid: 'id-5678',
           };
           return Promise.resolve(eventJSON);
         });
       });
 
       test('should resolve with the event object', done => {
-        testContext.event.save().then(event => {
+        return testContext.event.save().then(event => {
           expect(event.id).toBe('id-1234');
           expect(event.title).toBe('test event');
           expect(event.when.time).toEqual(1409594400);
           expect(event.when.object).toEqual('time');
           expect(event.iCalUID).toBe('id-5678');
-          let participant = event.participants[0];
-          expect(participant.toJSON()).toEqual(
-            {'name': 'foo', 'email': 'bar', 'status': 'noreply'});
+          const participant = event.participants[0];
+          expect(participant.toJSON()).toEqual({
+            name: 'foo',
+            email: 'bar',
+            status: 'noreply',
+          });
           done();
         });
       });
 
       test('should call the callback with the event object', done => {
-        testContext.event.save((err, event) => {
+        return testContext.event.save((err, event) => {
           expect(err).toBe(null);
           expect(event.id).toBe('id-1234');
           expect(event.title).toBe('test event');
@@ -460,23 +467,28 @@ describe('Event', () => {
             expect(event).toBe(undefined);
             done();
           })
-          .catch(() => {});
+          .catch(() => {
+            // do nothing
+          });
       });
     });
   });
 
   describe('rsvp', () => {
-    test('should do a POST request to the RSVP endpoint', () => {
+    test('should do a POST request to the RSVP endpoint', done => {
       testContext.event.id = 'public_id';
-      testContext.event.rsvp('yes', 'I will come.');
-      expect(testContext.connection.request).toHaveBeenCalledWith({
-        method: 'POST',
-        body: {
+      return testContext.event.rsvp('yes', 'I will come.').then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/send-rsvp'
+        );
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
           event_id: 'public_id',
           status: 'yes',
           comment: 'I will come.',
-        },
-        path: '/send-rsvp',
+        });
+        done();
       });
     });
   });

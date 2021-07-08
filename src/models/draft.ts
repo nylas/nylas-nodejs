@@ -1,10 +1,11 @@
-import File from './file';
 import Message from './message';
-import { Contact } from './contact';
 import Attributes from './attributes';
 import { SaveCallback } from './restful-model';
 
-export type SendCallback = (err: Error | null, json?: { [key: string]: any }) => void;
+export type SendCallback = (
+  err: Error | null,
+  json?: { [key: string]: any }
+) => void;
 
 export default class Draft extends Message {
   rawMime?: string;
@@ -58,7 +59,6 @@ export default class Draft extends Message {
     trackingArg?: { [key: string]: any } | SendCallback | null,
     callbackArg?: SendCallback | { [key: string]: any } | null
   ) {
-
     // callback used to be the first argument, and tracking was the second
     let callback: SendCallback | undefined;
     if (typeof callbackArg === 'function') {

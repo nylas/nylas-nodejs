@@ -81,11 +81,11 @@ export default class RestfulModel {
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
-  deleteRequestQueryString(params: { [key: string]: any }) {
+  deleteRequestQueryString(_params: { [key: string]: any }) {
     return {};
   }
   // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody(params: { [key: string]: any }) {
+  deleteRequestBody(_params: { [key: string]: any }) {
     return {};
   }
 
@@ -136,13 +136,13 @@ export default class RestfulModel {
   _get(
     params: { [key: string]: any } = {},
     callback?: (error: Error | null, result?: any) => void,
-    path_suffix = ''
+    pathSuffix = ''
   ) {
     const collectionName = (this.constructor as any).collectionName;
     return this.connection
       .request({
         method: 'GET',
-        path: `/${collectionName}/${this.id}${path_suffix}`,
+        path: `/${collectionName}/${this.id}${pathSuffix}`,
         qs: params,
       })
       .then(response => {

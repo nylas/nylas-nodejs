@@ -1,3 +1,4 @@
+name: Linked Clubhouse Story
 on:
   pull_request:
     types: [opened, closed, labeled]
@@ -11,9 +12,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           clubhouse-token: ${{ secrets.CLUBHOUSE_TOKEN }}
-          project-name: Engineering
+          project-name: Node SDK
           opened-state-name: Reviewing
-          merged-state-name: Merged
+          merged-state-name: Done
           closed-state-name: Won't Pursue
           ignored-users: dependabot
           label-iteration-group-map: |
@@ -36,7 +37,7 @@ jobs:
               "davidting": "5e0e4200-3c79-4755-aab9-a4a16f8ddcf1",
               "dominicj-nylas": "5e947e4e-d40e-477e-85d0-21f2b323c069",
               "dtom90": "604fa1a5-f5ce-4c4e-908a-3a87c15db98d",
-	            "aiirwiick": "60ab71f2-b85d-4317-9018-df3e48e89dab",
+              "aiirwiick": "60ab71f2-b85d-4317-9018-df3e48e89dab",
               "sammywen": "607da402-9bee-4ca4-80d5-b8f833840732",
               "jesmarcannao": "5e441a1c-a7b5-40c8-8634-ef9f0bcce5c1",
               "jhatch28": "5d0a9c4e-48a5-419b-a9b4-68fa672b96c9",
@@ -56,5 +57,5 @@ jobs:
               "spang": "5d13f026-00a6-4a9c-ba80-0048f43427f4",
               "yusra-ahmed": "5d237850-e39b-4e75-8c52-89003602a59a",
               "nylas-marcus": "5fc55708-44b9-41e8-aec0-004c3af90e69",
-              "mrashed-dev": "60b95d59-c018-48c0-8859-f7201ed502ae"
+              "mrashed-dev": "609964df-eb6c-4d74-8799-e33b7d503a09"
             }

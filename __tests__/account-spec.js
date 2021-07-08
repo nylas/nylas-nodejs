@@ -1,6 +1,4 @@
-import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
-import Account from '../src/models/account';
 
 describe('account', () => {
   let testContext;
@@ -42,7 +40,7 @@ describe('account', () => {
       expect(account.provider).toBe('eas');
       expect(account.syncState).toBe('running');
       expect(account.linkedAt).toEqual(new Date(linkedAtNum * 1000));
+      done();
     });
-    done();
   });
 });

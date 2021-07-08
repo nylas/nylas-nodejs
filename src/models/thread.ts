@@ -44,7 +44,6 @@ export default class Thread extends RestfulModel {
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
   }
-
 }
 Thread.collectionName = 'threads';
 Thread.attributes = {

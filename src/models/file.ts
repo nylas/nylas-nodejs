@@ -1,5 +1,4 @@
 import Attributes from './attributes';
-import NylasConnection from '../nylas-connection';
 import RestfulModel from './restful-model';
 
 export default class File extends RestfulModel {
@@ -22,7 +21,7 @@ export default class File extends RestfulModel {
       throw new Error('Please define a content-type');
     }
 
-    const formOptions: { [key: string]: any} = {
+    const formOptions: { [key: string]: any } = {
       filename: this.filename,
       contentType: this.contentType,
     };
@@ -35,7 +34,7 @@ export default class File extends RestfulModel {
       .request({
         method: 'POST',
         path: `/${File.collectionName}`,
-        json: false,
+        json: true,
         formData: {
           file: {
             value: this.data,
@@ -65,7 +64,12 @@ export default class File extends RestfulModel {
       });
   }
 
-  download(callback?: (error: Error | null, file?: { body: any; [key: string]: any }) => void) {
+  download(
+    callback?: (
+      error: Error | null,
+      file?: { body: any; [key: string]: any }
+    ) => void
+  ) {
     if (!this.id) {
       throw new Error('Please provide a File id');
     }
@@ -75,16 +79,7 @@ export default class File extends RestfulModel {
         path: `/files/${this.id}/download`,
         downloadRequest: true,
       })
-      .then(response => {
-        let filename;
-        const file = { ...response.headers, body: response.body };
-        if ('content-disposition' in file) {
-          filename =
-            /filename=([^;]*)/.exec(file['content-disposition'])![1] ||
-            'filename';
-        } else {
-          filename = 'filename';
-        }
+      .then(file => {
         if (callback) {
           callback(null, file);
         }
@@ -98,7 +93,9 @@ export default class File extends RestfulModel {
       });
   }
 
-  metadata(callback?: (error: Error | null, data?: { [key: string]: any }) => void) {
+  metadata(
+    callback?: (error: Error | null, data?: { [key: string]: any }) => void
+  ) {
     return this.connection
       .request({
         path: `/files/${this.id}`,
