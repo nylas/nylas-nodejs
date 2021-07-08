@@ -18,6 +18,7 @@ import Delta from './models/delta';
 import {Folder, Label} from './models/folder';
 import FormData, {AppendOptions} from "form-data";
 import NylasApiError from "./models/nylas-api-error";
+import Neural from "./models/neural";
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -57,6 +58,8 @@ export default class NylasConnection {
   labels: RestfulModelCollection<Label> = new RestfulModelCollection(Label, this);
   folders: RestfulModelCollection<Folder> = new RestfulModelCollection(Folder, this);
   account: RestfulModelInstance<Account> =  new RestfulModelInstance(Account, this);
+
+  neural: Neural = new Neural(this);
 
   constructor(
     accessToken: string | null | undefined,
