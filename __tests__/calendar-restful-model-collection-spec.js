@@ -61,28 +61,109 @@ describe('CalendarRestfulModelCollection', () => {
     );
   };
 
-  test('[FREE BUSY] should fetch results with snakecase params', () => {
+  test('[FREE BUSY] should fetch results with snakecase params', done => {
     const params = {
       start_time: '1590454800',
       end_time: '1590780800',
       emails: ['jane@email.com'],
     };
 
-    return testContext.connection.calendars
-      .freeBusy(params)
-      .then(evaluateFreeBusy);
+    return testContext.connection.calendars.freeBusy(params).then(() => {
+      evaluateFreeBusy();
+      done();
+    });
   });
 
-  test('[FREE BUSY] should fetch results with camelcase params', () => {
+  test('[FREE BUSY] should fetch results with camelcase params', done => {
     const params = {
       startTime: '1590454800',
       endTime: '1590780800',
       emails: ['jane@email.com'],
     };
 
-    return testContext.connection.calendars
-      .freeBusy(params)
-      .then(evaluateFreeBusy);
+    return testContext.connection.calendars.freeBusy(params).then(() => {
+      evaluateFreeBusy();
+      done();
+    });
+  });
+
+  const evaluateAvailability = () => {
+    const options = testContext.connection.request.mock.calls[0][0];
+    expect(options.url.toString()).toEqual(
+      'https://api.nylas.com/calendars/availability'
+    );
+    expect(options.method).toEqual('POST');
+    expect(JSON.parse(options.body)).toEqual({
+      start_time: '1590454800',
+      end_time: '1590780800',
+      interval_minutes: 5,
+      duration_minutes: 30,
+      emails: ['jane@email.com'],
+      free_busy: [],
+      open_hours: [
+        {
+          emails: ['swag@nylas.com'],
+          days: ['0'],
+          timezone: 'America/Chicago',
+          start: '10:00',
+          end: '14:00',
+          object_type: 'open_hours',
+        },
+      ],
+    });
+    expect(options.headers['authorization']).toEqual(
+      `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
+    );
+  };
+
+  test('[AVAILABILITY] should fetch results with snakecase params', done => {
+    const params = {
+      start_time: '1590454800',
+      end_time: '1590780800',
+      interval: 5,
+      duration: 30,
+      emails: ['jane@email.com'],
+      open_hours: [
+        {
+          emails: ['swag@nylas.com'],
+          days: ['0'],
+          timezone: 'America/Chicago',
+          start: '10:00',
+          end: '14:00',
+          object_type: 'open_hours',
+        },
+      ],
+    };
+
+    return testContext.connection.calendars.availability(params).then(() => {
+      evaluateAvailability();
+      done();
+    });
+  });
+
+  test('[AVAILABILITY] should fetch results with camelcase params', done => {
+    const params = {
+      startTime: '1590454800',
+      endTime: '1590780800',
+      interval: 5,
+      duration: 30,
+      emails: ['jane@email.com'],
+      open_hours: [
+        {
+          emails: ['swag@nylas.com'],
+          days: ['0'],
+          timezone: 'America/Chicago',
+          start: '10:00',
+          end: '14:00',
+          object_type: 'open_hours',
+        },
+      ],
+    };
+
+    return testContext.connection.calendars.availability(params).then(() => {
+      evaluateAvailability();
+      done();
+    });
   });
 
   test('[DELETE] should use correct route, method and auth', done => {
