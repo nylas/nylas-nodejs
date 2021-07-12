@@ -1,10 +1,11 @@
 # Changelog
 
 ### Unreleased
-* Fixed Jest test cases not respecting async methods
-* Fixed issue with parsing raw MIME emails
-* Added linting, enabled and set up eslint and prettier
+* Fix Jest test cases not respecting async methods
+* Fix issue with parsing raw MIME emails
+* Add linting, enabled and set up eslint and prettier
 * Add support for `/calendars/availability` endpoint
+* Add support for the Neural API
 
 ### 5.5.1 / 2021-06-24
 * Fix tracking object not being added to a pre-existing `draft` object
