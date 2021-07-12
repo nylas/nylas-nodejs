@@ -104,6 +104,8 @@ export default class Neural extends RestfulModel {
     }
 
     return this._request(path, body).then(json => {
+      // The Neural API will always return only one item
+      // but sometimes it returns it in the form of a 'singleton' array
       if (Array.isArray(json)) {
         json = json[0];
       }
