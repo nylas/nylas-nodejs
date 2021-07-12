@@ -7,10 +7,6 @@ export default class NeuralSentimentAnalysis extends RestfulModel {
   sentimentScore?: number;
   processedLength?: number;
   text?: string;
-
-  fromJSON(json: object): this {
-    return super.fromJSON(json);
-  }
 }
 
 NeuralSentimentAnalysis.collectionName = 'sentiment';
