@@ -17,6 +17,7 @@ import Resource from './models/resource';
 import Delta from './models/delta';
 import { Folder, Label } from './models/folder';
 import FormData, { AppendOptions } from 'form-data';
+import Neural from './models/neural';
 import NylasApiError from './models/nylas-api-error';
 
 const PACKAGE_JSON = require('../package.json');
@@ -88,6 +89,8 @@ export default class NylasConnection {
     Account,
     this
   );
+
+  neural: Neural = new Neural(this);
 
   constructor(
     accessToken: string | null | undefined,

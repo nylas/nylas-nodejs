@@ -1,7 +1,7 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 
-class EmailAddress extends RestfulModel {
+export class EmailAddress extends RestfulModel {
   type?: string;
   email?: string;
 
@@ -107,7 +107,7 @@ PhysicalAddress.attributes = {
   }),
 };
 
-class PhoneNumber extends RestfulModel {
+export class PhoneNumber extends RestfulModel {
   type?: string;
   number?: string;
 
@@ -130,7 +130,7 @@ PhoneNumber.attributes = {
   }),
 };
 
-class WebPage extends RestfulModel {
+export class WebPage extends RestfulModel {
   type?: string;
   url?: string;
 
