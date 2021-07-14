@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 5.6.0 / 2021-07-14
 * Fix Jest test cases not respecting async methods
 * Fix issue with parsing raw MIME emails
 * Add linting, enabled and set up eslint and prettier
