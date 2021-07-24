@@ -326,7 +326,24 @@ describe('Neural', () => {
         });
     });
 
-    //TODO::Add test for recategorize
+    test('should properly call recategorize and return a new NeuralCategorize object', async done => {
+      const categorizeList = await testContext.connection.neural.categorize([
+        'abc123',
+      ]);
+      const newCategorize = await categorizeList[0].reCategorize('feed');
+      const options = testContext.connection.request.mock.calls[1][0];
+
+      expect(options.url.toString()).toEqual(
+        'https://api.nylas.com/neural/categorize/feedback'
+      );
+      expect(options.method).toEqual('POST');
+      expect(JSON.parse(options.body)).toEqual({
+        message_id: 'abc123',
+        category: 'feed',
+      });
+      evaluateCategorize(newCategorize.categorizer);
+      done();
+    });
   });
 
   describe('OCR', () => {
