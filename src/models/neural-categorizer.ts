@@ -23,7 +23,7 @@ Categorize.attributes = {
   category: Attributes.String({
     modelKey: 'category',
   }),
-  categorizedAt: Attributes.Date({
+  categorizedAt: Attributes.DateTime({
     modelKey: 'categorizedAt',
     jsonKey: 'categorized_at',
   }),
@@ -49,8 +49,11 @@ export default class NeuralCategorizer extends Message {
           'Content-Type': 'application/json',
         },
       })
-      .then(json => {
-        return this.connection.neural.categorize(json['message_id']);
+      .then(async json => {
+        const categorizeResponse = await this.connection.neural.categorize([
+          json['message_id'],
+        ]);
+        return categorizeResponse[0];
       });
   }
 }
