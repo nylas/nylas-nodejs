@@ -119,7 +119,7 @@ NeuralSignatureContact.attributes = {
     modelKey: 'links',
     itemClass: Links,
   }),
-  phoneNumbers: Attributes.String({
+  phoneNumbers: Attributes.StringList({
     modelKey: 'phoneNumbers',
     jsonKey: 'phone_numbers',
   }),
