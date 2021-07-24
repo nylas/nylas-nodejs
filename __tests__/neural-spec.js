@@ -1,5 +1,15 @@
 import Nylas from '../src/nylas';
 import File from '../src/models/file';
+import NylasConnection from '../src/nylas-connection';
+import fetch from 'node-fetch';
+
+jest.mock('node-fetch', () => {
+  const { Request, Response } = jest.requireActual('node-fetch');
+  const fetch = jest.fn();
+  fetch.Request = Request;
+  fetch.Response = Response;
+  return fetch;
+});
 
 describe('Neural', () => {
   let testContext;
@@ -51,8 +61,10 @@ describe('Neural', () => {
 
     test('should properly decode object', done => {
       return testContext.connection.neural
-        .cleanConversation('abc123')
-        .then(convo => {
+        .cleanConversation(['abc123'])
+        .then(convoList => {
+          expect(convoList.length).toEqual(1);
+          const convo = convoList[0];
           // Test message-specific values were parsed
           expect(convo.id).toEqual('abc123');
           expect(convo.body).toEqual(
@@ -73,10 +85,10 @@ describe('Neural', () => {
         const fileJson = { id: a };
         return Promise.resolve(new File(testContext.connection, fileJson));
       });
-      const convo = await testContext.connection.neural.cleanConversation(
-        'abc123'
-      );
-      return convo.extractImages().then(f => {
+      const convoList = await testContext.connection.neural.cleanConversation([
+        'abc123',
+      ]);
+      return convoList[0].extractImages().then(f => {
         expect(f.length).toEqual(1);
         expect(f[0].id).toEqual('1781777f666586677621');
         done();
@@ -112,12 +124,13 @@ describe('Neural', () => {
 
     test('should properly decode object from message', done => {
       return testContext.connection.neural
-        .sentimentAnalysisMessage('abc123')
-        .then(convo => {
+        .sentimentAnalysisMessage(['abc123'])
+        .then(convoList => {
           const sentBody =
             testContext.connection.neural._request.mock.calls[0][1];
           expect(sentBody).toEqual({ message_id: ['abc123'] });
-          evaluateSentiment(convo);
+          expect(convoList.length).toEqual(1);
+          evaluateSentiment(convoList[0]);
           done();
         });
     });
@@ -189,8 +202,10 @@ describe('Neural', () => {
 
     test('should properly decode both the signature and contact', done => {
       return testContext.connection.neural
-        .extractSignature('abc123')
-        .then(sig => {
+        .extractSignature(['abc123'])
+        .then(sigList => {
+          expect(sigList.length).toEqual(1);
+          const sig = sigList[0];
           expect(sig.signature).toEqual(
             'Nylas Swag\n\nSoftware Engineer\n\n123-456-8901\n\nswag@nylas.com'
           );
@@ -218,9 +233,9 @@ describe('Neural', () => {
 
     test('should properly convert contact in signature to contact object', done => {
       return testContext.connection.neural
-        .extractSignature('abc123')
-        .then(sig => {
-          const contact = sig.contacts.toContactObject();
+        .extractSignature(['abc123'])
+        .then(sigList => {
+          const contact = sigList[0].contacts.toContactObject();
 
           expect(contact.givenName).toEqual('Nylas');
           expect(contact.surname).toEqual('Swag');
@@ -245,7 +260,7 @@ describe('Neural', () => {
           account_id: 'account123',
           body: 'This is a body',
           categorizer: {
-            categorized_at: '2021-06-24T21:28:09.549Z',
+            categorized_at: 1624570089,
             category: 'feed',
             model_version: '6194f733',
             subcategories: ['ooo'],
@@ -270,24 +285,43 @@ describe('Neural', () => {
         },
       ];
 
-      testContext.connection.neural._request = jest.fn(() =>
-        Promise.resolve(serverResponse)
-      );
+      testContext = {};
+      testContext.connection = new NylasConnection('123', { clientId: 'foo' });
+      jest.spyOn(testContext.connection, 'request');
+
+      const response = () => {
+        return {
+          status: 200,
+          buffer: () => {
+            return Promise.resolve('body');
+          },
+          json: () => {
+            return Promise.resolve(serverResponse);
+          },
+          headers: new Map(),
+        };
+      };
+
+      fetch.mockImplementation(() => Promise.resolve(response()));
     });
+
+    const evaluateCategorize = categorizer => {
+      expect(categorizer).toBeDefined();
+      expect(categorizer.category).toEqual('feed');
+      expect(categorizer.categorizedAt).toEqual(
+        new Date('2021-06-24T21:28:09Z')
+      );
+      expect(categorizer.modelVersion).toEqual('6194f733');
+      expect(categorizer.subcategories.length).toEqual(1);
+      expect(categorizer.subcategories[0]).toEqual('ooo');
+    };
 
     test('should properly decode the category object', done => {
       return testContext.connection.neural
-        .categorize('abc123')
-        .then(message => {
-          const categorizer = message.categorizer;
-          expect(categorizer).toBeDefined();
-          expect(categorizer.category).toEqual('feed');
-          expect(categorizer.categorizedAt).toEqual(
-            new Date('2021-06-24T21:28:09.549Z')
-          );
-          expect(categorizer.modelVersion).toEqual('6194f733');
-          expect(categorizer.subcategories.length).toEqual(1);
-          expect(categorizer.subcategories[0]).toEqual('ooo');
+        .categorize(['abc123'])
+        .then(categorizeList => {
+          expect(categorizeList.length).toEqual(1);
+          evaluateCategorize(categorizeList[0].categorizer);
           done();
         });
     });
