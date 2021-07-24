@@ -16,23 +16,33 @@ export type NeuralMessageOptions = {
 
 export default class Neural extends RestfulModel {
   sentimentAnalysisMessage(
-    messageId: string
-  ): Promise<NeuralSentimentAnalysis> {
-    const body = { message_id: [messageId] };
-    return this._sentimentAnalysis(body);
+    messageIds: string[]
+  ): Promise<NeuralSentimentAnalysis[]> {
+    const body = { message_id: messageIds };
+    const path = 'sentiment';
+
+    return this._request(path, body).then((jsonArray: any) => {
+      return jsonArray.map((json: any) => {
+        return new NeuralSentimentAnalysis(this.connection, json);
+      });
+    });
   }
 
   sentimentAnalysisText(text: string): Promise<NeuralSentimentAnalysis> {
     const body = { text: text };
-    return this._sentimentAnalysis(body);
+    const path = 'sentiment';
+
+    return this._request(path, body).then(json => {
+      return new NeuralSentimentAnalysis(this.connection, json);
+    });
   }
 
   extractSignature(
-    messageId: string,
+    messageIds: string[],
     parseContact?: boolean,
     options?: NeuralMessageOptions
-  ): Promise<NeuralSignatureExtraction> {
-    let body: { [key: string]: any } = { message_id: [messageId] };
+  ): Promise<NeuralSignatureExtraction[]> {
+    let body: { [key: string]: any } = { message_id: messageIds };
     const path = 'signature';
 
     if (options) {
@@ -45,18 +55,17 @@ export default class Neural extends RestfulModel {
       body['parse_contact'] = parseContact;
     }
 
-    return this._request(path, body).then(json => {
-      if (Array.isArray(json)) {
-        json = json[0];
-      }
-      const signature = new NeuralSignatureExtraction(this.connection, json);
-      if (parseContact !== false) {
-        signature.contacts = new NeuralSignatureContact(
-          this.connection,
-          signature.contacts
-        );
-      }
-      return signature;
+    return this._request(path, body).then((jsonArray: any) => {
+      return jsonArray.map((json: any) => {
+        const signature = new NeuralSignatureExtraction(this.connection, json);
+        if (parseContact !== false) {
+          signature.contacts = new NeuralSignatureContact(
+            this.connection,
+            signature.contacts
+          );
+        }
+        return signature;
+      });
     });
   }
 
@@ -73,27 +82,27 @@ export default class Neural extends RestfulModel {
     });
   }
 
-  categorize(messageId: string): Promise<NeuralCategorizer> {
-    const body = { message_id: [messageId] };
+  categorize(messageIds: string[]): Promise<NeuralCategorizer[]> {
+    const body = { message_id: messageIds };
     const path = 'categorize';
-    return this._request(path, body).then(json => {
-      if (Array.isArray(json)) {
-        json = json[0];
-      }
-      const category = new NeuralCategorizer(this.connection, json);
-      category.categorizer = new Categorize(
-        this.connection,
-        category.categorizer
-      );
-      return category;
+
+    return this._request(path, body).then((jsonArray: any) => {
+      return jsonArray.map((json: any) => {
+        const category = new NeuralCategorizer(this.connection, json);
+        category.categorizer = new Categorize(
+          this.connection,
+          category.categorizer
+        );
+        return category;
+      });
     });
   }
 
   cleanConversation(
-    messageId: string,
+    messageIds: string[],
     options?: NeuralMessageOptions
-  ): Promise<NeuralCleanConversation> {
-    let body: { [key: string]: any } = { message_id: [messageId] };
+  ): Promise<NeuralCleanConversation[]> {
+    let body: { [key: string]: any } = { message_id: messageIds };
     const path = 'conversation';
 
     if (options) {
@@ -103,23 +112,10 @@ export default class Neural extends RestfulModel {
       };
     }
 
-    return this._request(path, body).then(json => {
-      // The Neural API will always return only one item
-      // but sometimes it returns it in the form of a 'singleton' array
-      if (Array.isArray(json)) {
-        json = json[0];
-      }
-      return new NeuralCleanConversation(this.connection, json);
-    });
-  }
-
-  _sentimentAnalysis(body: object): Promise<NeuralSentimentAnalysis> {
-    const path = 'sentiment';
-    return this._request(path, body).then(json => {
-      if (Array.isArray(json)) {
-        json = json[0];
-      }
-      return new NeuralSentimentAnalysis(this.connection, json);
+    return this._request(path, body).then((jsonArray: any) => {
+      return jsonArray.map((json: any) => {
+        return new NeuralCleanConversation(this.connection, json);
+      });
     });
   }
 
