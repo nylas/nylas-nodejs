@@ -413,6 +413,8 @@ describe('Event', () => {
             when: { time: 1409594400, object: 'time' },
             participants: [{ name: 'foo', email: 'bar', status: 'noreply' }],
             ical_uid: 'id-5678',
+            master_event_id: 'master-1234',
+            original_start_time: 1409592400,
           };
           return Promise.resolve(eventJSON);
         });
@@ -425,6 +427,8 @@ describe('Event', () => {
           expect(event.when.time).toEqual(1409594400);
           expect(event.when.object).toEqual('time');
           expect(event.iCalUID).toBe('id-5678');
+          expect(event.masterEventId).toBe('master-1234');
+          expect(event.originalStartTime.toString()).toBe(new Date(1409592400 * 1000).toString())
           const participant = event.participants[0];
           expect(participant.toJSON()).toEqual({
             name: 'foo',
