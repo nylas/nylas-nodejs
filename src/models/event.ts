@@ -1,6 +1,7 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import EventParticipant from './event-participant';
+import { EventConferencing } from './event-conferencing';
 
 export default class Event extends RestfulModel {
   calendarId?: string;
@@ -29,6 +30,7 @@ export default class Event extends RestfulModel {
   };
   masterEventId?: string;
   originalStartTime?: number;
+  conferencing?: EventConferencing;
   metadata?: object;
 
   get start() {
@@ -195,6 +197,10 @@ Event.attributes = {
     modelKey: 'originalStartTime',
     jsonKey: 'original_start_time',
     readOnly: true,
+  }),
+  conferencing: Attributes.Object({
+    modelKey: 'conferencing',
+    itemClass: EventConferencing,
   }),
   metadata: Attributes.Object({
     modelKey: 'metadata',
