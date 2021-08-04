@@ -189,10 +189,12 @@ Event.attributes = {
   masterEventId: Attributes.String({
     modelKey: 'masterEventId',
     jsonKey: 'master_event_id',
+    readOnly: true
   }),
   originalStartTime: Attributes.DateTime({
     modelKey: 'originalStartTime',
     jsonKey: 'original_start_time',
+    readOnly: true
   }),
   metadata: Attributes.Object({
     modelKey: 'metadata',
