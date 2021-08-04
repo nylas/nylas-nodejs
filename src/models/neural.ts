@@ -57,14 +57,7 @@ export default class Neural extends RestfulModel {
 
     return this._request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
-        const signature = new NeuralSignatureExtraction(this.connection, json);
-        if (parseContact !== false) {
-          signature.contacts = new NeuralSignatureContact(
-            this.connection,
-            signature.contacts
-          );
-        }
-        return signature;
+        return new NeuralSignatureExtraction(this.connection, json);
       });
     });
   }
@@ -88,12 +81,7 @@ export default class Neural extends RestfulModel {
 
     return this._request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
-        const category = new NeuralCategorizer(this.connection, json);
-        category.categorizer = new Categorize(
-          this.connection,
-          category.categorizer
-        );
-        return category;
+        return new NeuralCategorizer(this.connection, json);
       });
     });
   }

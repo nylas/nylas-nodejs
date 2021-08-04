@@ -49,6 +49,23 @@ class AttributeObject extends Attribute {
     super({ modelKey, jsonKey, readOnly });
     this.itemClass = itemClass;
   }
+
+  toJSON(val: any) {
+    if (!val) {
+      return val;
+    }
+    if (val.toJSON != null) {
+      return val.toJSON()
+    }
+    return val;
+  }
+
+  fromJSON(val: any, _parent: any) {
+    if(!val || !this.itemClass) {
+      return val;
+    }
+    return new this.itemClass(_parent.connection, val);
+  }
 }
 
 class AttributeNumber extends Attribute {
