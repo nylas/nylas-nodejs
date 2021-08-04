@@ -2,7 +2,7 @@ import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import { Contact, EmailAddress, PhoneNumber, WebPage } from './contact';
 
-class Links extends RestfulModel {
+class Link extends RestfulModel {
   description?: string;
   url?: string;
 
@@ -14,8 +14,8 @@ class Links extends RestfulModel {
   }
 }
 
-Links.collectionName = 'links';
-Links.attributes = {
+Link.collectionName = 'link';
+Link.attributes = {
   description: Attributes.String({
     modelKey: 'description',
   }),
@@ -24,7 +24,7 @@ Links.attributes = {
   }),
 };
 
-class Names extends RestfulModel {
+class Name extends RestfulModel {
   firstName?: string;
   lastName?: string;
 
@@ -36,8 +36,8 @@ class Names extends RestfulModel {
   }
 }
 
-Names.collectionName = 'names';
-Names.attributes = {
+Name.collectionName = 'name';
+Name.attributes = {
   firstName: Attributes.String({
     modelKey: 'firstName',
     jsonKey: 'first_name',
@@ -50,10 +50,10 @@ Names.attributes = {
 
 export default class NeuralSignatureContact extends RestfulModel {
   jobTitles?: string[];
-  links?: Links[];
+  links?: Link[];
   phoneNumbers?: string[];
   emails?: string[];
-  names?: Names[];
+  names?: Name[];
 
   toJSON() {
     return {
@@ -117,7 +117,7 @@ NeuralSignatureContact.attributes = {
   }),
   links: Attributes.Collection({
     modelKey: 'links',
-    itemClass: Links,
+    itemClass: Link,
   }),
   phoneNumbers: Attributes.StringList({
     modelKey: 'phoneNumbers',
@@ -128,6 +128,6 @@ NeuralSignatureContact.attributes = {
   }),
   names: Attributes.Collection({
     modelKey: 'names',
-    itemClass: Names,
+    itemClass: Name,
   }),
 };
