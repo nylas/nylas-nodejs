@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Fix minor issues with Neural API implementation
+* Add missing fields for recurring events
 
 ### 5.6.0 / 2021-07-14
 * Fix Jest test cases not respecting async methods
