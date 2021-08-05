@@ -10,7 +10,7 @@ class EventConferencingDetails extends RestfulModel {
 
   toJSON() {
     return {
-      meetingCode: this.meetingCode,
+      meeting_code: this.meetingCode,
       phone: this.phone,
       password: this.password,
       pin: this.pin,
