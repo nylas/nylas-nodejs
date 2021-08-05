@@ -404,6 +404,50 @@ describe('Event', () => {
       });
     });
 
+    test('should create an event with conferencing options', done => {
+      const conferenceEvent = testContext.connection.events.build({
+        conferencing: {
+          provider: "Zoom Meeting",
+          details: {
+            url: "https://us02web.zoom.us/j/****************",
+            meeting_code: "213",
+            password: "xyz",
+            phone: [
+              "+11234567890"
+            ]
+          }
+        },
+      });
+      conferenceEvent.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: undefined,
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: undefined,
+          _start: undefined,
+          _end: undefined,
+          participants: [],
+          conferencing: {
+            provider: "Zoom Meeting",
+            details: {
+              url: "https://us02web.zoom.us/j/****************",
+              meeting_code: "213",
+              password: "xyz",
+              phone: [
+                "+11234567890"
+              ]
+            },
+          },
+        });
+        done();
+      });
+    });
+
     describe('when the request succeeds', () => {
       beforeEach(() => {
         testContext.connection.request = jest.fn(() => {
