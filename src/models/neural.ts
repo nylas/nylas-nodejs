@@ -2,9 +2,8 @@ import RestfulModel from './restful-model';
 import NeuralSentimentAnalysis from './neural-sentiment-analysis';
 import NeuralSignatureExtraction from './neural-signature-extraction';
 import NeuralOcr from './neural-ocr';
-import NeuralCategorizer, { Categorize } from './neural-categorizer';
+import NeuralCategorizer from './neural-categorizer';
 import NeuralCleanConversation from './neural-clean-conversation';
-import NeuralSignatureContact from './neural-signature-contact';
 
 export type NeuralMessageOptions = {
   ignore_links?: boolean;
