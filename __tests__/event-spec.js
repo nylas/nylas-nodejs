@@ -407,15 +407,13 @@ describe('Event', () => {
     test('should create an event with conferencing options', done => {
       const conferenceEvent = testContext.connection.events.build({
         conferencing: {
-          provider: "Zoom Meeting",
+          provider: 'Zoom Meeting',
           details: {
-            url: "https://us02web.zoom.us/j/****************",
-            meeting_code: "213",
-            password: "xyz",
-            phone: [
-              "+11234567890"
-            ]
-          }
+            url: 'https://us02web.zoom.us/j/****************',
+            meeting_code: '213',
+            password: 'xyz',
+            phone: ['+11234567890'],
+          },
         },
       });
       conferenceEvent.save().then(() => {
@@ -433,14 +431,12 @@ describe('Event', () => {
           _end: undefined,
           participants: [],
           conferencing: {
-            provider: "Zoom Meeting",
+            provider: 'Zoom Meeting',
             details: {
-              url: "https://us02web.zoom.us/j/****************",
-              meeting_code: "213",
-              password: "xyz",
-              phone: [
-                "+11234567890"
-              ]
+              url: 'https://us02web.zoom.us/j/****************',
+              meeting_code: '213',
+              password: 'xyz',
+              phone: ['+11234567890'],
             },
           },
         });

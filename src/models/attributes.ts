@@ -55,13 +55,13 @@ class AttributeObject extends Attribute {
       return val;
     }
     if (val.toJSON != null) {
-      return val.toJSON()
+      return val.toJSON();
     }
     return val;
   }
 
   fromJSON(val: any, _parent: any) {
-    if(!val || !this.itemClass) {
+    if (!val || !this.itemClass) {
       return val;
     }
     return new this.itemClass(_parent.connection, val);

@@ -40,7 +40,7 @@ EventConferencingDetails.attributes = {
 
 export class EventConferencing extends RestfulModel {
   details?: EventConferencingDetails;
-  provider?: string
+  provider?: string;
 
   toJSON(): any {
     return {
@@ -53,7 +53,7 @@ EventConferencing.collectionName = 'event_conferencing';
 EventConferencing.attributes = {
   details: Attributes.Object({
     modelKey: 'details',
-    itemClass: EventConferencingDetails
+    itemClass: EventConferencingDetails,
   }),
   provider: Attributes.String({
     modelKey: 'provider',
