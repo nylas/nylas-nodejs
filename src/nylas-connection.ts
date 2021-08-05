@@ -256,6 +256,9 @@ export default class NylasConnection {
             return resolve(response.json());
           }
         }
+      }).catch((err: Error) => {
+        console.error(`Error encountered during request:\n${err.stack}`);
+        return reject(err);
       });
     });
   }
