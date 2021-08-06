@@ -4,6 +4,7 @@
 * Fix minor issues with Neural API implementation
 * Fix not rejecting uncaught errors during requests
 * Add missing fields for recurring events
+* Add support for conferencing
 
 ### 5.6.0 / 2021-07-14
 * Fix Jest test cases not respecting async methods
