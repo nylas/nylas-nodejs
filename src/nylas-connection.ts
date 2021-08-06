@@ -200,63 +200,68 @@ export default class NylasConnection {
   request(options: RequestOptions) {
     const req = this.newRequest(options);
     return new Promise<any>((resolve, reject) => {
-      return fetch(req).then(response => {
-        if (typeof response === 'undefined') {
-          return reject(new Error('No response'));
-        }
-        // node headers are lowercaser so this refers to `Nylas-Api-Version`
-        const apiVersion = response.headers.get('nylas-api-version') as
-          | string
-          | undefined;
-
-        const warning = this._getWarningForVersion(
-          SUPPORTED_API_VERSION,
-          apiVersion
-        );
-        if (warning) {
-          console.warn(warning);
-        }
-
-        if (response.status > 299) {
-          return response.json().then(body => {
-            const error = new NylasApiError(
-              response.status,
-              body.type,
-              body.message
-            );
-            if (body.missing_fields) {
-              error.missingFields = body.missing_fields;
-            }
-            if (body.server_error) {
-              error.serverError = body.server_error;
-            }
-            return reject(error);
-          });
-        } else {
-          if (options.downloadRequest) {
-            response
-              .buffer()
-              .then(buffer => {
-                // Return an object with the headers and the body as a buffer
-                const fileDetails: { [key: string]: any } = {};
-                response.headers.forEach((v, k) => {
-                  fileDetails[k] = v;
-                });
-                fileDetails['body'] = buffer;
-                return resolve(fileDetails);
-              })
-              .catch(e => {
-                return reject(e);
-              });
-          } else if (
-            response.headers.get('Content-Type') === 'message/rfc822'
-          ) {
-            return resolve(response.text());
-          } else {
-            return resolve(response.json());
+      return fetch(req)
+        .then(response => {
+          if (typeof response === 'undefined') {
+            return reject(new Error('No response'));
           }
-        }
-      });
+          // node headers are lowercaser so this refers to `Nylas-Api-Version`
+          const apiVersion = response.headers.get('nylas-api-version') as
+            | string
+            | undefined;
+
+          const warning = this._getWarningForVersion(
+            SUPPORTED_API_VERSION,
+            apiVersion
+          );
+          if (warning) {
+            console.warn(warning);
+          }
+
+          if (response.status > 299) {
+            return response.json().then(body => {
+              const error = new NylasApiError(
+                response.status,
+                body.type,
+                body.message
+              );
+              if (body.missing_fields) {
+                error.missingFields = body.missing_fields;
+              }
+              if (body.server_error) {
+                error.serverError = body.server_error;
+              }
+              return reject(error);
+            });
+          } else {
+            if (options.downloadRequest) {
+              response
+                .buffer()
+                .then(buffer => {
+                  // Return an object with the headers and the body as a buffer
+                  const fileDetails: { [key: string]: any } = {};
+                  response.headers.forEach((v, k) => {
+                    fileDetails[k] = v;
+                  });
+                  fileDetails['body'] = buffer;
+                  return resolve(fileDetails);
+                })
+                .catch(e => {
+                  return reject(e);
+                });
+            } else if (
+              response.headers.get('Content-Type') === 'message/rfc822'
+            ) {
+              return resolve(response.text());
+            } else {
+              return resolve(response.json());
+            }
+          }
+        })
+        .catch((err: Error) => {
+          console.error(`Error encountered during request:\n${err.stack}`);
+          return reject(err);
+        });
     });
   }
 }
