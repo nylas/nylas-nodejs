@@ -10,6 +10,14 @@ interface RestfulModelJSON {
   [key: string]: any;
 }
 
+/**
+ * A class representing the base Nylas object
+ * @typedef {Object} RestfulModel
+ * @property {string} accountId - The account ID
+ * @property {NylasConnection} connection - The connection object
+ * @property {string} id - The object id
+ * @property {string} object - The object name
+ */
 export default class RestfulModel {
   static endpointName = ''; // overrridden in subclasses
   static collectionName = ''; // overrridden in subclasses

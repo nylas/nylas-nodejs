@@ -1,8 +1,15 @@
 import Attributes from './attributes';
 import RestfulModel from './restful-model';
 
+/**
+ * A class representing a Neural Sentiment Analysis response
+ * @typedef {RestfulModel} NeuralSentimentAnalysis
+ * @property {string} sentiment - The sentiment
+ * @property {number} sentimentScore - The sentiment score
+ * @property {number} processedLength - The processed length
+ * @property {number} text - The text analyzed
+ */
 export default class NeuralSentimentAnalysis extends RestfulModel {
-  account_id?: string;
   sentiment?: string;
   sentimentScore?: number;
   processedLength?: number;
@@ -11,10 +18,7 @@ export default class NeuralSentimentAnalysis extends RestfulModel {
 
 NeuralSentimentAnalysis.collectionName = 'sentiment';
 NeuralSentimentAnalysis.attributes = {
-  accountId: Attributes.String({
-    modelKey: 'accountId',
-    jsonKey: 'account_id',
-  }),
+  ...RestfulModel.attributes,
   sentiment: Attributes.String({
     modelKey: 'sentiment',
   }),

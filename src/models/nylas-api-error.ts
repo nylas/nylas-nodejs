@@ -1,5 +1,6 @@
 /**
- * Extended Error class for errors returned from the Nylas API
+ * Class for errors returned from the Nylas API
+ * @extends Error
  *
  * Properties:
  * name - The description of the HTTP status code
@@ -21,6 +22,7 @@ export default class NylasApiError extends Error {
    *
    * For more details on what each status code means head to
    * https://developer.nylas.com/docs/developer-tools/api/errors/
+   * @type {{ [statusCode: number]: string }}
    */
   errorMapping: { [statusCode: number]: string } = {
     400: 'Bad Request',
@@ -39,6 +41,12 @@ export default class NylasApiError extends Error {
     504: 'Server Error',
   };
 
+  /**
+   * Create a Nylas error
+   * @param statusCode - The status code returned from the API call
+   * @param type - The type of error returned from the Nylas API payload
+   * @param message - The error message returned from the Nylas API payload
+   */
   constructor(statusCode: number, type: string, message: string) {
     super(message);
     this.statusCode = statusCode;

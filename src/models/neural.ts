@@ -13,7 +13,16 @@ export type NeuralMessageOptions = {
   images_as_markdowns?: boolean;
 };
 
+/**
+ * Class containing all the Neural functions
+ * @extends RestfulModel
+ */
 export default class Neural extends RestfulModel {
+  /**
+   * Perform Sentiment Analysis on a list of messages
+   * @param {string[]} messageIds - List of IDs of messages to be analyzed
+   * @returns {Promise<NeuralSentimentAnalysis[]>} - Analysis on the messages returned in a list
+   */
   sentimentAnalysisMessage(
     messageIds: string[]
   ): Promise<NeuralSentimentAnalysis[]> {
