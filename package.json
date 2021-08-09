@@ -16,6 +16,7 @@
     "lint:prettier:check": "prettier --check '**/*.{ts,js}'",
     "build": "tsc",
     "prepare": "npm run build",
+    "docs": "documentation build src/** --parse-extension ts -f html -o docs --shallow",
     "watch": "nodemon -w src --exec npm run build"
   },
   "jest": {
@@ -63,11 +64,12 @@
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-custom-rules": "^0.0.0",
     "eslint-plugin-prettier": "^3.0.1",
-    "jest": "^24.9.0",
+    "jest": "^25.5.4",
     "prettier": "^1.19.1",
     "pretty-format": "^25.2.6",
     "ts-jest": "^25.2.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "documentation": "^13.2.5"
   },
   "repository": {
     "type": "git",
