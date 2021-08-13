@@ -43,7 +43,7 @@ export class EventConferencing extends RestfulModel {
   provider?: string;
   autocreate?: {
     settings?: object;
-  }
+  };
 
   toJSON(): any {
     return {

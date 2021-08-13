@@ -419,7 +419,9 @@ describe('Event', () => {
         });
         conferenceEvent.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
-          expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/events'
+          );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
             calendar_id: undefined,
@@ -451,14 +453,16 @@ describe('Event', () => {
             provider: 'Zoom Meeting',
             autocreate: {
               settings: {
-                password: "1234"
-              }
+                password: '1234',
+              },
             },
           },
         });
         conferenceEvent.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
-          expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/events'
+          );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
             calendar_id: undefined,
@@ -474,8 +478,8 @@ describe('Event', () => {
               provider: 'Zoom Meeting',
               autocreate: {
                 settings: {
-                  password: "1234"
-                }
+                  password: '1234',
+                },
               },
             },
           });
@@ -495,17 +499,21 @@ describe('Event', () => {
             },
             autocreate: {
               settings: {
-                password: "1234"
-              }
+                password: '1234',
+              },
             },
           },
         });
         conferenceEvent.save().catch(e => {
-          expect(e).toEqual(new Error("Cannot set both 'details' and 'autocreate' in conferencing object."));
-        })
+          expect(e).toEqual(
+            new Error(
+              "Cannot set both 'details' and 'autocreate' in conferencing object."
+            )
+          );
+        });
         done();
       });
-    })
+    });
 
     describe('when the request succeeds', () => {
       beforeEach(() => {
