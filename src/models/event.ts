@@ -113,6 +113,9 @@ export default class Event extends RestfulModel {
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+    if(this.conferencing && this.conferencing.details && this.conferencing.autocreate) {
+      return Promise.reject(new Error("Cannot set both 'details' and 'autocreate' in conferencing object."));
+    }
     return this._save(params, callback);
   }
 
