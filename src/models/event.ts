@@ -32,6 +32,7 @@ export default class Event extends RestfulModel {
   originalStartTime?: number;
   conferencing?: EventConferencing;
   metadata?: object;
+  jobStatusId?: string;
 
   get start() {
     const start =
@@ -204,5 +205,9 @@ Event.attributes = {
   }),
   metadata: Attributes.Object({
     modelKey: 'metadata',
+  }),
+  jobStatusId: Attributes.String({
+    modelKey: 'jobStatusId',
+    jsonKey: 'job_status_id',
   }),
 };
