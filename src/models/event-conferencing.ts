@@ -41,11 +41,15 @@ EventConferencingDetails.attributes = {
 export class EventConferencing extends RestfulModel {
   details?: EventConferencingDetails;
   provider?: string;
+  autocreate?: {
+    settings?: object;
+  };
 
   toJSON(): any {
     return {
       details: this.details,
       provider: this.provider,
+      autocreate: this.autocreate,
     };
   }
 }
@@ -57,5 +61,8 @@ EventConferencing.attributes = {
   }),
   provider: Attributes.String({
     modelKey: 'provider',
+  }),
+  autocreate: Attributes.Object({
+    modelKey: 'autocreate',
   }),
 };
