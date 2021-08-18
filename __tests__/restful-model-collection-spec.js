@@ -714,7 +714,7 @@ describe('RestfulModelCollection', () => {
 
   describe('path', () => {
     test("should return the modelClass' collectionName with no prefix", () => {
-      expect(testContext.collection.path()).toEqual('/threads');
+      expect(testContext.collection.path).toEqual('/threads');
     });
   });
 

@@ -235,7 +235,9 @@ describe('Neural', () => {
       return testContext.connection.neural
         .extractSignature(['abc123'])
         .then(sigList => {
-          const contact = sigList[0].contacts.toContactObject();
+          const contact = sigList[0].contacts.toContactObject(
+            testContext.connection
+          );
 
           expect(contact.givenName).toEqual('Nylas');
           expect(contact.surname).toEqual('Swag');
