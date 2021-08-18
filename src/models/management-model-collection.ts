@@ -16,7 +16,7 @@ export default class ManagementModelCollection<
     this.clientId = clientId;
   }
 
-  path() {
+  get path(): string {
     return `/a/${this.clientId}/${this.modelClass.collectionName}`;
   }
 

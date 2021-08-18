@@ -1,7 +1,7 @@
-import RestfulModel from './restful-model';
 import Attributes from './attributes';
+import Model from './model';
 
-class EventConferencingDetails extends RestfulModel {
+class EventConferencingDetails extends Model {
   meetingCode?: string;
   phone?: string[];
   password?: string;
@@ -18,7 +18,7 @@ class EventConferencingDetails extends RestfulModel {
     };
   }
 }
-EventConferencingDetails.collectionName = 'event_conferencing_details';
+
 EventConferencingDetails.attributes = {
   meetingCode: Attributes.String({
     modelKey: 'meetingCode',
@@ -38,7 +38,7 @@ EventConferencingDetails.attributes = {
   }),
 };
 
-export class EventConferencing extends RestfulModel {
+export class EventConferencing extends Model {
   details?: EventConferencingDetails;
   provider?: string;
   autocreate?: {
@@ -53,7 +53,7 @@ export class EventConferencing extends RestfulModel {
     };
   }
 }
-EventConferencing.collectionName = 'event_conferencing';
+
 EventConferencing.attributes = {
   details: Attributes.Object({
     modelKey: 'details',

@@ -1,8 +1,8 @@
 import Attributes from './attributes';
 import Message from './message';
-import RestfulModel from './restful-model';
+import Model from './model';
 
-export class Categorize extends RestfulModel {
+export class Categorize extends Model {
   category?: string;
   categorizedAt?: Date;
   modelVersion?: string;
@@ -18,7 +18,6 @@ export class Categorize extends RestfulModel {
   }
 }
 
-Categorize.collectionName = 'categorize';
 Categorize.attributes = {
   category: Attributes.String({
     modelKey: 'category',

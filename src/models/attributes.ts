@@ -1,3 +1,4 @@
+import Model from './model';
 import RestfulModel from './restful-model';
 
 // The Attribute class represents a single model attribute, like 'namespace_id'
@@ -33,7 +34,7 @@ export class Attribute {
 }
 
 class AttributeObject extends Attribute {
-  itemClass?: typeof RestfulModel;
+  itemClass?: typeof Model | typeof RestfulModel;
 
   constructor({
     modelKey,
@@ -43,7 +44,7 @@ class AttributeObject extends Attribute {
   }: {
     modelKey: string;
     jsonKey?: string;
-    itemClass?: typeof RestfulModel;
+    itemClass?: typeof Model | typeof RestfulModel;
     readOnly?: boolean;
   }) {
     super({ modelKey, jsonKey, readOnly });
@@ -64,7 +65,11 @@ class AttributeObject extends Attribute {
     if (!val || !this.itemClass) {
       return val;
     }
-    return new this.itemClass(_parent.connection, val);
+
+    if (this.itemClass.prototype instanceof RestfulModel) {
+      return new this.itemClass(_parent.connection, val);
+    }
+    return new this.itemClass(val);
   }
 }
 
@@ -155,7 +160,7 @@ class AttributeDateTime extends Attribute {
 }
 
 class AttributeCollection extends Attribute {
-  itemClass: typeof RestfulModel;
+  itemClass: typeof Model | typeof RestfulModel;
 
   constructor({
     modelKey,
@@ -165,7 +170,7 @@ class AttributeCollection extends Attribute {
   }: {
     modelKey: string;
     jsonKey?: string;
-    itemClass: typeof RestfulModel;
+    itemClass: typeof Model | typeof RestfulModel;
     readOnly?: boolean;
   }) {
     super({ modelKey, jsonKey, readOnly });
@@ -193,7 +198,12 @@ class AttributeCollection extends Attribute {
     }
     const objs = [];
     for (const objJSON of json) {
-      const obj = new this.itemClass(_parent.connection, objJSON);
+      let obj;
+      if (this.itemClass.prototype instanceof RestfulModel) {
+        obj = new this.itemClass(_parent.connection, objJSON);
+      } else {
+        obj = new this.itemClass(objJSON);
+      }
       objs.push(obj);
     }
     return objs;

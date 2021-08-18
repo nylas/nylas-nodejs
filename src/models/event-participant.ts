@@ -1,7 +1,7 @@
-import RestfulModel from './restful-model';
 import Attributes from './attributes';
+import Model from './model';
 
-export default class EventParticipant extends RestfulModel {
+export default class EventParticipant extends Model {
   name?: string;
   email?: string;
   status?: string;
@@ -14,7 +14,7 @@ export default class EventParticipant extends RestfulModel {
     return json;
   }
 }
-EventParticipant.collectionName = 'event-participants';
+
 EventParticipant.attributes = {
   name: Attributes.String({
     modelKey: 'name',

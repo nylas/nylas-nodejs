@@ -1,5 +1,6 @@
-import Attributes, { Attribute } from './attributes';
+import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
+import Model from './model';
 
 export type SaveCallback = (error: Error | null, result?: RestfulModel) => void;
 
@@ -10,10 +11,9 @@ interface RestfulModelJSON {
   [key: string]: any;
 }
 
-export default class RestfulModel {
+export default class RestfulModel extends Model {
   static endpointName = ''; // overrridden in subclasses
   static collectionName = ''; // overrridden in subclasses
-  static attributes: { [key: string]: Attribute };
 
   accountId?: string;
   connection: NylasConnection;
@@ -21,17 +21,14 @@ export default class RestfulModel {
   object?: string;
 
   constructor(connection: NylasConnection, json?: Partial<RestfulModelJSON>) {
+    super();
     this.connection = connection;
-    if (!(this.connection instanceof NylasConnection)) {
+    if (!this.connection) {
       throw new Error('Connection object not provided');
     }
     if (json) {
       this.fromJSON(json);
     }
-  }
-
-  attributes(): { [key: string]: Attribute } {
-    return (this.constructor as any).attributes;
   }
 
   isEqual(other: RestfulModel) {
@@ -41,7 +38,7 @@ export default class RestfulModel {
     );
   }
 
-  fromJSON(json: Partial<RestfulModelJSON> = {}) {
+  fromJSON(json: Partial<RestfulModelJSON> = {}): RestfulModel {
     const attributes = this.attributes();
     for (const attrName in attributes) {
       const attr = attributes[attrName];
@@ -50,18 +47,6 @@ export default class RestfulModel {
       }
     }
     return this;
-  }
-
-  toJSON(enforceReadOnly?: boolean) {
-    const json: any = {};
-    const attributes = this.attributes();
-    for (const attrName in attributes) {
-      if (!enforceReadOnly || !attributes[attrName].readOnly) {
-        const attr = attributes[attrName];
-        json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
-      }
-    }
-    return json;
   }
 
   // Subclasses should override this method.
@@ -95,10 +80,6 @@ export default class RestfulModel {
       body: this.deleteRequestBody(params),
       qs: this.deleteRequestQueryString(params),
     };
-  }
-
-  toString() {
-    return JSON.stringify(this.toJSON());
   }
 
   // Not every model needs to have a save function, but those who
