@@ -3,6 +3,7 @@ import NylasConnection from '../nylas-connection';
 
 export type SaveCallback = (error: Error | null, result?: RestfulModel) => void;
 
+
 interface RestfulModelJSON {
   id: string;
   object: string;
@@ -12,11 +13,11 @@ interface RestfulModelJSON {
 
 /**
  * A class representing the base Nylas object
- * @typedef {Object} RestfulModel
  * @property {string} accountId - The account ID
  * @property {NylasConnection} connection - The connection object
  * @property {string} id - The object id
  * @property {string} object - The object name
+ * @class
  */
 export default class RestfulModel {
   static endpointName = ''; // overrridden in subclasses
@@ -28,6 +29,12 @@ export default class RestfulModel {
   id?: string;
   object?: string;
 
+  /**
+   * Create a RestfulModel
+   * @constructor
+   * @param {NylasConnection} connection The status code returned from the API call
+   * @param {RestfulModelJSON} json The type of error returned from the Nylas API payload
+   */
   constructor(connection: NylasConnection, json?: Partial<RestfulModelJSON>) {
     this.connection = connection;
     if (!(this.connection instanceof NylasConnection)) {

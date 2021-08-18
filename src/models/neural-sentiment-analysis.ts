@@ -3,11 +3,11 @@ import RestfulModel from './restful-model';
 
 /**
  * A class representing a Neural Sentiment Analysis response
- * @typedef {RestfulModel} NeuralSentimentAnalysis
  * @property {string} sentiment - The sentiment
  * @property {number} sentimentScore - The sentiment score
  * @property {number} processedLength - The processed length
  * @property {number} text - The text analyzed
+ * @class NeuralSentimentAnalysis
  */
 export default class NeuralSentimentAnalysis extends RestfulModel {
   sentiment?: string;

@@ -14,9 +14,9 @@
     "lint:ci": "npm run lint:fix -- --quiet",
     "lint:prettier": "prettier --write '**/*.{ts,js}'",
     "lint:prettier:check": "prettier --check '**/*.{ts,js}'",
-    "build": "tsc",
+    "build": "tsc && npm run docs",
     "prepare": "npm run build",
-    "docs": "documentation build src/** --parse-extension ts -f html -o docs --shallow",
+    "docs": "node_modules/.bin/jsdoc --configure jsdoc.json --verbose",
     "watch": "nodemon -w src --exec npm run build"
   },
   "jest": {
@@ -69,7 +69,10 @@
     "pretty-format": "^25.2.6",
     "ts-jest": "^25.2.1",
     "typescript": "^3.8.3",
-    "documentation": "^13.2.5"
+    "jsdoc": "^3.6.7",
+    "better-docs": "^2.3.2",
+    "@ckeditor/jsdoc-plugins": "^25.3.1",
+    "clean-jsdoc-theme": "^3.2.7"
   },
   "repository": {
     "type": "git",

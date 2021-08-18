@@ -1,0 +1,23 @@
+{
+  "source": {
+    "include": ["src", "package.json", "README.md"],
+    "includePattern": "\\.(jsx|js|ts|tsx)$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+
+  "plugins": ["plugins/markdown",
+    "node_modules/better-docs/typescript",
+    "node_modules/@ckeditor/jsdoc-plugins/lib/export-fixer/export-fixer.js"],
+
+  "opts": {
+    "encoding": "utf8",
+    "readme": "./README.md",
+    "destination": "docs/",
+    "recurse": true,
+    "template": "./node_modules/clean-jsdoc-theme",
+    "theme_opts": {
+      "theme": "light",
+      "title": "Nylas Node.js SDK"
+    }
+  }
+}

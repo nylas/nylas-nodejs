@@ -1,15 +1,14 @@
 /**
  * Class for errors returned from the Nylas API
- * @extends Error
  *
- * Properties:
- * name - The description of the HTTP status code
- * message - The error message returned from the Nylas API payload
- * statusCode - The status code returned from the API call
- * type - The type of error returned from the Nylas API payload
- * stack - The Error stacktrace
- * missingFields (optional) - The fields that were missing in the call returned from the Nylas API payload
- * serverError (optional) - The error returned by the provider returned from the Nylas API payload
+ * @property {number} name - The description of the HTTP status code
+ * @property {string} message - The error message returned from the Nylas API payload
+ * @property {number} statusCode - The status code returned from the API call
+ * @property {string} type - The type of error returned from the Nylas API payload
+ * @property {string[]?} missingFields The fields that were missing in the call returned from the Nylas API payload
+ * @property {string?} serverError The error returned by the provider returned from the Nylas API payload
+ * @class
+ * @extends Error
  */
 export default class NylasApiError extends Error {
   statusCode: number;
@@ -17,12 +16,17 @@ export default class NylasApiError extends Error {
   missingFields?: string[];
   serverError?: string;
 
+  // /**
+  //  * Mapping of HTTP status codes to error descriptions
+  //  * @see https://developer.nylas.com/docs/developer-tools/api/errors/
+  //  * @type {Object<number, string>}
+  //  */
   /**
-   * Mapping of HTTP status codes to error descriptions
+   * Nesting example.
    *
-   * For more details on what each status code means head to
-   * https://developer.nylas.com/docs/developer-tools/api/errors/
-   * @type {{ [statusCode: number]: string }}
+   * @param {object} errorMapping
+   * @param {number} param.statusCode - First value
+   * @return {string} status code
    */
   errorMapping: { [statusCode: number]: string } = {
     400: 'Bad Request',
@@ -43,9 +47,10 @@ export default class NylasApiError extends Error {
 
   /**
    * Create a Nylas error
-   * @param statusCode - The status code returned from the API call
-   * @param type - The type of error returned from the Nylas API payload
-   * @param message - The error message returned from the Nylas API payload
+   * @constructor
+   * @param {number} statusCode - The status code returned from the API call
+   * @param {string} type - The type of error returned from the Nylas API payload
+   * @param {string} message - The error message returned from the Nylas API payload
    */
   constructor(statusCode: number, type: string, message: string) {
     super(message);

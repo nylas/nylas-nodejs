@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Adding meta -->
+    
+
+    <!-- Adding external script-->
+    
+
+    <!-- Adding external style-->
+    
+
+    <!-- Adding scripts-->
+    
+
+    <!-- Adding style-->
+    
+
+    <!-- Adding overlay script-->
+    
+
+    <!-- Adding overlay style-->
+    
+
+
+    <title>
+      neural.js
+    </title>
+
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/third-party/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/third-party/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/reset.css">
+    <link type="text/css" rel="stylesheet" href="styles/heading.css">
+    <link type="text/css" rel="stylesheet" href="styles/clean-jsdoc-theme-base.css">
+    <link type="text/css" rel="stylesheet" href="styles/clean-jsdoc-theme-light.css">
+    
+    <svg aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+    style="display:none">
+    <defs>
+        <symbol id="copy-icon" viewbox="0 0 488.3 488.3">
+            <g>
+                <path
+                    d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z" />
+                <path
+                    d="M401.05,0h-227c-21.3,0-38.6,17.3-38.6,38.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5c0-6.4,5.2-11.6,11.6-11.6h227    c6.4,0,11.6,5.2,11.6,11.6v325.7c0,6.4-5.2,11.6-11.6,11.6c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5c21.3,0,38.6-17.3,38.6-38.6    V38.6C439.65,17.3,422.35,0,401.05,0z" />
+            </g>
+        </symbol>
+        <symbol id='search-icon' viewBox="0 0 512 512">
+            <g>
+                <g>
+                    <path
+                        d="M225.474,0C101.151,0,0,101.151,0,225.474c0,124.33,101.151,225.474,225.474,225.474    c124.33,0,225.474-101.144,225.474-225.474C450.948,101.151,349.804,0,225.474,0z M225.474,409.323    c-101.373,0-183.848-82.475-183.848-183.848S124.101,41.626,225.474,41.626s183.848,82.475,183.848,183.848    S326.847,409.323,225.474,409.323z" />
+                </g>
+            </g>
+            <g>
+                <g>
+                    <path
+                        d="M505.902,476.472L386.574,357.144c-8.131-8.131-21.299-8.131-29.43,0c-8.131,8.124-8.131,21.306,0,29.43l119.328,119.328    c4.065,4.065,9.387,6.098,14.715,6.098c5.321,0,10.649-2.033,14.715-6.098C514.033,497.778,514.033,484.596,505.902,476.472z" />
+                </g>
+            </g>
+        </symbol>
+        <symbol id="down-icon" viewBox="0 0 16 16">
+            <path 
+                fill-rule="evenodd" 
+                clip-rule="evenodd" 
+                d="M12.7803 6.21967C13.0732 6.51256 13.0732 6.98744 12.7803 7.28033L8.53033 11.5303C8.23744 11.8232 7.76256 11.8232 7.46967 11.5303L3.21967 7.28033C2.92678 6.98744 2.92678 6.51256 3.21967 6.21967C3.51256 5.92678 3.98744 5.92678 4.28033 6.21967L8 9.93934L11.7197 6.21967C12.0126 5.92678 12.4874 5.92678 12.7803 6.21967Z"
+            >
+            </path>
+        </symbol>
+    </defs>
+</svg>
+  </head>
+
+  <body>
+
+    <nav class="navbar" id="navbar">
+      <div class="navbar-heading" id="navbar-heading"><a href="index.html"><h2 class="navbar-heading-text">Nylas Node.js SDK</h2></a></div><div class="search-box" id="search-box"><div class="search-box-input-container"><input class="search-box-input" type="text" placeholder="Search..." id="search-box-input" /><svg class="search-icon" alt="search-icon"><use xlink:href="#search-icon"></use></svg></div><div class="search-item-container" id="search-item-container"><ul class="search-item-ul" id="search-item-ul"></ul></div></div><div class="sidebar-main-content" id="sidebar-main-content"><div class="accordion collapsed" id="7510400" > <h3 class="accordion-heading">Classes<svg><use xlink:href="#down-icon"></use></svg></h3><ul class="accordion-content"><li class="accordion-list" id=""><a href="global.html#Neural">Neural</a></li><li class="accordion-list" id=""><a href="NeuralSentimentAnalysis.html">NeuralSentimentAnalysis</a></li><li class="accordion-list" id=""><a href="NylasApiError.html">NylasApiError</a></li><li class="accordion-list" id=""><a href="RestfulModel.html">RestfulModel</a></li></ul> </div></div>
+      
+
+    </nav>
+    <div class="navbar-ham" id="navbar-ham">
+      <div>
+        <div class="first"></div>
+        <div class="second"></div>
+        <div class="third"></div>
+      </div>
+    </div>
+
+    <div id="main" class="main-content">
+      
+      <h1 id='page-title' class="page-title">
+        neural.js
+      </h1>
+      
+
+      
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+var __extends = (this &amp;&amp; this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array &amp;&amp; function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign = (this &amp;&amp; this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i &lt; n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
+    return (mod &amp;&amp; mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var restful_model_1 = __importDefault(require("./restful-model"));
+var neural_sentiment_analysis_1 = __importDefault(require("./neural-sentiment-analysis"));
+var neural_signature_extraction_1 = __importDefault(require("./neural-signature-extraction"));
+var neural_ocr_1 = __importDefault(require("./neural-ocr"));
+var neural_categorizer_1 = __importDefault(require("./neural-categorizer"));
+var neural_clean_conversation_1 = __importDefault(require("./neural-clean-conversation"));
+/**
+ * Class containing all the Neural functions
+ * @extends RestfulModel
+ * @hideconstructor
+ */
+var Neural = /** @class */ (function (_super) {
+    __extends(Neural, _super);
+    function Neural() {
+        return _super !== null &amp;&amp; _super.apply(this, arguments) || this;
+    }
+    /**
+     * Perform Sentiment Analysis on a list of messages
+     * @param {string[]} messageIds List of IDs of messages to be analyzed
+     * @returns {Promise&lt;NeuralSentimentAnalysis[]>} Analysis on the messages returned in a list
+     */
+    Neural.prototype.sentimentAnalysisMessage = function (messageIds) {
+        var _this = this;
+        var body = { message_id: messageIds };
+        var path = 'sentiment';
+        return this._request(path, body).then(function (jsonArray) {
+            return jsonArray.map(function (json) {
+                return new neural_sentiment_analysis_1.default(_this.connection, json);
+            });
+        });
+    };
+    Neural.prototype.sentimentAnalysisText = function (text) {
+        var _this = this;
+        var body = { text: text };
+        var path = 'sentiment';
+        return this._request(path, body).then(function (json) {
+            return new neural_sentiment_analysis_1.default(_this.connection, json);
+        });
+    };
+    Neural.prototype.extractSignature = function (messageIds, parseContact, options) {
+        var _this = this;
+        var body = { message_id: messageIds };
+        var path = 'signature';
+        if (options) {
+            body = __assign(__assign({}, body), options);
+        }
+        if (parseContact) {
+            body['parse_contact'] = parseContact;
+        }
+        return this._request(path, body).then(function (jsonArray) {
+            return jsonArray.map(function (json) {
+                return new neural_signature_extraction_1.default(_this.connection, json);
+            });
+        });
+    };
+    Neural.prototype.ocrRequest = function (fileId, pages) {
+        var _this = this;
+        var body = { file_id: fileId };
+        var path = 'ocr';
+        if (pages) {
+            body['pages'] = pages;
+        }
+        return this._request(path, body).then(function (json) {
+            return new neural_ocr_1.default(_this.connection, json);
+        });
+    };
+    Neural.prototype.categorize = function (messageIds) {
+        var _this = this;
+        var body = { message_id: messageIds };
+        var path = 'categorize';
+        return this._request(path, body).then(function (jsonArray) {
+            return jsonArray.map(function (json) {
+                return new neural_categorizer_1.default(_this.connection, json);
+            });
+        });
+    };
+    Neural.prototype.cleanConversation = function (messageIds, options) {
+        var _this = this;
+        var body = { message_id: messageIds };
+        var path = 'conversation';
+        if (options) {
+            body = __assign(__assign({}, body), options);
+        }
+        return this._request(path, body).then(function (jsonArray) {
+            return jsonArray.map(function (json) {
+                return new neural_clean_conversation_1.default(_this.connection, json);
+            });
+        });
+    };
+    Neural.prototype._request = function (path, body) {
+        if (!path) {
+            path = this.constructor.collectionName;
+        }
+        return this.connection.request({
+            method: 'PUT',
+            path: "/neural/" + path,
+            body: body,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+    };
+    return Neural;
+}(restful_model_1.default));
+exports.default = Neural;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    </div>
+
+    <footer class="footer" id="footer">
+      
+    </footer>
+
+    <script src="scripts/third-party/prettify.js"></script>
+    <script src="scripts/third-party/lang-css.js"></script>
+    <script type="text/javascript" src="scripts/misc.js"></script>
+
+    <script>prettyPrint();</script>
+    <script src="scripts/linenumber.js"></script>
+    <script src="scripts/fix-code-block.js"></script>
+    <script src="scripts/fix-navbar.js"></script>
+    
+      <script src="scripts/search.js"></script>
+      <script src="scripts/third-party/fuse.js"></script>
+      <script>
+        var list = [{"title":"Neural","link":"<a href=\"global.html#Neural\">Neural</a>"},{"title":"NeuralSentimentAnalysis","link":"<a href=\"NeuralSentimentAnalysis.html\">NeuralSentimentAnalysis</a>"},{"title":"NylasApiError","link":"<a href=\"NylasApiError.html\">NylasApiError</a>"},{"title":"RestfulModel","link":"<a href=\"RestfulModel.html\">RestfulModel</a>"}];
+        var options = 
+          setupSearch(list, options)
+      </script>
+    
+
+    
+
+    
+
+    
+
+    
+
+
+  </body>
+
+</html>

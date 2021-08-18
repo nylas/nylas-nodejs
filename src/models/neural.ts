@@ -5,6 +5,15 @@ import NeuralOcr from './neural-ocr';
 import NeuralCategorizer from './neural-categorizer';
 import NeuralCleanConversation from './neural-clean-conversation';
 
+/**
+ * @typedef {Object<string, boolean>} NeuralMessageOptions
+ * @property {boolean=} ignore_links Remove links in the conversation or signature
+ * @property {boolean=} ignore_images Remove images in the conversation or signature
+ * @property {boolean=} ignore_tables Remove tables in the conversation or signature
+ * @property {boolean=} remove_conclusion_phrases Remove phrases such as 'best' and 'regards' in the signature
+ * @property {boolean=} images_as_markdowns If set to false, returns images as HTML
+ * @memberOf Neural
+ */
 export type NeuralMessageOptions = {
   ignore_links?: boolean;
   ignore_images?: boolean;
@@ -16,12 +25,13 @@ export type NeuralMessageOptions = {
 /**
  * Class containing all the Neural functions
  * @extends RestfulModel
+ * @hideconstructor
  */
 export default class Neural extends RestfulModel {
   /**
    * Perform Sentiment Analysis on a list of messages
-   * @param {string[]} messageIds - List of IDs of messages to be analyzed
-   * @returns {Promise<NeuralSentimentAnalysis[]>} - Analysis on the messages returned in a list
+   * @param {string[]} messageIds List of IDs of messages to be analyzed
+   * @returns {Promise<NeuralSentimentAnalysis[]>} Analysis on the messages returned in a list
    */
   sentimentAnalysisMessage(
     messageIds: string[]
