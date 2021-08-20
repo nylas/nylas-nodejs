@@ -8,7 +8,7 @@ const REQUEST_CHUNK_SIZE = 100;
 export default class ModelCollection<T extends Model> {
   connection: NylasConnection;
   modelClass: typeof Model;
-  private readonly _path: string;
+  path: string;
 
   constructor(
     modelClass: typeof Model,
@@ -17,17 +17,13 @@ export default class ModelCollection<T extends Model> {
   ) {
     this.modelClass = modelClass;
     this.connection = connection;
-    this._path = path;
+    this.path = path;
     if (!this.connection) {
       throw new Error('Connection object not provided');
     }
     if (!this.modelClass) {
       throw new Error('Model class not provided');
     }
-  }
-
-  get path(): string {
-    return this._path;
   }
 
   forEach(

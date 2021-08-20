@@ -14,6 +14,7 @@ export default class RestfulModelCollection<
   constructor(modelClass: typeof RestfulModel, connection: NylasConnection) {
     super(modelClass, connection, modelClass.collectionName);
     this.modelClass = modelClass;
+    this.path = `/${this.modelClass.collectionName}`;
   }
 
   count(
@@ -167,10 +168,6 @@ export default class RestfulModelCollection<
       (model as any)[key] = val;
     }
     return model;
-  }
-
-  get path(): string {
-    return `/${this.modelClass.collectionName}`;
   }
 
   _createModel(json: { [key: string]: any }): T {

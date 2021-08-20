@@ -16,7 +16,7 @@ export default class RestfulModelInstance<T extends RestfulModel> {
     }
   }
 
-  get path(): string {
+  path(): string {
     return `/${this.modelClass.endpointName}`;
   }
 
@@ -24,7 +24,7 @@ export default class RestfulModelInstance<T extends RestfulModel> {
     return this.connection
       .request({
         method: 'GET',
-        path: this.path,
+        path: this.path(),
         qs: params,
       })
       .then(json => {
