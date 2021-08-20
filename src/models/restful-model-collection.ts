@@ -19,7 +19,7 @@ export default class RestfulModelCollection<
   count(
     params: { [key: string]: any } = {},
     callback?: (err: Error | null, num?: number) => void
-  ) {
+  ): Promise<number> {
     return this.connection
       .request({
         method: 'GET',
@@ -43,7 +43,7 @@ export default class RestfulModelCollection<
   first(
     params: { [key: string]: any } = {},
     callback?: (error: Error | null, model?: T) => void
-  ) {
+  ): Promise<T> {
     if (params.view == 'count') {
       const err = new Error('first() cannot be called with the count view');
       if (callback) {
@@ -71,7 +71,7 @@ export default class RestfulModelCollection<
     query: string,
     params: { [key: string]: any } = {},
     callback?: (error: Error | null) => void
-  ) {
+  ): Promise<T[]> {
     if (this.modelClass != Message && this.modelClass != Thread) {
       const err = new Error(
         'search() can only be called for messages and threads'
@@ -102,7 +102,7 @@ export default class RestfulModelCollection<
     itemOrId: T | string,
     params: { [key: string]: any } = {},
     callback?: (error: Error | null) => void
-  ) {
+  ): any {
     if (!itemOrId) {
       const err = new Error('delete() requires an item or an id');
       if (callback) {
@@ -128,7 +128,7 @@ export default class RestfulModelCollection<
   deleteItem(
     options: { [key: string]: any },
     callbackArg?: (error: Error | null) => void
-  ) {
+  ): any {
     const item = options.item;
     // callback used to be in the options object
     const callback = options.callback ? options.callback : callbackArg;
@@ -160,7 +160,7 @@ export default class RestfulModelCollection<
       });
   }
 
-  build(args: { [key: string]: any }) {
+  build(args: { [key: string]: any }): T {
     const model = this._createModel({});
     for (const key in args) {
       const val = args[key];
@@ -173,7 +173,7 @@ export default class RestfulModelCollection<
     return `/${this.modelClass.collectionName}`;
   }
 
-  _createModel(json: { [key: string]: any }) {
+  _createModel(json: { [key: string]: any }): T {
     return new this.modelClass(this.connection, json) as T;
   }
 }

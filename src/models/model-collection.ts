@@ -34,13 +34,13 @@ export default class ModelCollection<T extends Model> {
     params: { [key: string]: any } = {},
     eachCallback: (item: T) => void,
     completeCallback?: (err?: Error | null | undefined) => void
-  ) {
+  ): void {
     if (params.view == 'count') {
       const err = new Error('forEach() cannot be called with the count view');
       if (completeCallback) {
         completeCallback(err);
       }
-      return Promise.reject(err);
+      throw err;
     }
 
     let offset = 0;
@@ -75,7 +75,7 @@ export default class ModelCollection<T extends Model> {
   list(
     params: { [key: string]: any } = {},
     callback?: (error: Error | null, obj?: T[]) => void
-  ) {
+  ): Promise<T[]> {
     if (params.view == 'count') {
       const err = new Error('list() cannot be called with the count view');
       if (callback) {
@@ -93,7 +93,7 @@ export default class ModelCollection<T extends Model> {
     id: string,
     paramsArg?: { [key: string]: any } | GetCallback | null,
     callbackArg?: GetCallback | { [key: string]: any } | null
-  ) {
+  ): Promise<T> {
     // callback used to be the second argument, and params was the third
     let callback: GetCallback | undefined;
     if (typeof callbackArg === 'function') {
@@ -154,7 +154,7 @@ export default class ModelCollection<T extends Model> {
     limit?: number;
     callback?: (error: Error | null, results?: T[]) => void;
     path?: string;
-  }) {
+  }): Promise<T[]> {
     let accumulated: T[] = [];
 
     const iteratee = (): Promise<void> => {
@@ -180,13 +180,13 @@ export default class ModelCollection<T extends Model> {
     return iteratee().then(
       () => {
         if (callback) {
-          return callback(null, accumulated);
+          callback(null, accumulated);
         }
         return accumulated;
       },
       (err: Error) => {
         if (callback) {
-          return callback(err);
+          callback(err);
         }
         throw err;
       }

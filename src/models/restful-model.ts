@@ -31,7 +31,7 @@ export default class RestfulModel extends Model {
     }
   }
 
-  isEqual(other: RestfulModel) {
+  isEqual(other: RestfulModel): boolean {
     return (
       (other ? other.id : undefined) === this.id &&
       (other ? other.constructor : undefined) === this.constructor
@@ -50,32 +50,32 @@ export default class RestfulModel extends Model {
   }
 
   // Subclasses should override this method.
-  pathPrefix() {
+  pathPrefix(): string {
     return '';
   }
 
-  saveEndpoint() {
+  saveEndpoint(): string {
     const collectionName = (this.constructor as any).collectionName;
     return `${this.pathPrefix()}/${collectionName}`;
   }
 
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
   // fields the API allows updating. Subclasses should override this method.
-  saveRequestBody() {
+  saveRequestBody(): any {
     return this.toJSON(true);
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
-  deleteRequestQueryString(_params: { [key: string]: any }) {
+  deleteRequestQueryString(_params: { [key: string]: any }): any {
     return {};
   }
   // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody(_params: { [key: string]: any }) {
+  deleteRequestBody(_params: { [key: string]: any }): any {
     return {};
   }
 
   // deleteRequestOptions is used by delete(). Subclasses should override this method.
-  deleteRequestOptions(params: { [key: string]: any }) {
+  deleteRequestOptions(params: { [key: string]: any }): any {
     return {
       body: this.deleteRequestBody(params),
       qs: this.deleteRequestQueryString(params),
@@ -85,7 +85,7 @@ export default class RestfulModel extends Model {
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
   // They should instead define a save() function which calls _save.
-  _save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  _save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     if (typeof params === 'function') {
       callback = params as SaveCallback;
       params = {};
@@ -118,7 +118,7 @@ export default class RestfulModel extends Model {
     params: { [key: string]: any } = {},
     callback?: (error: Error | null, result?: any) => void,
     pathSuffix = ''
-  ) {
+  ): Promise<any> {
     const collectionName = (this.constructor as any).collectionName;
     return this.connection
       .request({
