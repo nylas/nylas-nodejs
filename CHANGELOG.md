@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix issue where JSON.stringify would omit read-only values
+
 ### 5.7.0 / 2021-08-18
 * Fix minor issues with Neural API implementation
 * Fix not rejecting uncaught errors during requests
