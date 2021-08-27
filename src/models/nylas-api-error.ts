@@ -16,17 +16,10 @@ export default class NylasApiError extends Error {
   missingFields?: string[];
   serverError?: string;
 
-  // /**
-  //  * Mapping of HTTP status codes to error descriptions
-  //  * @see https://developer.nylas.com/docs/developer-tools/api/errors/
-  //  * @type {Object<number, string>}
-  //  */
   /**
-   * Nesting example.
-   *
-   * @param {object} errorMapping
-   * @param {number} param.statusCode - First value
-   * @return {string} status code
+   * Mapping of HTTP status codes to error descriptions
+   * @see https://developer.nylas.com/docs/developer-tools/api/errors/
+   * @type {Object.<number, string>}
    */
   errorMapping: { [statusCode: number]: string } = {
     400: 'Bad Request',
