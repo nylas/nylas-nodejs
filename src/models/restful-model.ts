@@ -31,6 +31,13 @@ export default class RestfulModel extends Model {
     }
   }
 
+  static propsFromJSON(
+    json: Partial<RestfulModelJSON> = {},
+    parent: any
+  ): Partial<RestfulModelJSON> {
+    return super.propsFromJSON(json, parent);
+  }
+
   isEqual(other: RestfulModel): boolean {
     return (
       (other ? other.id : undefined) === this.id &&
