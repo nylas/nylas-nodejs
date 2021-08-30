@@ -1,15 +1,31 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import { GetCallback } from './restful-model-collection';
 import Attributes from './attributes';
+import NylasConnection from '../nylas-connection';
 
-export default class Calendar extends RestfulModel {
-  name?: string;
-  description?: string;
+export interface CalendarProperties {
+  name: string;
+  description: string;
+  location: string;
+  timezone: string;
   readOnly?: boolean;
-  location?: string;
-  timezone?: string;
   isPrimary?: boolean;
   jobStatusId?: string;
+}
+
+export default class Calendar extends RestfulModel
+  implements CalendarProperties {
+  name = '';
+  description = '';
+  location = '';
+  timezone = '';
+  readOnly?: boolean;
+  isPrimary?: boolean;
+  jobStatusId?: string;
+
+  constructor(connection: NylasConnection, props?: CalendarProperties) {
+    super(connection, props);
+  }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);

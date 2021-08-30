@@ -1,4 +1,4 @@
-import Message from './message';
+import Message, { MessageProperties } from './message';
 import Attributes from './attributes';
 import { SaveCallback } from './restful-model';
 
@@ -7,7 +7,13 @@ export type SendCallback = (
   json?: { [key: string]: any }
 ) => void;
 
-export default class Draft extends Message {
+export interface DraftProperties extends MessageProperties {
+  rawMime?: string;
+  replyToMessageId?: string;
+  version?: number;
+}
+
+export default class Draft extends Message implements DraftProperties {
   rawMime?: string;
   replyToMessageId?: string;
   version?: number;

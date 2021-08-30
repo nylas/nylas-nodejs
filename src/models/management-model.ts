@@ -7,9 +7,9 @@ export default class ManagementModel extends RestfulModel {
   constructor(
     connection: NylasConnection,
     clientId: string,
-    json: { [key: string]: any }
+    props: { [key: string]: any }
   ) {
-    super(connection, json);
+    super(connection, props);
     this.clientId = clientId;
   }
 }

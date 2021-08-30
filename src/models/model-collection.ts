@@ -213,7 +213,8 @@ export default class ModelCollection<T extends Model> {
   }
 
   _createModel(json: { [key: string]: any }): T {
-    return new this.modelClass(json) as T;
+    const props = this.modelClass.propsFromJSON(json, this);
+    return new this.modelClass(props) as T;
   }
 
   _getModel(id: string, params: { [key: string]: any } = {}): Promise<T> {

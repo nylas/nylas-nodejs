@@ -1,9 +1,19 @@
 import Attributes from './attributes';
-import File from './file';
+import File, { FileProperties } from './file';
+import NylasConnection from '../nylas-connection';
 
-export default class NeuralOcr extends File {
-  ocr?: string[];
-  processedPages?: number;
+export interface NeuralOcrProperties extends FileProperties {
+  ocr: string[];
+  processedPages: number;
+}
+
+export default class NeuralOcr extends File implements NeuralOcrProperties {
+  ocr = [];
+  processedPages = 0;
+
+  constructor(connection: NylasConnection, props?: NeuralOcrProperties) {
+    super(connection, props);
+  }
 }
 
 NeuralOcr.collectionName = 'ocr';

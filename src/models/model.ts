@@ -5,9 +5,9 @@ export type SaveCallback = (error: Error | null, result?: any) => void;
 export default class Model {
   static attributes: { [key: string]: Attribute };
 
-  constructor(json?: any) {
-    if (json) {
-      this.fromJSON(json);
+  constructor(props?: { [key: string]: any }) {
+    if (props) {
+      this.initAttributes(props);
     }
   }
 

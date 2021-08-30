@@ -1,31 +1,55 @@
-import Message from './message';
+import Message, { MessageProperties } from './message';
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
-import EmailParticipant from './email-participant';
-import { Label, Folder } from './folder';
+import EmailParticipant, { EmailParticipantProperties } from './email-participant';
+import { Label, Folder, FolderProperties } from './folder';
+import NylasConnection from '../nylas-connection';
 
-export default class Thread extends RestfulModel {
-  subject?: string;
-  participants?: EmailParticipant[];
-  lastMessageTimestamp?: Date;
-  lastMessageReceivedTimestamp?: Date;
-  lastMessageSentTimestamp?: Date;
-  firstMessageTimestamp?: Date;
-  snippet?: string;
-  unread?: boolean;
-  starred?: boolean;
+export interface ThreadProperties {
+  subject: string;
+  participants: EmailParticipantProperties[];
+  lastMessageTimestamp: Date;
+  lastMessageReceivedTimestamp: Date;
+  firstMessageTimestamp: Date;
+  messageIds: string[];
+  snippet: string;
+  unread: boolean;
+  starred: boolean;
+  version: string;
   hasAttachments?: boolean;
-  version?: string;
+  lastMessageSentTimestamp?: Date;
+  folders?: FolderProperties[];
+  labels?: FolderProperties[];
+  draftIds?: string[];
+  messages?: MessageProperties[];
+  drafts?: MessageProperties[];
+}
+
+export default class Thread extends RestfulModel implements ThreadProperties {
+  subject = '';
+  participants = [];
+  lastMessageTimestamp = new Date();
+  lastMessageReceivedTimestamp = new Date();
+  firstMessageTimestamp = new Date();
+  messageIds = [];
+  snippet = '';
+  unread = false;
+  starred = false;
+  version = '';
+  hasAttachments?: boolean;
+  lastMessageSentTimestamp?: Date;
   folders?: Folder[];
   labels?: Label[];
-  messageIds?: string[];
   draftIds?: string[];
   messages?: Message[];
   drafts?: Message[];
 
-  fromJSON(json: { [key: string]: any }) {
-    super.fromJSON(json);
-    return this;
+  constructor(connection: NylasConnection, props?: ThreadProperties) {
+    super(connection, props);
+  }
+
+  toJSON(enforceReadOnly?: boolean): ThreadProperties {
+    return super.toJSON(enforceReadOnly);
   }
 
   saveRequestBody() {

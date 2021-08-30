@@ -1,9 +1,16 @@
 import Attributes from './attributes';
 import Model from './model';
 
-export default class EventParticipant extends Model {
+export interface EventParticipantProperties {
+  email: string;
   name?: string;
-  email?: string;
+  status?: string;
+}
+
+export default class EventParticipant extends Model
+  implements EventParticipantProperties {
+  email = '';
+  name?: string;
   status?: string;
 
   toJSON(enforceReadOnly?: boolean) {

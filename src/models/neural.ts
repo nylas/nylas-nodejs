@@ -106,10 +106,7 @@ export default class Neural extends RestfulModel {
     });
   }
 
-  _request(path?: string, body?: object): Promise<any> {
-    if (!path) {
-      path = (this.constructor as any).collectionName;
-    }
+  _request(path: string, body: object): Promise<any> {
     return this.connection.request({
       method: 'PUT',
       path: `/neural/${path}`,

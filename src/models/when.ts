@@ -9,9 +9,9 @@ type WhenProperties = {
   endDate?: string;
   date?: string;
   object?: string;
-}
+};
 
-export default class When extends Model {
+export default class When extends Model implements WhenProperties {
   startTime?: number;
   endTime?: number;
   time?: number;
@@ -21,19 +21,10 @@ export default class When extends Model {
   object?: string;
 
   constructor(props?: WhenProperties) {
-    super();
-    if(props) {
-      this.startTime = props.startTime;
-      this.endTime = props.endTime;
-      this.time = props.time;
-      this.startDate = props.startDate;
-      this.endDate = props.endDate;
-      this.date = props.date;
-      this.object = props.object;
-    }
+    super(props);
   }
 
-  toJSON(): any {
+  toJSON(): WhenProperties {
     return super.toJSON();
   }
 }

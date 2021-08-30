@@ -20,14 +20,14 @@ export default class RestfulModel extends Model {
   id?: string;
   object?: string;
 
-  constructor(connection: NylasConnection, json?: Partial<RestfulModelJSON>) {
+  constructor(connection: NylasConnection, props?: Partial<RestfulModelJSON>) {
     super();
     this.connection = connection;
     if (!this.connection) {
       throw new Error('Connection object not provided');
     }
-    if (json) {
-      this.fromJSON(json);
+    if (props) {
+      super.initAttributes(props);
     }
   }
 
@@ -45,15 +45,8 @@ export default class RestfulModel extends Model {
     );
   }
 
-  fromJSON(json: Partial<RestfulModelJSON> = {}): RestfulModel {
-    const attributes = this.attributes();
-    for (const attrName in attributes) {
-      const attr = attributes[attrName];
-      if (json[attr.jsonKey] !== undefined) {
-        (this as any)[attrName] = attr.fromJSON(json[attr.jsonKey], this);
-      }
-    }
-    return this;
+  fromJSON(json: Partial<RestfulModelJSON> = {}): this {
+    return super.fromJSON(json) as this;
   }
 
   // Subclasses should override this method.
@@ -92,7 +85,10 @@ export default class RestfulModel extends Model {
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
   // They should instead define a save() function which calls _save.
-  _save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+  _save(
+    params: {} | SaveCallback = {},
+    callback?: SaveCallback
+  ): Promise<this> {
     if (typeof params === 'function') {
       callback = params as SaveCallback;
       params = {};

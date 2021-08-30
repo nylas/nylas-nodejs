@@ -1,14 +1,33 @@
 import ManagementModel from './management-model';
 import Attributes from './attributes';
 import { SaveCallback } from './restful-model';
+import NylasConnection from '../nylas-connection';
 
-export default class Webhook extends ManagementModel {
+export interface WebhookProperties {
+  callbackUrl: string;
+  state: string;
+  triggers: string[];
   id?: string;
   applicationId?: string;
-  callbackUrl?: string;
-  state?: string;
-  triggers?: string[];
   version?: string;
+}
+
+export default class Webhook extends ManagementModel
+  implements WebhookProperties {
+  callbackUrl = '';
+  state = '';
+  triggers = [];
+  id?: string;
+  applicationId?: string;
+  version?: string;
+
+  constructor(
+    connection: NylasConnection,
+    clientId: string,
+    props: WebhookProperties
+  ) {
+    super(connection, clientId, props);
+  }
 
   pathPrefix() {
     return `/a/${this.clientId}`;

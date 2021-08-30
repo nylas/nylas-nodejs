@@ -1,11 +1,26 @@
 import NeuralSignatureContact from './neural-signature-contact';
 import Attributes from './attributes';
-import Message from './message';
+import Message, { MessageProperties } from './message';
+import NylasConnection from '../nylas-connection';
 
-export default class NeuralSignatureExtraction extends Message {
-  signature?: string;
-  modelVersion?: string;
+export interface NeuralSignatureExtractionProperties extends MessageProperties {
+  signature: string;
+  modelVersion: string;
   contacts?: NeuralSignatureContact;
+}
+
+export default class NeuralSignatureExtraction extends Message
+  implements NeuralSignatureExtractionProperties {
+  signature = '';
+  modelVersion = '';
+  contacts?: NeuralSignatureContact;
+
+  constructor(
+    connection: NylasConnection,
+    props?: NeuralSignatureExtractionProperties
+  ) {
+    super(connection, props);
+  }
 }
 
 NeuralSignatureExtraction.collectionName = 'signature';

@@ -1,11 +1,22 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import Model from './model';
+import NylasConnection from '../nylas-connection';
 
-export class EmailAddress extends Model {
-  type?: string;
-  email?: string;
+export interface EmailAddressProperties {
+  type: string;
+  email: string;
+}
 
+export class EmailAddress extends Model implements EmailAddressProperties {
+  type = '';
+  email = '';
+
+  constructor(props?: EmailAddressProperties) {
+    super(props);
+  }
+
+  // TODO::Can probably remove toJSONs in classes that extend Model
   toJSON() {
     return {
       type: this.type,
@@ -15,7 +26,6 @@ export class EmailAddress extends Model {
 }
 
 EmailAddress.attributes = {
-  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -24,9 +34,18 @@ EmailAddress.attributes = {
   }),
 };
 
-class IMAddress extends Model {
-  type?: string;
-  imAddress?: string;
+export interface IMAddressProperties {
+  type: string;
+  imAddress: string;
+}
+
+class IMAddress extends Model implements IMAddressProperties {
+  type = '';
+  imAddress = '';
+
+  constructor(props?: IMAddressProperties) {
+    super(props);
+  }
 
   toJSON() {
     return {
@@ -37,7 +56,6 @@ class IMAddress extends Model {
 }
 
 IMAddress.attributes = {
-  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -47,15 +65,31 @@ IMAddress.attributes = {
   }),
 };
 
-class PhysicalAddress extends Model {
-  type?: string;
-  format?: string;
+// TODO::Check if "address" is deprecated
+export interface PhysicalAddressProperties {
+  type: string;
+  format: string;
+  streetAddress: string;
+  city: string;
+  postalCode: string;
+  state: string;
+  country: string;
   address?: string;
-  streetAddress?: string;
-  city?: string;
-  postalCode?: string;
-  state?: string;
-  country?: string;
+}
+
+class PhysicalAddress extends Model implements PhysicalAddressProperties {
+  type = '';
+  format = '';
+  streetAddress = '';
+  city = '';
+  postalCode = '';
+  state = '';
+  country = '';
+  address?: string;
+
+  constructor(props?: PhysicalAddressProperties) {
+    super(props);
+  }
 
   toJSON() {
     const json: { [key: string]: any } = {
@@ -76,7 +110,6 @@ class PhysicalAddress extends Model {
 }
 
 PhysicalAddress.attributes = {
-  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -105,9 +138,18 @@ PhysicalAddress.attributes = {
   }),
 };
 
-export class PhoneNumber extends Model {
-  type?: string;
-  number?: string;
+export interface PhoneNumberProperties {
+  type: string;
+  number: string;
+}
+
+export class PhoneNumber extends Model implements PhoneNumberProperties {
+  type = '';
+  number = '';
+
+  constructor(props?: PhoneNumberProperties) {
+    super(props);
+  }
 
   toJSON() {
     return {
@@ -118,7 +160,6 @@ export class PhoneNumber extends Model {
 }
 
 PhoneNumber.attributes = {
-  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -127,9 +168,18 @@ PhoneNumber.attributes = {
   }),
 };
 
-export class WebPage extends Model {
-  type?: string;
-  url?: string;
+export interface WebPageProperties {
+  type: string;
+  url: string;
+}
+
+export class WebPage extends Model implements WebPageProperties {
+  type = '';
+  url = '';
+
+  constructor(props?: WebPageProperties) {
+    super(props);
+  }
 
   toJSON() {
     const json = {
@@ -141,7 +191,6 @@ export class WebPage extends Model {
 }
 
 WebPage.attributes = {
-  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -150,13 +199,21 @@ WebPage.attributes = {
   }),
 };
 
-export class Group extends Model {
-  type?: string;
-  path?: string;
+export interface GroupProperties {
+  type: string;
+  path: string;
+}
+
+export class Group extends Model implements GroupProperties {
+  type = '';
+  path = '';
+
+  constructor(props?: GroupProperties) {
+    super(props);
+  }
 }
 
 Group.attributes = {
-  ...RestfulModel.attributes,
   name: Attributes.String({
     modelKey: 'name',
   }),
@@ -165,7 +222,28 @@ Group.attributes = {
   }),
 };
 
-export class Contact extends RestfulModel {
+export interface ContactProperties {
+  givenName?: string;
+  middleName?: string;
+  surname?: string;
+  suffix?: string;
+  nickname?: string;
+  birthday?: string;
+  companyName?: string;
+  jobTitle?: string;
+  officeLocation?: string;
+  notes?: string;
+  pictureUrl?: string;
+  emailAddresses?: EmailAddressProperties[];
+  imAddresses?: IMAddress[];
+  physicalAddresses?: PhysicalAddressProperties[];
+  phoneNumbers?: PhoneNumberProperties[];
+  webPages?: WebPageProperties[];
+  groups?: GroupProperties[];
+  source?: string;
+}
+
+export class Contact extends RestfulModel implements ContactProperties {
   givenName?: string;
   middleName?: string;
   surname?: string;
@@ -184,6 +262,10 @@ export class Contact extends RestfulModel {
   webPages?: WebPage[];
   groups?: Group[];
   source?: string;
+
+  constructor(connection: NylasConnection, props?: ContactProperties) {
+    super(connection, props);
+  }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);

@@ -1,7 +1,17 @@
 import Attributes from './attributes';
 import RestfulModel from './restful-model';
 
-export default class File extends RestfulModel {
+export interface FileProperties {
+  contentType?: string;
+  size?: number;
+  filename?: string;
+  messageIds?: string[];
+  contentId?: string;
+  contentDisposition?: string;
+  data?: any;
+}
+
+export default class File extends RestfulModel implements FileProperties {
   contentType?: string;
   size?: number;
   filename?: string;

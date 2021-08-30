@@ -1,15 +1,39 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
-import File from './file';
-import Event from './event';
-import EmailParticipant from './email-participant';
-import { Label, Folder } from './folder';
+import File, { FileProperties } from './file';
+import Event, { EventProperties } from './event';
+import EmailParticipant, {
+  EmailParticipantProperties,
+} from './email-participant';
+import { Label, Folder, FolderProperties } from './folder';
+import NylasConnection from '../nylas-connection';
 
-export default class Message extends RestfulModel {
+export interface MessageProperties {
+  to: EmailParticipantProperties[];
+  subject?: string;
+  from?: EmailParticipantProperties[];
+  replyTo?: EmailParticipantProperties[];
+  cc?: EmailParticipantProperties[];
+  bcc?: EmailParticipantProperties[];
+  date?: Date;
+  threadId?: string;
+  snippet?: string;
+  body?: string;
+  unread?: boolean;
+  starred?: boolean;
+  files?: FileProperties[];
+  events?: EventProperties[];
+  folder?: Folder;
+  labels?: FolderProperties[];
+  headers?: { [key: string]: string };
+  failures?: any;
+}
+
+export default class Message extends RestfulModel implements MessageProperties {
+  to = [];
   subject?: string;
   from?: EmailParticipant[];
   replyTo?: EmailParticipant[];
-  to?: EmailParticipant[];
   cc?: EmailParticipant[];
   bcc?: EmailParticipant[];
   date?: Date;
@@ -25,6 +49,10 @@ export default class Message extends RestfulModel {
   headers?: { [key: string]: string };
   failures?: any;
 
+  constructor(connection: NylasConnection, props?: MessageProperties) {
+    super(connection, props);
+  }
+
   // We calculate the list of participants instead of grabbing it from
   // a parent because it is a better source of ground truth, and saves us
   // from more dependencies.
@@ -36,13 +64,11 @@ export default class Message extends RestfulModel {
     const contacts = Array.from(new Set([...to, ...cc, ...from]));
     for (const contact of contacts) {
       if (contact && (contact.email ? contact.email.length : '') > 0) {
-        if (contact) {
-          participants[
-            `${contact.email || ''.toLowerCase().trim()} ${(contact.name || '')
-              .toLowerCase()
-              .trim()}`
-          ] = contact;
-        }
+        participants[
+          `${contact.email || ''.toLowerCase().trim()} ${(contact.name || '')
+            .toLowerCase()
+            .trim()}`
+        ] = contact;
       }
     }
     return Object.values(participants);

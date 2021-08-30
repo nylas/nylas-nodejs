@@ -1,12 +1,25 @@
 import Attributes from './attributes';
 import Model from './model';
 
-class EventConferencingDetails extends Model {
+export interface EventConferencingDetailsProperties {
   meetingCode?: string;
   phone?: string[];
   password?: string;
   pin?: string;
   url?: string;
+}
+
+class EventConferencingDetails extends Model
+  implements EventConferencingDetailsProperties {
+  meetingCode?: string;
+  phone?: string[];
+  password?: string;
+  pin?: string;
+  url?: string;
+
+  constructor(props?: EventConferencingProperties) {
+    super(props);
+  }
 
   toJSON() {
     return {
@@ -38,12 +51,25 @@ EventConferencingDetails.attributes = {
   }),
 };
 
-export class EventConferencing extends Model {
+export interface EventConferencingProperties {
+  provider: string;
   details?: EventConferencingDetails;
-  provider?: string;
   autocreate?: {
     settings?: object;
   };
+}
+
+export class EventConferencing extends Model
+  implements EventConferencingProperties {
+  provider = '';
+  details?: EventConferencingDetails;
+  autocreate?: {
+    settings?: object;
+  };
+
+  constructor(props?: EventConferencingProperties) {
+    super(props);
+  }
 
   toJSON(): any {
     return {

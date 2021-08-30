@@ -1,11 +1,42 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
-import EventParticipant from './event-participant';
-import { EventConferencing } from './event-conferencing';
+import EventParticipant, {
+  EventParticipantProperties,
+} from './event-participant';
+import {
+  EventConferencing,
+  EventConferencingProperties,
+} from './event-conferencing';
 import When from './when';
+import NylasConnection from '../nylas-connection';
+
+export interface EventProperties {
+  calendarId: string;
+  when: When;
+  iCalUID?: string;
+  messageId?: string;
+  title?: string;
+  description?: string;
+  owner?: string;
+  participants?: EventParticipantProperties[];
+  readOnly?: boolean;
+  location?: string;
+  busy?: boolean;
+  status?: string;
+  recurrence?: {
+    rrule: string[];
+    timezone: string;
+  };
+  masterEventId?: string;
+  originalStartTime?: number;
+  conferencing?: EventConferencingProperties;
+  metadata?: object;
+  jobStatusId?: string;
+}
 
 export default class Event extends RestfulModel {
-  calendarId?: string;
+  calendarId = '';
+  when = new When();
   iCalUID?: string;
   messageId?: string;
   title?: string;
@@ -14,7 +45,6 @@ export default class Event extends RestfulModel {
   participants?: EventParticipant[];
   readOnly?: boolean;
   location?: string;
-  when?: When;
   busy?: boolean;
   status?: string;
   recurrence?: {
@@ -27,11 +57,17 @@ export default class Event extends RestfulModel {
   metadata?: object;
   jobStatusId?: string;
 
+  constructor(connection: NylasConnection, props?: EventProperties) {
+    super(connection, props);
+  }
+
   get start(): string | number | undefined {
-    return this.when?.startTime ||
+    return (
+      this.when?.startTime ||
       this.when?.startDate ||
       this.when?.time ||
-      this.when?.date;
+      this.when?.date
+    );
   }
 
   set start(val: string | number | undefined) {
@@ -63,10 +99,12 @@ export default class Event extends RestfulModel {
   }
 
   get end(): string | number | undefined {
-    return this.when?.endTime ||
+    return (
+      this.when?.endTime ||
       this.when?.endDate ||
       this.when?.time ||
-      this.when?.date;
+      this.when?.date
+    );
   }
 
   set end(val: string | number | undefined) {
@@ -183,7 +221,7 @@ Event.attributes = {
   }),
   when: Attributes.Object({
     modelKey: 'when',
-    itemClass: When
+    itemClass: When,
   }),
   busy: Attributes.Boolean({
     modelKey: 'busy',

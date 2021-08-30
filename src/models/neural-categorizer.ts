@@ -1,12 +1,24 @@
 import Attributes from './attributes';
-import Message from './message';
+import Message, { MessageProperties } from './message';
 import Model from './model';
+import NylasConnection from '../nylas-connection';
 
-export class Categorize extends Model {
-  category?: string;
-  categorizedAt?: Date;
-  modelVersion?: string;
-  subcategories?: string[];
+export interface CategorizeProperties {
+  category: string;
+  categorizedAt: Date;
+  modelVersion: string;
+  subcategories: string[];
+}
+
+export class Categorize extends Model implements CategorizeProperties {
+  category = '';
+  categorizedAt = new Date();
+  modelVersion = '';
+  subcategories = [];
+
+  constructor(props?: CategorizeProperties) {
+    super(props);
+  }
 
   toJSON() {
     return {
@@ -35,8 +47,20 @@ Categorize.attributes = {
   }),
 };
 
-export default class NeuralCategorizer extends Message {
-  categorizer?: Categorize;
+export interface NeuralCategorizerProperties extends MessageProperties {
+  categorizer: Categorize;
+}
+
+export default class NeuralCategorizer extends Message
+  implements NeuralCategorizerProperties {
+  categorizer = new Categorize();
+
+  constructor(
+    connection: NylasConnection,
+    props?: NeuralCategorizerProperties
+  ) {
+    super(connection, props);
+  }
 
   reCategorize(category: string): Promise<NeuralCategorizer> {
     return this.connection

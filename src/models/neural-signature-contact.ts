@@ -3,9 +3,18 @@ import { Contact, EmailAddress, PhoneNumber, WebPage } from './contact';
 import Model from './model';
 import NylasConnection from '../nylas-connection';
 
-class Link extends Model {
+interface LinkProperties {
   description?: string;
   url?: string;
+}
+
+class Link extends Model implements LinkProperties {
+  description?: string;
+  url?: string;
+
+  constructor(props?: LinkProperties) {
+    super(props);
+  }
 
   toJSON() {
     return {
@@ -24,9 +33,18 @@ Link.attributes = {
   }),
 };
 
-class Name extends Model {
+interface NameProperties {
   firstName?: string;
   lastName?: string;
+}
+
+class Name extends Model implements NameProperties {
+  firstName?: string;
+  lastName?: string;
+
+  constructor(props?: NameProperties) {
+    super(props);
+  }
 
   toJSON() {
     return {
@@ -47,12 +65,25 @@ Name.attributes = {
   }),
 };
 
-export default class NeuralSignatureContact extends Model {
+export interface NeuralSignatureContactProperties {
   jobTitles?: string[];
   links?: Link[];
   phoneNumbers?: string[];
   emails?: string[];
   names?: Name[];
+}
+
+export default class NeuralSignatureContact extends Model
+  implements NeuralSignatureContactProperties {
+  jobTitles?: string[];
+  links?: Link[];
+  phoneNumbers?: string[];
+  emails?: string[];
+  names?: Name[];
+
+  constructor(props?: NeuralSignatureContactProperties) {
+    super(props);
+  }
 
   toJSON() {
     return {
