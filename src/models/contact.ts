@@ -9,11 +9,15 @@ export interface EmailAddressProperties {
 }
 
 export class EmailAddress extends Model implements EmailAddressProperties {
-  type = '';
-  email = '';
+  type!: string;
+  email!: string;
 
   constructor(props?: EmailAddressProperties) {
     super(props);
+    if(!props) {
+      this.type = '';
+      this.email = '';
+    }
   }
 
   // TODO::Can probably remove toJSONs in classes that extend Model
@@ -34,17 +38,22 @@ EmailAddress.attributes = {
   }),
 };
 
+// eslint-disable-next-line @typescript-eslint/interface-name-prefix
 export interface IMAddressProperties {
   type: string;
   imAddress: string;
 }
 
 class IMAddress extends Model implements IMAddressProperties {
-  type = '';
-  imAddress = '';
+  type!: string;
+  imAddress!: string;
 
   constructor(props?: IMAddressProperties) {
     super(props);
+    if(!props) {
+      this.type = '';
+      this.imAddress = '';
+    }
   }
 
   toJSON() {
@@ -78,17 +87,26 @@ export interface PhysicalAddressProperties {
 }
 
 class PhysicalAddress extends Model implements PhysicalAddressProperties {
-  type = '';
-  format = '';
-  streetAddress = '';
-  city = '';
-  postalCode = '';
-  state = '';
-  country = '';
+  type!: string;
+  format!: string;
+  streetAddress!: string;
+  city!: string;
+  postalCode!: string;
+  state!: string;
+  country!: string;
   address?: string;
 
   constructor(props?: PhysicalAddressProperties) {
     super(props);
+    if(!props) {
+      this.type = '';
+      this.format = '';
+      this.streetAddress = '';
+      this.city = '';
+      this.postalCode = '';
+      this.state = '';
+      this.country = '';
+    }
   }
 
   toJSON() {
@@ -144,11 +162,15 @@ export interface PhoneNumberProperties {
 }
 
 export class PhoneNumber extends Model implements PhoneNumberProperties {
-  type = '';
-  number = '';
+  type!: string;
+  number!: string;
 
   constructor(props?: PhoneNumberProperties) {
     super(props);
+    if(!props) {
+      this.type = '';
+      this.number = '';
+    }
   }
 
   toJSON() {
@@ -174,11 +196,15 @@ export interface WebPageProperties {
 }
 
 export class WebPage extends Model implements WebPageProperties {
-  type = '';
-  url = '';
+  type!: string;
+  url!: string;
 
   constructor(props?: WebPageProperties) {
     super(props);
+    if(!props) {
+      this.type = '';
+      this.url = '';
+    }
   }
 
   toJSON() {
@@ -200,16 +226,26 @@ WebPage.attributes = {
 };
 
 export interface GroupProperties {
-  type: string;
+  name: string;
   path: string;
+  id?: string;
+  accountId?: string;
+  object?: string;
 }
 
 export class Group extends Model implements GroupProperties {
-  type = '';
-  path = '';
+  name!: string;
+  path!: string;
+  id?: string;
+  accountId?: string;
+  object?: string;
 
   constructor(props?: GroupProperties) {
     super(props);
+    if(!props) {
+      this.name = '';
+      this.path = '';
+    }
   }
 }
 
@@ -219,6 +255,19 @@ Group.attributes = {
   }),
   path: Attributes.String({
     modelKey: 'path',
+  }),
+  id: Attributes.String({
+    modelKey: 'id',
+    readOnly: true,
+  }),
+  object: Attributes.String({
+    modelKey: 'object',
+    readOnly: true,
+  }),
+  accountId: Attributes.String({
+    modelKey: 'accountId',
+    jsonKey: 'account_id',
+    readOnly: true,
   }),
 };
 
@@ -235,7 +284,7 @@ export interface ContactProperties {
   notes?: string;
   pictureUrl?: string;
   emailAddresses?: EmailAddressProperties[];
-  imAddresses?: IMAddress[];
+  imAddresses?: IMAddressProperties[];
   physicalAddresses?: PhysicalAddressProperties[];
   phoneNumbers?: PhoneNumberProperties[];
   webPages?: WebPageProperties[];
