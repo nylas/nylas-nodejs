@@ -125,39 +125,49 @@ describe('Contact', () => {
 
   describe('when the request succeeds', () => {
     beforeEach(() => {
-      const contactJSON = {
+      const contactProps = {
         id: '1257',
         object: 'contact',
-        account_id: '1234',
-        given_name: 'John',
-        middle_name: 'Jacob',
+        accountId: '1234',
+        givenName: 'John',
+        middleName: 'Jacob',
         surname: 'Jingleheimer Schmidt',
         suffix: 'II',
         nickname: 'John',
         birthday: '2019-07-01',
-        company_name: 'Life',
-        job_title: 'artist',
-        manager_name: 'April',
-        office_location: 'SF, CA, USA',
+        companyName: 'Life',
+        jobTitle: 'artist',
+        managerName: 'April',
+        officeLocation: 'SF, CA, USA',
         notes: 'lalala',
-        picture_url: 'example.com',
-        emails: [{ type: 'work', email: 'john@test.com' }],
-        im_addresses: [{ type: 'yahoo', im_address: 'jjj' }],
-        physical_addresses: [{ type: 'home', city: 'Boston' }],
-        phone_numbers: [{ type: 'mobile', number: '555-444-3333' }],
-        web_pages: [{ type: 'blog', url: 'johnblogs.com' }],
+        pictureUrl: 'example.com',
+        emailAddresses: [{ type: 'work', email: 'john@test.com' }],
+        imAddresses: [{ type: 'yahoo', imAddress: 'jjj' }],
+        physicalAddresses: [
+          {
+            format: "structured",
+            type: 'home',
+            streetAddress: "102 Test Dr",
+            city: 'Boston',
+            postalCode: "90210",
+            state: "MA",
+            country: "USA"
+          }
+        ],
+        phoneNumbers: [{ type: 'mobile', number: '555-444-3333' }],
+        webPages: [{ type: 'blog', url: 'johnblogs.com' }],
         groups: [
           {
             id: '123',
             object: 'contact_group',
-            account_id: '1234',
+            accountId: '1234',
             name: 'Fam',
             path: 'Fam',
           },
         ],
         source: 'inbox',
       };
-      testContext.contact = new Contact(testContext.connection, contactJSON);
+      testContext.contact = new Contact(testContext.connection, contactProps);
     });
 
     test('should resolve with the contact object', done => {
@@ -188,6 +198,11 @@ describe('Contact', () => {
         expect(contact.physicalAddresses[0].toJSON()).toEqual({
           type: 'home',
           city: 'Boston',
+          country: "USA",
+          format: "structured",
+          postal_code: "90210",
+          state: "MA",
+          street_address: "102 Test Dr",
         });
         expect(contact.phoneNumbers[0].toJSON()).toEqual({
           type: 'mobile',

@@ -40,7 +40,6 @@ describe('Draft', () => {
 
     fetch.mockImplementation(req => Promise.resolve(response(req.body)));
 
-    // testContext.connection.request = jest.fn(() => Promise.resolve({}));
     testContext.draft = new Draft(testContext.connection);
   });
 
@@ -303,7 +302,10 @@ Hey Ben, \
 \
 Would you like to grab coffee @ 2pm this Thursday?`;
 
-      const draft = testContext.connection.drafts.build({ rawMime: msg });
+      const draft = new Draft(testContext.connection, {
+        to: [{ email: 'foo', name: 'bar' }],
+        rawMime: msg
+      });
       draft.send().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/send');

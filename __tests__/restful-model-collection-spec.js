@@ -619,6 +619,7 @@ describe('RestfulModelCollection', () => {
       );
       testContext.item = new Draft(testContext.connection, {
         id: '123',
+        to: [{ email: 'foo', name: 'bar' }],
         version: 0,
       });
     });

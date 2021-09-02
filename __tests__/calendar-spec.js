@@ -58,7 +58,8 @@ describe('Calendar', () => {
     };
 
     fetch.mockImplementation(req => Promise.resolve(response(req.body)));
-    testContext.calendar = new Calendar(testContext.connection, calendarJSON);
+    testContext.calendar = new Calendar(testContext.connection);
+    testContext.calendar.fromJSON(calendarJSON);
   });
 
   const sharedCalendarEvaluation = calendar => {
