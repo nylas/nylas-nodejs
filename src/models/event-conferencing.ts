@@ -69,8 +69,8 @@ export class EventConferencing extends Model
 
   constructor(props?: EventConferencingProperties) {
     super(props);
-    if(!props) {
-      this.provider = "";
+    if (!props) {
+      this.provider = '';
     }
   }
 

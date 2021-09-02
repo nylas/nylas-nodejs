@@ -23,7 +23,7 @@ export default class NeuralSentimentAnalysis extends RestfulModel
     props?: NeuralSentimentAnalysisProperties
   ) {
     super(connection, props);
-    if(props) {
+    if (props) {
       this.accountId = '';
       this.sentiment = '';
       this.sentimentScore = 0;

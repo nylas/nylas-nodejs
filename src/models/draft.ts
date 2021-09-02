@@ -145,6 +145,6 @@ Draft.attributes = {
   }),
   rawMime: Attributes.String({
     modelKey: 'rawMime',
-    readOnly: true
+    readOnly: true,
   }),
 };

@@ -53,7 +53,9 @@ describe('Message', () => {
     testContext.message.body = 'bar';
     testContext.message.starred = true;
     testContext.message.unread = false;
-    testContext.message.to = [ new EmailParticipant({ email: 'foo', name: 'bar' }) ];
+    testContext.message.to = [
+      new EmailParticipant({ email: 'foo', name: 'bar' }),
+    ];
   });
 
   describe('save', () => {

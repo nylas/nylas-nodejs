@@ -59,7 +59,7 @@ export default class Event extends RestfulModel {
 
   constructor(connection: NylasConnection, props?: EventProperties) {
     super(connection, props);
-    if(!props) {
+    if (!props) {
       this.calendarId = '';
       this.when = new When();
     }

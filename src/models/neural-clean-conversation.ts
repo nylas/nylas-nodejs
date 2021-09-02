@@ -20,7 +20,7 @@ export default class NeuralCleanConversation extends Message
     props?: NeuralCleanConversationProperties
   ) {
     super(connection, props);
-    if(!props) {
+    if (!props) {
       this.conversation = '';
       this.modelVersion = '';
     }

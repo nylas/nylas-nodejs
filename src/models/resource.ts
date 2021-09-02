@@ -21,7 +21,7 @@ export default class Resource extends RestfulModel {
 
   constructor(connection: NylasConnection, props?: ResourceProperties) {
     super(connection, props);
-    if(!props) {
+    if (!props) {
       this.email = '';
       this.name = '';
       this.capacity = '';

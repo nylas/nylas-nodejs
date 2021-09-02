@@ -14,7 +14,7 @@ export class EmailAddress extends Model implements EmailAddressProperties {
 
   constructor(props?: EmailAddressProperties) {
     super(props);
-    if(!props) {
+    if (!props) {
       this.type = '';
       this.email = '';
     }
@@ -50,7 +50,7 @@ class IMAddress extends Model implements IMAddressProperties {
 
   constructor(props?: IMAddressProperties) {
     super(props);
-    if(!props) {
+    if (!props) {
       this.type = '';
       this.imAddress = '';
     }
@@ -98,7 +98,7 @@ class PhysicalAddress extends Model implements PhysicalAddressProperties {
 
   constructor(props?: PhysicalAddressProperties) {
     super(props);
-    if(!props) {
+    if (!props) {
       this.type = '';
       this.format = '';
       this.streetAddress = '';
@@ -167,7 +167,7 @@ export class PhoneNumber extends Model implements PhoneNumberProperties {
 
   constructor(props?: PhoneNumberProperties) {
     super(props);
-    if(!props) {
+    if (!props) {
       this.type = '';
       this.number = '';
     }
@@ -201,7 +201,7 @@ export class WebPage extends Model implements WebPageProperties {
 
   constructor(props?: WebPageProperties) {
     super(props);
-    if(!props) {
+    if (!props) {
       this.type = '';
       this.url = '';
     }
@@ -242,7 +242,7 @@ export class Group extends Model implements GroupProperties {
 
   constructor(props?: GroupProperties) {
     super(props);
-    if(!props) {
+    if (!props) {
       this.name = '';
       this.path = '';
     }

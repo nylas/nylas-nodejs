@@ -51,7 +51,7 @@ export default class Message extends RestfulModel implements MessageProperties {
 
   constructor(connection: NylasConnection, props?: MessageProperties) {
     super(connection, props);
-    if(!props) {
+    if (!props) {
       this.to = [];
     }
   }

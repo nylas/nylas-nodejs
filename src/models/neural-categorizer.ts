@@ -18,7 +18,7 @@ export class Categorize extends Model implements CategorizeProperties {
 
   constructor(props?: CategorizeProperties) {
     super(props);
-    if(!props) {
+    if (!props) {
       this.category = '';
       this.categorizedAt = new Date();
       this.modelVersion = '';
@@ -66,7 +66,7 @@ export default class NeuralCategorizer extends Message
     props?: NeuralCategorizerProperties
   ) {
     super(connection, props);
-    if(!props) {
+    if (!props) {
       this.categorizer = new Categorize();
     }
   }

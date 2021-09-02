@@ -1,7 +1,9 @@
 import Message, { MessageProperties } from './message';
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
-import EmailParticipant, { EmailParticipantProperties } from './email-participant';
+import EmailParticipant, {
+  EmailParticipantProperties,
+} from './email-participant';
 import { Label, Folder, FolderProperties } from './folder';
 import NylasConnection from '../nylas-connection';
 
@@ -46,7 +48,7 @@ export default class Thread extends RestfulModel implements ThreadProperties {
 
   constructor(connection: NylasConnection, props?: ThreadProperties) {
     super(connection, props);
-    if(!props) {
+    if (!props) {
       this.subject = '';
       this.participants = [];
       this.lastMessageTimestamp = new Date();

@@ -23,7 +23,7 @@ export default class Account extends RestfulModel implements AccountProperties {
 
   constructor(connection: NylasConnection, props?: AccountProperties) {
     super(connection, props);
-    if(!props) {
+    if (!props) {
       this.name = '';
       this.emailAddress = '';
       this.provider = '';

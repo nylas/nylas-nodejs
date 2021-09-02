@@ -52,7 +52,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           busy: undefined,
           title: undefined,
           description: undefined,
@@ -73,7 +73,7 @@ describe('Event', () => {
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           busy: undefined,
           title: undefined,
           description: undefined,
@@ -94,7 +94,7 @@ describe('Event', () => {
         );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           busy: undefined,
           title: undefined,
           description: undefined,
@@ -117,7 +117,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           busy: undefined,
           title: undefined,
           description: undefined,
@@ -139,7 +139,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -165,7 +165,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -192,7 +192,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -218,7 +218,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -243,7 +243,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -273,7 +273,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -302,7 +302,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -332,7 +332,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -366,7 +366,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -392,7 +392,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: "",
+          calendar_id: '',
           busy: undefined,
           title: undefined,
           description: undefined,
@@ -414,7 +414,7 @@ describe('Event', () => {
             meetingCode: '213',
             password: 'xyz',
             phone: ['+11234567890'],
-          }
+          },
         });
         testContext.event.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
@@ -423,7 +423,7 @@ describe('Event', () => {
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
-            calendar_id: "",
+            calendar_id: '',
             busy: undefined,
             title: undefined,
             description: undefined,
@@ -462,7 +462,7 @@ describe('Event', () => {
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
-            calendar_id: "",
+            calendar_id: '',
             busy: undefined,
             title: undefined,
             description: undefined,

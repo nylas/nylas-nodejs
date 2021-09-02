@@ -33,7 +33,7 @@ export default class Model {
   initAttributes(props: { [key: string]: any }): void {
     const attributes = this.attributes();
     for (const prop in props) {
-      if(props.hasOwnProperty(prop)) {
+      if (props.hasOwnProperty(prop)) {
         const attr = attributes[prop];
         if (attr) {
           (this as any)[prop] = attr.fromJSON(props[prop], this);

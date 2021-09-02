@@ -304,7 +304,7 @@ Would you like to grab coffee @ 2pm this Thursday?`;
 
       const draft = new Draft(testContext.connection, {
         to: [{ email: 'foo', name: 'bar' }],
-        rawMime: msg
+        rawMime: msg,
       });
       draft.send().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];

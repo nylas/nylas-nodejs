@@ -145,14 +145,14 @@ describe('Contact', () => {
         imAddresses: [{ type: 'yahoo', imAddress: 'jjj' }],
         physicalAddresses: [
           {
-            format: "structured",
+            format: 'structured',
             type: 'home',
-            streetAddress: "102 Test Dr",
+            streetAddress: '102 Test Dr',
             city: 'Boston',
-            postalCode: "90210",
-            state: "MA",
-            country: "USA"
-          }
+            postalCode: '90210',
+            state: 'MA',
+            country: 'USA',
+          },
         ],
         phoneNumbers: [{ type: 'mobile', number: '555-444-3333' }],
         webPages: [{ type: 'blog', url: 'johnblogs.com' }],
@@ -198,11 +198,11 @@ describe('Contact', () => {
         expect(contact.physicalAddresses[0].toJSON()).toEqual({
           type: 'home',
           city: 'Boston',
-          country: "USA",
-          format: "structured",
-          postal_code: "90210",
-          state: "MA",
-          street_address: "102 Test Dr",
+          country: 'USA',
+          format: 'structured',
+          postal_code: '90210',
+          state: 'MA',
+          street_address: '102 Test Dr',
         });
         expect(contact.phoneNumbers[0].toJSON()).toEqual({
           type: 'mobile',

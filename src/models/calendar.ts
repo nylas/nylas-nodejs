@@ -25,11 +25,11 @@ export default class Calendar extends RestfulModel
 
   constructor(connection: NylasConnection, props?: CalendarProperties) {
     super(connection, props);
-    if(!props) {
-      this.name = "";
-      this.description = "";
-      this.location = "";
-      this.timezone = "";
+    if (!props) {
+      this.name = '';
+      this.description = '';
+      this.location = '';
+      this.timezone = '';
     }
   }
 

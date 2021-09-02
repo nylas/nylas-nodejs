@@ -20,7 +20,7 @@ export default class NeuralSignatureExtraction extends Message
     props?: NeuralSignatureExtractionProperties
   ) {
     super(connection, props);
-    if(!props) {
+    if (!props) {
       this.signature = '';
       this.modelVersion = '';
     }

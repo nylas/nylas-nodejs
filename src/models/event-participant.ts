@@ -15,8 +15,8 @@ export default class EventParticipant extends Model
 
   constructor(props?: EventParticipantProperties) {
     super(props);
-    if(!props) {
-      this.email = "";
+    if (!props) {
+      this.email = '';
     }
   }
 

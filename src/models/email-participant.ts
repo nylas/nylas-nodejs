@@ -13,8 +13,8 @@ export default class EmailParticipant extends Model
 
   constructor(props?: EmailParticipantProperties) {
     super(props);
-    if(!props) {
-      this.email = "";
+    if (!props) {
+      this.email = '';
     }
   }
 
