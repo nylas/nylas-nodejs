@@ -42,7 +42,7 @@ export default class ModelCollection<T extends Model> {
     let offset = 0;
 
     const iteratee = (): Promise<void> => {
-      return this._getItems(params, offset, REQUEST_CHUNK_SIZE).then(items => {
+      return this.getItems(params, offset, REQUEST_CHUNK_SIZE).then(items => {
         for (const item of items) {
           eachCallback(item);
         }
@@ -82,7 +82,7 @@ export default class ModelCollection<T extends Model> {
 
     const limit = params.limit || Infinity;
     const offset = params.offset;
-    return this._range({ params, offset, limit, callback });
+    return this.range({ params, offset, limit, callback });
   }
 
   find(
@@ -123,7 +123,7 @@ export default class ModelCollection<T extends Model> {
       return Promise.reject(err);
     }
 
-    return this._getModel(id, params)
+    return this.getModel(id, params)
       .then(model => {
         if (callback) {
           callback(null, model);
@@ -138,7 +138,7 @@ export default class ModelCollection<T extends Model> {
       });
   }
 
-  _range({
+  protected range({
     params = {},
     offset = 0,
     limit = 100,
@@ -159,7 +159,7 @@ export default class ModelCollection<T extends Model> {
         REQUEST_CHUNK_SIZE,
         limit - accumulated.length
       );
-      return this._getItems(params, chunkOffset, chunkLimit, path).then(
+      return this.getItems(params, chunkOffset, chunkLimit, path).then(
         items => {
           accumulated = accumulated.concat(items);
           const finished =
@@ -189,7 +189,7 @@ export default class ModelCollection<T extends Model> {
     );
   }
 
-  _getItems(
+  protected getItems(
     params: { [key: string]: any },
     offset: number,
     limit: number,
@@ -209,14 +209,14 @@ export default class ModelCollection<T extends Model> {
       });
     }
 
-    return this._getModelCollection(params, offset, limit, path);
+    return this.getModelCollection(params, offset, limit, path);
   }
 
-  _createModel(json: { [key: string]: any }): T {
+  protected createModel(json: { [key: string]: any }): T {
     return new this.modelClass(json) as T;
   }
 
-  _getModel(id: string, params: { [key: string]: any } = {}): Promise<T> {
+  private getModel(id: string, params: { [key: string]: any } = {}): Promise<T> {
     return this.connection
       .request({
         method: 'GET',
@@ -224,12 +224,12 @@ export default class ModelCollection<T extends Model> {
         qs: params,
       })
       .then((json: any) => {
-        const model = this._createModel(json);
+        const model = this.createModel(json);
         return Promise.resolve(model);
       });
   }
 
-  _getModelCollection(
+  private getModelCollection(
     params: { [key: string]: any },
     offset: number,
     limit: number,
@@ -243,7 +243,7 @@ export default class ModelCollection<T extends Model> {
       })
       .then((jsonArray: any) => {
         const models = jsonArray.map((json: any) => {
-          return this._createModel(json);
+          return this.createModel(json);
         });
         return Promise.resolve(models);
       });

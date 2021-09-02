@@ -18,7 +18,7 @@ export default class ManagementModelCollection<
     this.path = `/a/${this.clientId}/${this.modelClass.collectionName}`;
   }
 
-  _createModel(json: { [key: string]: any }) {
+  protected createModel(json: { [key: string]: any }) {
     return new (this.modelClass as any)(this.connection, this.clientId, json);
   }
 }

@@ -53,7 +53,7 @@ export default class RestfulModelCollection<
       return Promise.reject(err);
     }
 
-    return this._getItems(params, 0, 1)
+    return this.getItems(params, 0, 1)
       .then(items => {
         if (callback) {
           callback(null, items[0]);
@@ -96,7 +96,7 @@ export default class RestfulModelCollection<
     const offset = params.offset;
     const path = `${this.path}/search`;
 
-    return this._range({ params, offset, limit, path });
+    return this.range({ params, offset, limit, path });
   }
 
   delete(
@@ -162,7 +162,7 @@ export default class RestfulModelCollection<
   }
 
   build(args: { [key: string]: any }): T {
-    const model = this._createModel({});
+    const model = this.createModel({});
     for (const key in args) {
       const val = args[key];
       (model as any)[key] = val;
@@ -170,7 +170,7 @@ export default class RestfulModelCollection<
     return model;
   }
 
-  _createModel(json: { [key: string]: any }): T {
+  protected createModel(json: { [key: string]: any }): T {
     return new this.modelClass(this.connection, json) as T;
   }
 }

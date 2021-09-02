@@ -83,8 +83,8 @@ export default class Message extends RestfulModel {
     return json;
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+    return super.save(params, callback);
   }
 }
 Message.collectionName = 'messages';

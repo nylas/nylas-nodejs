@@ -84,8 +84,8 @@ export default class RestfulModel extends Model {
 
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
-  // They should instead define a save() function which calls _save.
-  _save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+  // They should instead define a save() function which calls save.
+  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     if (typeof params === 'function') {
       callback = params as SaveCallback;
       params = {};
@@ -114,7 +114,7 @@ export default class RestfulModel extends Model {
       });
   }
 
-  _get(
+  protected get(
     params: { [key: string]: any } = {},
     callback?: (error: Error | null, result?: any) => void,
     pathSuffix = ''

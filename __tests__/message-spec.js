@@ -128,7 +128,7 @@ describe('Message', () => {
         Message,
         testContext.connection
       );
-      testContext.collection._getModelCollection = jest.fn(() => {
+      testContext.collection.getModelCollection = jest.fn(() => {
         return Promise.resolve([testContext.message]);
       });
     });

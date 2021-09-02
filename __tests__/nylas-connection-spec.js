@@ -33,13 +33,13 @@ describe('NylasConnection', () => {
   });
   describe('mismatched api version warnings', () => {
     test('should not warn if Nylas API version matches SDK supported API version', () => {
-      const noWarning = testContext.connection._getWarningForVersion(
+      const noWarning = testContext.connection.getWarningForVersion(
         '2.0',
         '2.0'
       );
       expect(noWarning).toEqual('');
 
-      const warnSdk = testContext.connection._getWarningForVersion(
+      const warnSdk = testContext.connection.getWarningForVersion(
         '1.0',
         '2.0'
       );
@@ -47,7 +47,7 @@ describe('NylasConnection', () => {
         `WARNING: SDK version may not support your Nylas API version. SDK supports version 1.0 of the API and your application is currently running on version 2.0 of the API. Please update the sdk to ensure it works properly.`
       );
 
-      const warnApi = testContext.connection._getWarningForVersion(
+      const warnApi = testContext.connection.getWarningForVersion(
         '2.0',
         '1.0'
       );

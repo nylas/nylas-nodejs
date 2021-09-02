@@ -22,7 +22,7 @@ export default class Draft extends Message {
     return json;
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     if (this.rawMime) {
       const err = new Error('save() cannot be called for raw MIME drafts');
       if (callback) {
@@ -30,7 +30,7 @@ export default class Draft extends Message {
       }
       return Promise.reject(err);
     }
-    return this._save(params, callback);
+    return super.save(params, callback);
   }
 
   saveRequestBody() {
