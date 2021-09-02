@@ -695,24 +695,6 @@ describe('RestfulModelCollection', () => {
     });
   });
 
-  describe('build', () => {
-    test('should return a new instance of the model class', () => {
-      expect(testContext.collection.build() instanceof Thread).toBe(true);
-    });
-
-    test('should initialize the new instance with the connection', () => {
-      expect(testContext.collection.build().connection).toBe(
-        testContext.connection
-      );
-    });
-
-    test('should set other attributes provided to the build method', () => {
-      expect(testContext.collection.build({ subject: '123' }).subject).toEqual(
-        '123'
-      );
-    });
-  });
-
   describe('path', () => {
     test("should return the modelClass' collectionName with no prefix", () => {
       expect(testContext.collection.path).toEqual('/threads');

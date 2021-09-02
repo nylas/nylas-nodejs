@@ -118,7 +118,7 @@ export default class RestfulModelCollection<
     }
 
     const item =
-      typeof itemOrId === 'string' ? this.build({ id: itemOrId }) : itemOrId;
+      typeof itemOrId === 'string' ? this._build({ id: itemOrId }) : itemOrId;
 
     const options: { [key: string]: any } = item.deleteRequestOptions(params);
     options.item = item;
@@ -161,7 +161,7 @@ export default class RestfulModelCollection<
       });
   }
 
-  build(args: { [key: string]: any }): T {
+  _build(args: { [key: string]: any }): T {
     const model = this._createModel({});
     for (const key in args) {
       const val = args[key];
