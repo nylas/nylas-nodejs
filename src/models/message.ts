@@ -30,7 +30,7 @@ export interface MessageProperties {
 }
 
 export default class Message extends RestfulModel implements MessageProperties {
-  to = [];
+  to!: EmailParticipant[];
   subject?: string;
   from?: EmailParticipant[];
   replyTo?: EmailParticipant[];
@@ -51,6 +51,9 @@ export default class Message extends RestfulModel implements MessageProperties {
 
   constructor(connection: NylasConnection, props?: MessageProperties) {
     super(connection, props);
+    if(!props) {
+      this.to = [];
+    }
   }
 
   // We calculate the list of participants instead of grabbing it from

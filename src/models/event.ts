@@ -35,8 +35,8 @@ export interface EventProperties {
 }
 
 export default class Event extends RestfulModel {
-  calendarId = '';
-  when = new When();
+  calendarId!: string;
+  when!: When;
   iCalUID?: string;
   messageId?: string;
   title?: string;
@@ -59,6 +59,10 @@ export default class Event extends RestfulModel {
 
   constructor(connection: NylasConnection, props?: EventProperties) {
     super(connection, props);
+    if(!props) {
+      this.calendarId = '';
+      this.when = new When();
+    }
   }
 
   get start(): string | number | undefined {

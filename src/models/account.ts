@@ -13,16 +13,24 @@ export interface AccountProperties {
 }
 
 export default class Account extends RestfulModel implements AccountProperties {
-  name = '';
-  emailAddress = '';
-  provider = '';
-  organizationUnit = '';
-  syncState = '';
-  linkedAt = new Date();
+  name!: string;
+  emailAddress!: string;
+  provider!: string;
+  organizationUnit!: string;
+  syncState!: string;
+  linkedAt!: Date;
   billingState?: string;
 
   constructor(connection: NylasConnection, props?: AccountProperties) {
     super(connection, props);
+    if(!props) {
+      this.name = '';
+      this.emailAddress = '';
+      this.provider = '';
+      this.organizationUnit = '';
+      this.syncState = '';
+      this.linkedAt = new Date();
+    }
   }
 }
 Account.collectionName = 'accounts';

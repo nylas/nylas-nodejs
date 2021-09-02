@@ -53,7 +53,7 @@ EventConferencingDetails.attributes = {
 
 export interface EventConferencingProperties {
   provider: string;
-  details?: EventConferencingDetails;
+  details?: EventConferencingDetailsProperties;
   autocreate?: {
     settings?: object;
   };
@@ -61,14 +61,17 @@ export interface EventConferencingProperties {
 
 export class EventConferencing extends Model
   implements EventConferencingProperties {
-  provider = '';
+  provider!: string;
   details?: EventConferencingDetails;
   autocreate?: {
-    settings?: object;
+    settings?: { [key: string]: string };
   };
 
   constructor(props?: EventConferencingProperties) {
     super(props);
+    if(!props) {
+      this.provider = "";
+    }
   }
 
   toJSON(): any {

@@ -15,16 +15,22 @@ export interface CalendarProperties {
 
 export default class Calendar extends RestfulModel
   implements CalendarProperties {
-  name = '';
-  description = '';
-  location = '';
-  timezone = '';
+  name!: string;
+  description!: string;
+  location!: string;
+  timezone!: string;
   readOnly?: boolean;
   isPrimary?: boolean;
   jobStatusId?: string;
 
   constructor(connection: NylasConnection, props?: CalendarProperties) {
     super(connection, props);
+    if(!props) {
+      this.name = "";
+      this.description = "";
+      this.location = "";
+      this.timezone = "";
+    }
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {

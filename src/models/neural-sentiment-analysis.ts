@@ -12,17 +12,24 @@ export interface NeuralSentimentAnalysisProperties {
 
 export default class NeuralSentimentAnalysis extends RestfulModel
   implements NeuralSentimentAnalysisProperties {
-  accountId = '';
-  sentiment = '';
-  sentimentScore = 0;
-  processedLength = 0;
-  text = '';
+  accountId!: string;
+  sentiment!: string;
+  sentimentScore!: number;
+  processedLength!: number;
+  text!: string;
 
   constructor(
     connection: NylasConnection,
     props?: NeuralSentimentAnalysisProperties
   ) {
     super(connection, props);
+    if(props) {
+      this.accountId = '';
+      this.sentiment = '';
+      this.sentimentScore = 0;
+      this.processedLength = 0;
+      this.text = '';
+    }
   }
 }
 

@@ -1,6 +1,7 @@
 import Message, { MessageProperties } from './message';
 import Attributes from './attributes';
 import { SaveCallback } from './restful-model';
+import NylasConnection from '../nylas-connection';
 
 export type SendCallback = (
   err: Error | null,
@@ -17,6 +18,10 @@ export default class Draft extends Message implements DraftProperties {
   rawMime?: string;
   replyToMessageId?: string;
   version?: number;
+
+  constructor(connection: NylasConnection, props?: DraftProperties) {
+    super(connection, props);
+  }
 
   toJSON(enforceReadOnly?: boolean) {
     if (this.rawMime) {
@@ -137,5 +142,9 @@ Draft.attributes = {
   replyToMessageId: Attributes.String({
     modelKey: 'replyToMessageId',
     jsonKey: 'reply_to_message_id',
+  }),
+  rawMime: Attributes.String({
+    modelKey: 'rawMime',
+    readOnly: true
   }),
 };

@@ -13,12 +13,12 @@ export interface ManagementAccountProperties {
 
 export default class ManagementAccount extends ManagementModel
   implements ManagementAccountProperties {
-  billingState = '';
-  emailAddress = '';
-  namespaceId = '';
-  provider = '';
-  syncState = '';
-  trial = false;
+  billingState: string;
+  emailAddress: string;
+  namespaceId: string;
+  provider: string;
+  syncState: string;
+  trial: boolean;
 
   constructor(
     connection: NylasConnection,
@@ -26,6 +26,12 @@ export default class ManagementAccount extends ManagementModel
     props: ManagementAccountProperties
   ) {
     super(connection, clientId, props);
+    this.billingState = props.billingState;
+    this.emailAddress = props.emailAddress;
+    this.namespaceId = props.namespaceId;
+    this.provider = props.provider;
+    this.syncState = props.syncState;
+    this.trial = props.trial;
   }
 
   upgrade() {

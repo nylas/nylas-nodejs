@@ -9,9 +9,16 @@ export interface EventParticipantProperties {
 
 export default class EventParticipant extends Model
   implements EventParticipantProperties {
-  email = '';
+  email!: string;
   name?: string;
   status?: string;
+
+  constructor(props?: EventParticipantProperties) {
+    super(props);
+    if(!props) {
+      this.email = "";
+    }
+  }
 
   toJSON(enforceReadOnly?: boolean) {
     const json = super.toJSON(enforceReadOnly);
