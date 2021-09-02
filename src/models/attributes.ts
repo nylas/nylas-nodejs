@@ -67,9 +67,9 @@ class AttributeObject extends Attribute {
     }
 
     if (this.itemClass.prototype instanceof RestfulModel) {
-      return new this.itemClass(_parent.connection, val);
+      return new this.itemClass(_parent.connection).fromJSON(val);
     }
-    return new this.itemClass(val);
+    return new this.itemClass(val).fromJSON(val);
   }
 }
 
@@ -201,9 +201,9 @@ class AttributeCollection extends Attribute {
     for (const objJSON of json) {
       let obj;
       if (this.itemClass.prototype instanceof RestfulModel) {
-        obj = new this.itemClass(_parent.connection, objJSON);
+        obj = new this.itemClass(_parent.connection).fromJSON(objJSON);
       } else {
-        obj = new this.itemClass(objJSON);
+        obj = new this.itemClass(objJSON).fromJSON(objJSON);
       }
       objs.push(obj);
     }

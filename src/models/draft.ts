@@ -113,7 +113,7 @@ export default class Draft extends Message implements DraftProperties {
         json,
       })
       .then(json => {
-        const message = new Message(this.connection, json);
+        const message = new Message(this.connection).fromJSON(json);
 
         // We may get failures for a partial send
         if (json.failures) {

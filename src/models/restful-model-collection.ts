@@ -171,7 +171,6 @@ export default class RestfulModelCollection<
   }
 
   _createModel(json: { [key: string]: any }): T {
-    const props = this.modelClass.propsFromJSON(json, this);
-    return new this.modelClass(this.connection, props) as T;
+    return new this.modelClass(this.connection).fromJSON(json) as T;
   }
 }

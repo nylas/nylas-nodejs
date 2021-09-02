@@ -22,7 +22,7 @@ export default class Neural extends RestfulModel {
 
     return this._request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
-        return new NeuralSentimentAnalysis(this.connection, json);
+        return new NeuralSentimentAnalysis(this.connection).fromJSON(json);
       });
     });
   }
@@ -32,7 +32,7 @@ export default class Neural extends RestfulModel {
     const path = 'sentiment';
 
     return this._request(path, body).then(json => {
-      return new NeuralSentimentAnalysis(this.connection, json);
+      return new NeuralSentimentAnalysis(this.connection).fromJSON(json);
     });
   }
 
@@ -56,7 +56,7 @@ export default class Neural extends RestfulModel {
 
     return this._request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
-        return new NeuralSignatureExtraction(this.connection, json);
+        return new NeuralSignatureExtraction(this.connection).fromJSON(json);
       });
     });
   }
@@ -70,7 +70,7 @@ export default class Neural extends RestfulModel {
     }
 
     return this._request(path, body).then(json => {
-      return new NeuralOcr(this.connection, json);
+      return new NeuralOcr(this.connection).fromJSON(json);
     });
   }
 
@@ -80,7 +80,7 @@ export default class Neural extends RestfulModel {
 
     return this._request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
-        return new NeuralCategorizer(this.connection, json);
+        return new NeuralCategorizer(this.connection).fromJSON(json);
       });
     });
   }
@@ -101,7 +101,7 @@ export default class Neural extends RestfulModel {
 
     return this._request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
-        return new NeuralCleanConversation(this.connection, json);
+        return new NeuralCleanConversation(this.connection).fromJSON(json);
       });
     });
   }

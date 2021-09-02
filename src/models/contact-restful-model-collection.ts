@@ -1,7 +1,6 @@
 import { Contact, Group } from './contact';
 import NylasConnection from '../nylas-connection';
 import RestfulModelCollection from './restful-model-collection';
-import { GroupProperties } from './contact';
 
 export default class ContactRestfulModelCollection extends RestfulModelCollection<
   Contact
@@ -25,8 +24,7 @@ export default class ContactRestfulModelCollection extends RestfulModelCollectio
       })
       .then(json => {
         const groups = json.map((group: { [key: string]: any }) => {
-          const props = Group.propsFromJSON(group, this) as GroupProperties;
-          return new Group(props);
+          return new Group().fromJSON(group);
         });
         if (callback) {
           callback(null, groups);

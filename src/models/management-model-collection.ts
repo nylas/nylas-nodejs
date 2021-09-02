@@ -19,6 +19,7 @@ export default class ManagementModelCollection<
   }
 
   _createModel(json: { [key: string]: any }) {
-    return new (this.modelClass as any)(this.connection, this.clientId, json);
+    const props = this.modelClass.propsFromJSON(json, this);
+    return new (this.modelClass as any)(this.connection, this.clientId, props);
   }
 }
