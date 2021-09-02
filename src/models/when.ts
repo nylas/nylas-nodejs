@@ -1,7 +1,7 @@
 import Model from './model';
 import Attributes from './attributes';
 
-type WhenProperties = {
+export interface WhenProperties {
   startTime?: number;
   endTime?: number;
   time?: number;
@@ -9,7 +9,7 @@ type WhenProperties = {
   endDate?: string;
   date?: string;
   object?: string;
-};
+}
 
 export default class When extends Model implements WhenProperties {
   startTime?: number;

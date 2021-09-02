@@ -7,12 +7,12 @@ import {
   EventConferencing,
   EventConferencingProperties,
 } from './event-conferencing';
-import When from './when';
+import When, { WhenProperties } from './when';
 import NylasConnection from '../nylas-connection';
 
 export interface EventProperties {
   calendarId: string;
-  when: When;
+  when: WhenProperties;
   iCalUID?: string;
   messageId?: string;
   title?: string;
