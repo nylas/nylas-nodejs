@@ -1,8 +1,9 @@
-import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import { Contact, EmailAddress, PhoneNumber, WebPage } from './contact';
+import Model from './model';
+import NylasConnection from '../nylas-connection';
 
-class Link extends RestfulModel {
+class Link extends Model {
   description?: string;
   url?: string;
 
@@ -14,7 +15,6 @@ class Link extends RestfulModel {
   }
 }
 
-Link.collectionName = 'link';
 Link.attributes = {
   description: Attributes.String({
     modelKey: 'description',
@@ -24,7 +24,7 @@ Link.attributes = {
   }),
 };
 
-class Name extends RestfulModel {
+class Name extends Model {
   firstName?: string;
   lastName?: string;
 
@@ -36,7 +36,6 @@ class Name extends RestfulModel {
   }
 }
 
-Name.collectionName = 'name';
 Name.attributes = {
   firstName: Attributes.String({
     modelKey: 'firstName',
@@ -48,7 +47,7 @@ Name.attributes = {
   }),
 };
 
-export default class NeuralSignatureContact extends RestfulModel {
+export default class NeuralSignatureContact extends Model {
   jobTitles?: string[];
   links?: Link[];
   phoneNumbers?: string[];
@@ -65,8 +64,9 @@ export default class NeuralSignatureContact extends RestfulModel {
     };
   }
 
-  toContactObject(): Contact {
-    const contact = new Contact(this.connection);
+  //TODO::Perhaps this gets moved out to Neural?
+  toContactObject(connection: NylasConnection): Contact {
+    const contact = new Contact(connection);
 
     if (this.names) {
       contact.givenName = this.names[0].firstName;
@@ -78,18 +78,14 @@ export default class NeuralSignatureContact extends RestfulModel {
     if (this.emails) {
       const contactEmails: EmailAddress[] = [];
       this.emails.forEach(email =>
-        contactEmails.push(
-          new EmailAddress(this.connection, { type: 'personal', email: email })
-        )
+        contactEmails.push(new EmailAddress({ type: 'personal', email: email }))
       );
       contact.emailAddresses = contactEmails;
     }
     if (this.phoneNumbers) {
       const contactNumbers: PhoneNumber[] = [];
       this.phoneNumbers.forEach(number =>
-        contactNumbers.push(
-          new PhoneNumber(this.connection, { type: 'mobile', number: number })
-        )
+        contactNumbers.push(new PhoneNumber({ type: 'mobile', number: number }))
       );
       contact.phoneNumbers = contactNumbers;
     }
@@ -97,9 +93,7 @@ export default class NeuralSignatureContact extends RestfulModel {
       const webPages: WebPage[] = [];
       this.links.forEach(link => {
         if (link['url']) {
-          webPages.push(
-            new WebPage(this.connection, { type: 'homepage', url: link['url'] })
-          );
+          webPages.push(new WebPage({ type: 'homepage', url: link['url'] }));
         }
       });
       contact.webPages = webPages;
@@ -109,7 +103,6 @@ export default class NeuralSignatureContact extends RestfulModel {
   }
 }
 
-NeuralSignatureContact.collectionName = 'signature_contact';
 NeuralSignatureContact.attributes = {
   jobTitles: Attributes.StringList({
     modelKey: 'jobTitles',

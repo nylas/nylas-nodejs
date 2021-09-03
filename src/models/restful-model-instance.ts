@@ -16,7 +16,7 @@ export default class RestfulModelInstance<T extends RestfulModel> {
     }
   }
 
-  path() {
+  path(): string {
     return `/${this.modelClass.endpointName}`;
   }
 

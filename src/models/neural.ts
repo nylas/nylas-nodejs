@@ -20,7 +20,7 @@ export default class Neural extends RestfulModel {
     const body = { message_id: messageIds };
     const path = 'sentiment';
 
-    return this._request(path, body).then((jsonArray: any) => {
+    return this.request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
         return new NeuralSentimentAnalysis(this.connection, json);
       });
@@ -31,7 +31,7 @@ export default class Neural extends RestfulModel {
     const body = { text: text };
     const path = 'sentiment';
 
-    return this._request(path, body).then(json => {
+    return this.request(path, body).then(json => {
       return new NeuralSentimentAnalysis(this.connection, json);
     });
   }
@@ -54,7 +54,7 @@ export default class Neural extends RestfulModel {
       body['parse_contact'] = parseContact;
     }
 
-    return this._request(path, body).then((jsonArray: any) => {
+    return this.request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
         return new NeuralSignatureExtraction(this.connection, json);
       });
@@ -69,7 +69,7 @@ export default class Neural extends RestfulModel {
       body['pages'] = pages;
     }
 
-    return this._request(path, body).then(json => {
+    return this.request(path, body).then(json => {
       return new NeuralOcr(this.connection, json);
     });
   }
@@ -78,7 +78,7 @@ export default class Neural extends RestfulModel {
     const body = { message_id: messageIds };
     const path = 'categorize';
 
-    return this._request(path, body).then((jsonArray: any) => {
+    return this.request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
         return new NeuralCategorizer(this.connection, json);
       });
@@ -99,14 +99,14 @@ export default class Neural extends RestfulModel {
       };
     }
 
-    return this._request(path, body).then((jsonArray: any) => {
+    return this.request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
         return new NeuralCleanConversation(this.connection, json);
       });
     });
   }
 
-  _request(path?: string, body?: object): Promise<any> {
+  private request(path?: string, body?: object): Promise<any> {
     if (!path) {
       path = (this.constructor as any).collectionName;
     }

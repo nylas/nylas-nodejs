@@ -1,7 +1,8 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
+import Model from './model';
 
-export class EmailAddress extends RestfulModel {
+export class EmailAddress extends Model {
   type?: string;
   email?: string;
 
@@ -13,7 +14,6 @@ export class EmailAddress extends RestfulModel {
   }
 }
 
-EmailAddress.collectionName = 'email_addresses';
 EmailAddress.attributes = {
   ...RestfulModel.attributes,
   type: Attributes.String({
@@ -24,7 +24,7 @@ EmailAddress.attributes = {
   }),
 };
 
-class IMAddress extends RestfulModel {
+class IMAddress extends Model {
   type?: string;
   imAddress?: string;
 
@@ -36,7 +36,6 @@ class IMAddress extends RestfulModel {
   }
 }
 
-IMAddress.collectionName = 'im_addresses';
 IMAddress.attributes = {
   ...RestfulModel.attributes,
   type: Attributes.String({
@@ -48,7 +47,7 @@ IMAddress.attributes = {
   }),
 };
 
-class PhysicalAddress extends RestfulModel {
+class PhysicalAddress extends Model {
   type?: string;
   format?: string;
   address?: string;
@@ -76,7 +75,6 @@ class PhysicalAddress extends RestfulModel {
   }
 }
 
-PhysicalAddress.collectionName = 'physical_addresses';
 PhysicalAddress.attributes = {
   ...RestfulModel.attributes,
   type: Attributes.String({
@@ -107,7 +105,7 @@ PhysicalAddress.attributes = {
   }),
 };
 
-export class PhoneNumber extends RestfulModel {
+export class PhoneNumber extends Model {
   type?: string;
   number?: string;
 
@@ -119,7 +117,6 @@ export class PhoneNumber extends RestfulModel {
   }
 }
 
-PhoneNumber.collectionName = 'phone_numbers';
 PhoneNumber.attributes = {
   ...RestfulModel.attributes,
   type: Attributes.String({
@@ -130,7 +127,7 @@ PhoneNumber.attributes = {
   }),
 };
 
-export class WebPage extends RestfulModel {
+export class WebPage extends Model {
   type?: string;
   url?: string;
 
@@ -143,7 +140,6 @@ export class WebPage extends RestfulModel {
   }
 }
 
-WebPage.collectionName = 'web_pages';
 WebPage.attributes = {
   ...RestfulModel.attributes,
   type: Attributes.String({
@@ -154,12 +150,11 @@ WebPage.attributes = {
   }),
 };
 
-export class Group extends RestfulModel {
+export class Group extends Model {
   type?: string;
   path?: string;
 }
 
-Group.collectionName = 'groups';
 Group.attributes = {
   ...RestfulModel.attributes,
   name: Attributes.String({
@@ -190,15 +185,15 @@ export class Contact extends RestfulModel {
   groups?: Group[];
   source?: string;
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+    return super.save(params, callback);
   }
 
   getPicture(
     params: { [key: string]: any } = {},
     callback?: (error: Error | null, result?: any) => void
   ) {
-    return this._get(params, callback, '/picture');
+    return this.get(params, callback, '/picture');
   }
 }
 

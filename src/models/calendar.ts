@@ -11,8 +11,8 @@ export default class Calendar extends RestfulModel {
   isPrimary?: boolean;
   jobStatusId?: string;
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+    return super.save(params, callback);
   }
 
   saveRequestBody() {

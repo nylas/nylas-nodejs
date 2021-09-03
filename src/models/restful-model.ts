@@ -1,5 +1,6 @@
-import Attributes, { Attribute } from './attributes';
+import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
+import Model from './model';
 
 export type SaveCallback = (error: Error | null, result?: RestfulModel) => void;
 
@@ -10,10 +11,9 @@ interface RestfulModelJSON {
   [key: string]: any;
 }
 
-export default class RestfulModel {
+export default class RestfulModel extends Model {
   static endpointName = ''; // overrridden in subclasses
   static collectionName = ''; // overrridden in subclasses
-  static attributes: { [key: string]: Attribute };
 
   accountId?: string;
   connection: NylasConnection;
@@ -21,8 +21,9 @@ export default class RestfulModel {
   object?: string;
 
   constructor(connection: NylasConnection, json?: Partial<RestfulModelJSON>) {
+    super();
     this.connection = connection;
-    if (!(this.connection instanceof NylasConnection)) {
+    if (!this.connection) {
       throw new Error('Connection object not provided');
     }
     if (json) {
@@ -30,18 +31,14 @@ export default class RestfulModel {
     }
   }
 
-  attributes(): { [key: string]: Attribute } {
-    return (this.constructor as any).attributes;
-  }
-
-  isEqual(other: RestfulModel) {
+  isEqual(other: RestfulModel): boolean {
     return (
       (other ? other.id : undefined) === this.id &&
       (other ? other.constructor : undefined) === this.constructor
     );
   }
 
-  fromJSON(json: Partial<RestfulModelJSON> = {}) {
+  fromJSON(json: Partial<RestfulModelJSON> = {}): RestfulModel {
     const attributes = this.attributes();
     for (const attrName in attributes) {
       const attr = attributes[attrName];
@@ -52,59 +49,43 @@ export default class RestfulModel {
     return this;
   }
 
-  toJSON(enforceReadOnly?: boolean) {
-    const json: any = {};
-    const attributes = this.attributes();
-    for (const attrName in attributes) {
-      if (!enforceReadOnly || !attributes[attrName].readOnly) {
-        const attr = attributes[attrName];
-        json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
-      }
-    }
-    return json;
-  }
-
   // Subclasses should override this method.
-  pathPrefix() {
+  pathPrefix(): string {
     return '';
   }
 
-  saveEndpoint() {
+  saveEndpoint(): string {
     const collectionName = (this.constructor as any).collectionName;
     return `${this.pathPrefix()}/${collectionName}`;
   }
 
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
   // fields the API allows updating. Subclasses should override this method.
-  saveRequestBody() {
+  saveRequestBody(): any {
     return this.toJSON(true);
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
-  deleteRequestQueryString(_params: { [key: string]: any }) {
+  deleteRequestQueryString(_params: { [key: string]: any }): any {
     return {};
   }
   // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody(_params: { [key: string]: any }) {
+  deleteRequestBody(_params: { [key: string]: any }): any {
     return {};
   }
 
   // deleteRequestOptions is used by delete(). Subclasses should override this method.
-  deleteRequestOptions(params: { [key: string]: any }) {
+  deleteRequestOptions(params: { [key: string]: any }): any {
     return {
       body: this.deleteRequestBody(params),
       qs: this.deleteRequestQueryString(params),
     };
   }
 
-  toString() {
-    return JSON.stringify(this.toJSON());
-  }
-
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
-  // They should instead define a save() function which calls _save.
-  _save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  // They should instead define a save() function which calls save.
+  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     if (typeof params === 'function') {
       callback = params as SaveCallback;
       params = {};
@@ -133,11 +114,11 @@ export default class RestfulModel {
       });
   }
 
-  _get(
+  protected get(
     params: { [key: string]: any } = {},
     callback?: (error: Error | null, result?: any) => void,
     pathSuffix = ''
-  ) {
+  ): Promise<any> {
     const collectionName = (this.constructor as any).collectionName;
     return this.connection
       .request({

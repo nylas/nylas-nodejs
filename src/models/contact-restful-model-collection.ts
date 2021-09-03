@@ -24,7 +24,7 @@ export default class ContactRestfulModelCollection extends RestfulModelCollectio
       })
       .then(json => {
         const groups = json.map((group: { [key: string]: any }) => {
-          return new Group(this.connection, group);
+          return new Group(group);
         });
         if (callback) {
           callback(null, groups);

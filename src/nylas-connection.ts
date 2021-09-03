@@ -174,7 +174,7 @@ export default class NylasConnection {
     });
   }
 
-  _getWarningForVersion(sdkApiVersion?: string, apiVersion?: string) {
+  private getWarningForVersion(sdkApiVersion?: string, apiVersion?: string) {
     let warning = '';
 
     if (sdkApiVersion != apiVersion) {
@@ -210,7 +210,7 @@ export default class NylasConnection {
             | string
             | undefined;
 
-          const warning = this._getWarningForVersion(
+          const warning = this.getWarningForVersion(
             SUPPORTED_API_VERSION,
             apiVersion
           );
