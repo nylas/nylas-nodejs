@@ -22,7 +22,7 @@ app.use(function(req, res, next) {
     // because the stream has been consumed, other parsers like bodyParser.json 
     // cannot stream the request data and will time out so we must explicitly parse the body
     try {
-      req.body = JSON.parse(req.rawBody);
+      req.body = req.rawBody.length ? JSON.parse(req.rawBody) : {};
       next();
     } catch (err) {
       res.status(500).send('Error parsing body');
