@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Fix issue where JSON.stringify would omit read-only values
+* Fix webhook example throwing error if body is not a raw body
 
 ### 5.7.0 / 2021-08-18
 * Fix minor issues with Neural API implementation
