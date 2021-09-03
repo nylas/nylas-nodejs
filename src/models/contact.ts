@@ -317,14 +317,14 @@ export class Contact extends RestfulModel implements ContactProperties {
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+    return super.save(params, callback);
   }
 
   getPicture(
     params: { [key: string]: any } = {},
     callback?: (error: Error | null, result?: any) => void
   ) {
-    return this._get(params, callback, '/picture');
+    return this.get(params, callback, '/picture');
   }
 }
 

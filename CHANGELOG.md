@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 5.7.0 / 2021-08-18
 * Fix minor issues with Neural API implementation
 * Fix not rejecting uncaught errors during requests
 * Add missing fields for recurring events

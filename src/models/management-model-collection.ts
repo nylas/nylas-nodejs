@@ -19,10 +19,10 @@ export default class ManagementModelCollection<
   }
 
   build(args: { [key: string]: any }): T {
-    return super._build(args);
+    return super.build(args);
   }
 
-  _createModel(json: { [key: string]: any }) {
+  protected createModel(json: { [key: string]: any }) {
     const props = this.modelClass.propsFromJSON(json, this);
     return new (this.modelClass as any)(this.connection, this.clientId, props);
   }

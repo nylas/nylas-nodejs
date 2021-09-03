@@ -147,7 +147,7 @@ export default class Event extends RestfulModel {
     return qs;
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     if (
       this.conferencing &&
       this.conferencing.details &&
@@ -159,7 +159,7 @@ export default class Event extends RestfulModel {
         )
       );
     }
-    return this._save(params, callback);
+    return super.save(params, callback);
   }
 
   rsvp(

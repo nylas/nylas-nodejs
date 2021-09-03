@@ -22,8 +22,8 @@ export class Folder extends RestfulModel implements FolderProperties {
     return json;
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+    return super.save(params, callback);
   }
 }
 Folder.collectionName = 'folders';
