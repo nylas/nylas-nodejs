@@ -8,14 +8,12 @@ export interface EmailParticipantProperties {
 
 export default class EmailParticipant extends Model
   implements EmailParticipantProperties {
-  email!: string;
+  email = '';
   name?: string;
 
   constructor(props?: EmailParticipantProperties) {
-    super(props);
-    if (!props) {
-      this.email = '';
-    }
+    super();
+    this.initAttributes(props);
   }
 
   toJSON(): EmailParticipantProperties {

@@ -21,6 +21,7 @@ export default class Draft extends Message implements DraftProperties {
 
   constructor(connection: NylasConnection, props?: DraftProperties) {
     super(connection, props);
+    this.initAttributes(props);
   }
 
   toJSON(enforceReadOnly?: boolean) {

@@ -8,15 +8,12 @@ export interface NeuralOcrProperties extends FileProperties {
 }
 
 export default class NeuralOcr extends File implements NeuralOcrProperties {
-  ocr!: string[];
-  processedPages!: number;
+  ocr = [];
+  processedPages = 0;
 
   constructor(connection: NylasConnection, props?: NeuralOcrProperties) {
     super(connection, props);
-    if (!props) {
-      this.ocr = [];
-      this.processedPages = 0;
-    }
+    this.initAttributes(props);
   }
 }
 

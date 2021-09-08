@@ -9,11 +9,12 @@ interface LinkProperties {
 }
 
 class Link extends Model implements LinkProperties {
-  description?: string;
-  url?: string;
+  description = '';
+  url = '';
 
   constructor(props?: LinkProperties) {
-    super(props);
+    super();
+    this.initAttributes(props);
   }
 
   toJSON() {
@@ -39,11 +40,12 @@ interface NameProperties {
 }
 
 class Name extends Model implements NameProperties {
-  firstName?: string;
-  lastName?: string;
+  firstName = '';
+  lastName = '';
 
   constructor(props?: NameProperties) {
-    super(props);
+    super();
+    this.initAttributes(props);
   }
 
   toJSON() {
@@ -82,7 +84,8 @@ export default class NeuralSignatureContact extends Model
   names?: Name[];
 
   constructor(props?: NeuralSignatureContactProperties) {
-    super(props);
+    super();
+    this.initAttributes(props);
   }
 
   toJSON() {

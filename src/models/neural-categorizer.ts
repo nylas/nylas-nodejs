@@ -11,19 +11,14 @@ export interface CategorizeProperties {
 }
 
 export class Categorize extends Model implements CategorizeProperties {
-  category!: string;
-  categorizedAt!: Date;
-  modelVersion!: string;
-  subcategories!: string[];
+  category = '';
+  categorizedAt = new Date();
+  modelVersion = '';
+  subcategories = [];
 
   constructor(props?: CategorizeProperties) {
-    super(props);
-    if (!props) {
-      this.category = '';
-      this.categorizedAt = new Date();
-      this.modelVersion = '';
-      this.subcategories = [];
-    }
+    super();
+    this.initAttributes(props);
   }
 
   toJSON() {
@@ -59,16 +54,14 @@ export interface NeuralCategorizerProperties extends MessageProperties {
 
 export default class NeuralCategorizer extends Message
   implements NeuralCategorizerProperties {
-  categorizer!: Categorize;
+  categorizer = new Categorize();
 
   constructor(
     connection: NylasConnection,
     props?: NeuralCategorizerProperties
   ) {
     super(connection, props);
-    if (!props) {
-      this.categorizer = new Categorize();
-    }
+    this.initAttributes(props);
   }
 
   reCategorize(category: string): Promise<NeuralCategorizer> {

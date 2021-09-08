@@ -12,22 +12,16 @@ export interface ResourceProperties {
 }
 
 export default class Resource extends RestfulModel {
-  email!: string;
-  name!: string;
-  capacity!: string;
-  building!: string;
-  floorNumber!: string;
+  email = '';
+  name = '';
+  capacity = '';
+  building = '';
+  floorNumber = '';
   floorName?: string;
 
   constructor(connection: NylasConnection, props?: ResourceProperties) {
     super(connection, props);
-    if (!props) {
-      this.email = '';
-      this.name = '';
-      this.capacity = '';
-      this.building = '';
-      this.floorNumber = '';
-    }
+    this.initAttributes(props);
   }
 }
 

@@ -28,16 +28,16 @@ export interface ThreadProperties {
 }
 
 export default class Thread extends RestfulModel implements ThreadProperties {
-  subject!: string;
-  participants!: EmailParticipantProperties[];
-  lastMessageTimestamp!: Date;
-  lastMessageReceivedTimestamp!: Date;
-  firstMessageTimestamp!: Date;
-  messageIds!: string[];
-  snippet!: string;
-  unread!: boolean;
-  starred!: boolean;
-  version!: string;
+  subject = '';
+  participants = [];
+  lastMessageTimestamp = new Date();
+  lastMessageReceivedTimestamp = new Date();
+  firstMessageTimestamp = new Date();
+  messageIds = [];
+  snippet = '';
+  unread = false;
+  starred = false;
+  version = '';
   hasAttachments?: boolean;
   lastMessageSentTimestamp?: Date;
   folders?: Folder[];
@@ -48,18 +48,7 @@ export default class Thread extends RestfulModel implements ThreadProperties {
 
   constructor(connection: NylasConnection, props?: ThreadProperties) {
     super(connection, props);
-    if (!props) {
-      this.subject = '';
-      this.participants = [];
-      this.lastMessageTimestamp = new Date();
-      this.lastMessageReceivedTimestamp = new Date();
-      this.firstMessageTimestamp = new Date();
-      this.messageIds = [];
-      this.snippet = '';
-      this.unread = false;
-      this.starred = false;
-      this.version = '';
-    }
+    this.initAttributes(props);
   }
 
   toJSON(enforceReadOnly?: boolean): ThreadProperties {

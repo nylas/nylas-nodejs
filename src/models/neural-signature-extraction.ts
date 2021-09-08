@@ -11,8 +11,8 @@ export interface NeuralSignatureExtractionProperties extends MessageProperties {
 
 export default class NeuralSignatureExtraction extends Message
   implements NeuralSignatureExtractionProperties {
-  signature!: string;
-  modelVersion!: string;
+  signature = '';
+  modelVersion = '';
   contacts?: NeuralSignatureContact;
 
   constructor(
@@ -20,10 +20,7 @@ export default class NeuralSignatureExtraction extends Message
     props?: NeuralSignatureExtractionProperties
   ) {
     super(connection, props);
-    if (!props) {
-      this.signature = '';
-      this.modelVersion = '';
-    }
+    this.initAttributes(props);
   }
 }
 

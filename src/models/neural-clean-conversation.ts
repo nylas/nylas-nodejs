@@ -12,18 +12,15 @@ export interface NeuralCleanConversationProperties extends MessageProperties {
 
 export default class NeuralCleanConversation extends Message
   implements NeuralCleanConversationProperties {
-  conversation!: string;
-  modelVersion!: string;
+  conversation = '';
+  modelVersion = '';
 
   constructor(
     connection: NylasConnection,
     props?: NeuralCleanConversationProperties
   ) {
     super(connection, props);
-    if (!props) {
-      this.conversation = '';
-      this.modelVersion = '';
-    }
+    this.initAttributes(props);
   }
 
   extractImages(): Promise<File[]> {

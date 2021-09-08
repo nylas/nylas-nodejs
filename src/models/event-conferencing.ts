@@ -18,7 +18,8 @@ class EventConferencingDetails extends Model
   url?: string;
 
   constructor(props?: EventConferencingProperties) {
-    super(props);
+    super();
+    this.initAttributes(props);
   }
 
   toJSON() {
@@ -61,17 +62,15 @@ export interface EventConferencingProperties {
 
 export class EventConferencing extends Model
   implements EventConferencingProperties {
-  provider!: string;
+  provider = '';
   details?: EventConferencingDetails;
   autocreate?: {
     settings?: { [key: string]: string };
   };
 
   constructor(props?: EventConferencingProperties) {
-    super(props);
-    if (!props) {
-      this.provider = '';
-    }
+    super();
+    this.initAttributes(props);
   }
 
   toJSON(): any {

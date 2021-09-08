@@ -13,6 +13,7 @@ export class Folder extends RestfulModel implements FolderProperties {
 
   constructor(connection: NylasConnection, props?: FolderProperties) {
     super(connection, props);
+    this.initAttributes(props);
   }
 
   saveRequestBody() {
@@ -39,7 +40,7 @@ Folder.attributes = {
   }),
 };
 
-export class Label extends Folder implements FolderProperties {
+export class Label extends Folder {
   constructor(connection: NylasConnection, props?: FolderProperties) {
     super(connection, props);
   }

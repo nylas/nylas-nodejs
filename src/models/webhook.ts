@@ -14,9 +14,9 @@ export interface WebhookProperties {
 
 export default class Webhook extends ManagementModel
   implements WebhookProperties {
-  callbackUrl: string;
-  state: string;
-  triggers: string[];
+  callbackUrl = '';
+  state = '';
+  triggers = [];
   id?: string;
   applicationId?: string;
   version?: string;
@@ -27,9 +27,7 @@ export default class Webhook extends ManagementModel
     props: WebhookProperties
   ) {
     super(connection, clientId, props);
-    this.callbackUrl = props.callbackUrl;
-    this.state = props.state;
-    this.triggers = props.triggers;
+    this.initAttributes(props);
   }
 
   pathPrefix() {

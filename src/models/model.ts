@@ -5,12 +5,6 @@ export type SaveCallback = (error: Error | null, result?: any) => void;
 export default class Model {
   static attributes: { [key: string]: Attribute };
 
-  constructor(props?: { [key: string]: any }) {
-    if (props) {
-      this.initAttributes(props);
-    }
-  }
-
   static propsFromJSON(
     json: { [key: string]: any },
     parent: any
@@ -30,7 +24,7 @@ export default class Model {
   }
 
   //TODO::Maybe come up with a better name?
-  initAttributes(props: { [key: string]: any }): void {
+  initAttributes(props?: { [key: string]: any }): void {
     const attributes = this.attributes();
     for (const prop in props) {
       if (props.hasOwnProperty(prop)) {

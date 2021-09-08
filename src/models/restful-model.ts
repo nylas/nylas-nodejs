@@ -23,12 +23,13 @@ export default class RestfulModel extends Model {
   constructor(connection: NylasConnection, props?: Partial<RestfulModelJSON>) {
     super();
     this.connection = connection;
+    //TODO::Can we remove this?
     if (!this.connection) {
       throw new Error('Connection object not provided');
     }
-    if (props) {
-      super.initAttributes(props);
-    }
+    this.id = props?.id ? props.id : undefined;
+    this.accountId = props?.accountId ? props.accountId : undefined;
+    this.object = props?.object ? props.object : undefined;
   }
 
   static propsFromJSON(

@@ -9,15 +9,12 @@ export interface EmailAddressProperties {
 }
 
 export class EmailAddress extends Model implements EmailAddressProperties {
-  type!: string;
-  email!: string;
+  type = '';
+  email = '';
 
   constructor(props?: EmailAddressProperties) {
-    super(props);
-    if (!props) {
-      this.type = '';
-      this.email = '';
-    }
+    super();
+    this.initAttributes(props);
   }
 
   // TODO::Can probably remove toJSONs in classes that extend Model
@@ -44,16 +41,13 @@ export interface IMAddressProperties {
   imAddress: string;
 }
 
-class IMAddress extends Model implements IMAddressProperties {
-  type!: string;
-  imAddress!: string;
+export class IMAddress extends Model implements IMAddressProperties {
+  type = '';
+  imAddress = '';
 
   constructor(props?: IMAddressProperties) {
-    super(props);
-    if (!props) {
-      this.type = '';
-      this.imAddress = '';
-    }
+    super();
+    this.initAttributes(props);
   }
 
   toJSON() {
@@ -87,26 +81,18 @@ export interface PhysicalAddressProperties {
 }
 
 class PhysicalAddress extends Model implements PhysicalAddressProperties {
-  type!: string;
-  format!: string;
-  streetAddress!: string;
-  city!: string;
-  postalCode!: string;
-  state!: string;
-  country!: string;
-  address?: string;
+  type = '';
+  format = '';
+  streetAddress = '';
+  city = '';
+  postalCode = '';
+  state = '';
+  country = '';
+  address = '';
 
   constructor(props?: PhysicalAddressProperties) {
-    super(props);
-    if (!props) {
-      this.type = '';
-      this.format = '';
-      this.streetAddress = '';
-      this.city = '';
-      this.postalCode = '';
-      this.state = '';
-      this.country = '';
-    }
+    super();
+    this.initAttributes(props);
   }
 
   toJSON() {
@@ -162,15 +148,12 @@ export interface PhoneNumberProperties {
 }
 
 export class PhoneNumber extends Model implements PhoneNumberProperties {
-  type!: string;
-  number!: string;
+  type = '';
+  number = '';
 
   constructor(props?: PhoneNumberProperties) {
-    super(props);
-    if (!props) {
-      this.type = '';
-      this.number = '';
-    }
+    super();
+    this.initAttributes(props);
   }
 
   toJSON() {
@@ -196,15 +179,12 @@ export interface WebPageProperties {
 }
 
 export class WebPage extends Model implements WebPageProperties {
-  type!: string;
-  url!: string;
+  type = '';
+  url = '';
 
   constructor(props?: WebPageProperties) {
-    super(props);
-    if (!props) {
-      this.type = '';
-      this.url = '';
-    }
+    super();
+    this.initAttributes(props);
   }
 
   toJSON() {
@@ -234,18 +214,15 @@ export interface GroupProperties {
 }
 
 export class Group extends Model implements GroupProperties {
-  name!: string;
-  path!: string;
+  name = '';
+  path = '';
   id?: string;
   accountId?: string;
   object?: string;
 
   constructor(props?: GroupProperties) {
-    super(props);
-    if (!props) {
-      this.name = '';
-      this.path = '';
-    }
+    super();
+    this.initAttributes(props);
   }
 }
 
@@ -313,7 +290,8 @@ export class Contact extends RestfulModel implements ContactProperties {
   source?: string;
 
   constructor(connection: NylasConnection, props?: ContactProperties) {
-    super(connection, props);
+    super(connection);
+    this.initAttributes(props);
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {

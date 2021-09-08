@@ -1,5 +1,6 @@
 import Attributes from './attributes';
 import RestfulModel from './restful-model';
+import NylasConnection from '../nylas-connection';
 
 export interface FileProperties {
   contentType?: string;
@@ -19,6 +20,11 @@ export default class File extends RestfulModel implements FileProperties {
   contentId?: string;
   contentDisposition?: string;
   data?: any;
+
+  constructor(connection: NylasConnection, props?: FileProperties) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
 
   upload(callback?: (error: Error | null, model?: File) => void) {
     if (!this.filename) {
