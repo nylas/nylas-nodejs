@@ -53,16 +53,20 @@ describe('CalendarRestfulModelCollection', () => {
       },
       json: () => {
         return Promise.resolve(
-          JSON.stringify([{
-            object: "free_busy",
-            email: "jane@email.com",
-            time_slots: [{
-              object: "time_slot",
-              status: "busy",
-              start_time: 1590454800,
-              end_time: 1590780800
-            }]
-          }])
+          JSON.stringify([
+            {
+              object: 'free_busy',
+              email: 'jane@email.com',
+              time_slots: [
+                {
+                  object: 'time_slot',
+                  status: 'busy',
+                  start_time: 1590454800,
+                  end_time: 1590780800,
+                },
+              ],
+            },
+          ])
         );
       },
       headers: new Map(),
@@ -91,12 +95,12 @@ describe('CalendarRestfulModelCollection', () => {
       );
       expect(freeBusy.length).toEqual(1);
       freeBusy = freeBusy[0];
-      expect(freeBusy.object).toEqual("free_busy");
-      expect(freeBusy.email).toEqual("jane@email.com");
+      expect(freeBusy.object).toEqual('free_busy');
+      expect(freeBusy.email).toEqual('jane@email.com');
       expect(freeBusy.timeSlots.length).toEqual(1);
       const timeSlots = freeBusy.timeSlots[0];
-      expect(timeSlots.object).toEqual("time_slot");
-      expect(timeSlots.status).toEqual("busy");
+      expect(timeSlots.object).toEqual('time_slot');
+      expect(timeSlots.status).toEqual('busy');
       expect(timeSlots.startTime).toEqual(1590454800);
       expect(timeSlots.endTime).toEqual(1590780800);
       done();
