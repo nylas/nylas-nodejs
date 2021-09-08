@@ -13,11 +13,11 @@ export interface ManagementAccountProperties {
 
 export default class ManagementAccount extends ManagementModel
   implements ManagementAccountProperties {
-  billingState = "";
-  emailAddress = "";
-  namespaceId = "";
-  provider = "";
-  syncState = "";
+  billingState = '';
+  emailAddress = '';
+  namespaceId = '';
+  provider = '';
+  syncState = '';
   trial = false;
 
   constructor(

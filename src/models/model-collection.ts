@@ -216,7 +216,10 @@ export default class ModelCollection<T extends Model> {
     return new this.modelClass().fromJSON(json) as T;
   }
 
-  private getModel(id: string, params: { [key: string]: any } = {}): Promise<T> {
+  private getModel(
+    id: string,
+    params: { [key: string]: any } = {}
+  ): Promise<T> {
     return this.connection
       .request({
         method: 'GET',

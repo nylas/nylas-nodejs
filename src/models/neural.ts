@@ -16,7 +16,8 @@ export interface NeuralMessageOptionsProperties {
   parseContacts?: boolean;
 }
 
-export class NeuralMessageOptions extends Model implements NeuralMessageOptionsProperties {
+export class NeuralMessageOptions extends Model
+  implements NeuralMessageOptionsProperties {
   ignoreLinks?: boolean;
   ignoreImages?: boolean;
   ignoreTables?: boolean;
@@ -31,8 +32,8 @@ export class NeuralMessageOptions extends Model implements NeuralMessageOptionsP
 
   toJSON(writeParseContact?: boolean): { [key: string]: boolean } {
     const body: { [key: string]: boolean } = super.toJSON();
-    if(writeParseContact !== true) {
-      delete body["parse_contacts"];
+    if (writeParseContact !== true) {
+      delete body['parse_contacts'];
     }
     return body;
   }
@@ -62,7 +63,7 @@ NeuralMessageOptions.attributes = {
     modelKey: 'parseContacts',
     jsonKey: 'parse_contacts',
   }),
-}
+};
 
 export default class Neural extends RestfulModel {
   sentimentAnalysisMessage(

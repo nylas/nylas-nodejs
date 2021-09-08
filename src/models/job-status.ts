@@ -9,7 +9,8 @@ export interface JobStatusProperties {
   status?: string;
 }
 
-export default class JobStatus extends RestfulModel implements JobStatusProperties {
+export default class JobStatus extends RestfulModel
+  implements JobStatusProperties {
   action?: string;
   createdAt?: Date;
   jobStatusId?: string;
