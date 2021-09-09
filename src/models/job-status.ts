@@ -1,11 +1,25 @@
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
+import NylasConnection from '../nylas-connection';
 
-export default class JobStatus extends RestfulModel {
+export interface JobStatusProperties {
   action?: string;
   createdAt?: Date;
   jobStatusId?: string;
   status?: string;
+}
+
+export default class JobStatus extends RestfulModel
+  implements JobStatusProperties {
+  action?: string;
+  createdAt?: Date;
+  jobStatusId?: string;
+  status?: string;
+
+  constructor(connection: NylasConnection, props?: JobStatusProperties) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
 }
 
 JobStatus.collectionName = 'job-statuses';

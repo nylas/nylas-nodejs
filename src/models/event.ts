@@ -1,10 +1,42 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
-import EventParticipant from './event-participant';
-import { EventConferencing } from './event-conferencing';
+import EventParticipant, {
+  EventParticipantProperties,
+} from './event-participant';
+import {
+  EventConferencing,
+  EventConferencingProperties,
+} from './event-conferencing';
+import When, { WhenProperties } from './when';
+import NylasConnection from '../nylas-connection';
+
+export interface EventProperties {
+  calendarId: string;
+  when: WhenProperties;
+  iCalUID?: string;
+  messageId?: string;
+  title?: string;
+  description?: string;
+  owner?: string;
+  participants?: EventParticipantProperties[];
+  readOnly?: boolean;
+  location?: string;
+  busy?: boolean;
+  status?: string;
+  recurrence?: {
+    rrule: string[];
+    timezone: string;
+  };
+  masterEventId?: string;
+  originalStartTime?: number;
+  conferencing?: EventConferencingProperties;
+  metadata?: object;
+  jobStatusId?: string;
+}
 
 export default class Event extends RestfulModel {
-  calendarId?: string;
+  calendarId = '';
+  when = new When();
   iCalUID?: string;
   messageId?: string;
   title?: string;
@@ -13,15 +45,6 @@ export default class Event extends RestfulModel {
   participants?: EventParticipant[];
   readOnly?: boolean;
   location?: string;
-  when?: {
-    start_time?: number;
-    end_time?: number;
-    time?: number;
-    start_date?: string;
-    end_date?: string;
-    date?: string;
-    object?: string;
-  };
   busy?: boolean;
   status?: string;
   recurrence?: {
@@ -34,72 +57,81 @@ export default class Event extends RestfulModel {
   metadata?: object;
   jobStatusId?: string;
 
-  get start() {
-    const start =
-      this.when?.start_time ||
-      this.when?.start_date ||
+  constructor(connection: NylasConnection, props?: EventProperties) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
+
+  get start(): string | number | undefined {
+    return (
+      this.when?.startTime ||
+      this.when?.startDate ||
       this.when?.time ||
-      this.when?.date;
-    return start;
+      this.when?.date
+    );
   }
 
   set start(val: string | number | undefined) {
     if (!this.when) {
-      this.when = {};
+      this.when = new When();
     }
     if (typeof val === 'number') {
-      if (val === this.when.end_time) {
-        this.when = { time: val };
+      if (val === this.when.endTime) {
+        this.when.time = val;
+        this.when.endTime = undefined;
       } else {
-        delete this.when.time;
-        delete this.when.start_date;
-        delete this.when.date;
-        this.when.start_time = val;
+        this.when.time = undefined;
+        this.when.startDate = undefined;
+        this.when.date = undefined;
+        this.when.startTime = val;
       }
     }
     if (typeof val === 'string') {
-      if (val === this.when.end_date) {
-        this.when = { date: val };
+      if (val === this.when.endDate) {
+        this.when.date = val;
+        this.when.endDate = undefined;
       } else {
-        delete this.when.date;
-        delete this.when.start_time;
-        delete this.when.time;
-        this.when.start_date = val;
+        this.when.time = undefined;
+        this.when.startTime = undefined;
+        this.when.date = undefined;
+        this.when.startDate = val;
       }
     }
   }
 
-  get end() {
-    const end =
-      this.when?.end_time ||
-      this.when?.end_date ||
+  get end(): string | number | undefined {
+    return (
+      this.when?.endTime ||
+      this.when?.endDate ||
       this.when?.time ||
-      this.when?.date;
-    return end;
+      this.when?.date
+    );
   }
 
   set end(val: string | number | undefined) {
     if (!this.when) {
-      this.when = {};
+      this.when = new When();
     }
     if (typeof val === 'number') {
-      if (val === this.when.start_time) {
-        this.when = { time: val };
+      if (val === this.when.startTime) {
+        this.when.time = val;
+        this.when.startTime = undefined;
       } else {
-        delete this.when.time;
-        delete this.when.end_date;
-        delete this.when.date;
-        this.when.end_time = val;
+        this.when.time = undefined;
+        this.when.endDate = undefined;
+        this.when.date = undefined;
+        this.when.endTime = val;
       }
     }
     if (typeof val === 'string') {
-      if (val === this.when.start_date) {
-        this.when = { date: val };
+      if (val === this.when.startDate) {
+        this.when.date = val;
+        this.when.startDate = undefined;
       } else {
-        delete this.when.date;
-        delete this.when.time;
-        delete this.when.end_time;
-        this.when.end_date = val;
+        this.when.time = undefined;
+        this.when.endTime = undefined;
+        this.when.date = undefined;
+        this.when.endDate = val;
       }
     }
   }
@@ -190,6 +222,7 @@ Event.attributes = {
   }),
   when: Attributes.Object({
     modelKey: 'when',
+    itemClass: When,
   }),
   busy: Attributes.Boolean({
     modelKey: 'busy',

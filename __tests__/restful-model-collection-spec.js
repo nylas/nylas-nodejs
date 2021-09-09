@@ -619,6 +619,7 @@ describe('RestfulModelCollection', () => {
       );
       testContext.item = new Draft(testContext.connection, {
         id: '123',
+        to: [{ email: 'foo', name: 'bar' }],
         version: 0,
       });
     });
@@ -691,24 +692,6 @@ describe('RestfulModelCollection', () => {
           .deleteItem({ item: testContext.item, callback: callback })
           .catch(() => {});
       });
-    });
-  });
-
-  describe('build', () => {
-    test('should return a new instance of the model class', () => {
-      expect(testContext.collection.build() instanceof Thread).toBe(true);
-    });
-
-    test('should initialize the new instance with the connection', () => {
-      expect(testContext.collection.build().connection).toBe(
-        testContext.connection
-      );
-    });
-
-    test('should set other attributes provided to the build method', () => {
-      expect(testContext.collection.build({ subject: '123' }).subject).toEqual(
-        '123'
-      );
     });
   });
 

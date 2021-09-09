@@ -1,14 +1,30 @@
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
+import NylasConnection from '../nylas-connection';
 
-export default class Account extends RestfulModel {
-  name?: string;
-  emailAddress?: string;
-  provider?: string;
-  organizationUnit?: string;
-  syncState?: string;
+export interface AccountProperties {
+  name: string;
+  emailAddress: string;
+  provider: string;
+  organizationUnit: string;
+  syncState: string;
+  linkedAt: Date;
   billingState?: string;
-  linkedAt?: Date;
+}
+
+export default class Account extends RestfulModel implements AccountProperties {
+  name = '';
+  emailAddress = '';
+  provider = '';
+  organizationUnit = '';
+  syncState = '';
+  linkedAt = new Date();
+  billingState?: string;
+
+  constructor(connection: NylasConnection, props?: AccountProperties) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
 }
 Account.collectionName = 'accounts';
 Account.endpointName = 'account';

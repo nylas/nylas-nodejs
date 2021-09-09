@@ -20,15 +20,23 @@ export default class RestfulModel extends Model {
   id?: string;
   object?: string;
 
-  constructor(connection: NylasConnection, json?: Partial<RestfulModelJSON>) {
+  constructor(connection: NylasConnection, props?: Partial<RestfulModelJSON>) {
     super();
     this.connection = connection;
+    //TODO::Can we remove this?
     if (!this.connection) {
       throw new Error('Connection object not provided');
     }
-    if (json) {
-      this.fromJSON(json);
-    }
+    this.id = props?.id ? props.id : undefined;
+    this.accountId = props?.accountId ? props.accountId : undefined;
+    this.object = props?.object ? props.object : undefined;
+  }
+
+  static propsFromJSON(
+    json: Partial<RestfulModelJSON> = {},
+    parent: any
+  ): Partial<RestfulModelJSON> {
+    return super.propsFromJSON(json, parent);
   }
 
   isEqual(other: RestfulModel): boolean {
@@ -38,15 +46,8 @@ export default class RestfulModel extends Model {
     );
   }
 
-  fromJSON(json: Partial<RestfulModelJSON> = {}): RestfulModel {
-    const attributes = this.attributes();
-    for (const attrName in attributes) {
-      const attr = attributes[attrName];
-      if (json[attr.jsonKey] !== undefined) {
-        (this as any)[attrName] = attr.fromJSON(json[attr.jsonKey], this);
-      }
-    }
-    return this;
+  fromJSON(json: Partial<RestfulModelJSON> = {}): this {
+    return super.fromJSON(json) as this;
   }
 
   // Subclasses should override this method.
@@ -84,8 +85,11 @@ export default class RestfulModel extends Model {
 
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
-  // They should instead define a save() function which calls save.
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+  // They should instead define a save() function which calls _save.
+  protected save(
+    params: {} | SaveCallback = {},
+    callback?: SaveCallback
+  ): Promise<this> {
     if (typeof params === 'function') {
       callback = params as SaveCallback;
       params = {};

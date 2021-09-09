@@ -4,13 +4,65 @@ import NeuralSignatureExtraction from './neural-signature-extraction';
 import NeuralOcr from './neural-ocr';
 import NeuralCategorizer from './neural-categorizer';
 import NeuralCleanConversation from './neural-clean-conversation';
+import Model from './model';
+import Attributes from './attributes';
 
-export type NeuralMessageOptions = {
-  ignore_links?: boolean;
-  ignore_images?: boolean;
-  ignore_tables?: boolean;
-  remove_conclusion_phrases?: boolean;
-  images_as_markdowns?: boolean;
+export interface NeuralMessageOptionsProperties {
+  ignoreLinks?: boolean;
+  ignoreImages?: boolean;
+  ignoreTables?: boolean;
+  removeConclusionPhrases?: boolean;
+  imagesAsMarkdown?: boolean;
+  parseContacts?: boolean;
+}
+
+export class NeuralMessageOptions extends Model
+  implements NeuralMessageOptionsProperties {
+  ignoreLinks?: boolean;
+  ignoreImages?: boolean;
+  ignoreTables?: boolean;
+  removeConclusionPhrases?: boolean;
+  imagesAsMarkdown?: boolean;
+  parseContacts?: boolean;
+
+  constructor(props?: NeuralMessageOptionsProperties) {
+    super();
+    this.initAttributes(props);
+  }
+
+  toJSON(writeParseContact?: boolean): { [key: string]: boolean } {
+    const body: { [key: string]: boolean } = super.toJSON();
+    if (writeParseContact !== true) {
+      delete body['parse_contacts'];
+    }
+    return body;
+  }
+}
+NeuralMessageOptions.attributes = {
+  ignoreLinks: Attributes.Boolean({
+    modelKey: 'ignoreLinks',
+    jsonKey: 'ignore_links',
+  }),
+  ignoreImages: Attributes.Boolean({
+    modelKey: 'ignoreImages',
+    jsonKey: 'ignore_images',
+  }),
+  ignoreTables: Attributes.Boolean({
+    modelKey: 'ignoreTables',
+    jsonKey: 'ignore_tables',
+  }),
+  removeConclusionPhrases: Attributes.Boolean({
+    modelKey: 'removeConclusionPhrases',
+    jsonKey: 'remove_conclusion_phrases',
+  }),
+  imagesAsMarkdown: Attributes.Boolean({
+    modelKey: 'imagesAsMarkdown',
+    jsonKey: 'images_as_markdown',
+  }),
+  parseContacts: Attributes.Boolean({
+    modelKey: 'parseContacts',
+    jsonKey: 'parse_contacts',
+  }),
 };
 
 export default class Neural extends RestfulModel {
@@ -22,7 +74,7 @@ export default class Neural extends RestfulModel {
 
     return this.request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
-        return new NeuralSentimentAnalysis(this.connection, json);
+        return new NeuralSentimentAnalysis(this.connection).fromJSON(json);
       });
     });
   }
@@ -32,14 +84,13 @@ export default class Neural extends RestfulModel {
     const path = 'sentiment';
 
     return this.request(path, body).then(json => {
-      return new NeuralSentimentAnalysis(this.connection, json);
+      return new NeuralSentimentAnalysis(this.connection).fromJSON(json);
     });
   }
 
   extractSignature(
     messageIds: string[],
-    parseContact?: boolean,
-    options?: NeuralMessageOptions
+    options?: NeuralMessageOptionsProperties
   ): Promise<NeuralSignatureExtraction[]> {
     let body: { [key: string]: any } = { message_id: messageIds };
     const path = 'signature';
@@ -47,16 +98,13 @@ export default class Neural extends RestfulModel {
     if (options) {
       body = {
         ...body,
-        ...options,
+        ...new NeuralMessageOptions(options).toJSON(true),
       };
-    }
-    if (parseContact) {
-      body['parse_contact'] = parseContact;
     }
 
     return this.request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
-        return new NeuralSignatureExtraction(this.connection, json);
+        return new NeuralSignatureExtraction(this.connection).fromJSON(json);
       });
     });
   }
@@ -70,7 +118,7 @@ export default class Neural extends RestfulModel {
     }
 
     return this.request(path, body).then(json => {
-      return new NeuralOcr(this.connection, json);
+      return new NeuralOcr(this.connection).fromJSON(json);
     });
   }
 
@@ -80,14 +128,14 @@ export default class Neural extends RestfulModel {
 
     return this.request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
-        return new NeuralCategorizer(this.connection, json);
+        return new NeuralCategorizer(this.connection).fromJSON(json);
       });
     });
   }
 
   cleanConversation(
     messageIds: string[],
-    options?: NeuralMessageOptions
+    options?: NeuralMessageOptionsProperties
   ): Promise<NeuralCleanConversation[]> {
     let body: { [key: string]: any } = { message_id: messageIds };
     const path = 'conversation';
@@ -101,15 +149,12 @@ export default class Neural extends RestfulModel {
 
     return this.request(path, body).then((jsonArray: any) => {
       return jsonArray.map((json: any) => {
-        return new NeuralCleanConversation(this.connection, json);
+        return new NeuralCleanConversation(this.connection).fromJSON(json);
       });
     });
   }
 
-  private request(path?: string, body?: object): Promise<any> {
-    if (!path) {
-      path = (this.constructor as any).collectionName;
-    }
+  private request(path: string, body: object): Promise<any> {
     return this.connection.request({
       method: 'PUT',
       path: `/neural/${path}`,

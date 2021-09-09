@@ -1,6 +1,7 @@
 import Calendar from './calendar';
 import NylasConnection from '../nylas-connection';
 import RestfulModelCollection from './restful-model-collection';
+import FreeBusy from './free-busy';
 
 export default class CalendarRestfulModelCollection extends RestfulModelCollection<
   Calendar
@@ -16,21 +17,19 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
 
   freeBusy(
     options: {
-      start_time?: string;
-      startTime?: string;
-      end_time?: string;
-      endTime?: string;
+      startTime: number;
+      endTime: number;
       emails: string[];
     },
     callback?: (error: Error | null, data?: { [key: string]: any }) => void
-  ) {
+  ): Promise<FreeBusy[]> {
     return this.connection
       .request({
         method: 'POST',
         path: `/calendars/free-busy`,
         body: {
-          start_time: options.startTime || options.start_time,
-          end_time: options.endTime || options.end_time,
+          start_time: options.startTime.toString(),
+          end_time: options.endTime.toString(),
           emails: options.emails,
         },
       })
@@ -38,7 +37,11 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
         if (callback) {
           callback(null, json);
         }
-        return Promise.resolve(json);
+        const freeBusy = [];
+        for (const fb of JSON.parse(json)) {
+          freeBusy.push(new FreeBusy().fromJSON(fb));
+        }
+        return Promise.resolve(freeBusy);
       })
       .catch(err => {
         if (callback) {

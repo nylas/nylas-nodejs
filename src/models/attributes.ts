@@ -25,7 +25,7 @@ export class Attribute {
     this.readOnly = readOnly || false;
   }
 
-  toJSON(val: any) {
+  toJSON(val: any, _parent?: any) {
     return val;
   }
   fromJSON(val: any, _parent: any) {
@@ -51,7 +51,7 @@ class AttributeObject extends Attribute {
     this.itemClass = itemClass;
   }
 
-  toJSON(val: any) {
+  toJSON(val: any, _parent: any) {
     if (!val) {
       return val;
     }
@@ -67,9 +67,9 @@ class AttributeObject extends Attribute {
     }
 
     if (this.itemClass.prototype instanceof RestfulModel) {
-      return new this.itemClass(_parent.connection, val);
+      return new this.itemClass(_parent.connection).fromJSON(val);
     }
-    return new this.itemClass(val);
+    return new this.itemClass(val).fromJSON(val);
   }
 }
 
@@ -160,6 +160,7 @@ class AttributeDateTime extends Attribute {
 }
 
 class AttributeCollection extends Attribute {
+  //TODO::Do we still do this? or jsut typeof model?
   itemClass: typeof Model | typeof RestfulModel;
 
   constructor({
@@ -177,7 +178,7 @@ class AttributeCollection extends Attribute {
     this.itemClass = itemClass;
   }
 
-  toJSON(vals: any) {
+  toJSON(vals: any, _parent: any) {
     if (!vals) {
       return [];
     }
@@ -200,9 +201,9 @@ class AttributeCollection extends Attribute {
     for (const objJSON of json) {
       let obj;
       if (this.itemClass.prototype instanceof RestfulModel) {
-        obj = new this.itemClass(_parent.connection, objJSON);
+        obj = new this.itemClass(_parent.connection).fromJSON(objJSON);
       } else {
-        obj = new this.itemClass(objJSON);
+        obj = new this.itemClass(objJSON).fromJSON(objJSON);
       }
       objs.push(obj);
     }

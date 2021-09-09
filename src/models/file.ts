@@ -1,7 +1,8 @@
 import Attributes from './attributes';
 import RestfulModel from './restful-model';
+import NylasConnection from '../nylas-connection';
 
-export default class File extends RestfulModel {
+export interface FileProperties {
   contentType?: string;
   size?: number;
   filename?: string;
@@ -9,6 +10,21 @@ export default class File extends RestfulModel {
   contentId?: string;
   contentDisposition?: string;
   data?: any;
+}
+
+export default class File extends RestfulModel implements FileProperties {
+  contentType?: string;
+  size?: number;
+  filename?: string;
+  messageIds?: string[];
+  contentId?: string;
+  contentDisposition?: string;
+  data?: any;
+
+  constructor(connection: NylasConnection, props?: FileProperties) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
 
   upload(callback?: (error: Error | null, model?: File) => void) {
     if (!this.filename) {

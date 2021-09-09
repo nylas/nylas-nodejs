@@ -1,13 +1,33 @@
 import ManagementModel from './management-model';
 import Attributes from './attributes';
+import NylasConnection from '../nylas-connection';
 
-export default class ManagementAccount extends ManagementModel {
-  billingState?: string;
-  emailAddress?: string;
-  namespaceId?: string;
-  provider?: string;
-  syncState?: string;
-  trial?: boolean;
+export interface ManagementAccountProperties {
+  billingState: string;
+  emailAddress: string;
+  namespaceId: string;
+  provider: string;
+  syncState: string;
+  trial: boolean;
+}
+
+export default class ManagementAccount extends ManagementModel
+  implements ManagementAccountProperties {
+  billingState = '';
+  emailAddress = '';
+  namespaceId = '';
+  provider = '';
+  syncState = '';
+  trial = false;
+
+  constructor(
+    connection: NylasConnection,
+    clientId: string,
+    props: ManagementAccountProperties
+  ) {
+    super(connection, clientId, props);
+    this.initAttributes(props);
+  }
 
   upgrade() {
     return this.connection

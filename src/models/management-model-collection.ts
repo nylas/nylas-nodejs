@@ -18,7 +18,12 @@ export default class ManagementModelCollection<
     this.path = `/a/${this.clientId}/${this.modelClass.collectionName}`;
   }
 
+  build(args: { [key: string]: any }): T {
+    return super.build(args);
+  }
+
   protected createModel(json: { [key: string]: any }) {
-    return new (this.modelClass as any)(this.connection, this.clientId, json);
+    const props = this.modelClass.propsFromJSON(json, this);
+    return new (this.modelClass as any)(this.connection, this.clientId, props);
   }
 }

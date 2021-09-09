@@ -1,12 +1,27 @@
-import Message from './message';
+import Message, { MessageProperties } from './message';
 import Attributes from './attributes';
 import File from './file';
+import NylasConnection from '../nylas-connection';
 
 const IMAGE_REGEX = /[(']cid:(.)*[)']/g;
 
-export default class NeuralCleanConversation extends Message {
-  conversation?: string;
-  modelVersion?: string;
+export interface NeuralCleanConversationProperties extends MessageProperties {
+  conversation: string;
+  modelVersion: string;
+}
+
+export default class NeuralCleanConversation extends Message
+  implements NeuralCleanConversationProperties {
+  conversation = '';
+  modelVersion = '';
+
+  constructor(
+    connection: NylasConnection,
+    props?: NeuralCleanConversationProperties
+  ) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
 
   extractImages(): Promise<File[]> {
     const f: File[] = [];

@@ -161,7 +161,7 @@ export default class RestfulModelCollection<
       });
   }
 
-  build(args: { [key: string]: any }): T {
+  protected build(args: { [key: string]: any }): T {
     const model = this.createModel({});
     for (const key in args) {
       const val = args[key];
@@ -171,6 +171,6 @@ export default class RestfulModelCollection<
   }
 
   protected createModel(json: { [key: string]: any }): T {
-    return new this.modelClass(this.connection, json) as T;
+    return new this.modelClass(this.connection).fromJSON(json) as T;
   }
 }

@@ -1,10 +1,22 @@
 import Attributes from './attributes';
 import Model from './model';
 
-export default class EventParticipant extends Model {
+export interface EventParticipantProperties {
+  email: string;
   name?: string;
-  email?: string;
   status?: string;
+}
+
+export default class EventParticipant extends Model
+  implements EventParticipantProperties {
+  email = '';
+  name?: string;
+  status?: string;
+
+  constructor(props?: EventParticipantProperties) {
+    super();
+    this.initAttributes(props);
+  }
 
   toJSON(enforceReadOnly?: boolean) {
     const json = super.toJSON(enforceReadOnly);

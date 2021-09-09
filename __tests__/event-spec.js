@@ -1,7 +1,9 @@
 import NylasConnection from '../src/nylas-connection';
 import Event from '../src/models/event';
+import { EventConferencing } from '../src/models/event-conferencing';
 import Nylas from '../src/nylas';
 import fetch from 'node-fetch';
+import When from '../src/models/when';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -50,12 +52,12 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           busy: undefined,
           title: undefined,
           description: undefined,
           location: undefined,
-          when: undefined,
+          when: {},
           participants: [],
         });
         done();
@@ -71,12 +73,12 @@ describe('Event', () => {
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           busy: undefined,
           title: undefined,
           description: undefined,
           location: undefined,
-          when: undefined,
+          when: {},
           participants: [],
         });
         done();
@@ -92,12 +94,12 @@ describe('Event', () => {
         );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           busy: undefined,
           title: undefined,
           description: undefined,
           location: undefined,
-          when: undefined,
+          when: {},
           participants: [],
         });
         done();
@@ -115,12 +117,12 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           busy: undefined,
           title: undefined,
           description: undefined,
           location: undefined,
-          when: undefined,
+          when: {},
           participants: [],
           recurrence: recurrence,
         });
@@ -129,7 +131,7 @@ describe('Event', () => {
     });
 
     test('should create event with time when start and end are the same UNIX timestamp', done => {
-      testContext.event.when = {};
+      testContext.event.when = new When();
       testContext.event.start = 1408875644;
       testContext.event.end = 1408875644;
       return testContext.event.save().then(() => {
@@ -137,7 +139,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -156,7 +158,6 @@ describe('Event', () => {
     });
 
     test('should create event with start_time and end_time when start and end are different UNIX timestamps', done => {
-      testContext.event.when = {};
       testContext.event.start = 1409594400;
       testContext.event.end = 1409598000;
       return testContext.event.save().then(() => {
@@ -164,7 +165,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -184,7 +185,6 @@ describe('Event', () => {
     });
 
     test('should create event with date when start and end are same ISO date', done => {
-      testContext.event.when = {};
       testContext.event.start = '1912-06-23';
       testContext.event.end = '1912-06-23';
       return testContext.event.save().then(() => {
@@ -192,7 +192,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -211,7 +211,6 @@ describe('Event', () => {
     });
 
     test('should create event with start_date and end_date when start and end are different ISO date', done => {
-      testContext.event.when = {};
       testContext.event.start = '1815-12-10';
       testContext.event.end = '1852-11-27';
       return testContext.event.save().then(() => {
@@ -219,7 +218,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -244,7 +243,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -265,13 +264,16 @@ describe('Event', () => {
     });
 
     test('should create event with start_time and end_time when event param `when` is updated with start_time and end_time', done => {
-      testContext.event.when = { start_time: 1409594400, end_time: 1409598000 };
+      testContext.event.when = new When({
+        startTime: 1409594400,
+        endTime: 1409598000,
+      });
       return testContext.event.save().then(event => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -293,13 +295,14 @@ describe('Event', () => {
     });
 
     test('should create event with date when the event param `when` is updated with date', done => {
-      testContext.event.when = { date: '1912-06-23' };
+      testContext.event.when = new When();
+      testContext.event.when.date = '1912-06-23';
       return testContext.event.save().then(event => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -320,16 +323,16 @@ describe('Event', () => {
     });
 
     test('should create event with start_date and end_date when the event param `when` is updated with start_date and end_date', done => {
-      testContext.event.when = {
-        start_date: '1815-12-10',
-        end_date: '1852-11-27',
-      };
+      testContext.event.when = new When({
+        startDate: '1815-12-10',
+        endDate: '1852-11-27',
+      });
       return testContext.event.save().then(event => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -354,7 +357,7 @@ describe('Event', () => {
       delete testContext.event.when;
       testContext.event.start = '1815-12-10';
       testContext.event.end = '1852-11-27';
-      expect(testContext.event.when).toEqual({
+      expect(testContext.event.when.toJSON()).toEqual({
         start_date: '1815-12-10',
         end_date: '1852-11-27',
       });
@@ -363,7 +366,7 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           message_id: undefined,
           busy: undefined,
           title: undefined,
@@ -389,14 +392,12 @@ describe('Event', () => {
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
-          calendar_id: undefined,
+          calendar_id: '',
           busy: undefined,
           title: undefined,
           description: undefined,
           location: undefined,
-          when: undefined,
-          _start: undefined,
-          _end: undefined,
+          when: {},
           participants: [],
           metadata: { hello: 'world' },
         });
@@ -406,30 +407,28 @@ describe('Event', () => {
 
     describe('conferencing', () => {
       test('should create an event with conferencing details', done => {
-        const conferenceEvent = testContext.connection.events.build({
-          conferencing: {
-            provider: 'Zoom Meeting',
-            details: {
-              url: 'https://us02web.zoom.us/j/****************',
-              meeting_code: '213',
-              password: 'xyz',
-              phone: ['+11234567890'],
-            },
+        testContext.event.conferencing = new EventConferencing({
+          provider: 'Zoom Meeting',
+          details: {
+            url: 'https://us02web.zoom.us/j/****************',
+            meetingCode: '213',
+            password: 'xyz',
+            phone: ['+11234567890'],
           },
         });
-        conferenceEvent.save().then(() => {
+        testContext.event.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
             'https://api.nylas.com/events'
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
-            calendar_id: undefined,
+            calendar_id: '',
             busy: undefined,
             title: undefined,
             description: undefined,
             location: undefined,
-            when: undefined,
+            when: {},
             _start: undefined,
             _end: undefined,
             participants: [],
@@ -448,31 +447,27 @@ describe('Event', () => {
       });
 
       test('should create an event with conferencing autocreate set', done => {
-        const conferenceEvent = testContext.connection.events.build({
-          conferencing: {
-            provider: 'Zoom Meeting',
-            autocreate: {
-              settings: {
-                password: '1234',
-              },
+        testContext.event.conferencing = new EventConferencing({
+          provider: 'Zoom Meeting',
+          autocreate: {
+            settings: {
+              password: '1234',
             },
           },
         });
-        conferenceEvent.save().then(() => {
+        testContext.event.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
             'https://api.nylas.com/events'
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
-            calendar_id: undefined,
+            calendar_id: '',
             busy: undefined,
             title: undefined,
             description: undefined,
             location: undefined,
-            when: undefined,
-            _start: undefined,
-            _end: undefined,
+            when: {},
             participants: [],
             conferencing: {
               provider: 'Zoom Meeting',
@@ -488,23 +483,21 @@ describe('Event', () => {
       });
 
       test('should throw exception if both conferencing details and autocreate are set', done => {
-        const conferenceEvent = testContext.connection.events.build({
-          conferencing: {
-            provider: 'Zoom Meeting',
-            details: {
-              url: 'https://us02web.zoom.us/j/****************',
-              meeting_code: '213',
-              password: 'xyz',
-              phone: ['+11234567890'],
-            },
-            autocreate: {
-              settings: {
-                password: '1234',
-              },
+        testContext.event.conferencing = new EventConferencing({
+          provider: 'Zoom Meeting',
+          details: {
+            url: 'https://us02web.zoom.us/j/****************',
+            meeting_code: '213',
+            password: 'xyz',
+            phone: ['+11234567890'],
+          },
+          autocreate: {
+            settings: {
+              password: '1234',
             },
           },
         });
-        conferenceEvent.save().catch(e => {
+        testContext.event.save().catch(e => {
           expect(e).toEqual(
             new Error(
               "Cannot set both 'details' and 'autocreate' in conferencing object."

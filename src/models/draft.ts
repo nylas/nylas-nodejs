@@ -1,16 +1,28 @@
-import Message from './message';
+import Message, { MessageProperties } from './message';
 import Attributes from './attributes';
 import { SaveCallback } from './restful-model';
+import NylasConnection from '../nylas-connection';
 
 export type SendCallback = (
   err: Error | null,
   json?: { [key: string]: any }
 ) => void;
 
-export default class Draft extends Message {
+export interface DraftProperties extends MessageProperties {
   rawMime?: string;
   replyToMessageId?: string;
   version?: number;
+}
+
+export default class Draft extends Message implements DraftProperties {
+  rawMime?: string;
+  replyToMessageId?: string;
+  version?: number;
+
+  constructor(connection: NylasConnection, props?: DraftProperties) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
 
   toJSON(enforceReadOnly?: boolean) {
     if (this.rawMime) {
@@ -102,7 +114,7 @@ export default class Draft extends Message {
         json,
       })
       .then(json => {
-        const message = new Message(this.connection, json);
+        const message = new Message(this.connection).fromJSON(json);
 
         // We may get failures for a partial send
         if (json.failures) {
@@ -131,5 +143,9 @@ Draft.attributes = {
   replyToMessageId: Attributes.String({
     modelKey: 'replyToMessageId',
     jsonKey: 'reply_to_message_id',
+  }),
+  rawMime: Attributes.String({
+    modelKey: 'rawMime',
+    readOnly: true,
   }),
 };

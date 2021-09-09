@@ -45,44 +45,64 @@ describe('CalendarRestfulModelCollection', () => {
     fetch.mockImplementation(() => Promise.resolve(response));
   });
 
-  const evaluateFreeBusy = () => {
-    const options = testContext.connection.request.mock.calls[0][0];
-    expect(options.url.toString()).toEqual(
-      'https://api.nylas.com/calendars/free-busy'
-    );
-    expect(options.method).toEqual('POST');
-    expect(JSON.parse(options.body)).toEqual({
-      start_time: '1590454800',
-      end_time: '1590780800',
-      emails: ['jane@email.com'],
-    });
-    expect(options.headers['authorization']).toEqual(
-      `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
-    );
-  };
-
-  test('[FREE BUSY] should fetch results with snakecase params', done => {
-    const params = {
-      start_time: '1590454800',
-      end_time: '1590780800',
-      emails: ['jane@email.com'],
-    };
-
-    return testContext.connection.calendars.freeBusy(params).then(() => {
-      evaluateFreeBusy();
-      done();
-    });
-  });
-
   test('[FREE BUSY] should fetch results with camelcase params', done => {
+    const response = {
+      status: 200,
+      buffer: () => {
+        return Promise.resolve('body');
+      },
+      json: () => {
+        return Promise.resolve(
+          JSON.stringify([
+            {
+              object: 'free_busy',
+              email: 'jane@email.com',
+              time_slots: [
+                {
+                  object: 'time_slot',
+                  status: 'busy',
+                  start_time: 1590454800,
+                  end_time: 1590780800,
+                },
+              ],
+            },
+          ])
+        );
+      },
+      headers: new Map(),
+    };
+    fetch.mockImplementation(() => Promise.resolve(response));
+
     const params = {
-      startTime: '1590454800',
-      endTime: '1590780800',
+      startTime: 1590454800,
+      endTime: 1590780800,
       emails: ['jane@email.com'],
     };
 
-    return testContext.connection.calendars.freeBusy(params).then(() => {
-      evaluateFreeBusy();
+    return testContext.connection.calendars.freeBusy(params).then(freeBusy => {
+      const options = testContext.connection.request.mock.calls[0][0];
+      expect(options.url.toString()).toEqual(
+        'https://api.nylas.com/calendars/free-busy'
+      );
+      expect(options.method).toEqual('POST');
+      expect(JSON.parse(options.body)).toEqual({
+        start_time: '1590454800',
+        end_time: '1590780800',
+        emails: ['jane@email.com'],
+      });
+      expect(options.headers['authorization']).toEqual(
+        `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
+      );
+      expect(freeBusy.length).toEqual(1);
+      freeBusy = freeBusy[0];
+      expect(freeBusy.object).toEqual('free_busy');
+      expect(freeBusy.email).toEqual('jane@email.com');
+      expect(freeBusy.timeSlots.length).toEqual(1);
+      const timeSlots = freeBusy.timeSlots[0];
+      expect(timeSlots.object).toEqual('time_slot');
+      expect(timeSlots.status).toEqual('busy');
+      expect(timeSlots.startTime).toEqual(1590454800);
+      expect(timeSlots.endTime).toEqual(1590780800);
       done();
     });
   });

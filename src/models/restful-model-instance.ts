@@ -28,7 +28,7 @@ export default class RestfulModelInstance<T extends RestfulModel> {
         qs: params,
       })
       .then(json => {
-        const model = new this.modelClass(this.connection, json) as T;
+        const model = new this.modelClass(this.connection).fromJSON(json) as T;
         return Promise.resolve(model);
       });
   }
