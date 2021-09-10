@@ -16,14 +16,6 @@ export class EmailAddress extends Model implements EmailAddressProperties {
     super();
     this.initAttributes(props);
   }
-
-  // TODO::Can probably remove toJSONs in classes that extend Model
-  toJSON() {
-    return {
-      type: this.type,
-      email: this.email,
-    };
-  }
 }
 
 EmailAddress.attributes = {
@@ -49,13 +41,6 @@ export class IMAddress extends Model implements IMAddressProperties {
     super();
     this.initAttributes(props);
   }
-
-  toJSON() {
-    return {
-      type: this.type,
-      im_address: this.imAddress,
-    };
-  }
 }
 
 IMAddress.attributes = {
@@ -68,7 +53,6 @@ IMAddress.attributes = {
   }),
 };
 
-// TODO::Check if "address" is deprecated
 export interface PhysicalAddressProperties {
   type: string;
   format: string;
@@ -95,7 +79,7 @@ class PhysicalAddress extends Model implements PhysicalAddressProperties {
     this.initAttributes(props);
   }
 
-  toJSON() {
+  toJSON(): { [key: string]: any } {
     const json: { [key: string]: any } = {
       type: this.type,
       format: this.format,
@@ -155,13 +139,6 @@ export class PhoneNumber extends Model implements PhoneNumberProperties {
     super();
     this.initAttributes(props);
   }
-
-  toJSON() {
-    return {
-      type: this.type,
-      number: this.number,
-    };
-  }
 }
 
 PhoneNumber.attributes = {
@@ -185,14 +162,6 @@ export class WebPage extends Model implements WebPageProperties {
   constructor(props?: WebPageProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  toJSON() {
-    const json = {
-      type: this.type,
-      url: this.url,
-    };
-    return json;
   }
 }
 
@@ -294,14 +263,10 @@ export class Contact extends RestfulModel implements ContactProperties {
     this.initAttributes(props);
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return super.save(params, callback);
-  }
-
   getPicture(
     params: { [key: string]: any } = {},
     callback?: (error: Error | null, result?: any) => void
-  ) {
+  ): any {
     return this.get(params, callback, '/picture');
   }
 }
