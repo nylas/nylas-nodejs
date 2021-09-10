@@ -21,16 +21,6 @@ class EventConferencingDetails extends Model
     super();
     this.initAttributes(props);
   }
-
-  toJSON() {
-    return {
-      meeting_code: this.meetingCode,
-      phone: this.phone,
-      password: this.password,
-      pin: this.pin,
-      url: this.url,
-    };
-  }
 }
 
 EventConferencingDetails.attributes = {
@@ -71,14 +61,6 @@ export class EventConferencing extends Model
   constructor(props?: EventConferencingProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  toJSON(): any {
-    return {
-      details: this.details,
-      provider: this.provider,
-      autocreate: this.autocreate,
-    };
   }
 }
 

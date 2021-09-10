@@ -20,15 +20,6 @@ export class Categorize extends Model implements CategorizeProperties {
     super();
     this.initAttributes(props);
   }
-
-  toJSON() {
-    return {
-      category: this.category,
-      categorized_at: this.categorizedAt,
-      model_version: this.modelVersion,
-      subcategories: this.subcategories,
-    };
-  }
 }
 
 Categorize.attributes = {

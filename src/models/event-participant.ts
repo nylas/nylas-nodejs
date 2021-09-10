@@ -18,7 +18,7 @@ export default class EventParticipant extends Model
     this.initAttributes(props);
   }
 
-  toJSON(enforceReadOnly?: boolean) {
+  toJSON(enforceReadOnly?: boolean): { [key: string]: any } {
     const json = super.toJSON(enforceReadOnly);
     if (!json['name']) {
       json['name'] = json['email'];

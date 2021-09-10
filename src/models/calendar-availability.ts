@@ -29,7 +29,7 @@ OpenHours.attributes = {
     jsonKey: 'object_type',
   }),
   emails: Attributes.StringList({
-    modelKey: 'emails'
+    modelKey: 'emails',
   }),
   days: Attributes.StringList({
     modelKey: 'days',
@@ -43,13 +43,14 @@ OpenHours.attributes = {
   end: Attributes.String({
     modelKey: 'end',
   }),
-}
+};
 
 export interface CalendarAvailabilityProperties {
   timeSlots: TimeSlotProperties[];
 }
 
-export default class CalendarAvailability extends Model implements CalendarAvailabilityProperties {
+export default class CalendarAvailability extends Model
+  implements CalendarAvailabilityProperties {
   object = 'availability';
   timeSlots: TimeSlot[] = [];
 

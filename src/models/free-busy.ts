@@ -33,7 +33,7 @@ TimeSlot.attributes = {
     modelKey: 'endTime',
     jsonKey: 'end_time',
   }),
-}
+};
 
 export interface FreeBusyProperties {
   email: string;
@@ -62,4 +62,4 @@ FreeBusy.attributes = {
     jsonKey: 'time_slots',
     itemClass: TimeSlot,
   }),
-}
+};

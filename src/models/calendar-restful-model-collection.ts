@@ -2,11 +2,13 @@ import Calendar from './calendar';
 import NylasConnection from '../nylas-connection';
 import RestfulModelCollection from './restful-model-collection';
 import FreeBusy, { FreeBusyProperties } from './free-busy';
-import CalendarAvailability, { OpenHoursProperties } from './calendar-availability';
+import CalendarAvailability, {
+  OpenHoursProperties,
+} from './calendar-availability';
 
 export default class CalendarRestfulModelCollection extends RestfulModelCollection<
   Calendar
-  > {
+> {
   connection: NylasConnection;
   modelClass: typeof Calendar;
 

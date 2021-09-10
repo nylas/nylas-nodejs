@@ -22,7 +22,7 @@ export default class ManagementModelCollection<
     return super.build(args);
   }
 
-  protected createModel(json: { [key: string]: any }) {
+  protected createModel(json: { [key: string]: any }): T {
     const props = this.modelClass.propsFromJSON(json, this);
     return new (this.modelClass as any)(this.connection, this.clientId, props);
   }

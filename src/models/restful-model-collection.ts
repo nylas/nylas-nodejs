@@ -164,8 +164,7 @@ export default class RestfulModelCollection<
   protected build(args: { [key: string]: any }): T {
     const model = this.createModel({});
     for (const key in args) {
-      const val = args[key];
-      (model as any)[key] = val;
+      (model as any)[key] = args[key];
     }
     return model;
   }

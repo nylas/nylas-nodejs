@@ -11,6 +11,11 @@ interface RestfulModelJSON {
   [key: string]: any;
 }
 
+type requestOptions = {
+  body: { [key: string]: any };
+  qs: { [key: string]: any };
+};
+
 export default class RestfulModel extends Model {
   static endpointName = ''; // overrridden in subclasses
   static collectionName = ''; // overrridden in subclasses
@@ -62,21 +67,23 @@ export default class RestfulModel extends Model {
 
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
   // fields the API allows updating. Subclasses should override this method.
-  saveRequestBody(): any {
+  saveRequestBody(): { [key: string]: any } {
     return this.toJSON(true);
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
-  deleteRequestQueryString(_params: { [key: string]: any }): any {
+  deleteRequestQueryString(_params: {
+    [key: string]: any;
+  }): { [key: string]: any } {
     return {};
   }
   // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody(_params: { [key: string]: any }): any {
+  deleteRequestBody(_params: { [key: string]: any }): { [key: string]: any } {
     return {};
   }
 
   // deleteRequestOptions is used by delete(). Subclasses should override this method.
-  deleteRequestOptions(params: { [key: string]: any }): any {
+  deleteRequestOptions(params: { [key: string]: any }): requestOptions {
     return {
       body: this.deleteRequestBody(params),
       qs: this.deleteRequestQueryString(params),
@@ -89,7 +96,7 @@ export default class RestfulModel extends Model {
   protected save(
     params: {} | SaveCallback = {},
     callback?: SaveCallback
-  ): Promise<this> {
+  ): Promise<any> {
     if (typeof params === 'function') {
       callback = params as SaveCallback;
       params = {};
@@ -104,11 +111,11 @@ export default class RestfulModel extends Model {
           : `${this.saveEndpoint()}`,
       })
       .then(json => {
-        this.fromJSON(json as RestfulModelJSON);
+        const newModel = this.fromJSON(json as RestfulModelJSON);
         if (callback) {
           callback(null, this);
         }
-        return Promise.resolve(this);
+        return Promise.resolve(newModel);
       })
       .catch(err => {
         if (callback) {

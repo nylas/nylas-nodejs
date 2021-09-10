@@ -24,7 +24,7 @@ export default class Draft extends Message implements DraftProperties {
     this.initAttributes(props);
   }
 
-  toJSON(enforceReadOnly?: boolean) {
+  toJSON(enforceReadOnly?: boolean): { [key: string]: any } {
     if (this.rawMime) {
       throw Error('toJSON() cannot be called for raw MIME drafts');
     }
@@ -34,7 +34,7 @@ export default class Draft extends Message implements DraftProperties {
     return json;
   }
 
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<Draft> {
     if (this.rawMime) {
       const err = new Error('save() cannot be called for raw MIME drafts');
       if (callback) {
@@ -45,14 +45,14 @@ export default class Draft extends Message implements DraftProperties {
     return super.save(params, callback);
   }
 
-  saveRequestBody() {
+  saveRequestBody(): { [key: string]: any } {
     if (this.rawMime) {
       throw Error('saveRequestBody() cannot be called for raw MIME drafts');
     }
     return super.saveRequestBody();
   }
 
-  deleteRequestBody(params: { [key: string]: any } = {}) {
+  deleteRequestBody(params: { [key: string]: any } = {}): { [key: string]: any } {
     const body: { [key: string]: any } = {};
     body.version = params.hasOwnProperty('version')
       ? params.version
@@ -60,7 +60,7 @@ export default class Draft extends Message implements DraftProperties {
     return body;
   }
 
-  toString() {
+  toString(): string {
     if (this.rawMime) {
       throw Error('toString() cannot be called for raw MIME drafts');
     }
@@ -70,7 +70,7 @@ export default class Draft extends Message implements DraftProperties {
   send(
     trackingArg?: { [key: string]: any } | SendCallback | null,
     callbackArg?: SendCallback | { [key: string]: any } | null
-  ) {
+  ): Promise<Message> {
     // callback used to be the first argument, and tracking was the second
     let callback: SendCallback | undefined;
     if (typeof callbackArg === 'function') {

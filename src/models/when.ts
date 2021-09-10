@@ -24,10 +24,6 @@ export default class When extends Model implements WhenProperties {
     super();
     this.initAttributes(props);
   }
-
-  toJSON(): WhenProperties {
-    return super.toJSON();
-  }
 }
 
 When.attributes = {

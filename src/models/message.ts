@@ -57,7 +57,7 @@ export default class Message extends RestfulModel implements MessageProperties {
   // We calculate the list of participants instead of grabbing it from
   // a parent because it is a better source of ground truth, and saves us
   // from more dependencies.
-  participants() {
+  participants(): EmailParticipant[] {
     const participants: { [key: string]: EmailParticipant } = {};
     const to = this.to || [];
     const cc = this.cc || [];
@@ -75,11 +75,11 @@ export default class Message extends RestfulModel implements MessageProperties {
     return Object.values(participants);
   }
 
-  fileIds() {
+  fileIds(): (string | undefined)[] {
     return this.files ? this.files.map(file => file.id) : [];
   }
 
-  getRaw() {
+  getRaw(): Promise<string> {
     return this.connection
       .request({
         method: 'GET',
@@ -91,7 +91,7 @@ export default class Message extends RestfulModel implements MessageProperties {
       .catch(err => Promise.reject(err));
   }
 
-  saveRequestBody() {
+  saveRequestBody(): { [key: string]: any } {
     // It's possible to update most of the fields of a draft.
     if (this.constructor.name === 'Draft') {
       return super.saveRequestBody();
@@ -108,10 +108,6 @@ export default class Message extends RestfulModel implements MessageProperties {
     json['starred'] = this.starred;
     json['unread'] = this.unread;
     return json;
-  }
-
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return super.save(params, callback);
   }
 }
 Message.collectionName = 'messages';

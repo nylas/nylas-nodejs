@@ -30,10 +30,10 @@ export default class Webhook extends ManagementModel
     this.initAttributes(props);
   }
 
-  pathPrefix() {
+  pathPrefix(): string {
     return `/a/${this.clientId}`;
   }
-  saveRequestBody() {
+  saveRequestBody(): { [key: string]: any } {
     const json: { [key: string]: any } = {};
     // We can only update the state of an existing webhook
     if (this.id) {
@@ -45,7 +45,7 @@ export default class Webhook extends ManagementModel
     }
     return json;
   }
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<Webhook> {
     return super.save(params, callback);
   }
 }

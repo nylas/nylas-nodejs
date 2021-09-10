@@ -174,7 +174,7 @@ export default class NylasConnection {
     });
   }
 
-  private getWarningForVersion(sdkApiVersion?: string, apiVersion?: string) {
+  private getWarningForVersion(sdkApiVersion?: string, apiVersion?: string): string {
     let warning = '';
 
     if (sdkApiVersion != apiVersion) {
@@ -197,7 +197,7 @@ export default class NylasConnection {
     return warning;
   }
 
-  request(options: RequestOptions) {
+  request(options: RequestOptions): Promise<any> {
     const req = this.newRequest(options);
     return new Promise<any>((resolve, reject) => {
       return fetch(req)

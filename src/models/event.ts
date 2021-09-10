@@ -136,7 +136,7 @@ export default class Event extends RestfulModel {
     }
   }
 
-  deleteRequestQueryString(params: { [key: string]: any } = {}) {
+  deleteRequestQueryString(params: { [key: string]: any } = {}): { [key: string]: any } {
     const qs: { [key: string]: any } = {};
     if (params.hasOwnProperty('notify_participants')) {
       qs.notify_participants = params.notify_participants;
@@ -144,7 +144,7 @@ export default class Event extends RestfulModel {
     return qs;
   }
 
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<Event> {
     if (
       this.conferencing &&
       this.conferencing.details &&
@@ -163,7 +163,7 @@ export default class Event extends RestfulModel {
     status: string,
     comment: string,
     callback?: (error: Error | null, data?: Event) => void
-  ) {
+  ): Promise<Event> {
     return this.connection
       .request({
         method: 'POST',

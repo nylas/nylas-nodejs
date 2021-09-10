@@ -16,14 +16,7 @@ export class Folder extends RestfulModel implements FolderProperties {
     this.initAttributes(props);
   }
 
-  saveRequestBody() {
-    const json: { [key: string]: any } = {};
-    json['display_name'] = this.displayName;
-    json['name'] = this.name;
-    return json;
-  }
-
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<Folder> {
     return super.save(params, callback);
   }
 }
@@ -45,7 +38,7 @@ export class Label extends Folder {
     super(connection, props);
   }
 
-  saveRequestBody() {
+  saveRequestBody(): { [key: string]: any } {
     return { display_name: this.displayName };
   }
 }

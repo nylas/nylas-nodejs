@@ -36,7 +36,7 @@ export default class Model {
     }
   }
 
-  fromJSON(json?: any): this {
+  fromJSON(json: { [key: string]: any }): this {
     const attributes = this.attributes();
     for (const attrName in attributes) {
       const attr = attributes[attrName];
@@ -47,7 +47,7 @@ export default class Model {
     return this;
   }
 
-  toJSON(enforceReadOnly?: boolean): any {
+  toJSON(enforceReadOnly?: boolean): { [key: string]: any } {
     const json: any = {};
     const attributes = this.attributes();
     for (const attrName in attributes) {

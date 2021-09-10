@@ -51,11 +51,11 @@ export default class Thread extends RestfulModel implements ThreadProperties {
     this.initAttributes(props);
   }
 
-  toJSON(enforceReadOnly?: boolean): ThreadProperties {
+  toJSON(enforceReadOnly?: boolean): { [key: string]: any } {
     return super.toJSON(enforceReadOnly);
   }
 
-  saveRequestBody() {
+  saveRequestBody(): { [key: string]: any } {
     const json: { [key: string]: any } = {};
     if (this.labels) {
       json['label_ids'] = this.labels.map(label => label.id);
@@ -68,7 +68,7 @@ export default class Thread extends RestfulModel implements ThreadProperties {
     return json;
   }
 
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<Thread> {
     return super.save(params, callback);
   }
 }
