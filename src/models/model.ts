@@ -36,7 +36,7 @@ export default class Model {
     }
   }
 
-  fromJSON(json: { [key: string]: any }): this {
+  fromJSON(json: { [key: string]: any }): any {
     const attributes = this.attributes();
     for (const attrName in attributes) {
       const attr = attributes[attrName];

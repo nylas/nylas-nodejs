@@ -7,14 +7,10 @@ const REQUEST_CHUNK_SIZE = 100;
 
 export default class ModelCollection<T extends Model> {
   connection: NylasConnection;
-  modelClass: typeof Model;
+  modelClass: any;
   path: string;
 
-  constructor(
-    modelClass: typeof Model,
-    connection: NylasConnection,
-    path: string
-  ) {
+  constructor(modelClass: any, connection: NylasConnection, path: string) {
     this.modelClass = modelClass;
     this.connection = connection;
     this.path = path;
