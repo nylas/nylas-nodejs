@@ -233,7 +233,7 @@ describe('ManagementAccount', () => {
             method: 'GET',
             path: `/a/${CLIENT_ID}/ip_addresses`,
           });
-          expect(resp.updated_at).toBe(1544658529);
+          expect(resp.updatedAt).toBe(1544658529);
           done();
         });
     });
@@ -279,16 +279,16 @@ describe('ManagementAccount', () => {
             path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/token-info`,
             body: { access_token: 'abc123' },
           });
-          expect(resp.created_at).toBe(1563496685);
+          expect(resp.createdAt).toBe(1563496685);
           expect(resp.scopes).toBe('calendar,email,contacts');
           expect(resp.state).toBe('valid');
-          expect(resp.updated_at).toBe(1563496685);
+          expect(resp.updatedAt).toBe(1563496685);
           done();
         });
     });
 
     test('should error when no access token passed in', done => {
-      expect.assertions(4);
+      expect.assertions(3);
       const requestMock = jest.fn();
       requestMock
         .mockReturnValueOnce(
@@ -302,12 +302,12 @@ describe('ManagementAccount', () => {
             },
           ])
         )
-        .mockReturnValueOnce(Promise.resolve('Error: No access_token passed.'));
+        .mockReturnValueOnce(Promise.reject('Error: No access_token passed.'));
       Nylas.accounts.connection.request = requestMock;
       Nylas.accounts
         .first()
         .then(account => account.tokenInfo())
-        .then(resp => {
+        .catch(() => {
           expect(Nylas.accounts.connection.request).toHaveBeenCalledTimes(2);
           expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
@@ -319,7 +319,6 @@ describe('ManagementAccount', () => {
             path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/token-info`,
             body: { access_token: undefined },
           });
-          expect(resp).toBe('Error: No access_token passed.');
           done();
         });
     });
