@@ -10,6 +10,7 @@ export interface AccountProperties {
   syncState: string;
   linkedAt: Date;
   billingState?: string;
+  accessToken?: string;
 }
 
 export default class Account extends RestfulModel implements AccountProperties {
@@ -20,6 +21,7 @@ export default class Account extends RestfulModel implements AccountProperties {
   syncState = '';
   linkedAt = new Date();
   billingState?: string;
+  accessToken?: string;
 
   constructor(connection: NylasConnection, props?: AccountProperties) {
     super(connection, props);
@@ -61,5 +63,10 @@ Account.attributes = {
   linkedAt: Attributes.DateTime({
     modelKey: 'linkedAt',
     jsonKey: 'linked_at',
+  }),
+
+  accessToken: Attributes.String({
+    modelKey: 'accessToken',
+    jsonKey: 'access_token',
   }),
 };
