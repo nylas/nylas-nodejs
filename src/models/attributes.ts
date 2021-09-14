@@ -1,5 +1,6 @@
 import Model from './model';
 import RestfulModel from './restful-model';
+import { NativeAuthenticationProvider } from './connect';
 
 // The Attribute class represents a single model attribute, like 'namespace_id'
 // Subclasses of Attribute like AttributeDateTime know how to covert between
@@ -210,6 +211,73 @@ class AttributeCollection extends Attribute {
   }
 }
 
+class AttributeEnum extends Attribute {
+  itemClass: any;
+
+  constructor({
+    modelKey,
+    itemClass,
+    jsonKey,
+    readOnly,
+  }: {
+    modelKey: string;
+    itemClass: any;
+    jsonKey?: string;
+    readOnly?: boolean;
+  }) {
+    super({ modelKey, jsonKey, readOnly });
+    this.itemClass = itemClass;
+  }
+
+  toJSON(val: any): string {
+    return val.toString();
+  }
+
+  fromJSON(val: any, _parent: any): any {
+    if (Object.values(this.itemClass).includes(val)) {
+      return val;
+    }
+    return;
+  }
+}
+
+class AttributeEnumList extends Attribute {
+  itemClass: any;
+
+  constructor({
+    modelKey,
+    itemClass,
+    jsonKey,
+    readOnly,
+  }: {
+    modelKey: string;
+    itemClass: any;
+    jsonKey?: string;
+    readOnly?: boolean;
+  }) {
+    super({ modelKey, jsonKey, readOnly });
+    this.itemClass = itemClass;
+  }
+
+  toJSON(val: any[]): string[] {
+    const enumList: string[] = [];
+    for (const v in val) {
+      enumList.push(v.toString());
+    }
+    return enumList;
+  }
+
+  fromJSON(val: any[], _parent: any): any[] {
+    const enumList: any[] = [];
+    for (const v in val) {
+      if (Object.values(this.itemClass).includes(val[v])) {
+        enumList.push(val[v]);
+      }
+    }
+    return enumList;
+  }
+}
+
 const Attributes = {
   Number(
     ...args: ConstructorParameters<typeof AttributeNumber>
@@ -248,6 +316,14 @@ const Attributes = {
     ...args: ConstructorParameters<typeof AttributeObject>
   ): AttributeObject {
     return new AttributeObject(...args);
+  },
+  Enum(...args: ConstructorParameters<typeof AttributeEnum>): AttributeEnum {
+    return new AttributeEnum(...args);
+  },
+  EnumList(
+    ...args: ConstructorParameters<typeof AttributeEnumList>
+  ): AttributeEnumList {
+    return new AttributeEnumList(...args);
   },
 };
 export default Attributes;
