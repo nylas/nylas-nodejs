@@ -8,7 +8,8 @@ export interface ApplicationIPAddressesProperties {
   updatedAt: number;
 }
 
-export class ApplicationIPAddresses extends Model implements ApplicationIPAddressesProperties {
+export class ApplicationIPAddresses extends Model
+  implements ApplicationIPAddressesProperties {
   ipAddresses = [];
   updatedAt = 0;
 
@@ -26,7 +27,7 @@ ApplicationIPAddresses.attributes = {
     modelKey: 'updatedAt',
     jsonKey: 'updated_at',
   }),
-}
+};
 
 export interface AccountTokenInfoProperties {
   scopes: string;
@@ -35,7 +36,8 @@ export interface AccountTokenInfoProperties {
   updatedAt: number;
 }
 
-export class AccountTokenInfo extends Model implements AccountTokenInfoProperties {
+export class AccountTokenInfo extends Model
+  implements AccountTokenInfoProperties {
   scopes = '';
   state = '';
   createdAt = 0;
@@ -61,7 +63,7 @@ AccountTokenInfo.attributes = {
     modelKey: 'updatedAt',
     jsonKey: 'updated_at',
   }),
-}
+};
 
 export interface ManagementAccountProperties {
   billingState: string;
@@ -74,7 +76,7 @@ export interface ManagementAccountProperties {
 
 export type AccountOperationResponse = {
   success: boolean;
-}
+};
 
 export default class ManagementAccount extends ManagementModel
   implements ManagementAccountProperties {
@@ -137,7 +139,9 @@ export default class ManagementAccount extends ManagementModel
         method: 'GET',
         path: `/a/${this.clientId}/ip_addresses`,
       })
-      .then(json => Promise.resolve(new ApplicationIPAddresses().fromJSON(json)))
+      .then(json =>
+        Promise.resolve(new ApplicationIPAddresses().fromJSON(json))
+      )
       .catch(err => Promise.reject(err));
   }
 

@@ -3,7 +3,7 @@ import DeltaStream from './delta-stream';
 
 export type LatestCursor = {
   cursor: string;
-}
+};
 
 export default class Delta {
   connection: NylasConnection;
@@ -16,7 +16,9 @@ export default class Delta {
     }
   }
 
-  latestCursor(callback: (error: Error | null, cursor: string | null) => void): Promise<LatestCursor> {
+  latestCursor(
+    callback: (error: Error | null, cursor: string | null) => void
+  ): Promise<string> {
     const reqOpts = {
       method: 'POST',
       path: '/delta/latest_cursor',
@@ -28,7 +30,7 @@ export default class Delta {
         if (callback) {
           callback(null, response.cursor);
         }
-        return Promise.resolve(response);
+        return Promise.resolve(response.cursor);
       })
       .catch(err => {
         if (callback) {
@@ -38,7 +40,10 @@ export default class Delta {
       });
   }
 
-  async startStream(cursor: string, params: { [key: string]: any } = {}): Promise<DeltaStream> {
+  async startStream(
+    cursor: string,
+    params: { [key: string]: any } = {}
+  ): Promise<DeltaStream> {
     const stream = new DeltaStream(this.connection, cursor, params);
     await stream.open();
     return stream;
