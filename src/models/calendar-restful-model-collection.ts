@@ -61,7 +61,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       interval: number;
       startTime: string;
       endTime: string;
-      freeBusy: FreeBusyProperties[];
+      freeBusy?: FreeBusyProperties[];
       openHours?: OpenHoursProperties[];
     },
     callback?: (error: Error | null, data?: { [key: string]: any }) => void
@@ -76,7 +76,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
           interval_minutes: options.interval,
           start_time: options.startTime,
           end_time: options.endTime,
-          free_busy: options.freeBusy,
+          free_busy: options.freeBusy || [],
           open_hours: options.openHours || [],
         },
       })
