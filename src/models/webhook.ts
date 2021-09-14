@@ -45,7 +45,10 @@ export default class Webhook extends ManagementModel
     }
     return json;
   }
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<Webhook> {
+  save(
+    params: {} | SaveCallback = {},
+    callback?: SaveCallback
+  ): Promise<Webhook> {
     return super.save(params, callback);
   }
 }

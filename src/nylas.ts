@@ -73,7 +73,10 @@ class Nylas {
         this.clientId!
       ) as ManagementModelCollection<ManagementAccount>;
     } else {
-      this.accounts = new RestfulModelCollection(Account, conn);
+      this.accounts = new RestfulModelCollection(
+        Account,
+        conn
+      ) as RestfulModelCollection<Account>;
     }
 
     return this;

@@ -174,7 +174,10 @@ export default class NylasConnection {
     });
   }
 
-  private getWarningForVersion(sdkApiVersion?: string, apiVersion?: string): string {
+  private getWarningForVersion(
+    sdkApiVersion?: string,
+    apiVersion?: string
+  ): string {
     let warning = '';
 
     if (sdkApiVersion != apiVersion) {

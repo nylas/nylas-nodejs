@@ -68,7 +68,10 @@ export default class Thread extends RestfulModel implements ThreadProperties {
     return json;
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<Thread> {
+  save(
+    params: {} | SaveCallback = {},
+    callback?: SaveCallback
+  ): Promise<Thread> {
     return super.save(params, callback);
   }
 }

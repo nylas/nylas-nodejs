@@ -34,7 +34,10 @@ export default class Draft extends Message implements DraftProperties {
     return json;
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<Draft> {
+  save(
+    params: {} | SaveCallback = {},
+    callback?: SaveCallback
+  ): Promise<Draft> {
     if (this.rawMime) {
       const err = new Error('save() cannot be called for raw MIME drafts');
       if (callback) {
@@ -52,7 +55,9 @@ export default class Draft extends Message implements DraftProperties {
     return super.saveRequestBody();
   }
 
-  deleteRequestBody(params: { [key: string]: any } = {}): { [key: string]: any } {
+  deleteRequestBody(
+    params: { [key: string]: any } = {}
+  ): { [key: string]: any } {
     const body: { [key: string]: any } = {};
     body.version = params.hasOwnProperty('version')
       ? params.version

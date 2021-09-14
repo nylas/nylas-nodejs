@@ -16,7 +16,10 @@ export class Folder extends RestfulModel implements FolderProperties {
     this.initAttributes(props);
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<Folder> {
+  save(
+    params: {} | SaveCallback = {},
+    callback?: SaveCallback
+  ): Promise<Folder> {
     return super.save(params, callback);
   }
 }

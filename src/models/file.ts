@@ -26,7 +26,9 @@ export default class File extends RestfulModel implements FileProperties {
     this.initAttributes(props);
   }
 
-  upload(callback?: (error: Error | null, model?: File) => void): Promise<File> {
+  upload(
+    callback?: (error: Error | null, model?: File) => void
+  ): Promise<File> {
     if (!this.filename) {
       throw new Error('Please define a filename');
     }
