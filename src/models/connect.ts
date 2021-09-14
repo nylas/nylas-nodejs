@@ -4,10 +4,10 @@ import Attributes from './attributes';
 import Account from './account';
 
 export interface VirtualCalendarProperties {
-  clientId: string;
   scopes: string;
   email: string;
   name: string;
+  clientId?: string;
   settings?: { [key: string]: string };
 }
 
@@ -47,7 +47,7 @@ VirtualCalendar.attributes = {
   }),
 };
 
-export enum Scopes {
+export enum Scope {
   EmailModify = 'email.modify',
   EmailReadOnly = 'email.read_only',
   EmailSend = 'email.send',
@@ -74,11 +74,11 @@ export enum NativeAuthenticationProvider {
 }
 
 export interface NativeAuthenticationProperties {
-  clientId: string;
   name: string;
   emailAddress: string;
   provider: NativeAuthenticationProvider;
-  scopes: Scopes[];
+  scopes: Scope[];
+  clientId?: string;
   settings?: { [key: string]: string };
 }
 
@@ -92,7 +92,7 @@ export class NativeAuthentication extends Model
   name = '';
   emailAddress = '';
   provider = NativeAuthenticationProvider.Gmail;
-  scopes: Scopes[] = [];
+  scopes: Scope[] = [];
   settings?: { [key: string]: string };
 
   constructor(props?: NativeAuthenticationProperties) {
@@ -105,7 +105,38 @@ export class NativeAuthentication extends Model
     json['scopes'] = this.scopes.join();
     return json;
   }
+
+  fromJSON(json: { [p: string]: any }): NativeAuthentication {
+    if (json['scopes']) {
+      json['scopes'] = json['scopes'].split(',');
+    }
+    return super.fromJSON(json);
+  }
 }
+NativeAuthentication.attributes = {
+  clientId: Attributes.String({
+    modelKey: 'clientId',
+    jsonKey: 'client_id',
+  }),
+  name: Attributes.String({
+    modelKey: 'name',
+  }),
+  emailAddress: Attributes.String({
+    modelKey: 'emailAddress',
+    jsonKey: 'email_address',
+  }),
+  provider: Attributes.Enum({
+    modelKey: 'provider',
+    itemClass: NativeAuthenticationProvider,
+  }),
+  scopes: Attributes.EnumList({
+    modelKey: 'scopes',
+    itemClass: Scope,
+  }),
+  settings: Attributes.Object({
+    modelKey: 'settings',
+  }),
+};
 
 export default class Connect {
   connection: NylasConnection;
@@ -133,7 +164,10 @@ export default class Connect {
     }
 
     let authClass: VirtualCalendar | NativeAuthentication;
-    if (auth.hasOwnProperty('scope')) {
+    if (!auth.clientId) {
+      auth.clientId = this.clientId;
+    }
+    if (auth.hasOwnProperty('scopes')) {
       authClass = new NativeAuthentication(
         auth as NativeAuthenticationProperties
       );
