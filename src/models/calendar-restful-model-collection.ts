@@ -106,7 +106,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       });
   }
 
-  calendarAvailability(
+  consecutiveAvailability(
     options: {
       emails: Array<{
         email: string;

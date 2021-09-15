@@ -186,7 +186,7 @@ describe('CalendarRestfulModelCollection', () => {
     };
 
     return testContext.connection.calendars
-      .calendarAvailability(params)
+      .consecutiveAvailability(params)
       .then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
