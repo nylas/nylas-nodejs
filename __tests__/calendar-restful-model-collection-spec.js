@@ -202,7 +202,7 @@ describe('CalendarRestfulModelCollection', () => {
           free_busy: [],
           open_hours: [
             {
-              emails: ['swag@nylas.com'],
+              emails: [{ name: 'Nylas', email: 'swag@nylas.com' }],
               days: ['0'],
               timezone: 'America/Chicago',
               start: '10:00',
