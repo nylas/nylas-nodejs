@@ -15,7 +15,7 @@ export default class ContactRestfulModelCollection extends RestfulModelCollectio
   }
 
   groups(
-    callback?: (error: Error | null, data?: { [key: string]: any }) => void
+    callback?: (error: Error | null, data?: Record<string, any>) => void
   ): Promise<Group[]> {
     return this.connection
       .request({
@@ -23,7 +23,7 @@ export default class ContactRestfulModelCollection extends RestfulModelCollectio
         path: `/contacts/groups`,
       })
       .then(json => {
-        const groups: Group[] = json.map((group: { [key: string]: any }) => {
+        const groups: Group[] = json.map((group: Record<string, any>) => {
           return new Group().fromJSON(group);
         });
         if (callback) {

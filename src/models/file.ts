@@ -39,7 +39,7 @@ export default class File extends RestfulModel implements FileProperties {
       throw new Error('Please define a content-type');
     }
 
-    const formOptions: { [key: string]: any } = {
+    const formOptions: Record<string, any> = {
       filename: this.filename,
       contentType: this.contentType,
     };
@@ -113,7 +113,7 @@ export default class File extends RestfulModel implements FileProperties {
 
   //TODO::Probably deprecate this? All it does is call /files/{id}
   metadata(
-    callback?: (error: Error | null, data?: { [key: string]: any }) => void
+    callback?: (error: Error | null, data?: Record<string, any>) => void
   ) {
     return this.connection
       .request({

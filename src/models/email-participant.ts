@@ -16,7 +16,7 @@ export default class EmailParticipant extends Model
     this.initAttributes(props);
   }
 
-  toJSON(): { [key: string]: any } {
+  toJSON(): Record<string, any> {
     const json = super.toJSON();
     if (!json['name']) {
       json['name'] = json['email'];

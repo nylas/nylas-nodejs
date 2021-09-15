@@ -30,8 +30,8 @@ export class NeuralMessageOptions extends Model
     this.initAttributes(props);
   }
 
-  toJSON(writeParseContact?: boolean): { [key: string]: boolean } {
-    const body: { [key: string]: boolean } = super.toJSON();
+  toJSON(writeParseContact?: boolean): Record<string, boolean> {
+    const body: Record<string, boolean> = super.toJSON();
     if (writeParseContact !== true) {
       delete body['parse_contacts'];
     }
@@ -92,7 +92,7 @@ export default class Neural extends RestfulModel {
     messageIds: string[],
     options?: NeuralMessageOptionsProperties
   ): Promise<NeuralSignatureExtraction[]> {
-    let body: { [key: string]: any } = { message_id: messageIds };
+    let body: Record<string, any> = { message_id: messageIds };
     const path = 'signature';
 
     if (options) {
@@ -110,7 +110,7 @@ export default class Neural extends RestfulModel {
   }
 
   ocrRequest(fileId: string, pages?: number[]): Promise<NeuralOcr> {
-    const body: { [key: string]: any } = { file_id: fileId };
+    const body: Record<string, any> = { file_id: fileId };
     const path = 'ocr';
 
     if (pages) {
@@ -137,7 +137,7 @@ export default class Neural extends RestfulModel {
     messageIds: string[],
     options?: NeuralMessageOptionsProperties
   ): Promise<NeuralCleanConversation[]> {
-    let body: { [key: string]: any } = { message_id: messageIds };
+    let body: Record<string, any> = { message_id: messageIds };
     const path = 'conversation';
 
     if (options) {

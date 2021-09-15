@@ -51,12 +51,12 @@ export default class Thread extends RestfulModel implements ThreadProperties {
     this.initAttributes(props);
   }
 
-  toJSON(enforceReadOnly?: boolean): { [key: string]: any } {
+  toJSON(enforceReadOnly?: boolean): Record<string, any> {
     return super.toJSON(enforceReadOnly);
   }
 
-  saveRequestBody(): { [key: string]: any } {
-    const json: { [key: string]: any } = {};
+  saveRequestBody(): Record<string, any> {
+    const json: Record<string, any> = {};
     if (this.labels) {
       json['label_ids'] = this.labels.map(label => label.id);
     } else if (this.folders && this.folders.length === 1) {

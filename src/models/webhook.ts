@@ -33,8 +33,8 @@ export default class Webhook extends ManagementModel
   pathPrefix(): string {
     return `/a/${this.clientId}`;
   }
-  saveRequestBody(): { [key: string]: any } {
-    const json: { [key: string]: any } = {};
+  saveRequestBody(): Record<string, any> {
+    const json: Record<string, any> = {};
     // We can only update the state of an existing webhook
     if (this.id) {
       json['state'] = this.state;

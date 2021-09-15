@@ -25,7 +25,7 @@ export interface MessageProperties {
   events?: EventProperties[];
   folder?: Folder;
   labels?: FolderProperties[];
-  headers?: { [key: string]: string };
+  headers?: Record<string, string>;
   failures?: any;
 }
 
@@ -46,7 +46,7 @@ export default class Message extends RestfulModel implements MessageProperties {
   events?: Event[];
   folder?: Folder;
   labels?: Label[];
-  headers?: { [key: string]: string };
+  headers?: Record<string, string>;
   failures?: any;
 
   constructor(connection: NylasConnection, props?: MessageProperties) {
@@ -58,7 +58,7 @@ export default class Message extends RestfulModel implements MessageProperties {
   // a parent because it is a better source of ground truth, and saves us
   // from more dependencies.
   participants(): EmailParticipant[] {
-    const participants: { [key: string]: EmailParticipant } = {};
+    const participants: Record<string, EmailParticipant> = {};
     const to = this.to || [];
     const cc = this.cc || [];
     const from = this.from || [];
@@ -91,14 +91,14 @@ export default class Message extends RestfulModel implements MessageProperties {
       .catch(err => Promise.reject(err));
   }
 
-  saveRequestBody(): { [key: string]: any } {
+  saveRequestBody(): Record<string, any> {
     // It's possible to update most of the fields of a draft.
     if (this.constructor.name === 'Draft') {
       return super.saveRequestBody();
     }
 
     // Messages are more limited, though.
-    const json: { [key: string]: any } = {};
+    const json: Record<string, any> = {};
     if (this.labels) {
       json['label_ids'] = Array.from(this.labels).map(label => label.id);
     } else if (this.folder) {

@@ -8,7 +8,7 @@ export interface VirtualCalendarProperties {
   email: string;
   name: string;
   clientId?: string;
-  settings?: { [key: string]: string };
+  settings?: Record<string, string>;
 }
 
 export class VirtualCalendar extends Model
@@ -18,7 +18,7 @@ export class VirtualCalendar extends Model
   scopes = '';
   email = '';
   name = '';
-  settings?: { [key: string]: string };
+  settings?: Record<string, string>;
 
   constructor(props?: VirtualCalendarProperties) {
     super();
@@ -79,7 +79,7 @@ export interface NativeAuthenticationProperties {
   provider: NativeAuthenticationProvider;
   scopes: Scope[];
   clientId?: string;
-  settings?: { [key: string]: string };
+  settings?: Record<string, string>;
 }
 
 type AuthorizationCode = {
@@ -93,7 +93,7 @@ export class NativeAuthentication extends Model
   emailAddress = '';
   provider = NativeAuthenticationProvider.Gmail;
   scopes: Scope[] = [];
-  settings?: { [key: string]: string };
+  settings?: Record<string, string>;
 
   constructor(props?: NativeAuthenticationProperties) {
     super();
@@ -106,7 +106,7 @@ export class NativeAuthentication extends Model
     return json;
   }
 
-  fromJSON(json: { [p: string]: any }): NativeAuthentication {
+  fromJSON(json: Record<string, any>): NativeAuthentication {
     if (json['scopes']) {
       json['scopes'] = json['scopes'].split(',');
     }

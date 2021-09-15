@@ -79,8 +79,8 @@ class PhysicalAddress extends Model implements PhysicalAddressProperties {
     this.initAttributes(props);
   }
 
-  toJSON(): { [key: string]: any } {
-    const json: { [key: string]: any } = {
+  toJSON(): Record<string, string> {
+    const json: Record<string, string> = {
       type: this.type,
       format: this.format,
     };
@@ -264,7 +264,7 @@ export class Contact extends RestfulModel implements ContactProperties {
   }
 
   getPicture(
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     callback?: (error: Error | null, result?: any) => void
   ): any {
     return this.get(params, callback, '/picture');

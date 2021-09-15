@@ -41,7 +41,7 @@ export class Label extends Folder {
     super(connection, props);
   }
 
-  saveRequestBody(): { [key: string]: any } {
+  saveRequestBody(): Record<string, any> {
     return { display_name: this.displayName };
   }
 }

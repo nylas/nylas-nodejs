@@ -22,7 +22,7 @@ export default class NylasApiError extends Error {
    * For more details on what each status code means head to
    * https://developer.nylas.com/docs/developer-tools/api/errors/
    */
-  errorMapping: { [statusCode: number]: string } = {
+  errorMapping: Record<number, string> = {
     400: 'Bad Request',
     401: 'Unauthorized',
     402: 'Request Failed or Payment Required',

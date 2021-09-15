@@ -24,7 +24,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       endTime: number;
       emails: string[];
     },
-    callback?: (error: Error | null, data?: { [key: string]: any }) => void
+    callback?: (error: Error | null, data?: Record<string, any>) => void
   ): Promise<FreeBusy[]> {
     return this.connection
       .request({
@@ -64,7 +64,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       freeBusy?: FreeBusyProperties[];
       openHours?: OpenHoursProperties[];
     },
-    callback?: (error: Error | null, data?: { [key: string]: any }) => void
+    callback?: (error: Error | null, data?: Record<string, any>) => void
   ): Promise<CalendarAvailability> {
     return this.connection
       .request({

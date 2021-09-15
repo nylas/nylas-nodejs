@@ -137,9 +137,9 @@ export default class Event extends RestfulModel {
   }
 
   deleteRequestQueryString(
-    params: { [key: string]: any } = {}
-  ): { [key: string]: any } {
-    const qs: { [key: string]: any } = {};
+    params: Record<string, any> = {}
+  ): Record<string, any> {
+    const qs: Record<string, any> = {};
     if (params.hasOwnProperty('notify_participants')) {
       qs.notify_participants = params.notify_participants;
     }

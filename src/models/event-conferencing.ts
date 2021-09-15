@@ -55,7 +55,7 @@ export class EventConferencing extends Model
   provider = '';
   details?: EventConferencingDetails;
   autocreate?: {
-    settings?: { [key: string]: string };
+    settings?: Record<string, string>;
   };
 
   constructor(props?: EventConferencingProperties) {

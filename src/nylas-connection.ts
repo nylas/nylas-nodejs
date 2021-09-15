@@ -27,18 +27,18 @@ const SUPPORTED_API_VERSION = '2.2';
 export type RequestOptions = {
   path: string;
   method?: string;
-  headers?: { [key: string]: string };
-  qs?: { [key: string]: any };
+  headers?: Record<string, string>;
+  qs?: Record<string, any>;
   downloadRequest?: boolean;
   json?: boolean;
-  formData?: { [key: string]: FormDataType };
+  formData?: Record<string, FormDataType>;
   body?: any;
   url?: URL;
 };
 
 export type FormDataType = {
   value: any;
-  options?: { [key: string]: any } | AppendOptions;
+  options?: Record<string, any> | AppendOptions;
 };
 
 export default class NylasConnection {
@@ -128,7 +128,7 @@ export default class NylasConnection {
     }
     options.url = url;
 
-    const headers = { ...options.headers };
+    const headers: Record<string, string> = { ...options.headers };
     const user =
       options.path.substr(0, 3) === '/a/'
         ? config.clientSecret
@@ -242,7 +242,7 @@ export default class NylasConnection {
                 .buffer()
                 .then(buffer => {
                   // Return an object with the headers and the body as a buffer
-                  const fileDetails: { [key: string]: any } = {};
+                  const fileDetails: Record<string, any> = {};
                   response.headers.forEach((v, k) => {
                     fileDetails[k] = v;
                   });

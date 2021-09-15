@@ -88,7 +88,7 @@ export default class NeuralSignatureContact extends Model
     this.initAttributes(props);
   }
 
-  toJSON(): { [key: string]: any } {
+  toJSON(): Record<string, any> {
     return {
       job_titles: this.jobTitles,
       links: this.links,

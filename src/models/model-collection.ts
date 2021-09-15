@@ -23,7 +23,7 @@ export default class ModelCollection<T extends Model> {
   }
 
   forEach(
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     eachCallback: (item: T) => void,
     completeCallback?: (err?: Error | null | undefined) => void
   ): void {
@@ -65,7 +65,7 @@ export default class ModelCollection<T extends Model> {
   }
 
   list(
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     callback?: (error: Error | null, obj?: T[]) => void
   ): Promise<T[]> {
     if (params.view == 'count') {
@@ -83,8 +83,8 @@ export default class ModelCollection<T extends Model> {
 
   find(
     id: string,
-    paramsArg?: { [key: string]: any } | GetCallback | null,
-    callbackArg?: GetCallback | { [key: string]: any } | null
+    paramsArg?: Record<string, any> | GetCallback | null,
+    callbackArg?: GetCallback | Record<string, any> | null
   ): Promise<T> {
     // callback used to be the second argument, and params was the third
     let callback: GetCallback | undefined;
@@ -94,7 +94,7 @@ export default class ModelCollection<T extends Model> {
       callback = paramsArg as GetCallback;
     }
 
-    let params: { [key: string]: any } = {};
+    let params: Record<string, any> = {};
     if (paramsArg && typeof paramsArg === 'object') {
       params = paramsArg;
     } else if (callbackArg && typeof callbackArg === 'object') {
@@ -141,7 +141,7 @@ export default class ModelCollection<T extends Model> {
     callback,
     path,
   }: {
-    params?: { [key: string]: any };
+    params?: Record<string, any>;
     offset?: number;
     limit?: number;
     callback?: (error: Error | null, results?: T[]) => void;
@@ -186,7 +186,7 @@ export default class ModelCollection<T extends Model> {
   }
 
   protected getItems(
-    params: { [key: string]: any },
+    params: Record<string, any>,
     offset: number,
     limit: number,
     path?: string
@@ -208,14 +208,11 @@ export default class ModelCollection<T extends Model> {
     return this.getModelCollection(params, offset, limit, path);
   }
 
-  protected createModel(json: { [key: string]: any }): T {
+  protected createModel(json: Record<string, any>): T {
     return new this.modelClass().fromJSON(json) as T;
   }
 
-  private getModel(
-    id: string,
-    params: { [key: string]: any } = {}
-  ): Promise<T> {
+  private getModel(id: string, params: Record<string, any> = {}): Promise<T> {
     return this.connection
       .request({
         method: 'GET',
@@ -229,7 +226,7 @@ export default class ModelCollection<T extends Model> {
   }
 
   private getModelCollection(
-    params: { [key: string]: any },
+    params: Record<string, any>,
     offset: number,
     limit: number,
     path: string

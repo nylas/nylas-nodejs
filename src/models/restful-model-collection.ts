@@ -18,7 +18,7 @@ export default class RestfulModelCollection<
   }
 
   count(
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     callback?: (err: Error | null, num?: number) => void
   ): Promise<number> {
     return this.connection
@@ -42,7 +42,7 @@ export default class RestfulModelCollection<
   }
 
   first(
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     callback?: (error: Error | null, model?: T) => void
   ): Promise<T> {
     if (params.view == 'count') {
@@ -70,7 +70,7 @@ export default class RestfulModelCollection<
 
   search(
     query: string,
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     callback?: (error: Error | null) => void
   ): Promise<T[]> {
     if (this.modelClass != Message && this.modelClass != Thread) {
@@ -101,7 +101,7 @@ export default class RestfulModelCollection<
 
   delete(
     itemOrId: T | string,
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     callback?: (error: Error | null) => void
   ): any {
     if (!itemOrId) {
@@ -120,14 +120,14 @@ export default class RestfulModelCollection<
     const item =
       typeof itemOrId === 'string' ? this.build({ id: itemOrId }) : itemOrId;
 
-    const options: { [key: string]: any } = item.deleteRequestOptions(params);
+    const options: Record<string, any> = item.deleteRequestOptions(params);
     options.item = item;
 
     return this.deleteItem(options, callback);
   }
 
   deleteItem(
-    options: { [key: string]: any },
+    options: Record<string, any>,
     callbackArg?: (error: Error | null) => void
   ): any {
     const item = options.item;
@@ -161,7 +161,7 @@ export default class RestfulModelCollection<
       });
   }
 
-  protected build(args: { [key: string]: any }): T {
+  protected build(args: Record<string, any>): T {
     const model = this.createModel({});
     for (const key in args) {
       (model as any)[key] = args[key];
@@ -169,7 +169,7 @@ export default class RestfulModelCollection<
     return model;
   }
 
-  protected createModel(json: { [key: string]: any }): T {
+  protected createModel(json: Record<string, any>): T {
     return new this.modelClass(this.connection).fromJSON(json) as T;
   }
 }

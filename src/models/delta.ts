@@ -42,7 +42,7 @@ export default class Delta {
 
   async startStream(
     cursor: string,
-    params: { [key: string]: any } = {}
+    params: Record<string, any> = {}
   ): Promise<DeltaStream> {
     const stream = new DeltaStream(this.connection, cursor, params);
     await stream.open();

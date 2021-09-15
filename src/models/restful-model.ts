@@ -12,8 +12,8 @@ interface RestfulModelJSON {
 }
 
 type requestOptions = {
-  body: { [key: string]: any };
-  qs: { [key: string]: any };
+  body: Record<string, any>;
+  qs: Record<string, any>;
 };
 
 export default class RestfulModel extends Model {
@@ -67,23 +67,21 @@ export default class RestfulModel extends Model {
 
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
   // fields the API allows updating. Subclasses should override this method.
-  saveRequestBody(): { [key: string]: any } {
+  saveRequestBody(): Record<string, any> {
     return this.toJSON(true);
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
-  deleteRequestQueryString(_params: {
-    [key: string]: any;
-  }): { [key: string]: any } {
+  deleteRequestQueryString(_params: Record<string, any>): Record<string, any> {
     return {};
   }
   // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody(_params: { [key: string]: any }): { [key: string]: any } {
+  deleteRequestBody(_params: Record<string, any>): Record<string, any> {
     return {};
   }
 
   // deleteRequestOptions is used by delete(). Subclasses should override this method.
-  deleteRequestOptions(params: { [key: string]: any }): requestOptions {
+  deleteRequestOptions(params: Record<string, any>): requestOptions {
     return {
       body: this.deleteRequestBody(params),
       qs: this.deleteRequestQueryString(params),
@@ -126,7 +124,7 @@ export default class RestfulModel extends Model {
   }
 
   protected get(
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     callback?: (error: Error | null, result?: any) => void,
     pathSuffix = ''
   ): Promise<any> {
