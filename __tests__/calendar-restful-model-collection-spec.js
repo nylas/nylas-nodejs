@@ -168,15 +168,15 @@ describe('CalendarRestfulModelCollection', () => {
 
   test('[CONSECUTIVE AVAILABILITY] should fetch results with params', done => {
     const params = {
-      startTime: '1590454800',
-      endTime: '1590780800',
+      startTime: 1590454800,
+      endTime: 1590780800,
       interval: 5,
       duration: 30,
-      emails: [{ name: 'Jane', email: 'jane@email.com' }],
+      emails: [['jane@email.com'], ['swag@nylas.com']],
       open_hours: [
         {
-          emails: [{ name: 'Nylas', email: 'swag@nylas.com' }],
-          days: ['0'],
+          emails: ['jane@email.com', 'swag@nylas.com'],
+          days: [0],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
