@@ -173,16 +173,20 @@ describe('CalendarRestfulModelCollection', () => {
       interval: 5,
       duration: 30,
       emails: [['jane@email.com'], ['swag@nylas.com']],
-      free_busy: [{
-        email: 'jane@email.com',
-        object: 'free_busy',
-        time_slots: [{
-          object: "time_slots",
-          status: "busy",
-          start_time: 1590454800,
-          end_time: 1590780800,
-        }]
-      }],
+      free_busy: [
+        {
+          email: 'jane@email.com',
+          object: 'free_busy',
+          time_slots: [
+            {
+              object: 'time_slots',
+              status: 'busy',
+              start_time: 1590454800,
+              end_time: 1590780800,
+            },
+          ],
+        },
+      ],
       open_hours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
@@ -209,16 +213,20 @@ describe('CalendarRestfulModelCollection', () => {
           interval_minutes: 5,
           duration_minutes: 30,
           emails: [['jane@email.com'], ['swag@nylas.com']],
-          free_busy: [{
-            email: 'jane@email.com',
-            object: 'free_busy',
-            time_slots: [{
-              object: "time_slots",
-              status: "busy",
-              start_time: 1590454800,
-              end_time: 1590780800,
-            }]
-          }],
+          free_busy: [
+            {
+              email: 'jane@email.com',
+              object: 'free_busy',
+              time_slots: [
+                {
+                  object: 'time_slots',
+                  status: 'busy',
+                  start_time: 1590454800,
+                  end_time: 1590780800,
+                },
+              ],
+            },
+          ],
           open_hours: [
             {
               emails: ['jane@email.com', 'swag@nylas.com'],
@@ -246,16 +254,20 @@ describe('CalendarRestfulModelCollection', () => {
       interval: 5,
       duration: 30,
       emails: [['jane@email.com']],
-      free_busy: [{
-        email: 'jane@email.com',
-        object: 'free_busy',
-        time_slots: [{
-          object: "time_slots",
-          status: "busy",
-          start_time: 1590454800,
-          end_time: 1590780800,
-        }]
-      }],
+      free_busy: [
+        {
+          email: 'jane@email.com',
+          object: 'free_busy',
+          time_slots: [
+            {
+              object: 'time_slots',
+              status: 'busy',
+              start_time: 1590454800,
+              end_time: 1590780800,
+            },
+          ],
+        },
+      ],
       open_hours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
@@ -268,7 +280,9 @@ describe('CalendarRestfulModelCollection', () => {
       ],
     };
 
-    expect(() => testContext.connection.calendars.consecutiveAvailability(params)).toThrow();
+    expect(() =>
+      testContext.connection.calendars.consecutiveAvailability(params)
+    ).toThrow();
     done();
   });
 
