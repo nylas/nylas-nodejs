@@ -136,6 +136,22 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     },
     callback?: (error: Error | null, data?: { [key: string]: any }) => void
   ) {
+    const freeBusyEmails = options.free_busy
+      ? options.free_busy.map(freeBusy => freeBusy.emails)
+      : [];
+    for (const openHour of options.open_hours) {
+      for (const email of openHour.emails) {
+        if (
+          !options.emails.some(row => row.includes(email)) &&
+          !freeBusyEmails.includes(email)
+        ) {
+          throw new Error(
+            'Open Hours cannot contain an email not present in the main email list or the free busy email list.'
+          );
+        }
+      }
+    }
+
     return this.connection
       .request({
         method: 'POST',
