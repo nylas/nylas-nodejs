@@ -117,13 +117,13 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       endTime?: number;
       buffer?: number;
       free_busy?: Array<{
-        emails: string;
+        email: string;
         object: string;
         time_slots: Array<{
           object: string;
           status: string;
-          start_time: string;
-          end_time: string;
+          start_time: number;
+          end_time: number;
         }>;
       }>;
       open_hours: Array<{
@@ -138,7 +138,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     callback?: (error: Error | null, data?: { [key: string]: any }) => void
   ) {
     const freeBusyEmails = options.free_busy
-      ? options.free_busy.map(freeBusy => freeBusy.emails)
+      ? options.free_busy.map(freeBusy => freeBusy.email)
       : [];
     for (const openHour of options.open_hours) {
       for (const email of openHour.emails) {
