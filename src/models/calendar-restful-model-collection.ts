@@ -129,7 +129,10 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
         }>;
       }>;
       open_hours: Array<{
-        emails: string[];
+        emails: Array<{
+          email: string;
+          name: string;
+        }>;
         days: string[];
         timezone: string;
         start: string;

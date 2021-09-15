@@ -175,7 +175,7 @@ describe('CalendarRestfulModelCollection', () => {
       emails: [{ name: 'Jane', email: 'jane@email.com' }],
       open_hours: [
         {
-          emails: ['swag@nylas.com'],
+          emails: [{ name: 'Nylas', email: 'swag@nylas.com' }],
           days: ['0'],
           timezone: 'America/Chicago',
           start: '10:00',
