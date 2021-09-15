@@ -239,6 +239,39 @@ describe('CalendarRestfulModelCollection', () => {
       });
   });
 
+  test('[CONSECUTIVE AVAILABILITY] should throw error if open hour emails dont match free busy emails', done => {
+    const params = {
+      startTime: 1590454800,
+      endTime: 1590780800,
+      interval: 5,
+      duration: 30,
+      emails: [['jane@email.com']],
+      free_busy: [{
+        email: 'jane@email.com',
+        object: 'free_busy',
+        time_slots: [{
+          object: "time_slots",
+          status: "busy",
+          start_time: 1590454800,
+          end_time: 1590780800,
+        }]
+      }],
+      open_hours: [
+        {
+          emails: ['jane@email.com', 'swag@nylas.com'],
+          days: [0],
+          timezone: 'America/Chicago',
+          start: '10:00',
+          end: '14:00',
+          object_type: 'open_hours',
+        },
+      ],
+    };
+
+    expect(() => testContext.connection.calendars.consecutiveAvailability(params)).toThrow();
+    done();
+  });
+
   test('[DELETE] should use correct route, method and auth', done => {
     const calendarId = 'id123';
 
