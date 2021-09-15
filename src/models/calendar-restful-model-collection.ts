@@ -108,13 +108,14 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
 
   consecutiveAvailability(
     options: {
-      emails: string[][];
+      emails: Array<string[]>;
       duration: number;
       interval: number;
       start_time?: number;
       startTime?: number;
       end_time?: number;
       endTime?: number;
+      buffer?: number;
       free_busy?: Array<{
         emails: string;
         object: string;
@@ -162,6 +163,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
           interval_minutes: options.interval,
           start_time: options.startTime || options.start_time,
           end_time: options.endTime || options.end_time,
+          buffer: options.buffer,
           free_busy: options.free_busy || [],
           open_hours: options.open_hours,
         },
