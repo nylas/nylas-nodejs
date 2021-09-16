@@ -22,7 +22,7 @@ import NylasApiError from './models/nylas-api-error';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
-const SUPPORTED_API_VERSION = '2.2';
+const SUPPORTED_API_VERSION = '2.3';
 
 export type RequestOptions = {
   path: string;
