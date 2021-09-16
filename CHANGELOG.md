@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 5.8.0 / 2021-09-16
 * Add support for consecutive availability
 * Fix issue where JSON.stringify would omit read-only values
 * Fix webhook example throwing error if body is not a raw body
