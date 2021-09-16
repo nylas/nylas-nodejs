@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Add support for consecutive availability
 * Fix issue where JSON.stringify would omit read-only values
 * Fix webhook example throwing error if body is not a raw body
 * Fix readonly calendar attributes being sent for POST and PUT calls
