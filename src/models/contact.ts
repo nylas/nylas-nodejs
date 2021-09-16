@@ -1,12 +1,12 @@
-import RestfulModel, { SaveCallback } from './restful-model';
+import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import Model from './model';
 import NylasConnection from '../nylas-connection';
 
-export interface EmailAddressProperties {
+export type EmailAddressProperties = {
   type: string;
   email: string;
-}
+};
 
 export class EmailAddress extends Model implements EmailAddressProperties {
   type = '';
@@ -27,11 +27,10 @@ EmailAddress.attributes = {
   }),
 };
 
-// eslint-disable-next-line @typescript-eslint/interface-name-prefix
-export interface IMAddressProperties {
+export type IMAddressProperties = {
   type: string;
   imAddress: string;
-}
+};
 
 export class IMAddress extends Model implements IMAddressProperties {
   type = '';
@@ -53,7 +52,7 @@ IMAddress.attributes = {
   }),
 };
 
-export interface PhysicalAddressProperties {
+export type PhysicalAddressProperties = {
   type: string;
   format: string;
   streetAddress: string;
@@ -62,7 +61,7 @@ export interface PhysicalAddressProperties {
   state: string;
   country: string;
   address?: string;
-}
+};
 
 class PhysicalAddress extends Model implements PhysicalAddressProperties {
   type = '';
@@ -126,10 +125,10 @@ PhysicalAddress.attributes = {
   }),
 };
 
-export interface PhoneNumberProperties {
+export type PhoneNumberProperties = {
   type: string;
   number: string;
-}
+};
 
 export class PhoneNumber extends Model implements PhoneNumberProperties {
   type = '';
@@ -150,10 +149,10 @@ PhoneNumber.attributes = {
   }),
 };
 
-export interface WebPageProperties {
+export type WebPageProperties = {
   type: string;
   url: string;
-}
+};
 
 export class WebPage extends Model implements WebPageProperties {
   type = '';
@@ -174,13 +173,13 @@ WebPage.attributes = {
   }),
 };
 
-export interface GroupProperties {
+export type GroupProperties = {
   name: string;
   path: string;
   id?: string;
   accountId?: string;
   object?: string;
-}
+};
 
 export class Group extends Model implements GroupProperties {
   name = '';
@@ -217,7 +216,7 @@ Group.attributes = {
   }),
 };
 
-export interface ContactProperties {
+export type ContactProperties = {
   givenName?: string;
   middleName?: string;
   surname?: string;
@@ -236,7 +235,7 @@ export interface ContactProperties {
   webPages?: WebPageProperties[];
   groups?: GroupProperties[];
   source?: string;
-}
+};
 
 export class Contact extends RestfulModel implements ContactProperties {
   givenName?: string;

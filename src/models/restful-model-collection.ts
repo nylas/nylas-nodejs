@@ -18,7 +18,7 @@ export default class RestfulModelCollection<
   }
 
   count(
-    params: Record<string, any> = {},
+    params: Record<string, unknown> = {},
     callback?: (err: Error | null, num?: number) => void
   ): Promise<number> {
     return this.connection
@@ -42,7 +42,7 @@ export default class RestfulModelCollection<
   }
 
   first(
-    params: Record<string, any> = {},
+    params: Record<string, unknown> = {},
     callback?: (error: Error | null, model?: T) => void
   ): Promise<T> {
     if (params.view == 'count') {
@@ -70,7 +70,7 @@ export default class RestfulModelCollection<
 
   search(
     query: string,
-    params: Record<string, any> = {},
+    params: Record<string, unknown> = {},
     callback?: (error: Error | null) => void
   ): Promise<T[]> {
     if (this.modelClass != Message && this.modelClass != Thread) {
@@ -92,8 +92,8 @@ export default class RestfulModelCollection<
     }
 
     params.q = query;
-    const limit = params.limit || 40;
-    const offset = params.offset;
+    const limit = (params.limit as number) || 40;
+    const offset = params.offset as number;
     const path = `${this.path}/search`;
 
     return this.range({ params, offset, limit, path });
@@ -101,7 +101,7 @@ export default class RestfulModelCollection<
 
   delete(
     itemOrId: T | string,
-    params: Record<string, any> = {},
+    params: Record<string, unknown> = {},
     callback?: (error: Error | null) => void
   ): any {
     if (!itemOrId) {
@@ -161,7 +161,7 @@ export default class RestfulModelCollection<
       });
   }
 
-  protected build(args: Record<string, any>): T {
+  protected build(args: Record<string, unknown>): T {
     const model = this.createModel({});
     for (const key in args) {
       (model as any)[key] = args[key];
@@ -169,7 +169,7 @@ export default class RestfulModelCollection<
     return model;
   }
 
-  protected createModel(json: Record<string, any>): T {
+  protected createModel(json: Record<string, unknown>): T {
     return new this.modelClass(this.connection).fromJSON(json) as T;
   }
 }

@@ -24,7 +24,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       endTime: number;
       emails: string[];
     },
-    callback?: (error: Error | null, data?: Record<string, any>) => void
+    callback?: (error: Error | null, data?: Record<string, unknown>) => void
   ): Promise<FreeBusy[]> {
     return this.connection
       .request({

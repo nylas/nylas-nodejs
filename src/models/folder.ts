@@ -2,10 +2,10 @@ import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
 
-export interface FolderProperties {
+export type FolderProperties = {
   displayName?: string;
   name?: string;
-}
+};
 
 export class Folder extends RestfulModel implements FolderProperties {
   displayName?: string;
@@ -16,10 +16,7 @@ export class Folder extends RestfulModel implements FolderProperties {
     this.initAttributes(props);
   }
 
-  save(
-    params: {} | SaveCallback = {},
-    callback?: SaveCallback
-  ): Promise<Folder> {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     return super.save(params, callback);
   }
 }

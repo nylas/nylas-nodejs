@@ -46,7 +46,7 @@ export default class DeltaStream extends EventEmitter {
   constructor(
     connection: NylasConnection,
     cursor: string,
-    params: Record<string, any> = {}
+    params: Record<string, unknown> = {}
   ) {
     super();
     this.connection = connection;
@@ -83,7 +83,7 @@ export default class DeltaStream extends EventEmitter {
     const path = '/delta/streaming';
     const { excludeTypes = [], includeTypes = [], ...params } = this.params;
 
-    const queryObj: Record<string, any> = {
+    const queryObj: Record<string, unknown> = {
       ...params,
       cursor: this.cursor,
     };

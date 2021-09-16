@@ -7,14 +7,14 @@ import NeuralCleanConversation from './neural-clean-conversation';
 import Model from './model';
 import Attributes from './attributes';
 
-export interface NeuralMessageOptionsProperties {
+export type NeuralMessageOptionsProperties = {
   ignoreLinks?: boolean;
   ignoreImages?: boolean;
   ignoreTables?: boolean;
   removeConclusionPhrases?: boolean;
   imagesAsMarkdown?: boolean;
   parseContacts?: boolean;
-}
+};
 
 export class NeuralMessageOptions extends Model
   implements NeuralMessageOptionsProperties {
@@ -31,7 +31,7 @@ export class NeuralMessageOptions extends Model
   }
 
   toJSON(writeParseContact?: boolean): Record<string, boolean> {
-    const body: Record<string, boolean> = super.toJSON();
+    const body = super.toJSON() as Record<string, boolean>;
     if (writeParseContact !== true) {
       delete body['parse_contacts'];
     }
@@ -72,8 +72,8 @@ export default class Neural extends RestfulModel {
     const body = { message_id: messageIds };
     const path = 'sentiment';
 
-    return this.request(path, body).then((jsonArray: any) => {
-      return jsonArray.map((json: any) => {
+    return this.request(path, body).then((jsonArray: []) => {
+      return jsonArray.map(json => {
         return new NeuralSentimentAnalysis(this.connection).fromJSON(json);
       });
     });
@@ -92,7 +92,7 @@ export default class Neural extends RestfulModel {
     messageIds: string[],
     options?: NeuralMessageOptionsProperties
   ): Promise<NeuralSignatureExtraction[]> {
-    let body: Record<string, any> = { message_id: messageIds };
+    let body: Record<string, unknown> = { message_id: messageIds };
     const path = 'signature';
 
     if (options) {
@@ -102,15 +102,15 @@ export default class Neural extends RestfulModel {
       };
     }
 
-    return this.request(path, body).then((jsonArray: any) => {
-      return jsonArray.map((json: any) => {
+    return this.request(path, body).then((jsonArray: []) => {
+      return jsonArray.map(json => {
         return new NeuralSignatureExtraction(this.connection).fromJSON(json);
       });
     });
   }
 
   ocrRequest(fileId: string, pages?: number[]): Promise<NeuralOcr> {
-    const body: Record<string, any> = { file_id: fileId };
+    const body: Record<string, string | number[]> = { file_id: fileId };
     const path = 'ocr';
 
     if (pages) {
@@ -126,8 +126,8 @@ export default class Neural extends RestfulModel {
     const body = { message_id: messageIds };
     const path = 'categorize';
 
-    return this.request(path, body).then((jsonArray: any) => {
-      return jsonArray.map((json: any) => {
+    return this.request(path, body).then((jsonArray: []) => {
+      return jsonArray.map(json => {
         return new NeuralCategorizer(this.connection).fromJSON(json);
       });
     });
@@ -137,7 +137,7 @@ export default class Neural extends RestfulModel {
     messageIds: string[],
     options?: NeuralMessageOptionsProperties
   ): Promise<NeuralCleanConversation[]> {
-    let body: Record<string, any> = { message_id: messageIds };
+    let body: Record<string, unknown> = { message_id: messageIds };
     const path = 'conversation';
 
     if (options) {
@@ -147,8 +147,8 @@ export default class Neural extends RestfulModel {
       };
     }
 
-    return this.request(path, body).then((jsonArray: any) => {
-      return jsonArray.map((json: any) => {
+    return this.request(path, body).then((jsonArray: []) => {
+      return jsonArray.map(json => {
         return new NeuralCleanConversation(this.connection).fromJSON(json);
       });
     });

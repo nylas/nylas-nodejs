@@ -3,10 +3,10 @@ import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
 import Model from './model';
 
-export interface ApplicationIPAddressesProperties {
+export type ApplicationIPAddressesProperties = {
   ipAddresses: string[];
   updatedAt: number;
-}
+};
 
 export class ApplicationIPAddresses extends Model
   implements ApplicationIPAddressesProperties {
@@ -29,12 +29,12 @@ ApplicationIPAddresses.attributes = {
   }),
 };
 
-export interface AccountTokenInfoProperties {
+export type AccountTokenInfoProperties = {
   scopes: string;
   state: string;
   createdAt: number;
   updatedAt: number;
-}
+};
 
 export class AccountTokenInfo extends Model
   implements AccountTokenInfoProperties {
@@ -65,14 +65,14 @@ AccountTokenInfo.attributes = {
   }),
 };
 
-export interface ManagementAccountProperties {
+export type ManagementAccountProperties = {
   billingState: string;
   emailAddress: string;
   namespaceId: string;
   provider: string;
   syncState: string;
   trial: boolean;
-}
+};
 
 export type AccountOperationResponse = {
   success: boolean;

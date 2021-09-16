@@ -5,10 +5,10 @@ import NylasConnection from '../nylas-connection';
 
 const IMAGE_REGEX = /[(']cid:(.)*[)']/g;
 
-export interface NeuralCleanConversationProperties extends MessageProperties {
+export type NeuralCleanConversationProperties = MessageProperties & {
   conversation: string;
   modelVersion: string;
-}
+};
 
 export default class NeuralCleanConversation extends Message
   implements NeuralCleanConversationProperties {

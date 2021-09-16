@@ -2,13 +2,13 @@ import Model from './model';
 import Attributes from './attributes';
 import { TimeSlot, TimeSlotProperties } from './free-busy';
 
-export interface OpenHoursProperties {
+export type OpenHoursProperties = {
   emails: string[];
   days: string[];
   timezone: string;
   start: string;
   end: string;
-}
+};
 
 export class OpenHours extends Model implements OpenHoursProperties {
   objectType = 'open_hours';
@@ -45,9 +45,9 @@ OpenHours.attributes = {
   }),
 };
 
-export interface CalendarAvailabilityProperties {
+export type CalendarAvailabilityProperties = {
   timeSlots: TimeSlotProperties[];
-}
+};
 
 export default class CalendarAvailability extends Model
   implements CalendarAvailabilityProperties {

@@ -2,7 +2,7 @@ import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
 
-export interface AccountProperties {
+export type AccountProperties = {
   name: string;
   emailAddress: string;
   provider: string;
@@ -11,7 +11,7 @@ export interface AccountProperties {
   linkedAt: Date;
   billingState?: string;
   accessToken?: string;
-}
+};
 
 export default class Account extends RestfulModel implements AccountProperties {
   name = '';

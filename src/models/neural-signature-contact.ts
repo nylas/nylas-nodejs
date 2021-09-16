@@ -3,10 +3,10 @@ import { Contact, EmailAddress, PhoneNumber, WebPage } from './contact';
 import Model from './model';
 import NylasConnection from '../nylas-connection';
 
-interface LinkProperties {
+type LinkProperties = {
   description?: string;
   url?: string;
-}
+};
 
 class Link extends Model implements LinkProperties {
   description = '';
@@ -15,13 +15,6 @@ class Link extends Model implements LinkProperties {
   constructor(props?: LinkProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  toJSON() {
-    return {
-      description: this.description,
-      url: this.url,
-    };
   }
 }
 
@@ -34,10 +27,10 @@ Link.attributes = {
   }),
 };
 
-interface NameProperties {
+type NameProperties = {
   firstName?: string;
   lastName?: string;
-}
+};
 
 class Name extends Model implements NameProperties {
   firstName = '';
@@ -46,13 +39,6 @@ class Name extends Model implements NameProperties {
   constructor(props?: NameProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  toJSON() {
-    return {
-      type: this.firstName,
-      email: this.lastName,
-    };
   }
 }
 
@@ -67,13 +53,13 @@ Name.attributes = {
   }),
 };
 
-export interface NeuralSignatureContactProperties {
+export type NeuralSignatureContactProperties = {
   jobTitles?: string[];
   links?: Link[];
   phoneNumbers?: string[];
   emails?: string[];
   names?: Name[];
-}
+};
 
 export default class NeuralSignatureContact extends Model
   implements NeuralSignatureContactProperties {
@@ -88,7 +74,7 @@ export default class NeuralSignatureContact extends Model
     this.initAttributes(props);
   }
 
-  toJSON(): Record<string, any> {
+  toJSON(): Record<string, unknown> {
     return {
       job_titles: this.jobTitles,
       links: this.links,

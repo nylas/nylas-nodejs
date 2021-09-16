@@ -4,7 +4,7 @@ import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
 import JobStatus from './job-status';
 
-export interface CalendarProperties {
+export type CalendarProperties = {
   name: string;
   description: string;
   location: string;
@@ -12,7 +12,7 @@ export interface CalendarProperties {
   readOnly?: boolean;
   isPrimary?: boolean;
   jobStatusId?: string;
-}
+};
 
 export default class Calendar extends RestfulModel
   implements CalendarProperties {
@@ -29,10 +29,7 @@ export default class Calendar extends RestfulModel
     this.initAttributes(props);
   }
 
-  save(
-    params: {} | SaveCallback = {},
-    callback?: SaveCallback
-  ): Promise<Calendar> {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     return super.save(params, callback);
   }
 

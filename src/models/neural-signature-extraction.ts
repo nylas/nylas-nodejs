@@ -3,11 +3,11 @@ import Attributes from './attributes';
 import Message, { MessageProperties } from './message';
 import NylasConnection from '../nylas-connection';
 
-export interface NeuralSignatureExtractionProperties extends MessageProperties {
+export type NeuralSignatureExtractionProperties = MessageProperties & {
   signature: string;
   modelVersion: string;
   contacts?: NeuralSignatureContact;
-}
+};
 
 export default class NeuralSignatureExtraction extends Message
   implements NeuralSignatureExtractionProperties {

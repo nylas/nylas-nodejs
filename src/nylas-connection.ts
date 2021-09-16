@@ -28,7 +28,7 @@ export type RequestOptions = {
   path: string;
   method?: string;
   headers?: Record<string, string>;
-  qs?: Record<string, any>;
+  qs?: Record<string, unknown>;
   downloadRequest?: boolean;
   json?: boolean;
   formData?: Record<string, FormDataType>;
@@ -37,8 +37,8 @@ export type RequestOptions = {
 };
 
 export type FormDataType = {
-  value: any;
-  options?: Record<string, any> | AppendOptions;
+  value: unknown;
+  options?: Record<string, unknown> | AppendOptions;
 };
 
 export default class NylasConnection {
@@ -114,15 +114,18 @@ export default class NylasConnection {
         } else if (key == 'metadata_pair') {
           // The API understands a metadata_pair filter in the form of:
           // <key>:<value>
-          for (const item in value) {
-            url.searchParams.set('metadata_pair', `${item}:${value[item]}`);
+          for (const item in value as Record<string, string>) {
+            url.searchParams.set(
+              'metadata_pair',
+              `${item}:${(value as Record<string, string>)[item]}`
+            );
           }
         } else if (Array.isArray(value)) {
           for (const item of value) {
             url.searchParams.append(key, item);
           }
         } else {
-          url.searchParams.set(key, value);
+          url.searchParams.set(key, value as string);
         }
       }
     }

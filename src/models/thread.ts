@@ -7,7 +7,7 @@ import EmailParticipant, {
 import { Label, Folder, FolderProperties } from './folder';
 import NylasConnection from '../nylas-connection';
 
-export interface ThreadProperties {
+export type ThreadProperties = {
   subject: string;
   participants: EmailParticipantProperties[];
   lastMessageTimestamp: Date;
@@ -25,7 +25,7 @@ export interface ThreadProperties {
   draftIds?: string[];
   messages?: MessageProperties[];
   drafts?: MessageProperties[];
-}
+};
 
 export default class Thread extends RestfulModel implements ThreadProperties {
   subject = '';
@@ -51,12 +51,8 @@ export default class Thread extends RestfulModel implements ThreadProperties {
     this.initAttributes(props);
   }
 
-  toJSON(enforceReadOnly?: boolean): Record<string, any> {
-    return super.toJSON(enforceReadOnly);
-  }
-
-  saveRequestBody(): Record<string, any> {
-    const json: Record<string, any> = {};
+  saveRequestBody(): Record<string, unknown> {
+    const json: Record<string, unknown> = {};
     if (this.labels) {
       json['label_ids'] = this.labels.map(label => label.id);
     } else if (this.folders && this.folders.length === 1) {
@@ -68,10 +64,7 @@ export default class Thread extends RestfulModel implements ThreadProperties {
     return json;
   }
 
-  save(
-    params: {} | SaveCallback = {},
-    callback?: SaveCallback
-  ): Promise<Thread> {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     return super.save(params, callback);
   }
 }

@@ -2,15 +2,15 @@ import Attributes from './attributes';
 import RestfulModel from './restful-model';
 import NylasConnection from '../nylas-connection';
 
-export interface FileProperties {
+export type FileProperties = {
   contentType?: string;
   size?: number;
   filename?: string;
   messageIds?: string[];
   contentId?: string;
   contentDisposition?: string;
-  data?: any;
-}
+  data?: unknown;
+};
 
 export default class File extends RestfulModel implements FileProperties {
   contentType?: string;
@@ -19,7 +19,7 @@ export default class File extends RestfulModel implements FileProperties {
   messageIds?: string[];
   contentId?: string;
   contentDisposition?: string;
-  data?: any;
+  data?: unknown;
 
   constructor(connection: NylasConnection, props?: FileProperties) {
     super(connection, props);

@@ -20,7 +20,7 @@ export default class RestfulModelInstance<T extends RestfulModel> {
     return `/${this.modelClass.endpointName}`;
   }
 
-  get(params: Record<string, any> = {}): Promise<T> {
+  get(params: Record<string, unknown> = {}): Promise<T> {
     return this.connection
       .request({
         method: 'GET',

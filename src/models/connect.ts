@@ -3,13 +3,13 @@ import Model from './model';
 import Attributes from './attributes';
 import Account from './account';
 
-export interface VirtualCalendarProperties {
+export type VirtualCalendarProperties = {
   scopes: string;
   email: string;
   name: string;
   clientId?: string;
   settings?: Record<string, string>;
-}
+};
 
 export class VirtualCalendar extends Model
   implements VirtualCalendarProperties {
@@ -22,7 +22,7 @@ export class VirtualCalendar extends Model
 
   constructor(props?: VirtualCalendarProperties) {
     super();
-    super.initAttributes(props);
+    this.initAttributes(props);
   }
 }
 VirtualCalendar.attributes = {
@@ -73,14 +73,14 @@ export enum NativeAuthenticationProvider {
   Office365 = 'office365',
 }
 
-export interface NativeAuthenticationProperties {
+export type NativeAuthenticationProperties = {
   name: string;
   emailAddress: string;
   provider: NativeAuthenticationProvider;
   scopes: Scope[];
   clientId?: string;
   settings?: Record<string, string>;
-}
+};
 
 type AuthorizationCode = {
   code: string;
@@ -100,13 +100,13 @@ export class NativeAuthentication extends Model
     this.initAttributes(props);
   }
 
-  toJSON(): any {
+  toJSON(): Record<string, unknown> {
     const json = super.toJSON();
     json['scopes'] = this.scopes.join();
     return json;
   }
 
-  fromJSON(json: Record<string, any>): NativeAuthentication {
+  fromJSON(json: Record<string, any>): this {
     if (json['scopes']) {
       json['scopes'] = json['scopes'].split(',');
     }

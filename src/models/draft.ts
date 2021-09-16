@@ -8,11 +8,11 @@ export type SendCallback = (
   json?: Record<string, any>
 ) => void;
 
-export interface DraftProperties extends MessageProperties {
+export type DraftProperties = MessageProperties & {
   rawMime?: string;
   replyToMessageId?: string;
   version?: number;
-}
+};
 
 export default class Draft extends Message implements DraftProperties {
   rawMime?: string;
@@ -34,10 +34,7 @@ export default class Draft extends Message implements DraftProperties {
     return json;
   }
 
-  save(
-    params: {} | SaveCallback = {},
-    callback?: SaveCallback
-  ): Promise<Draft> {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     if (this.rawMime) {
       const err = new Error('save() cannot be called for raw MIME drafts');
       if (callback) {
@@ -48,15 +45,17 @@ export default class Draft extends Message implements DraftProperties {
     return super.save(params, callback);
   }
 
-  saveRequestBody(): Record<string, any> {
+  saveRequestBody(): Record<string, unknown> {
     if (this.rawMime) {
       throw Error('saveRequestBody() cannot be called for raw MIME drafts');
     }
     return super.saveRequestBody();
   }
 
-  deleteRequestBody(params: Record<string, any> = {}): Record<string, any> {
-    const body: Record<string, any> = {};
+  deleteRequestBody(
+    params: Record<string, unknown> = {}
+  ): Record<string, unknown> {
+    const body: Record<string, unknown> = {};
     body.version = params.hasOwnProperty('version')
       ? params.version
       : this.version;

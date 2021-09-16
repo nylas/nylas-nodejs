@@ -8,7 +8,7 @@ import EmailParticipant, {
 import { Label, Folder, FolderProperties } from './folder';
 import NylasConnection from '../nylas-connection';
 
-export interface MessageProperties {
+export type MessageProperties = {
   to: EmailParticipantProperties[];
   subject?: string;
   from?: EmailParticipantProperties[];
@@ -26,8 +26,7 @@ export interface MessageProperties {
   folder?: Folder;
   labels?: FolderProperties[];
   headers?: Record<string, string>;
-  failures?: any;
-}
+};
 
 export default class Message extends RestfulModel implements MessageProperties {
   to = [];
@@ -47,7 +46,6 @@ export default class Message extends RestfulModel implements MessageProperties {
   folder?: Folder;
   labels?: Label[];
   headers?: Record<string, string>;
-  failures?: any;
 
   constructor(connection: NylasConnection, props?: MessageProperties) {
     super(connection, props);
@@ -91,14 +89,14 @@ export default class Message extends RestfulModel implements MessageProperties {
       .catch(err => Promise.reject(err));
   }
 
-  saveRequestBody(): Record<string, any> {
+  saveRequestBody(): Record<string, unknown> {
     // It's possible to update most of the fields of a draft.
     if (this.constructor.name === 'Draft') {
       return super.saveRequestBody();
     }
 
     // Messages are more limited, though.
-    const json: Record<string, any> = {};
+    const json: Record<string, unknown> = {};
     if (this.labels) {
       json['label_ids'] = Array.from(this.labels).map(label => label.id);
     } else if (this.folder) {

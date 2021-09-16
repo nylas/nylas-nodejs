@@ -1,13 +1,12 @@
 import Model from './model';
 import RestfulModel from './restful-model';
-import { NativeAuthenticationProvider } from './connect';
 
 // The Attribute class represents a single model attribute, like 'namespace_id'
 // Subclasses of Attribute like AttributeDateTime know how to covert between
 // the JSON representation of that type and the javascript representation.
 // The Attribute class also exposes convenience methods for generating Matchers.
 
-export class Attribute {
+export abstract class Attribute {
   modelKey: string;
   jsonKey: string;
   readOnly: boolean;
@@ -26,16 +25,12 @@ export class Attribute {
     this.readOnly = readOnly || false;
   }
 
-  toJSON(val: any, _parent?: any): any {
-    return val;
-  }
-  fromJSON(val: any, _parent: any): any {
-    return val || null;
-  }
+  abstract toJSON(val: any, _parent?: any): any;
+  abstract fromJSON(val: any, _parent: any): any;
 }
 
 class AttributeObject extends Attribute {
-  itemClass?: typeof Model | typeof RestfulModel;
+  itemClass?: any;
 
   constructor({
     modelKey,
@@ -52,7 +47,7 @@ class AttributeObject extends Attribute {
     this.itemClass = itemClass;
   }
 
-  toJSON(val: any, _parent: any): any {
+  toJSON(val: any): unknown {
     if (!val) {
       return val;
     }
@@ -75,11 +70,11 @@ class AttributeObject extends Attribute {
 }
 
 class AttributeNumber extends Attribute {
-  toJSON(val: any): any {
+  toJSON(val: number): number {
     return val;
   }
-  fromJSON(val: any, _parent: any): number | null {
-    if (!isNaN(val)) {
+  fromJSON(val: any): number | null {
+    if (!isNaN(Number(val))) {
       return Number(val);
     } else {
       return null;
@@ -88,34 +83,34 @@ class AttributeNumber extends Attribute {
 }
 
 class AttributeBoolean extends Attribute {
-  toJSON(val: any): any {
+  toJSON(val: boolean): boolean {
     return val;
   }
-  fromJSON(val: any, _parent: any): boolean {
+  fromJSON(val: string | boolean): boolean {
     return val === 'true' || val === true || false;
   }
 }
 
 class AttributeString extends Attribute {
-  toJSON(val: any): any {
+  toJSON(val: string): string {
     return val;
   }
-  fromJSON(val: any, _parent: any): any {
+  fromJSON(val: string): string {
     return val || '';
   }
 }
 
 class AttributeStringList extends Attribute {
-  toJSON(val: any): any {
+  toJSON(val: []): [] {
     return val;
   }
-  fromJSON(val: any, _parent: any): any {
+  fromJSON(val: []): [] {
     return val || [];
   }
 }
 
 class AttributeDate extends Attribute {
-  toJSON(val: any): any {
+  toJSON(val: Date): string {
     if (!val) {
       return val;
     }
@@ -138,7 +133,7 @@ class AttributeDate extends Attribute {
 }
 
 class AttributeDateTime extends Attribute {
-  toJSON(val: any): number | null {
+  toJSON(val: Date): number | null {
     if (!val) {
       return null;
     }
@@ -152,7 +147,7 @@ class AttributeDateTime extends Attribute {
     return val.getTime() / 1000.0;
   }
 
-  fromJSON(val: any, _parent: any): Date | null {
+  fromJSON(val: number, _parent: any): Date | null {
     if (!val) {
       return null;
     }
@@ -161,7 +156,7 @@ class AttributeDateTime extends Attribute {
 }
 
 class AttributeCollection extends Attribute {
-  itemClass: typeof Model | typeof RestfulModel;
+  itemClass: any;
 
   constructor({
     modelKey,
@@ -178,7 +173,7 @@ class AttributeCollection extends Attribute {
     this.itemClass = itemClass;
   }
 
-  toJSON(vals: any, _parent: any): any[] {
+  toJSON(vals: any[]): unknown[] {
     if (!vals) {
       return [];
     }
@@ -193,7 +188,10 @@ class AttributeCollection extends Attribute {
     return json;
   }
 
-  fromJSON(json: any, _parent: any): any[] {
+  fromJSON(
+    json: unknown[],
+    _parent: any
+  ): typeof Model[] | typeof RestfulModel[] | unknown[] {
     if (!json || !(json instanceof Array)) {
       return [];
     }
@@ -233,7 +231,7 @@ class AttributeEnum extends Attribute {
     return val.toString();
   }
 
-  fromJSON(val: any, _parent: any): any {
+  fromJSON(val: unknown): unknown {
     if (Object.values(this.itemClass).includes(val)) {
       return val;
     }

@@ -1,11 +1,11 @@
 import Model from './model';
 import Attributes from './attributes';
 
-export interface TimeSlotProperties {
+export type TimeSlotProperties = {
   status: string;
   startTime: number;
   endTime: number;
-}
+};
 
 export class TimeSlot extends Model implements TimeSlotProperties {
   object = 'time_slot';
@@ -35,10 +35,10 @@ TimeSlot.attributes = {
   }),
 };
 
-export interface FreeBusyProperties {
+export type FreeBusyProperties = {
   email: string;
   timeSlots: TimeSlotProperties[];
-}
+};
 
 export default class FreeBusy extends Model implements FreeBusyProperties {
   object = 'free_busy';

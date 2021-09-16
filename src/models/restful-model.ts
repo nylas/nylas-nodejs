@@ -12,8 +12,8 @@ interface RestfulModelJSON {
 }
 
 type requestOptions = {
-  body: Record<string, any>;
-  qs: Record<string, any>;
+  body: Record<string, unknown>;
+  qs: Record<string, unknown>;
 };
 
 export default class RestfulModel extends Model {
@@ -39,7 +39,7 @@ export default class RestfulModel extends Model {
 
   static propsFromJSON(
     json: Partial<RestfulModelJSON> = {},
-    parent: any
+    parent: unknown
   ): Partial<RestfulModelJSON> {
     return super.propsFromJSON(json, parent);
   }
@@ -67,21 +67,23 @@ export default class RestfulModel extends Model {
 
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
   // fields the API allows updating. Subclasses should override this method.
-  saveRequestBody(): Record<string, any> {
+  saveRequestBody(): Record<string, unknown> {
     return this.toJSON(true);
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
-  deleteRequestQueryString(_params: Record<string, any>): Record<string, any> {
+  deleteRequestQueryString(
+    _params: Record<string, unknown>
+  ): Record<string, unknown> {
     return {};
   }
   // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody(_params: Record<string, any>): Record<string, any> {
+  deleteRequestBody(_params: Record<string, unknown>): Record<string, unknown> {
     return {};
   }
 
   // deleteRequestOptions is used by delete(). Subclasses should override this method.
-  deleteRequestOptions(params: Record<string, any>): requestOptions {
+  deleteRequestOptions(params: Record<string, unknown>): requestOptions {
     return {
       body: this.deleteRequestBody(params),
       qs: this.deleteRequestQueryString(params),
@@ -94,7 +96,7 @@ export default class RestfulModel extends Model {
   protected save(
     params: {} | SaveCallback = {},
     callback?: SaveCallback
-  ): Promise<any> {
+  ): Promise<this> {
     if (typeof params === 'function') {
       callback = params as SaveCallback;
       params = {};
