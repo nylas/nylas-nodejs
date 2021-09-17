@@ -152,7 +152,7 @@ class Nylas {
             throw new Error(errorMessage);
           }
           if (callback) {
-            callback(null, body['access_token']);
+            callback(null, body);
           }
           return body;
         },
