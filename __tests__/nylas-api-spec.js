@@ -150,7 +150,7 @@ describe('Nylas', () => {
         Nylas.exchangeCodeForToken(
           'code-from-server',
           (returnedError, accessToken) => {
-            expect(accessToken).toBe('12345');
+            expect(accessToken).toBe('{"access_token": "12345"}');
             done();
           }
         );
