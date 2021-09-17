@@ -154,7 +154,7 @@ class Nylas {
           if (callback) {
             callback(null, body['access_token']);
           }
-          return body['access_token'];
+          return body;
         },
         error => {
           const newError = new Error(error.message);
