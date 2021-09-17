@@ -2,13 +2,13 @@ import Attributes from './attributes';
 import RestfulModel from './restful-model';
 import NylasConnection from '../nylas-connection';
 
-export interface NeuralSentimentAnalysisProperties {
+export type NeuralSentimentAnalysisProperties = {
   accountId: string;
   sentiment: string;
   sentimentScore: number;
   processedLength: number;
   text: string;
-}
+};
 
 export default class NeuralSentimentAnalysis extends RestfulModel
   implements NeuralSentimentAnalysisProperties {

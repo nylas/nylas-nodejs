@@ -2,12 +2,12 @@ import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
 
-export interface JobStatusProperties {
+export type JobStatusProperties = {
   action?: string;
   createdAt?: Date;
   jobStatusId?: string;
   status?: string;
-}
+};
 
 export default class JobStatus extends RestfulModel
   implements JobStatusProperties {

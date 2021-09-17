@@ -1,7 +1,10 @@
 import Calendar from './calendar';
 import NylasConnection from '../nylas-connection';
 import RestfulModelCollection from './restful-model-collection';
-import FreeBusy from './free-busy';
+import FreeBusy, { FreeBusyProperties } from './free-busy';
+import CalendarAvailability, {
+  OpenHoursProperties,
+} from './calendar-availability';
 
 export default class CalendarRestfulModelCollection extends RestfulModelCollection<
   Calendar
@@ -21,7 +24,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       endTime: number;
       emails: string[];
     },
-    callback?: (error: Error | null, data?: { [key: string]: any }) => void
+    callback?: (error: Error | null, data?: Record<string, unknown>) => void
   ): Promise<FreeBusy[]> {
     return this.connection
       .request({
@@ -56,31 +59,13 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       emails: string[];
       duration: number;
       interval: number;
-      start_time?: string;
-      startTime?: string;
-      end_time?: string;
-      endTime?: string;
-      free_busy?: Array<{
-        emails: string;
-        object: string;
-        time_slots: Array<{
-          object: string;
-          status: string;
-          start_time: string;
-          end_time: string;
-        }>;
-      }>;
-      open_hours: Array<{
-        emails: string[];
-        days: string[];
-        timezone: string;
-        start: string;
-        end: string;
-        object_type: string;
-      }>;
+      startTime: string;
+      endTime: string;
+      freeBusy?: FreeBusyProperties[];
+      openHours?: OpenHoursProperties[];
     },
-    callback?: (error: Error | null, data?: { [key: string]: any }) => void
-  ) {
+    callback?: (error: Error | null, data?: Record<string, any>) => void
+  ): Promise<CalendarAvailability> {
     return this.connection
       .request({
         method: 'POST',
@@ -89,17 +74,17 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
           emails: options.emails,
           duration_minutes: options.duration,
           interval_minutes: options.interval,
-          start_time: options.startTime || options.start_time,
-          end_time: options.endTime || options.end_time,
-          free_busy: options.free_busy || [],
-          open_hours: options.open_hours,
+          start_time: options.startTime,
+          end_time: options.endTime,
+          free_busy: options.freeBusy || [],
+          open_hours: options.openHours || [],
         },
       })
       .then(json => {
         if (callback) {
           callback(null, json);
         }
-        return Promise.resolve(json);
+        return Promise.resolve(new CalendarAvailability().fromJSON(json));
       })
       .catch(err => {
         if (callback) {

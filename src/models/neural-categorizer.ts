@@ -3,12 +3,12 @@ import Message, { MessageProperties } from './message';
 import Model from './model';
 import NylasConnection from '../nylas-connection';
 
-export interface CategorizeProperties {
+export type CategorizeProperties = {
   category: string;
   categorizedAt: Date;
   modelVersion: string;
   subcategories: string[];
-}
+};
 
 export class Categorize extends Model implements CategorizeProperties {
   category = '';
@@ -19,15 +19,6 @@ export class Categorize extends Model implements CategorizeProperties {
   constructor(props?: CategorizeProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  toJSON() {
-    return {
-      category: this.category,
-      categorized_at: this.categorizedAt,
-      model_version: this.modelVersion,
-      subcategories: this.subcategories,
-    };
   }
 }
 
@@ -48,9 +39,9 @@ Categorize.attributes = {
   }),
 };
 
-export interface NeuralCategorizerProperties extends MessageProperties {
+export type NeuralCategorizerProperties = MessageProperties & {
   categorizer: Categorize;
-}
+};
 
 export default class NeuralCategorizer extends Message
   implements NeuralCategorizerProperties {

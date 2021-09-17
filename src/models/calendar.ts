@@ -2,8 +2,9 @@ import RestfulModel, { SaveCallback } from './restful-model';
 import { GetCallback } from './restful-model-collection';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
+import JobStatus from './job-status';
 
-export interface CalendarProperties {
+export type CalendarProperties = {
   name: string;
   description: string;
   location: string;
@@ -11,7 +12,7 @@ export interface CalendarProperties {
   readOnly?: boolean;
   isPrimary?: boolean;
   jobStatusId?: string;
-}
+};
 
 export default class Calendar extends RestfulModel
   implements CalendarProperties {
@@ -28,21 +29,11 @@ export default class Calendar extends RestfulModel
     this.initAttributes(props);
   }
 
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     return super.save(params, callback);
   }
 
-  saveRequestBody() {
-    const calendarJSON = super.saveRequestBody();
-    return {
-      name: calendarJSON.name,
-      description: calendarJSON.description,
-      location: calendarJSON.location,
-      timezone: calendarJSON.timezone,
-    };
-  }
-
-  getJobStatus(callback?: GetCallback) {
+  getJobStatus(callback?: GetCallback): Promise<JobStatus> {
     if (typeof this.jobStatusId === 'undefined') {
       const err = new Error('jobStatusId must be defined');
       if (callback) {
@@ -66,6 +57,7 @@ Calendar.attributes = {
   readOnly: Attributes.Boolean({
     modelKey: 'readOnly',
     jsonKey: 'read_only',
+    readOnly: true,
   }),
   location: Attributes.String({
     modelKey: 'location',
@@ -76,9 +68,11 @@ Calendar.attributes = {
   isPrimary: Attributes.Boolean({
     modelKey: 'isPrimary',
     jsonKey: 'is_primary',
+    readOnly: true,
   }),
   jobStatusId: Attributes.String({
     modelKey: 'jobStatusId',
     jsonKey: 'job_status_id',
+    readOnly: true,
   }),
 };

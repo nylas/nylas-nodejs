@@ -5,14 +5,14 @@ import NylasConnection from '../nylas-connection';
 
 export type SendCallback = (
   err: Error | null,
-  json?: { [key: string]: any }
+  json?: Record<string, any>
 ) => void;
 
-export interface DraftProperties extends MessageProperties {
+export type DraftProperties = MessageProperties & {
   rawMime?: string;
   replyToMessageId?: string;
   version?: number;
-}
+};
 
 export default class Draft extends Message implements DraftProperties {
   rawMime?: string;
@@ -24,7 +24,7 @@ export default class Draft extends Message implements DraftProperties {
     this.initAttributes(props);
   }
 
-  toJSON(enforceReadOnly?: boolean) {
+  toJSON(enforceReadOnly?: boolean): Record<string, any> {
     if (this.rawMime) {
       throw Error('toJSON() cannot be called for raw MIME drafts');
     }
@@ -34,7 +34,7 @@ export default class Draft extends Message implements DraftProperties {
     return json;
   }
 
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     if (this.rawMime) {
       const err = new Error('save() cannot be called for raw MIME drafts');
       if (callback) {
@@ -45,22 +45,24 @@ export default class Draft extends Message implements DraftProperties {
     return super.save(params, callback);
   }
 
-  saveRequestBody() {
+  saveRequestBody(): Record<string, unknown> {
     if (this.rawMime) {
       throw Error('saveRequestBody() cannot be called for raw MIME drafts');
     }
     return super.saveRequestBody();
   }
 
-  deleteRequestBody(params: { [key: string]: any } = {}) {
-    const body: { [key: string]: any } = {};
+  deleteRequestBody(
+    params: Record<string, unknown> = {}
+  ): Record<string, unknown> {
+    const body: Record<string, unknown> = {};
     body.version = params.hasOwnProperty('version')
       ? params.version
       : this.version;
     return body;
   }
 
-  toString() {
+  toString(): string {
     if (this.rawMime) {
       throw Error('toString() cannot be called for raw MIME drafts');
     }
@@ -68,9 +70,9 @@ export default class Draft extends Message implements DraftProperties {
   }
 
   send(
-    trackingArg?: { [key: string]: any } | SendCallback | null,
-    callbackArg?: SendCallback | { [key: string]: any } | null
-  ) {
+    trackingArg?: Record<string, any> | SendCallback | null,
+    callbackArg?: SendCallback | Record<string, any> | null
+  ): Promise<Message> {
     // callback used to be the first argument, and tracking was the second
     let callback: SendCallback | undefined;
     if (typeof callbackArg === 'function') {
@@ -78,7 +80,7 @@ export default class Draft extends Message implements DraftProperties {
     } else if (typeof trackingArg === 'function') {
       callback = trackingArg as SendCallback;
     }
-    let tracking: { [key: string]: any } | undefined;
+    let tracking: Record<string, any> | undefined;
     if (trackingArg && typeof trackingArg === 'object') {
       tracking = trackingArg;
     } else if (callbackArg && typeof callbackArg === 'object') {
@@ -86,7 +88,7 @@ export default class Draft extends Message implements DraftProperties {
     }
 
     let body: any = this.rawMime,
-      headers: { [key: string]: any } = { 'Content-Type': 'message/rfc822' },
+      headers: Record<string, string> = { 'Content-Type': 'message/rfc822' },
       json = false;
 
     if (!this.rawMime) {

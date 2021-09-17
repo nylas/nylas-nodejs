@@ -27,18 +27,18 @@ const SUPPORTED_API_VERSION = '2.2';
 export type RequestOptions = {
   path: string;
   method?: string;
-  headers?: { [key: string]: string };
-  qs?: { [key: string]: any };
+  headers?: Record<string, string>;
+  qs?: Record<string, unknown>;
   downloadRequest?: boolean;
   json?: boolean;
-  formData?: { [key: string]: FormDataType };
+  formData?: Record<string, FormDataType>;
   body?: any;
   url?: URL;
 };
 
 export type FormDataType = {
-  value: any;
-  options?: { [key: string]: any } | AppendOptions;
+  value: unknown;
+  options?: Record<string, unknown> | AppendOptions;
 };
 
 export default class NylasConnection {
@@ -114,21 +114,24 @@ export default class NylasConnection {
         } else if (key == 'metadata_pair') {
           // The API understands a metadata_pair filter in the form of:
           // <key>:<value>
-          for (const item in value) {
-            url.searchParams.set('metadata_pair', `${item}:${value[item]}`);
+          for (const item in value as Record<string, string>) {
+            url.searchParams.set(
+              'metadata_pair',
+              `${item}:${(value as Record<string, string>)[item]}`
+            );
           }
         } else if (Array.isArray(value)) {
           for (const item of value) {
             url.searchParams.append(key, item);
           }
         } else {
-          url.searchParams.set(key, value);
+          url.searchParams.set(key, value as string);
         }
       }
     }
     options.url = url;
 
-    const headers = { ...options.headers };
+    const headers: Record<string, string> = { ...options.headers };
     const user =
       options.path.substr(0, 3) === '/a/'
         ? config.clientSecret
@@ -174,7 +177,10 @@ export default class NylasConnection {
     });
   }
 
-  private getWarningForVersion(sdkApiVersion?: string, apiVersion?: string) {
+  private getWarningForVersion(
+    sdkApiVersion?: string,
+    apiVersion?: string
+  ): string {
     let warning = '';
 
     if (sdkApiVersion != apiVersion) {
@@ -197,7 +203,7 @@ export default class NylasConnection {
     return warning;
   }
 
-  request(options: RequestOptions) {
+  request(options: RequestOptions): Promise<any> {
     const req = this.newRequest(options);
     return new Promise<any>((resolve, reject) => {
       return fetch(req)
@@ -239,7 +245,7 @@ export default class NylasConnection {
                 .buffer()
                 .then(buffer => {
                   // Return an object with the headers and the body as a buffer
-                  const fileDetails: { [key: string]: any } = {};
+                  const fileDetails: Record<string, any> = {};
                   response.headers.forEach((v, k) => {
                     fileDetails[k] = v;
                   });

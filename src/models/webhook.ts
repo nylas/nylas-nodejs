@@ -3,14 +3,14 @@ import Attributes from './attributes';
 import { SaveCallback } from './restful-model';
 import NylasConnection from '../nylas-connection';
 
-export interface WebhookProperties {
+export type WebhookProperties = {
   callbackUrl: string;
   state: string;
   triggers: string[];
   id?: string;
   applicationId?: string;
   version?: string;
-}
+};
 
 export default class Webhook extends ManagementModel
   implements WebhookProperties {
@@ -30,11 +30,11 @@ export default class Webhook extends ManagementModel
     this.initAttributes(props);
   }
 
-  pathPrefix() {
+  pathPrefix(): string {
     return `/a/${this.clientId}`;
   }
-  saveRequestBody() {
-    const json: { [key: string]: any } = {};
+  saveRequestBody(): Record<string, unknown> {
+    const json: Record<string, unknown> = {};
     // We can only update the state of an existing webhook
     if (this.id) {
       json['state'] = this.state;
@@ -45,7 +45,7 @@ export default class Webhook extends ManagementModel
     }
     return json;
   }
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     return super.save(params, callback);
   }
 }

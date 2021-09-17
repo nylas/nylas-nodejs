@@ -1,13 +1,13 @@
 import Attributes from './attributes';
 import Model from './model';
 
-export interface EventConferencingDetailsProperties {
+export type EventConferencingDetailsProperties = {
   meetingCode?: string;
   phone?: string[];
   password?: string;
   pin?: string;
   url?: string;
-}
+};
 
 class EventConferencingDetails extends Model
   implements EventConferencingDetailsProperties {
@@ -20,16 +20,6 @@ class EventConferencingDetails extends Model
   constructor(props?: EventConferencingProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  toJSON() {
-    return {
-      meeting_code: this.meetingCode,
-      phone: this.phone,
-      password: this.password,
-      pin: this.pin,
-      url: this.url,
-    };
   }
 }
 
@@ -52,33 +42,25 @@ EventConferencingDetails.attributes = {
   }),
 };
 
-export interface EventConferencingProperties {
+export type EventConferencingProperties = {
   provider: string;
   details?: EventConferencingDetailsProperties;
   autocreate?: {
     settings?: object;
   };
-}
+};
 
 export class EventConferencing extends Model
   implements EventConferencingProperties {
   provider = '';
   details?: EventConferencingDetails;
   autocreate?: {
-    settings?: { [key: string]: string };
+    settings?: Record<string, string>;
   };
 
   constructor(props?: EventConferencingProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  toJSON(): any {
-    return {
-      details: this.details,
-      provider: this.provider,
-      autocreate: this.autocreate,
-    };
   }
 }
 

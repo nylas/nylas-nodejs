@@ -2,10 +2,10 @@ import Attributes from './attributes';
 import File, { FileProperties } from './file';
 import NylasConnection from '../nylas-connection';
 
-export interface NeuralOcrProperties extends FileProperties {
+export type NeuralOcrProperties = FileProperties & {
   ocr: string[];
   processedPages: number;
-}
+};
 
 export default class NeuralOcr extends File implements NeuralOcrProperties {
   ocr = [];

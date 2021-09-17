@@ -2,14 +2,14 @@ import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
 
-export interface ResourceProperties {
+export type ResourceProperties = {
   email: string;
   name: string;
   capacity: string;
   building: string;
   floorNumber: string;
   floorName?: string;
-}
+};
 
 export default class Resource extends RestfulModel {
   email = '';

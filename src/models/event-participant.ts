@@ -1,11 +1,11 @@
 import Attributes from './attributes';
 import Model from './model';
 
-export interface EventParticipantProperties {
+export type EventParticipantProperties = {
   email: string;
   name?: string;
   status?: string;
-}
+};
 
 export default class EventParticipant extends Model
   implements EventParticipantProperties {
@@ -18,8 +18,8 @@ export default class EventParticipant extends Model
     this.initAttributes(props);
   }
 
-  toJSON(enforceReadOnly?: boolean) {
-    const json = super.toJSON(enforceReadOnly);
+  toJSON(enforceReadOnly?: boolean): Record<string, string> {
+    const json = super.toJSON(enforceReadOnly) as Record<string, string>;
     if (!json['name']) {
       json['name'] = json['email'];
     }

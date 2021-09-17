@@ -7,14 +7,10 @@ const REQUEST_CHUNK_SIZE = 100;
 
 export default class ModelCollection<T extends Model> {
   connection: NylasConnection;
-  modelClass: typeof Model;
+  modelClass: any;
   path: string;
 
-  constructor(
-    modelClass: typeof Model,
-    connection: NylasConnection,
-    path: string
-  ) {
+  constructor(modelClass: any, connection: NylasConnection, path: string) {
     this.modelClass = modelClass;
     this.connection = connection;
     this.path = path;
@@ -27,7 +23,7 @@ export default class ModelCollection<T extends Model> {
   }
 
   forEach(
-    params: { [key: string]: any } = {},
+    params: Record<string, unknown> = {},
     eachCallback: (item: T) => void,
     completeCallback?: (err?: Error | null | undefined) => void
   ): void {
@@ -69,7 +65,7 @@ export default class ModelCollection<T extends Model> {
   }
 
   list(
-    params: { [key: string]: any } = {},
+    params: Record<string, unknown> = {},
     callback?: (error: Error | null, obj?: T[]) => void
   ): Promise<T[]> {
     if (params.view == 'count') {
@@ -80,15 +76,15 @@ export default class ModelCollection<T extends Model> {
       return Promise.reject(err);
     }
 
-    const limit = params.limit || Infinity;
-    const offset = params.offset;
+    const limit = (params.limit as number) || Infinity;
+    const offset = params.offset as number;
     return this.range({ params, offset, limit, callback });
   }
 
   find(
     id: string,
-    paramsArg?: { [key: string]: any } | GetCallback | null,
-    callbackArg?: GetCallback | { [key: string]: any } | null
+    paramsArg?: Record<string, unknown> | GetCallback | null,
+    callbackArg?: GetCallback | Record<string, unknown> | null
   ): Promise<T> {
     // callback used to be the second argument, and params was the third
     let callback: GetCallback | undefined;
@@ -98,7 +94,7 @@ export default class ModelCollection<T extends Model> {
       callback = paramsArg as GetCallback;
     }
 
-    let params: { [key: string]: any } = {};
+    let params: Record<string, unknown> = {};
     if (paramsArg && typeof paramsArg === 'object') {
       params = paramsArg;
     } else if (callbackArg && typeof callbackArg === 'object') {
@@ -145,7 +141,7 @@ export default class ModelCollection<T extends Model> {
     callback,
     path,
   }: {
-    params?: { [key: string]: any };
+    params?: Record<string, unknown>;
     offset?: number;
     limit?: number;
     callback?: (error: Error | null, results?: T[]) => void;
@@ -190,7 +186,7 @@ export default class ModelCollection<T extends Model> {
   }
 
   protected getItems(
-    params: { [key: string]: any },
+    params: Record<string, unknown>,
     offset: number,
     limit: number,
     path?: string
@@ -212,13 +208,13 @@ export default class ModelCollection<T extends Model> {
     return this.getModelCollection(params, offset, limit, path);
   }
 
-  protected createModel(json: { [key: string]: any }): T {
+  protected createModel(json: Record<string, unknown>): T {
     return new this.modelClass().fromJSON(json) as T;
   }
 
   private getModel(
     id: string,
-    params: { [key: string]: any } = {}
+    params: Record<string, unknown> = {}
   ): Promise<T> {
     return this.connection
       .request({
@@ -226,14 +222,14 @@ export default class ModelCollection<T extends Model> {
         path: `${this.path}/${id}`,
         qs: params,
       })
-      .then((json: any) => {
+      .then(json => {
         const model = this.createModel(json);
         return Promise.resolve(model);
       });
   }
 
   private getModelCollection(
-    params: { [key: string]: any },
+    params: Record<string, unknown>,
     offset: number,
     limit: number,
     path: string
@@ -244,8 +240,8 @@ export default class ModelCollection<T extends Model> {
         path,
         qs: { ...params, offset, limit },
       })
-      .then((jsonArray: any) => {
-        const models = jsonArray.map((json: any) => {
+      .then((jsonArray: []) => {
+        const models = jsonArray.map(json => {
           return this.createModel(json);
         });
         return Promise.resolve(models);

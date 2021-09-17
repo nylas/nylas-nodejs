@@ -11,6 +11,11 @@ interface RestfulModelJSON {
   [key: string]: any;
 }
 
+type requestOptions = {
+  body: Record<string, unknown>;
+  qs: Record<string, unknown>;
+};
+
 export default class RestfulModel extends Model {
   static endpointName = ''; // overrridden in subclasses
   static collectionName = ''; // overrridden in subclasses
@@ -34,7 +39,7 @@ export default class RestfulModel extends Model {
 
   static propsFromJSON(
     json: Partial<RestfulModelJSON> = {},
-    parent: any
+    parent: unknown
   ): Partial<RestfulModelJSON> {
     return super.propsFromJSON(json, parent);
   }
@@ -62,21 +67,23 @@ export default class RestfulModel extends Model {
 
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
   // fields the API allows updating. Subclasses should override this method.
-  saveRequestBody(): any {
+  saveRequestBody(): Record<string, unknown> {
     return this.toJSON(true);
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
-  deleteRequestQueryString(_params: { [key: string]: any }): any {
+  deleteRequestQueryString(
+    _params: Record<string, unknown>
+  ): Record<string, unknown> {
     return {};
   }
   // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody(_params: { [key: string]: any }): any {
+  deleteRequestBody(_params: Record<string, unknown>): Record<string, unknown> {
     return {};
   }
 
   // deleteRequestOptions is used by delete(). Subclasses should override this method.
-  deleteRequestOptions(params: { [key: string]: any }): any {
+  deleteRequestOptions(params: Record<string, unknown>): requestOptions {
     return {
       body: this.deleteRequestBody(params),
       qs: this.deleteRequestQueryString(params),
@@ -104,11 +111,11 @@ export default class RestfulModel extends Model {
           : `${this.saveEndpoint()}`,
       })
       .then(json => {
-        this.fromJSON(json as RestfulModelJSON);
+        const newModel = this.fromJSON(json as RestfulModelJSON);
         if (callback) {
           callback(null, this);
         }
-        return Promise.resolve(this);
+        return Promise.resolve(newModel);
       })
       .catch(err => {
         if (callback) {
@@ -119,7 +126,7 @@ export default class RestfulModel extends Model {
   }
 
   protected get(
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     callback?: (error: Error | null, result?: any) => void,
     pathSuffix = ''
   ): Promise<any> {

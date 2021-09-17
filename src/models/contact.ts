@@ -1,12 +1,12 @@
-import RestfulModel, { SaveCallback } from './restful-model';
+import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import Model from './model';
 import NylasConnection from '../nylas-connection';
 
-export interface EmailAddressProperties {
+export type EmailAddressProperties = {
   type: string;
   email: string;
-}
+};
 
 export class EmailAddress extends Model implements EmailAddressProperties {
   type = '';
@@ -15,14 +15,6 @@ export class EmailAddress extends Model implements EmailAddressProperties {
   constructor(props?: EmailAddressProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  // TODO::Can probably remove toJSONs in classes that extend Model
-  toJSON() {
-    return {
-      type: this.type,
-      email: this.email,
-    };
   }
 }
 
@@ -35,11 +27,10 @@ EmailAddress.attributes = {
   }),
 };
 
-// eslint-disable-next-line @typescript-eslint/interface-name-prefix
-export interface IMAddressProperties {
+export type IMAddressProperties = {
   type: string;
   imAddress: string;
-}
+};
 
 export class IMAddress extends Model implements IMAddressProperties {
   type = '';
@@ -48,13 +39,6 @@ export class IMAddress extends Model implements IMAddressProperties {
   constructor(props?: IMAddressProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  toJSON() {
-    return {
-      type: this.type,
-      im_address: this.imAddress,
-    };
   }
 }
 
@@ -68,8 +52,7 @@ IMAddress.attributes = {
   }),
 };
 
-// TODO::Check if "address" is deprecated
-export interface PhysicalAddressProperties {
+export type PhysicalAddressProperties = {
   type: string;
   format: string;
   streetAddress: string;
@@ -78,7 +61,7 @@ export interface PhysicalAddressProperties {
   state: string;
   country: string;
   address?: string;
-}
+};
 
 class PhysicalAddress extends Model implements PhysicalAddressProperties {
   type = '';
@@ -95,8 +78,8 @@ class PhysicalAddress extends Model implements PhysicalAddressProperties {
     this.initAttributes(props);
   }
 
-  toJSON() {
-    const json: { [key: string]: any } = {
+  toJSON(): Record<string, string> {
+    const json: Record<string, string> = {
       type: this.type,
       format: this.format,
     };
@@ -142,10 +125,10 @@ PhysicalAddress.attributes = {
   }),
 };
 
-export interface PhoneNumberProperties {
+export type PhoneNumberProperties = {
   type: string;
   number: string;
-}
+};
 
 export class PhoneNumber extends Model implements PhoneNumberProperties {
   type = '';
@@ -154,13 +137,6 @@ export class PhoneNumber extends Model implements PhoneNumberProperties {
   constructor(props?: PhoneNumberProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  toJSON() {
-    return {
-      type: this.type,
-      number: this.number,
-    };
   }
 }
 
@@ -173,10 +149,10 @@ PhoneNumber.attributes = {
   }),
 };
 
-export interface WebPageProperties {
+export type WebPageProperties = {
   type: string;
   url: string;
-}
+};
 
 export class WebPage extends Model implements WebPageProperties {
   type = '';
@@ -185,14 +161,6 @@ export class WebPage extends Model implements WebPageProperties {
   constructor(props?: WebPageProperties) {
     super();
     this.initAttributes(props);
-  }
-
-  toJSON() {
-    const json = {
-      type: this.type,
-      url: this.url,
-    };
-    return json;
   }
 }
 
@@ -205,13 +173,13 @@ WebPage.attributes = {
   }),
 };
 
-export interface GroupProperties {
+export type GroupProperties = {
   name: string;
   path: string;
   id?: string;
   accountId?: string;
   object?: string;
-}
+};
 
 export class Group extends Model implements GroupProperties {
   name = '';
@@ -248,7 +216,7 @@ Group.attributes = {
   }),
 };
 
-export interface ContactProperties {
+export type ContactProperties = {
   givenName?: string;
   middleName?: string;
   surname?: string;
@@ -267,7 +235,7 @@ export interface ContactProperties {
   webPages?: WebPageProperties[];
   groups?: GroupProperties[];
   source?: string;
-}
+};
 
 export class Contact extends RestfulModel implements ContactProperties {
   givenName?: string;
@@ -294,14 +262,10 @@ export class Contact extends RestfulModel implements ContactProperties {
     this.initAttributes(props);
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return super.save(params, callback);
-  }
-
   getPicture(
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     callback?: (error: Error | null, result?: any) => void
-  ) {
+  ): any {
     return this.get(params, callback, '/picture');
   }
 }

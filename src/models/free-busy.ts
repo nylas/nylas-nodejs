@@ -1,14 +1,13 @@
 import Model from './model';
 import Attributes from './attributes';
 
-interface TimeSlotProperties {
-  object: string;
+export type TimeSlotProperties = {
   status: string;
   startTime: number;
   endTime: number;
-}
+};
 
-class TimeSlot extends Model implements TimeSlotProperties {
+export class TimeSlot extends Model implements TimeSlotProperties {
   object = 'time_slot';
   status = '';
   startTime = 0;
@@ -36,16 +35,15 @@ TimeSlot.attributes = {
   }),
 };
 
-interface FreeBusyProperties {
-  object: string;
+export type FreeBusyProperties = {
   email: string;
   timeSlots: TimeSlotProperties[];
-}
+};
 
 export default class FreeBusy extends Model implements FreeBusyProperties {
   object = 'free_busy';
   email = '';
-  timeSlots = [];
+  timeSlots: TimeSlot[] = [];
 
   constructor(props?: FreeBusyProperties) {
     super();

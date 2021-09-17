@@ -2,10 +2,10 @@ import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
 
-export interface FolderProperties {
+export type FolderProperties = {
   displayName?: string;
   name?: string;
-}
+};
 
 export class Folder extends RestfulModel implements FolderProperties {
   displayName?: string;
@@ -16,14 +16,7 @@ export class Folder extends RestfulModel implements FolderProperties {
     this.initAttributes(props);
   }
 
-  saveRequestBody() {
-    const json: { [key: string]: any } = {};
-    json['display_name'] = this.displayName;
-    json['name'] = this.name;
-    return json;
-  }
-
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     return super.save(params, callback);
   }
 }
@@ -45,7 +38,7 @@ export class Label extends Folder {
     super(connection, props);
   }
 
-  saveRequestBody() {
+  saveRequestBody(): Record<string, any> {
     return { display_name: this.displayName };
   }
 }

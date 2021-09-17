@@ -2,15 +2,15 @@ import Attributes from './attributes';
 import RestfulModel from './restful-model';
 import NylasConnection from '../nylas-connection';
 
-export interface FileProperties {
+export type FileProperties = {
   contentType?: string;
   size?: number;
   filename?: string;
   messageIds?: string[];
   contentId?: string;
   contentDisposition?: string;
-  data?: any;
-}
+  data?: unknown;
+};
 
 export default class File extends RestfulModel implements FileProperties {
   contentType?: string;
@@ -19,14 +19,16 @@ export default class File extends RestfulModel implements FileProperties {
   messageIds?: string[];
   contentId?: string;
   contentDisposition?: string;
-  data?: any;
+  data?: unknown;
 
   constructor(connection: NylasConnection, props?: FileProperties) {
     super(connection, props);
     this.initAttributes(props);
   }
 
-  upload(callback?: (error: Error | null, model?: File) => void) {
+  upload(
+    callback?: (error: Error | null, model?: File) => void
+  ): Promise<File> {
     if (!this.filename) {
       throw new Error('Please define a filename');
     }
@@ -37,7 +39,7 @@ export default class File extends RestfulModel implements FileProperties {
       throw new Error('Please define a content-type');
     }
 
-    const formOptions: { [key: string]: any } = {
+    const formOptions: Record<string, any> = {
       filename: this.filename,
       contentType: this.contentType,
     };
@@ -85,7 +87,7 @@ export default class File extends RestfulModel implements FileProperties {
       error: Error | null,
       file?: { body: any; [key: string]: any }
     ) => void
-  ) {
+  ): Promise<any> {
     if (!this.id) {
       throw new Error('Please provide a File id');
     }
@@ -109,8 +111,9 @@ export default class File extends RestfulModel implements FileProperties {
       });
   }
 
+  //TODO::Probably deprecate this? All it does is call /files/{id}
   metadata(
-    callback?: (error: Error | null, data?: { [key: string]: any }) => void
+    callback?: (error: Error | null, data?: Record<string, any>) => void
   ) {
     return this.connection
       .request({

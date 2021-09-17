@@ -8,7 +8,7 @@ import EmailParticipant, {
 import { Label, Folder, FolderProperties } from './folder';
 import NylasConnection from '../nylas-connection';
 
-export interface MessageProperties {
+export type MessageProperties = {
   to: EmailParticipantProperties[];
   subject?: string;
   from?: EmailParticipantProperties[];
@@ -25,9 +25,8 @@ export interface MessageProperties {
   events?: EventProperties[];
   folder?: Folder;
   labels?: FolderProperties[];
-  headers?: { [key: string]: string };
-  failures?: any;
-}
+  headers?: Record<string, string>;
+};
 
 export default class Message extends RestfulModel implements MessageProperties {
   to = [];
@@ -46,8 +45,7 @@ export default class Message extends RestfulModel implements MessageProperties {
   events?: Event[];
   folder?: Folder;
   labels?: Label[];
-  headers?: { [key: string]: string };
-  failures?: any;
+  headers?: Record<string, string>;
 
   constructor(connection: NylasConnection, props?: MessageProperties) {
     super(connection, props);
@@ -57,8 +55,8 @@ export default class Message extends RestfulModel implements MessageProperties {
   // We calculate the list of participants instead of grabbing it from
   // a parent because it is a better source of ground truth, and saves us
   // from more dependencies.
-  participants() {
-    const participants: { [key: string]: EmailParticipant } = {};
+  participants(): EmailParticipant[] {
+    const participants: Record<string, EmailParticipant> = {};
     const to = this.to || [];
     const cc = this.cc || [];
     const from = this.from || [];
@@ -75,11 +73,11 @@ export default class Message extends RestfulModel implements MessageProperties {
     return Object.values(participants);
   }
 
-  fileIds() {
+  fileIds(): (string | undefined)[] {
     return this.files ? this.files.map(file => file.id) : [];
   }
 
-  getRaw() {
+  getRaw(): Promise<string> {
     return this.connection
       .request({
         method: 'GET',
@@ -91,14 +89,14 @@ export default class Message extends RestfulModel implements MessageProperties {
       .catch(err => Promise.reject(err));
   }
 
-  saveRequestBody() {
+  saveRequestBody(): Record<string, unknown> {
     // It's possible to update most of the fields of a draft.
     if (this.constructor.name === 'Draft') {
       return super.saveRequestBody();
     }
 
     // Messages are more limited, though.
-    const json: { [key: string]: any } = {};
+    const json: Record<string, unknown> = {};
     if (this.labels) {
       json['label_ids'] = Array.from(this.labels).map(label => label.id);
     } else if (this.folder) {
@@ -108,10 +106,6 @@ export default class Message extends RestfulModel implements MessageProperties {
     json['starred'] = this.starred;
     json['unread'] = this.unread;
     return json;
-  }
-
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return super.save(params, callback);
   }
 }
 Message.collectionName = 'messages';

@@ -3,13 +3,13 @@ import { Attribute } from './attributes';
 export type SaveCallback = (error: Error | null, result?: any) => void;
 
 export default class Model {
-  static attributes: { [key: string]: Attribute };
+  static attributes: Record<string, Attribute>;
 
   static propsFromJSON(
-    json: { [key: string]: any },
-    parent: any
-  ): { [key: string]: any } {
-    const props: { [key: string]: any } = {};
+    json: Record<string, unknown>,
+    parent: unknown
+  ): Record<string, unknown> {
+    const props: Record<string, unknown> = {};
     for (const attrName in this.attributes) {
       const attr = this.attributes[attrName];
       if (json[attr.jsonKey] !== undefined) {
@@ -19,12 +19,12 @@ export default class Model {
     return props;
   }
 
-  attributes(): { [key: string]: Attribute } {
+  attributes(): Record<string, Attribute> {
     return (this.constructor as any).attributes;
   }
 
   //TODO::Maybe come up with a better name?
-  initAttributes(props?: { [key: string]: any }): void {
+  initAttributes(props?: Record<string, unknown>): void {
     const attributes = this.attributes();
     for (const prop in props) {
       if (props.hasOwnProperty(prop)) {
@@ -36,7 +36,7 @@ export default class Model {
     }
   }
 
-  fromJSON(json?: any): this {
+  fromJSON(json: Record<string, unknown>): this {
     const attributes = this.attributes();
     for (const attrName in attributes) {
       const attr = attributes[attrName];
@@ -47,8 +47,8 @@ export default class Model {
     return this;
   }
 
-  toJSON(enforceReadOnly?: boolean): any {
-    const json: any = {};
+  toJSON(enforceReadOnly?: boolean): Record<string, unknown> {
+    const json: Record<string, unknown> = {};
     const attributes = this.attributes();
     for (const attrName in attributes) {
       if (!enforceReadOnly || !attributes[attrName].readOnly) {

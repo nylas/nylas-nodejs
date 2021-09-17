@@ -10,7 +10,7 @@ import {
 import When, { WhenProperties } from './when';
 import NylasConnection from '../nylas-connection';
 
-export interface EventProperties {
+export type EventProperties = {
   calendarId: string;
   when: WhenProperties;
   iCalUID?: string;
@@ -32,7 +32,7 @@ export interface EventProperties {
   conferencing?: EventConferencingProperties;
   metadata?: object;
   jobStatusId?: string;
-}
+};
 
 export default class Event extends RestfulModel {
   calendarId = '';
@@ -136,15 +136,17 @@ export default class Event extends RestfulModel {
     }
   }
 
-  deleteRequestQueryString(params: { [key: string]: any } = {}) {
-    const qs: { [key: string]: any } = {};
+  deleteRequestQueryString(
+    params: Record<string, unknown> = {}
+  ): Record<string, unknown> {
+    const qs: Record<string, unknown> = {};
     if (params.hasOwnProperty('notify_participants')) {
       qs.notify_participants = params.notify_participants;
     }
     return qs;
   }
 
-  protected save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     if (
       this.conferencing &&
       this.conferencing.details &&
@@ -163,7 +165,7 @@ export default class Event extends RestfulModel {
     status: string,
     comment: string,
     callback?: (error: Error | null, data?: Event) => void
-  ) {
+  ): Promise<Event> {
     return this.connection
       .request({
         method: 'POST',

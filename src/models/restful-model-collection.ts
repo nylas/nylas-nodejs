@@ -18,7 +18,7 @@ export default class RestfulModelCollection<
   }
 
   count(
-    params: { [key: string]: any } = {},
+    params: Record<string, unknown> = {},
     callback?: (err: Error | null, num?: number) => void
   ): Promise<number> {
     return this.connection
@@ -42,7 +42,7 @@ export default class RestfulModelCollection<
   }
 
   first(
-    params: { [key: string]: any } = {},
+    params: Record<string, unknown> = {},
     callback?: (error: Error | null, model?: T) => void
   ): Promise<T> {
     if (params.view == 'count') {
@@ -70,7 +70,7 @@ export default class RestfulModelCollection<
 
   search(
     query: string,
-    params: { [key: string]: any } = {},
+    params: Record<string, unknown> = {},
     callback?: (error: Error | null) => void
   ): Promise<T[]> {
     if (this.modelClass != Message && this.modelClass != Thread) {
@@ -92,8 +92,8 @@ export default class RestfulModelCollection<
     }
 
     params.q = query;
-    const limit = params.limit || 40;
-    const offset = params.offset;
+    const limit = (params.limit as number) || 40;
+    const offset = params.offset as number;
     const path = `${this.path}/search`;
 
     return this.range({ params, offset, limit, path });
@@ -101,7 +101,7 @@ export default class RestfulModelCollection<
 
   delete(
     itemOrId: T | string,
-    params: { [key: string]: any } = {},
+    params: Record<string, unknown> = {},
     callback?: (error: Error | null) => void
   ): any {
     if (!itemOrId) {
@@ -120,14 +120,14 @@ export default class RestfulModelCollection<
     const item =
       typeof itemOrId === 'string' ? this.build({ id: itemOrId }) : itemOrId;
 
-    const options: { [key: string]: any } = item.deleteRequestOptions(params);
+    const options: Record<string, any> = item.deleteRequestOptions(params);
     options.item = item;
 
     return this.deleteItem(options, callback);
   }
 
   deleteItem(
-    options: { [key: string]: any },
+    options: Record<string, any>,
     callbackArg?: (error: Error | null) => void
   ): any {
     const item = options.item;
@@ -161,16 +161,15 @@ export default class RestfulModelCollection<
       });
   }
 
-  protected build(args: { [key: string]: any }): T {
+  protected build(args: Record<string, unknown>): T {
     const model = this.createModel({});
     for (const key in args) {
-      const val = args[key];
-      (model as any)[key] = val;
+      (model as any)[key] = args[key];
     }
     return model;
   }
 
-  protected createModel(json: { [key: string]: any }): T {
+  protected createModel(json: Record<string, unknown>): T {
     return new this.modelClass(this.connection).fromJSON(json) as T;
   }
 }

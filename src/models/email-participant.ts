@@ -1,10 +1,10 @@
 import Attributes from './attributes';
 import Model from './model';
 
-export interface EmailParticipantProperties {
+export type EmailParticipantProperties = {
   email: string;
   name?: string;
-}
+};
 
 export default class EmailParticipant extends Model
   implements EmailParticipantProperties {
@@ -16,7 +16,7 @@ export default class EmailParticipant extends Model
     this.initAttributes(props);
   }
 
-  toJSON(): EmailParticipantProperties {
+  toJSON(): Record<string, unknown> {
     const json = super.toJSON();
     if (!json['name']) {
       json['name'] = json['email'];
