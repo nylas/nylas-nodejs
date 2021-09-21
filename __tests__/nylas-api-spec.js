@@ -109,7 +109,7 @@ describe('Nylas', () => {
 
     test('should resolve with the returned access_token', async () => {
       const accessToken = await Nylas.exchangeCodeForToken('code-from-server');
-      expect(accessToken).toEqual({ access_token: 12345 });
+      expect(accessToken).toEqual({ access_token: "12345" });
     });
 
     test('should reject with the request error', async () => {
