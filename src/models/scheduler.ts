@@ -81,8 +81,8 @@ export default class Scheduler extends RestfulModel {
   modifiedAt?: Date;
 
   getAvailableCalendars(): Record<string, any> {
-    if(!this.id) {
-      throw new Error("Cannot get calendars for a page without an ID.");
+    if (!this.id) {
+      throw new Error('Cannot get calendars for a page without an ID.');
     }
     return this.connection.request({
       method: 'GET',
@@ -94,8 +94,8 @@ export default class Scheduler extends RestfulModel {
   }
 
   uploadImage(contentType: string, objectName: string): Record<string, any> {
-    if(!this.id) {
-      throw new Error("Cannot upload an image to a page without an ID.");
+    if (!this.id) {
+      throw new Error('Cannot upload an image to a page without an ID.');
     }
     return this.connection.request({
       method: 'PUT',
@@ -151,4 +151,4 @@ Scheduler.attributes = {
     jsonKey: 'modified_at',
     readOnly: true,
   }),
-}
+};
