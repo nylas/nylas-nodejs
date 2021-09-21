@@ -79,6 +79,36 @@ export default class Scheduler extends RestfulModel {
   slug?: string;
   createdAt?: Date;
   modifiedAt?: Date;
+
+  getAvailableCalendars(): Record<string, any> {
+    if(!this.id) {
+      throw new Error("Cannot get calendars for a page without an ID.");
+    }
+    return this.connection.request({
+      method: 'GET',
+      path: `/manage/pages/${this.id}/calendars`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+
+  uploadImage(contentType: string, objectName: string): Record<string, any> {
+    if(!this.id) {
+      throw new Error("Cannot upload an image to a page without an ID.");
+    }
+    return this.connection.request({
+      method: 'PUT',
+      path: `/manage/pages/${this.id}/upload-image`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        contentType: contentType,
+        objectName: objectName,
+      },
+    });
+  }
 }
 Scheduler.collectionName = 'manage/pages';
 Scheduler.attributes = {
