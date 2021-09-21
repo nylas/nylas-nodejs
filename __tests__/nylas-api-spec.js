@@ -145,12 +145,12 @@ describe('Nylas', () => {
     describe('when provided an optional callback', () => {
       test('should call it with the returned access_token', done => {
         fetch.mockImplementation(() =>
-          Promise.resolve(new Response('{"access_token":"12345"}'))
+          Promise.resolve(new Response('{"access_token": "12345"}'))
         );
         Nylas.exchangeCodeForToken(
           'code-from-server',
           (returnedError, accessToken) => {
-            expect(accessToken).toBe({ access_token: '12345' });
+            expect(accessToken).toStrictEqual({ access_token: '12345' });
             done();
           }
         );
