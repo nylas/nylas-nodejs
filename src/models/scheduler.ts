@@ -1,5 +1,6 @@
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
+import NylasConnection from '../nylas-connection';
 
 export default class Scheduler extends RestfulModel {
   accessTokens?: string[];
@@ -79,6 +80,15 @@ export default class Scheduler extends RestfulModel {
   slug?: string;
   createdAt?: Date;
   modifiedAt?: Date;
+
+  constructor(connection: NylasConnection, json?: Record<string, any>) {
+    super(connection, json);
+    connection.baseUrl = "https://api.schedule.nylas.com";
+  }
+
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+    return this._save(params, callback);
+  }
 
   getAvailableCalendars(): Record<string, any> {
     if (!this.id) {
