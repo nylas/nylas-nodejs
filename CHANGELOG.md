@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add Scheduler support
+
 ### 5.8.0 / 2021-09-16
 * Add support for consecutive availability
 * Fix issue where JSON.stringify would omit read-only values
