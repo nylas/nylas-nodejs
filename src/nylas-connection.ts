@@ -19,6 +19,7 @@ import { Folder, Label } from './models/folder';
 import FormData, { AppendOptions } from 'form-data';
 import Neural from './models/neural';
 import NylasApiError from './models/nylas-api-error';
+import ComponentRestfulModelCollection from './models/component-restful-model-collection';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -87,6 +88,9 @@ export default class NylasConnection {
   );
   account: RestfulModelInstance<Account> = new RestfulModelInstance(
     Account,
+    this
+  );
+  conponent: ComponentRestfulModelCollection = new ComponentRestfulModelCollection(
     this
   );
 
