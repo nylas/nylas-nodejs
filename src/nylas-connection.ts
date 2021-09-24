@@ -134,7 +134,7 @@ export default class NylasConnection {
 
     const headers = { ...options.headers };
     const user =
-      options.path.substr(0, 3) === '/a/'
+      options.path.substr(0, 3) === '/a/' || options.path.includes('/component')
         ? config.clientSecret
         : this.accessToken;
     if (user) {
