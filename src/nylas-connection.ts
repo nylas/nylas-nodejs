@@ -19,6 +19,7 @@ import { Folder, Label } from './models/folder';
 import FormData, { AppendOptions } from 'form-data';
 import Neural from './models/neural';
 import NylasApiError from './models/nylas-api-error';
+import ComponentRestfulModelCollection from './models/component-restful-model-collection';
 import Scheduler from './models/scheduler';
 
 const PACKAGE_JSON = require('../package.json');
@@ -92,6 +93,9 @@ export default class NylasConnection {
     Account,
     this
   );
+  component: ComponentRestfulModelCollection = new ComponentRestfulModelCollection(
+    this
+  );
   scheduler: RestfulModelCollection<Scheduler> = new RestfulModelCollection(
     Scheduler,
     this
@@ -138,7 +142,7 @@ export default class NylasConnection {
 
     const headers = { ...options.headers };
     const user =
-      options.path.substr(0, 3) === '/a/'
+      options.path.substr(0, 3) === '/a/' || options.path.includes('/component')
         ? config.clientSecret
         : this.accessToken;
     if (user) {

@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Add Component CRUD Support
 * Add Scheduler support
 
 ### 5.8.0 / 2021-09-16
