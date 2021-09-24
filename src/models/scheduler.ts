@@ -83,7 +83,7 @@ export default class Scheduler extends RestfulModel {
 
   constructor(connection: NylasConnection, json?: Record<string, any>) {
     super(connection, json);
-    connection.baseUrl = "https://api.schedule.nylas.com";
+    connection.baseUrl = 'https://api.schedule.nylas.com';
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
