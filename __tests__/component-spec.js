@@ -123,10 +123,9 @@ describe('Component', () => {
       const response = req => {
         return {
           status: 200,
-          text: () => {
-          },
+          text: () => {},
           json: () => {
-            if(!req.url.includes("abc-123")) {
+            if (!req.url.includes('abc-123')) {
               return Promise.resolve([componentJSON]);
             }
             return Promise.resolve(componentJSON);
@@ -170,33 +169,33 @@ describe('Component', () => {
     });
 
     test('should do a GET request to the correct URL when requesting a specific component', done => {
-      return testContext.connection.component.find("abc-123").then(component => {
-        const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/component/myClientId/abc-123'
-        );
-        expect(options.method).toEqual('GET');
-        expect(component.id).toEqual('abc-123');
-        expect(component.accountId).toEqual('account-123');
-        expect(component.name).toEqual('test-component');
-        expect(component.type).toEqual('agenda');
-        expect(component.action).toBe(0);
-        expect(component.active).toBe(true);
-        expect(component.settings).toEqual({});
-        expect(component.allowedDomains).toEqual([]);
-        expect(component.publicAccountId).toEqual(['account-123']);
-        expect(component.publicTokenId).toEqual(['token-123']);
-        expect(component.publicApplicationId).toEqual([
-          'application-123',
-        ]);
-        expect(component.createdAt).toEqual(
-          new Date('2021-08-24T15:05:48.000Z')
-        );
-        expect(component.updatedAt).toEqual(
-          new Date('2021-08-24T15:05:48.000Z')
-        );
-        done();
-      });
+      return testContext.connection.component
+        .find('abc-123')
+        .then(component => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/component/myClientId/abc-123'
+          );
+          expect(options.method).toEqual('GET');
+          expect(component.id).toEqual('abc-123');
+          expect(component.accountId).toEqual('account-123');
+          expect(component.name).toEqual('test-component');
+          expect(component.type).toEqual('agenda');
+          expect(component.action).toBe(0);
+          expect(component.active).toBe(true);
+          expect(component.settings).toEqual({});
+          expect(component.allowedDomains).toEqual([]);
+          expect(component.publicAccountId).toEqual(['account-123']);
+          expect(component.publicTokenId).toEqual(['token-123']);
+          expect(component.publicApplicationId).toEqual(['application-123']);
+          expect(component.createdAt).toEqual(
+            new Date('2021-08-24T15:05:48.000Z')
+          );
+          expect(component.updatedAt).toEqual(
+            new Date('2021-08-24T15:05:48.000Z')
+          );
+          done();
+        });
     });
   });
 
