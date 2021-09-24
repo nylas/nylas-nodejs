@@ -1,7 +1,6 @@
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import fetch from 'node-fetch';
-import Message from '../src/models/message';
 import Scheduler from '../src/models/scheduler';
 
 jest.mock('node-fetch', () => {
