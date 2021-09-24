@@ -15,7 +15,7 @@ export default class Component extends RestfulModel {
   updatedAt?: Date;
 
   saveEndpoint(): string {
-    return `/component/${this.connection.clientId}`
+    return `/component/${this.connection.clientId}`;
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
@@ -64,4 +64,4 @@ Component.attributes = {
     modelKey: 'updatedAt',
     jsonKey: 'updated_at',
   }),
-}
+};

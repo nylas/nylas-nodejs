@@ -21,24 +21,26 @@ describe('Component', () => {
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = new NylasConnection('123', { clientId: 'myClientId' });
+    testContext.connection = new NylasConnection('123', {
+      clientId: 'myClientId',
+    });
     jest.spyOn(testContext.connection, 'request');
 
     const componentJSON = {
-      id: "abc-123",
-      account_id: "account-123",
-      name: "test-component",
-      type: "agenda",
+      id: 'abc-123',
+      account_id: 'account-123',
+      name: 'test-component',
+      type: 'agenda',
       action: 0,
       active: true,
       settings: {},
       allowed_domains: [],
-      public_account_id: ["account-123"],
-      public_token_id: ["token-123"],
-      public_application_id: ["application-123"],
-      created_at: "2021-08-24T15:05:48.000Z",
-      updated_at: "2021-08-24T15:05:48.000Z",
-    }
+      public_account_id: ['account-123'],
+      public_token_id: ['token-123'],
+      public_application_id: ['application-123'],
+      created_at: '2021-08-24T15:05:48.000Z',
+      updated_at: '2021-08-24T15:05:48.000Z',
+    };
 
     const response = receivedBody => {
       return {
@@ -47,7 +49,7 @@ describe('Component', () => {
           return Promise.resolve(receivedBody);
         },
         json: () => {
-          if(!receivedBody) {
+          if (!receivedBody) {
             return Promise.resolve([componentJSON]);
           }
           return Promise.resolve(receivedBody);
@@ -65,7 +67,9 @@ describe('Component', () => {
       testContext.component.id = undefined;
       return testContext.component.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/component/myClientId');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/component/myClientId'
+        );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           id: undefined,
@@ -88,11 +92,13 @@ describe('Component', () => {
     });
 
     test('should do a PUT request if the component has an id', done => {
-      testContext.component.id = "abc-123";
-      testContext.component.allowedDomains = ["www.nylas.com"];
+      testContext.component.id = 'abc-123';
+      testContext.component.allowedDomains = ['www.nylas.com'];
       return testContext.component.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/component/myClientId/abc-123');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/component/myClientId/abc-123'
+        );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
           id: undefined,
@@ -103,7 +109,7 @@ describe('Component', () => {
           action: undefined,
           active: undefined,
           settings: undefined,
-          allowed_domains: ["www.nylas.com"],
+          allowed_domains: ['www.nylas.com'],
           public_account_id: undefined,
           public_token_id: undefined,
           public_application_id: undefined,
@@ -119,22 +125,30 @@ describe('Component', () => {
     test('should do a GET request to the correct URL when requesting all components', done => {
       return testContext.connection.conponent.list().then(componentList => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/component/myClientId?offset=0&limit=100');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/component/myClientId?offset=0&limit=100'
+        );
         expect(options.method).toEqual('GET');
         expect(componentList.length).toBe(1);
-        expect(componentList[0].id).toEqual("abc-123");
-        expect(componentList[0].accountId).toEqual("account-123");
-        expect(componentList[0].name).toEqual("test-component");
-        expect(componentList[0].type).toEqual("agenda");
+        expect(componentList[0].id).toEqual('abc-123');
+        expect(componentList[0].accountId).toEqual('account-123');
+        expect(componentList[0].name).toEqual('test-component');
+        expect(componentList[0].type).toEqual('agenda');
         expect(componentList[0].action).toBe(0);
         expect(componentList[0].active).toBe(true);
         expect(componentList[0].settings).toEqual({});
         expect(componentList[0].allowedDomains).toEqual([]);
-        expect(componentList[0].publicAccountId).toEqual(["account-123"]);
-        expect(componentList[0].publicTokenId).toEqual(["token-123"]);
-        expect(componentList[0].publicApplicationId).toEqual(["application-123"]);
-        expect(componentList[0].createdAt).toEqual(new Date("2021-08-24T15:05:48.000Z"));
-        expect(componentList[0].updatedAt).toEqual(new Date("2021-08-24T15:05:48.000Z"));
+        expect(componentList[0].publicAccountId).toEqual(['account-123']);
+        expect(componentList[0].publicTokenId).toEqual(['token-123']);
+        expect(componentList[0].publicApplicationId).toEqual([
+          'application-123',
+        ]);
+        expect(componentList[0].createdAt).toEqual(
+          new Date('2021-08-24T15:05:48.000Z')
+        );
+        expect(componentList[0].updatedAt).toEqual(
+          new Date('2021-08-24T15:05:48.000Z')
+        );
         done();
       });
     });
@@ -142,9 +156,11 @@ describe('Component', () => {
 
   describe('delete', () => {
     test('should do a DELETE request to the correct URL when deleting a', done => {
-      return testContext.connection.conponent.delete("abc-123").then(() => {
+      return testContext.connection.conponent.delete('abc-123').then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/component/myClientId/abc-123');
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/component/myClientId/abc-123'
+        );
         expect(options.method).toEqual('DELETE');
         done();
       });

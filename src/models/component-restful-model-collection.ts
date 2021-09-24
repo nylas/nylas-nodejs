@@ -4,7 +4,7 @@ import Component from './component';
 
 export default class ComponentRestfulModelCollection extends RestfulModelCollection<
   Component
-  > {
+> {
   connection: NylasConnection;
   modelClass: typeof Component;
 
