@@ -123,7 +123,7 @@ describe('Component', () => {
 
   describe('fetching', () => {
     test('should do a GET request to the correct URL when requesting all components', done => {
-      return testContext.connection.conponent.list().then(componentList => {
+      return testContext.connection.component.list().then(componentList => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
           'https://api.nylas.com/component/myClientId?offset=0&limit=100'
@@ -156,7 +156,7 @@ describe('Component', () => {
 
   describe('delete', () => {
     test('should do a DELETE request to the correct URL when deleting a', done => {
-      return testContext.connection.conponent.delete('abc-123').then(() => {
+      return testContext.connection.component.delete('abc-123').then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
           'https://api.nylas.com/component/myClientId/abc-123'

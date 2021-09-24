@@ -90,7 +90,7 @@ export default class NylasConnection {
     Account,
     this
   );
-  conponent: ComponentRestfulModelCollection = new ComponentRestfulModelCollection(
+  component: ComponentRestfulModelCollection = new ComponentRestfulModelCollection(
     this
   );
 
