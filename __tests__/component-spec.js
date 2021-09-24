@@ -26,22 +26,6 @@ describe('Component', () => {
     });
     jest.spyOn(testContext.connection, 'request');
 
-    const componentJSON = {
-      id: 'abc-123',
-      account_id: 'account-123',
-      name: 'test-component',
-      type: 'agenda',
-      action: 0,
-      active: true,
-      settings: {},
-      allowed_domains: [],
-      public_account_id: ['account-123'],
-      public_token_id: ['token-123'],
-      public_application_id: ['application-123'],
-      created_at: '2021-08-24T15:05:48.000Z',
-      updated_at: '2021-08-24T15:05:48.000Z',
-    };
-
     const response = receivedBody => {
       return {
         status: 200,
@@ -49,9 +33,6 @@ describe('Component', () => {
           return Promise.resolve(receivedBody);
         },
         json: () => {
-          if (!receivedBody) {
-            return Promise.resolve([componentJSON]);
-          }
           return Promise.resolve(receivedBody);
         },
         headers: new Map(),
@@ -122,6 +103,41 @@ describe('Component', () => {
   });
 
   describe('fetching', () => {
+    beforeEach(() => {
+      const componentJSON = {
+        id: 'abc-123',
+        account_id: 'account-123',
+        name: 'test-component',
+        type: 'agenda',
+        action: 0,
+        active: true,
+        settings: {},
+        allowed_domains: [],
+        public_account_id: ['account-123'],
+        public_token_id: ['token-123'],
+        public_application_id: ['application-123'],
+        created_at: '2021-08-24T15:05:48.000Z',
+        updated_at: '2021-08-24T15:05:48.000Z',
+      };
+
+      const response = req => {
+        return {
+          status: 200,
+          text: () => {
+          },
+          json: () => {
+            if(!req.url.includes("abc-123")) {
+              return Promise.resolve([componentJSON]);
+            }
+            return Promise.resolve(componentJSON);
+          },
+          headers: new Map(),
+        };
+      };
+
+      fetch.mockImplementation(req => Promise.resolve(response(req)));
+    });
+
     test('should do a GET request to the correct URL when requesting all components', done => {
       return testContext.connection.component.list().then(componentList => {
         const options = testContext.connection.request.mock.calls[0][0];
@@ -147,6 +163,36 @@ describe('Component', () => {
           new Date('2021-08-24T15:05:48.000Z')
         );
         expect(componentList[0].updatedAt).toEqual(
+          new Date('2021-08-24T15:05:48.000Z')
+        );
+        done();
+      });
+    });
+
+    test('should do a GET request to the correct URL when requesting a specific component', done => {
+      return testContext.connection.component.find("abc-123").then(component => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/component/myClientId/abc-123'
+        );
+        expect(options.method).toEqual('GET');
+        expect(component.id).toEqual('abc-123');
+        expect(component.accountId).toEqual('account-123');
+        expect(component.name).toEqual('test-component');
+        expect(component.type).toEqual('agenda');
+        expect(component.action).toBe(0);
+        expect(component.active).toBe(true);
+        expect(component.settings).toEqual({});
+        expect(component.allowedDomains).toEqual([]);
+        expect(component.publicAccountId).toEqual(['account-123']);
+        expect(component.publicTokenId).toEqual(['token-123']);
+        expect(component.publicApplicationId).toEqual([
+          'application-123',
+        ]);
+        expect(component.createdAt).toEqual(
+          new Date('2021-08-24T15:05:48.000Z')
+        );
+        expect(component.updatedAt).toEqual(
           new Date('2021-08-24T15:05:48.000Z')
         );
         done();
