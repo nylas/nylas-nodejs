@@ -1,6 +1,6 @@
 {
   "name": "nylas",
-  "version": "5.8.0",
+  "version": "5.9.0",
   "description": "A NodeJS wrapper for the Nylas REST API for email, contacts, and calendar.",
   "main": "lib/nylas.js",
   "types": "lib/nylas.d.ts",
