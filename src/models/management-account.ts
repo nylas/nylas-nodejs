@@ -10,7 +10,7 @@ export type ApplicationIPAddressesProperties = {
 
 export class ApplicationIPAddresses extends Model
   implements ApplicationIPAddressesProperties {
-  ipAddresses = [];
+  ipAddresses: string[] = [];
   updatedAt = 0;
 
   constructor(props?: ApplicationIPAddressesProperties) {

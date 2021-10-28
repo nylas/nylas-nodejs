@@ -8,7 +8,7 @@ export type NeuralOcrProperties = FileProperties & {
 };
 
 export default class NeuralOcr extends File implements NeuralOcrProperties {
-  ocr = [];
+  ocr: string[] = [];
   processedPages = 0;
 
   constructor(connection: NylasConnection, props?: NeuralOcrProperties) {

@@ -29,11 +29,11 @@ export type ThreadProperties = {
 
 export default class Thread extends RestfulModel implements ThreadProperties {
   subject = '';
-  participants = [];
-  lastMessageTimestamp = new Date();
-  lastMessageReceivedTimestamp = new Date();
-  firstMessageTimestamp = new Date();
-  messageIds = [];
+  participants: EmailParticipant[] = [];
+  lastMessageTimestamp: Date = new Date();
+  lastMessageReceivedTimestamp: Date = new Date();
+  firstMessageTimestamp: Date = new Date();
+  messageIds: string[] = [];
   snippet = '';
   unread = false;
   starred = false;
