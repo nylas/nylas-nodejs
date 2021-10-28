@@ -91,7 +91,7 @@ class AttributeNumberList extends Attribute {
       return [];
     }
     const nums = [];
-    for(const num in json) {
+    for (const num in json) {
       if (!isNaN(Number(num))) {
         nums.push(Number(num));
       }

@@ -14,9 +14,10 @@ export type ComponentProperties = {
   publicApplicationId?: string;
   createdAt?: Date;
   updatedAt?: Date;
-}
+};
 
-export default class Component extends RestfulModel implements ComponentProperties {
+export default class Component extends RestfulModel
+  implements ComponentProperties {
   name?: string;
   type?: string;
   action?: number;

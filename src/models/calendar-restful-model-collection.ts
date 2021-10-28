@@ -4,7 +4,8 @@ import RestfulModelCollection from './restful-model-collection';
 import FreeBusy, { FreeBusyProperties } from './free-busy';
 import CalendarAvailability, {
   CalendarConsecutiveAvailability,
-  OpenHoursProperties, RoundRobin,
+  OpenHoursProperties,
+  RoundRobin,
 } from './calendar-availability';
 
 export default class CalendarRestfulModelCollection extends RestfulModelCollection<
@@ -115,7 +116,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     const freeBusyEmails = options.freeBusy
       ? options.freeBusy.map(fb => fb.email)
       : [];
-    if(options.openHours) {
+    if (options.openHours) {
       for (const openHour of options.openHours) {
         for (const email of openHour.emails) {
           if (

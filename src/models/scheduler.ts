@@ -15,9 +15,10 @@ export type SchedulerAppearanceProperties = {
   thankYouRedirect?: string;
   thankYouText?: string;
   thankYouTextSecondary?: string;
-}
+};
 
-export class SchedulerAppearance extends Model implements SchedulerAppearanceProperties {
+export class SchedulerAppearance extends Model
+  implements SchedulerAppearanceProperties {
   color?: string;
   companyName?: string;
   logo?: string;
@@ -89,9 +90,10 @@ export type SchedulerBookingAdditionalFieldsProperties = {
   pattern?: string;
   required?: boolean;
   type?: string;
-}
+};
 
-export class SchedulerBookingAdditionalFields extends Model implements SchedulerBookingAdditionalFieldsProperties {
+export class SchedulerBookingAdditionalFields extends Model
+  implements SchedulerBookingAdditionalFieldsProperties {
   dropdownOptions?: string[];
   label?: string;
   multiSelectOptions?: string[];
@@ -140,9 +142,10 @@ export type SchedulerBookingOpeningHoursProperties = {
   days?: string;
   end?: string;
   start?: string;
-}
+};
 
-export class SchedulerBookingOpeningHours extends Model implements SchedulerBookingOpeningHoursProperties {
+export class SchedulerBookingOpeningHours extends Model
+  implements SchedulerBookingOpeningHoursProperties {
   accountId?: string;
   days?: string;
   end?: string;
@@ -183,9 +186,10 @@ export type SchedulerBookingProperties = {
   nameFieldHidden?: boolean;
   openingHours?: SchedulerBookingOpeningHoursProperties[];
   schedulingMethod?: string;
-}
+};
 
-export class SchedulerBooking extends Model implements SchedulerBookingProperties {
+export class SchedulerBooking extends Model
+  implements SchedulerBookingProperties {
   additionalFields?: SchedulerBookingAdditionalFields[];
   availableDaysInFuture?: number;
   calendarInviteToGuests?: boolean;
@@ -209,7 +213,7 @@ SchedulerBooking.attributes = {
   additionalFields: Attributes.Collection({
     modelKey: 'additionalFields',
     jsonKey: 'additional_fields',
-    itemClass: SchedulerBookingAdditionalFields
+    itemClass: SchedulerBookingAdditionalFields,
   }),
   availableDaysInFuture: Attributes.Number({
     modelKey: 'availableDaysInFuture',
@@ -254,7 +258,7 @@ SchedulerBooking.attributes = {
   openingHours: Attributes.Collection({
     modelKey: 'openingHours',
     jsonKey: 'opening_hours',
-    itemClass: SchedulerBookingOpeningHours
+    itemClass: SchedulerBookingOpeningHours,
   }),
   schedulingMethod: Attributes.String({
     modelKey: 'schedulingMethod',
@@ -268,9 +272,10 @@ export type SchedulerRemindersProperties = {
   emailSubject?: string;
   timeBeforeEvent?: number;
   webhookUrl?: string;
-}
+};
 
-export class SchedulerReminders extends Model implements SchedulerRemindersProperties {
+export class SchedulerReminders extends Model
+  implements SchedulerRemindersProperties {
   deliveryMethod?: string;
   deliveryRecipient?: string;
   emailSubject?: string;
@@ -327,9 +332,10 @@ export type SchedulerConfigProperties = {
   localeForGuests?: string;
   reminders?: SchedulerRemindersProperties[];
   timezone?: string;
-}
+};
 
-export class SchedulerConfig extends Model implements SchedulerConfigProperties {
+export class SchedulerConfig extends Model
+  implements SchedulerConfigProperties {
   appearance?: SchedulerAppearanceProperties;
   booking?: SchedulerBookingProperties;
   calendarIds?: {
@@ -360,11 +366,11 @@ export class SchedulerConfig extends Model implements SchedulerConfigProperties 
 SchedulerConfig.attributes = {
   appearance: Attributes.Object({
     modelKey: 'appearance',
-    itemClass: SchedulerAppearance
+    itemClass: SchedulerAppearance,
   }),
   booking: Attributes.Object({
     modelKey: 'booking',
-    itemClass: SchedulerBooking
+    itemClass: SchedulerBooking,
   }),
   calendarIds: Attributes.Object({
     modelKey: 'calendarIds',
@@ -386,7 +392,7 @@ SchedulerConfig.attributes = {
   }),
   reminders: Attributes.Collection({
     modelKey: 'reminders',
-    itemClass: SchedulerReminders
+    itemClass: SchedulerReminders,
   }),
   timezone: Attributes.String({
     modelKey: 'timezone',
@@ -403,9 +409,10 @@ export type SchedulerProperties = {
   slug?: string;
   createdAt?: Date;
   modifiedAt?: Date;
-}
+};
 
-export default class Scheduler extends RestfulModel implements SchedulerProperties {
+export default class Scheduler extends RestfulModel
+  implements SchedulerProperties {
   accessTokens?: string[];
   appClientId?: string;
   appOrganizationId?: number;
