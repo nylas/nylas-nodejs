@@ -19,10 +19,12 @@ import { Folder, Label } from './models/folder';
 import FormData, { AppendOptions } from 'form-data';
 import Neural from './models/neural';
 import NylasApiError from './models/nylas-api-error';
+import ComponentRestfulModelCollection from './models/component-restful-model-collection';
+import Scheduler from './models/scheduler';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
-const SUPPORTED_API_VERSION = '2.2';
+const SUPPORTED_API_VERSION = '2.3';
 
 export type RequestOptions = {
   path: string;
@@ -33,6 +35,7 @@ export type RequestOptions = {
   json?: boolean;
   formData?: Record<string, FormDataType>;
   body?: any;
+  baseUrl?: string;
   url?: URL;
 };
 
@@ -44,6 +47,7 @@ export type FormDataType = {
 export default class NylasConnection {
   accessToken: string | null | undefined;
   clientId: string | null | undefined;
+  baseUrl: string | null | undefined;
 
   threads: RestfulModelCollection<Thread> = new RestfulModelCollection(
     Thread,
@@ -89,6 +93,13 @@ export default class NylasConnection {
     Account,
     this
   );
+  component: ComponentRestfulModelCollection = new ComponentRestfulModelCollection(
+    this
+  );
+  scheduler: RestfulModelCollection<Scheduler> = new RestfulModelCollection(
+    Scheduler,
+    this
+  );
 
   neural: Neural = new Neural(this);
 
@@ -101,7 +112,8 @@ export default class NylasConnection {
   }
 
   requestOptions(options: RequestOptions): RequestOptions {
-    const url = new URL(`${config.apiServer}${options.path}`);
+    const baseUrl = this.baseUrl ? this.baseUrl : config.apiServer;
+    const url = new URL(`${baseUrl}${options.path}`);
     // map querystring to search params
     if (options.qs) {
       for (const [key, value] of Object.entries(options.qs)) {
@@ -133,7 +145,7 @@ export default class NylasConnection {
 
     const headers: Record<string, string> = { ...options.headers };
     const user =
-      options.path.substr(0, 3) === '/a/'
+      options.path.substr(0, 3) === '/a/' || options.path.includes('/component')
         ? config.clientSecret
         : this.accessToken;
     if (user) {
