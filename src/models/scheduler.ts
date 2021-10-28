@@ -1,93 +1,429 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
+import Model from './model';
 
-export default class Scheduler extends RestfulModel {
+export type SchedulerAppearanceProperties = {
+  color?: string;
+  companyName?: string;
+  logo?: string;
+  privacyPolicyRedirect?: string;
+  showAutoschedule?: boolean;
+  showNylasBranding?: boolean;
+  showTimezoneOptions?: boolean;
+  submitText?: string;
+  thankYouRedirect?: string;
+  thankYouText?: string;
+  thankYouTextSecondary?: string;
+}
+
+export class SchedulerAppearance extends Model implements SchedulerAppearanceProperties {
+  color?: string;
+  companyName?: string;
+  logo?: string;
+  privacyPolicyRedirect?: string;
+  showAutoschedule?: boolean;
+  showNylasBranding?: boolean;
+  showTimezoneOptions?: boolean;
+  submitText?: string;
+  thankYouRedirect?: string;
+  thankYouText?: string;
+  thankYouTextSecondary?: string;
+
+  constructor(props?: SchedulerAppearanceProperties) {
+    super();
+    this.initAttributes(props);
+  }
+}
+SchedulerAppearance.attributes = {
+  color: Attributes.String({
+    modelKey: 'color',
+  }),
+  companyName: Attributes.String({
+    modelKey: 'companyName',
+    jsonKey: 'company_name',
+  }),
+  logo: Attributes.String({
+    modelKey: 'logo',
+  }),
+  privacyPolicyRedirect: Attributes.String({
+    modelKey: 'privacyPolicyRedirect',
+    jsonKey: 'privacy_policy_redirect',
+  }),
+  showAutoschedule: Attributes.Boolean({
+    modelKey: 'showAutoschedule',
+    jsonKey: 'show_autoschedule',
+  }),
+  showNylasBranding: Attributes.Boolean({
+    modelKey: 'showNylasBranding',
+    jsonKey: 'show_nylas_branding',
+  }),
+  showTimezoneOptions: Attributes.Boolean({
+    modelKey: 'showTimezoneOptions',
+    jsonKey: 'show_timezone_options',
+  }),
+  submitText: Attributes.String({
+    modelKey: 'submitText',
+    jsonKey: 'submit_text',
+  }),
+  thankYouRedirect: Attributes.String({
+    modelKey: 'thankYouRedirect',
+    jsonKey: 'thank_you_redirect',
+  }),
+  thankYouText: Attributes.String({
+    modelKey: 'thankYouText',
+    jsonKey: 'thank_you_text',
+  }),
+  thankYouTextSecondary: Attributes.String({
+    modelKey: 'thankYouTextSecondary',
+    jsonKey: 'thank_you_text_secondary',
+  }),
+};
+
+export type SchedulerBookingAdditionalFieldsProperties = {
+  dropdownOptions?: string[];
+  label?: string;
+  multiSelectOptions?: string[];
+  name?: string;
+  order?: number;
+  pattern?: string;
+  required?: boolean;
+  type?: string;
+}
+
+export class SchedulerBookingAdditionalFields extends Model implements SchedulerBookingAdditionalFieldsProperties {
+  dropdownOptions?: string[];
+  label?: string;
+  multiSelectOptions?: string[];
+  name?: string;
+  order?: number;
+  pattern?: string;
+  required?: boolean;
+  type?: string;
+
+  constructor(props?: SchedulerBookingAdditionalFieldsProperties) {
+    super();
+    this.initAttributes(props);
+  }
+}
+SchedulerBookingAdditionalFields.attributes = {
+  dropdownOptions: Attributes.StringList({
+    modelKey: 'dropdownOptions',
+    jsonKey: 'dropdown_options',
+  }),
+  label: Attributes.String({
+    modelKey: 'label',
+  }),
+  multiSelectOptions: Attributes.StringList({
+    modelKey: 'multiSelectOptions',
+    jsonKey: 'multi_select_options',
+  }),
+  name: Attributes.String({
+    modelKey: 'name',
+  }),
+  order: Attributes.Number({
+    modelKey: 'order',
+  }),
+  pattern: Attributes.String({
+    modelKey: 'pattern',
+  }),
+  required: Attributes.Boolean({
+    modelKey: 'required',
+  }),
+  type: Attributes.String({
+    modelKey: 'type',
+  }),
+};
+
+export type SchedulerBookingOpeningHoursProperties = {
+  accountId?: string;
+  days?: string;
+  end?: string;
+  start?: string;
+}
+
+export class SchedulerBookingOpeningHours extends Model implements SchedulerBookingOpeningHoursProperties {
+  accountId?: string;
+  days?: string;
+  end?: string;
+  start?: string;
+
+  constructor(props?: SchedulerBookingOpeningHoursProperties) {
+    super();
+    this.initAttributes(props);
+  }
+}
+SchedulerBookingOpeningHours.attributes = {
+  dropdownOptions: Attributes.String({
+    modelKey: 'accountId',
+    jsonKey: 'account_id',
+  }),
+  days: Attributes.String({
+    modelKey: 'days',
+  }),
+  end: Attributes.String({
+    modelKey: 'end',
+  }),
+  start: Attributes.String({
+    modelKey: 'start',
+  }),
+};
+
+export type SchedulerBookingProperties = {
+  additionalFields?: SchedulerBookingAdditionalFieldsProperties[];
+  availableDaysInFuture?: number;
+  calendarInviteToGuests?: boolean;
+  cancellationPolicy?: string;
+  confirmationEmailsToGuests?: boolean;
+  confirmationEmailToHost?: boolean;
+  confirmationMethod?: string;
+  minBookingNotice?: number;
+  minBuffer?: number;
+  minCancellationNotice?: number;
+  nameFieldHidden?: boolean;
+  openingHours?: SchedulerBookingOpeningHoursProperties[];
+  schedulingMethod?: string;
+}
+
+export class SchedulerBooking extends Model implements SchedulerBookingProperties {
+  additionalFields?: SchedulerBookingAdditionalFields[];
+  availableDaysInFuture?: number;
+  calendarInviteToGuests?: boolean;
+  cancellationPolicy?: string;
+  confirmationEmailsToGuests?: boolean;
+  confirmationEmailToHost?: boolean;
+  confirmationMethod?: string;
+  minBookingNotice?: number;
+  minBuffer?: number;
+  minCancellationNotice?: number;
+  nameFieldHidden?: boolean;
+  openingHours?: SchedulerBookingOpeningHours[];
+  schedulingMethod?: string;
+
+  constructor(props?: SchedulerBookingProperties) {
+    super();
+    this.initAttributes(props);
+  }
+}
+SchedulerBooking.attributes = {
+  additionalFields: Attributes.Collection({
+    modelKey: 'additionalFields',
+    jsonKey: 'additional_fields',
+    itemClass: SchedulerBookingAdditionalFields
+  }),
+  availableDaysInFuture: Attributes.Number({
+    modelKey: 'availableDaysInFuture',
+    jsonKey: 'available_days_in_future',
+  }),
+  calendarInviteToGuests: Attributes.Boolean({
+    modelKey: 'calendarInviteToGuests',
+    jsonKey: 'calendar_invites_to_guests',
+  }),
+  cancellationPolicy: Attributes.String({
+    modelKey: 'cancellationPolicy',
+    jsonKey: 'cancellation_policy',
+  }),
+  confirmationEmailsToGuests: Attributes.Boolean({
+    modelKey: 'confirmationEmailsToGuests',
+    jsonKey: 'confirmation_emails_to_guests',
+  }),
+  confirmationEmailToHost: Attributes.Boolean({
+    modelKey: 'confirmationEmailToHost',
+    jsonKey: 'confirmation_email_to_host',
+  }),
+  confirmationMethod: Attributes.String({
+    modelKey: 'confirmationMethod',
+    jsonKey: 'confirmation_method',
+  }),
+  minBookingNotice: Attributes.Number({
+    modelKey: 'minBookingNotice',
+    jsonKey: 'min_booking_notice',
+  }),
+  minBuffer: Attributes.Number({
+    modelKey: 'minBuffer',
+    jsonKey: 'min_buffer',
+  }),
+  minCancellationNotice: Attributes.Number({
+    modelKey: 'minCancellationNotice',
+    jsonKey: 'min_cancellation_notice',
+  }),
+  nameFieldHidden: Attributes.Boolean({
+    modelKey: 'nameFieldHidden',
+    jsonKey: 'name_field_hidden',
+  }),
+  openingHours: Attributes.Collection({
+    modelKey: 'openingHours',
+    jsonKey: 'opening_hours',
+    itemClass: SchedulerBookingOpeningHours
+  }),
+  schedulingMethod: Attributes.String({
+    modelKey: 'schedulingMethod',
+    jsonKey: 'scheduling_method',
+  }),
+};
+
+export type SchedulerRemindersProperties = {
+  deliveryMethod?: string;
+  deliveryRecipient?: string;
+  emailSubject?: string;
+  timeBeforeEvent?: number;
+  webhookUrl?: string;
+}
+
+export class SchedulerReminders extends Model implements SchedulerRemindersProperties {
+  deliveryMethod?: string;
+  deliveryRecipient?: string;
+  emailSubject?: string;
+  timeBeforeEvent?: number;
+  webhookUrl?: string;
+
+  constructor(props?: SchedulerRemindersProperties) {
+    super();
+    this.initAttributes(props);
+  }
+}
+SchedulerReminders.attributes = {
+  deliveryMethod: Attributes.String({
+    modelKey: 'deliveryMethod',
+    jsonKey: 'delivery_method',
+  }),
+  deliveryRecipient: Attributes.String({
+    modelKey: 'deliveryRecipient',
+    jsonKey: 'delivery_recipient',
+  }),
+  emailSubject: Attributes.String({
+    modelKey: 'emailSubject',
+    jsonKey: 'email_subject',
+  }),
+  timeBeforeEvent: Attributes.Number({
+    modelKey: 'timeBeforeEvent',
+    jsonKey: 'time_before_event',
+  }),
+  webhookUrl: Attributes.String({
+    modelKey: 'webhookUrl',
+    jsonKey: 'webhook_url',
+  }),
+};
+
+export type SchedulerConfigProperties = {
+  appearance?: SchedulerAppearanceProperties;
+  booking?: SchedulerBookingProperties;
+  calendarIds?: {
+    [accountId: string]: {
+      availability?: string[];
+      booking?: string;
+    };
+  };
+  event?: {
+    duration?: number;
+    location?: string;
+    title?: string;
+  };
+  expireAfter?: {
+    date?: number;
+    uses?: number;
+  };
+  locale?: string;
+  localeForGuests?: string;
+  reminders?: SchedulerRemindersProperties[];
+  timezone?: string;
+}
+
+export class SchedulerConfig extends Model implements SchedulerConfigProperties {
+  appearance?: SchedulerAppearanceProperties;
+  booking?: SchedulerBookingProperties;
+  calendarIds?: {
+    [accountId: string]: {
+      availability?: string[];
+      booking?: string;
+    };
+  };
+  event?: {
+    duration?: number;
+    location?: string;
+    title?: string;
+  };
+  expireAfter?: {
+    date?: number;
+    uses?: number;
+  };
+  locale?: string;
+  localeForGuests?: string;
+  reminders?: SchedulerRemindersProperties[];
+  timezone?: string;
+
+  constructor(props?: SchedulerConfigProperties) {
+    super();
+    this.initAttributes(props);
+  }
+}
+SchedulerConfig.attributes = {
+  appearance: Attributes.Object({
+    modelKey: 'appearance',
+    itemClass: SchedulerAppearance
+  }),
+  booking: Attributes.Object({
+    modelKey: 'booking',
+    itemClass: SchedulerBooking
+  }),
+  calendarIds: Attributes.Object({
+    modelKey: 'calendarIds',
+    jsonKey: 'calendar_ids',
+  }),
+  event: Attributes.Object({
+    modelKey: 'event',
+  }),
+  expireAfter: Attributes.Object({
+    modelKey: 'expireAfter',
+    jsonKey: 'expire_after',
+  }),
+  locale: Attributes.String({
+    modelKey: 'locale',
+  }),
+  localeForGuests: Attributes.String({
+    modelKey: 'localeForGuests',
+    jsonKey: 'locale_for_guests',
+  }),
+  reminders: Attributes.Collection({
+    modelKey: 'reminders',
+    itemClass: SchedulerReminders
+  }),
+  timezone: Attributes.String({
+    modelKey: 'timezone',
+  }),
+};
+
+export type SchedulerProperties = {
   accessTokens?: string[];
   appClientId?: string;
   appOrganizationId?: number;
-  config?: {
-    appearance?: {
-      color?: string;
-      company_name?: string;
-      logo?: string;
-      privacy_policy_redirect?: string;
-      show_autoschedule?: boolean;
-      show_nylas_branding?: boolean;
-      show_timezone_options?: boolean;
-      submit_text?: string;
-      thank_you_redirect?: string;
-      thank_you_text?: string;
-      thank_you_text_secondary?: string;
-    };
-    booking?: {
-      additional_fields: Array<{
-        dropdown_options?: string[];
-        label?: string;
-        multi_select_options?: string[];
-        name?: string;
-        order?: number;
-        pattern?: string;
-        required?: boolean;
-        type?: string;
-      }>;
-      available_days_in_future: number;
-      calendar_invite_to_guests: boolean;
-      cancellation_policy: string;
-      confirmation_emails_to_guests: boolean;
-      confirmation_emails_to_host: boolean;
-      confirmation_method: string;
-      min_booking_notice: number;
-      min_buffer: number;
-      min_cancellation_notice: number;
-      name_field_hidden: boolean;
-      opening_hours: Array<{
-        account_id?: string;
-        days?: string;
-        end?: string;
-        start?: string;
-      }>;
-      scheduling_method: string;
-    };
-    calendar_ids?: {
-      [accountId: string]: {
-        availability?: string[];
-        booking?: string;
-      };
-    };
-    event?: {
-      duration?: number;
-      location?: string;
-      title?: string;
-    };
-    expire_after?: {
-      date?: number;
-      uses?: number;
-    };
-    locale?: string;
-    locale_for_guests?: string;
-    reminders?: Array<{
-      delivery_method?: string;
-      delivery_recipient?: string;
-      email_subject?: string;
-      time_before_event?: number;
-      webhook_url?: string;
-    }>;
-    timezone?: string;
-  };
+  config?: SchedulerConfig;
+  editToken?: string;
+  name?: string;
+  slug?: string;
+  createdAt?: Date;
+  modifiedAt?: Date;
+}
+
+export default class Scheduler extends RestfulModel implements SchedulerProperties {
+  accessTokens?: string[];
+  appClientId?: string;
+  appOrganizationId?: number;
+  config?: SchedulerConfig;
   editToken?: string;
   name?: string;
   slug?: string;
   createdAt?: Date;
   modifiedAt?: Date;
 
-  constructor(connection: NylasConnection, json?: Record<string, any>) {
-    super(connection, json);
+  constructor(connection: NylasConnection, props?: SchedulerProperties) {
+    super(connection, props);
+    this.initAttributes(props);
     connection.baseUrl = 'https://api.schedule.nylas.com';
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    return super.save(params, callback);
   }
 
   getAvailableCalendars(): Record<string, any> {
@@ -139,6 +475,7 @@ Scheduler.attributes = {
   }),
   config: Attributes.Object({
     modelKey: 'config',
+    itemClass: SchedulerConfig,
   }),
   editToken: Attributes.String({
     modelKey: 'editToken',
