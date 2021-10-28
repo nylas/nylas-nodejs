@@ -1,5 +1,5 @@
 import RestfulModel, { SaveCallback } from './restful-model';
-import { GetCallback } from './restful-model-collection';
+import { GetCallback } from './model-collection';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
 import JobStatus from './job-status';

@@ -118,11 +118,6 @@ export default class Draft extends Message implements DraftProperties {
       .then(json => {
         const message = new Message(this.connection).fromJSON(json);
 
-        // We may get failures for a partial send
-        if (json.failures) {
-          message.failures = json.failures;
-        }
-
         if (callback) {
           callback(null, message);
         }
