@@ -82,6 +82,24 @@ class AttributeNumber extends Attribute {
   }
 }
 
+class AttributeNumberList extends Attribute {
+  toJSON(val: any): number {
+    return val;
+  }
+  fromJSON(json: any, _parent: any): number[] {
+    if (!json || !(json instanceof Array)) {
+      return [];
+    }
+    const nums = [];
+    for(const num in json) {
+      if (!isNaN(Number(num))) {
+        nums.push(Number(num));
+      }
+    }
+    return nums;
+  }
+}
+
 class AttributeBoolean extends Attribute {
   toJSON(val: boolean): boolean {
     return val;
@@ -281,6 +299,11 @@ const Attributes = {
     ...args: ConstructorParameters<typeof AttributeNumber>
   ): AttributeNumber {
     return new AttributeNumber(...args);
+  },
+  NumberList(
+    ...args: ConstructorParameters<typeof AttributeNumberList>
+  ): AttributeNumberList {
+    return new AttributeNumberList(...args);
   },
   String(
     ...args: ConstructorParameters<typeof AttributeString>
