@@ -1,7 +1,22 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
+import NylasConnection from '../nylas-connection';
 
-export default class Component extends RestfulModel {
+export type ComponentProperties = {
+  name?: string;
+  type?: string;
+  action?: number;
+  active?: boolean;
+  settings?: object;
+  allowedDomains?: string[];
+  publicAccountId?: string;
+  publicTokenId?: string;
+  publicApplicationId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export default class Component extends RestfulModel implements ComponentProperties {
   name?: string;
   type?: string;
   action?: number;
@@ -14,12 +29,17 @@ export default class Component extends RestfulModel {
   createdAt?: Date;
   updatedAt?: Date;
 
+  constructor(connection: NylasConnection, props?: ComponentProperties) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
+
   saveEndpoint(): string {
     return `/component/${this.connection.clientId}`;
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    return super.save(params, callback);
   }
 }
 Component.collectionName = 'component';

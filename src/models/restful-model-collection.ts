@@ -14,7 +14,7 @@ export default class RestfulModelCollection<
   constructor(modelClass: typeof RestfulModel, connection: NylasConnection) {
     super(modelClass, connection, modelClass.collectionName);
     this.modelClass = modelClass;
-    this.path = `/${this.modelClass.collectionName}`;
+    this._path = `/${this.modelClass.collectionName}`;
   }
 
   count(
@@ -24,7 +24,7 @@ export default class RestfulModelCollection<
     return this.connection
       .request({
         method: 'GET',
-        path: this.path,
+        path: this.path(),
         qs: { view: 'count', ...params },
       })
       .then((json: any) => {
@@ -94,7 +94,7 @@ export default class RestfulModelCollection<
     params.q = query;
     const limit = (params.limit as number) || 40;
     const offset = params.offset as number;
-    const path = `${this.path}/search`;
+    const path = `${this.path()}/search`;
 
     return this.range({ params, offset, limit, path });
   }
@@ -145,7 +145,7 @@ export default class RestfulModelCollection<
         method: 'DELETE',
         qs: qs,
         body: body,
-        path: `${this.path}/${item.id}`,
+        path: `${this.path()}/${item.id}`,
       })
       .then(data => {
         if (callback) {

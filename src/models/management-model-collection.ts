@@ -6,7 +6,6 @@ export default class ManagementModelCollection<
   T extends ManagementModel
 > extends RestfulModelCollection<T> {
   clientId: string;
-  path: string;
 
   constructor(
     modelClass: typeof ManagementModel,
@@ -15,11 +14,14 @@ export default class ManagementModelCollection<
   ) {
     super(modelClass as any, connection);
     this.clientId = clientId;
-    this.path = `/a/${this.clientId}/${this.modelClass.collectionName}`;
   }
 
   build(args: Record<string, unknown>): T {
     return super.build(args);
+  }
+
+  path(): string {
+    return `/a/${this.clientId}/${this.modelClass.collectionName}`;
   }
 
   protected createModel(json: Record<string, unknown>): T {
