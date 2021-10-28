@@ -4,7 +4,7 @@ import { TimeSlot, TimeSlotProperties } from './free-busy';
 
 export type OpenHoursProperties = {
   emails: string[];
-  days: string[];
+  days: number[];
   timezone: string;
   start: string;
   end: string;
@@ -12,8 +12,8 @@ export type OpenHoursProperties = {
 
 export class OpenHours extends Model implements OpenHoursProperties {
   objectType = 'open_hours';
-  emails = [];
-  days = [];
+  emails: string[] = [];
+  days: number[] = [];
   timezone = '';
   start = '';
   end = '';
@@ -31,7 +31,7 @@ OpenHours.attributes = {
   emails: Attributes.StringList({
     modelKey: 'emails',
   }),
-  days: Attributes.StringList({
+  days: Attributes.NumberList({
     modelKey: 'days',
   }),
   timezone: Attributes.String({
