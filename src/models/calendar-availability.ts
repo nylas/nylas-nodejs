@@ -2,6 +2,11 @@ import Model from './model';
 import Attributes from './attributes';
 import { TimeSlot, TimeSlotProperties } from './free-busy';
 
+export enum RoundRobin {
+  MaxAvailability = 'max-availability',
+  MaxFairness = 'max-fairness',
+}
+
 export type OpenHoursProperties = {
   emails: string[];
   days: number[];
@@ -44,6 +49,24 @@ OpenHours.attributes = {
     modelKey: 'end',
   }),
 };
+
+export type CalendarConsecutiveAvailabilityProperties = {
+  emails: string[];
+  start_time: number;
+  end_time: number;
+};
+
+export class CalendarConsecutiveAvailability extends Model
+  implements CalendarConsecutiveAvailabilityProperties {
+  emails: string[] = [];
+  start_time = 0;
+  end_time = 0;
+
+  constructor(props?: CalendarConsecutiveAvailabilityProperties) {
+    super();
+    this.initAttributes(props);
+  }
+}
 
 export type CalendarAvailabilityProperties = {
   timeSlots: TimeSlotProperties[];

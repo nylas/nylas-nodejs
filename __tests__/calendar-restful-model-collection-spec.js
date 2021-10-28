@@ -162,7 +162,7 @@ describe('CalendarRestfulModelCollection', () => {
       interval: 5,
       duration: 30,
       emails: [['jane@email.com'], ['swag@nylas.com']],
-      free_busy: [
+      freeBusy: [
         {
           email: 'jane@email.com',
           object: 'free_busy',
@@ -176,7 +176,7 @@ describe('CalendarRestfulModelCollection', () => {
           ],
         },
       ],
-      open_hours: [
+      openHours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
           days: [0],
@@ -243,7 +243,7 @@ describe('CalendarRestfulModelCollection', () => {
       interval: 5,
       duration: 30,
       emails: [['jane@email.com']],
-      free_busy: [
+      freeBusy: [
         {
           email: 'jane@email.com',
           object: 'free_busy',
@@ -257,7 +257,7 @@ describe('CalendarRestfulModelCollection', () => {
           ],
         },
       ],
-      open_hours: [
+      openHours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
           days: [0],
