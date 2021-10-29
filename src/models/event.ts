@@ -197,10 +197,12 @@ Event.attributes = {
   iCalUID: Attributes.String({
     modelKey: 'iCalUID',
     jsonKey: 'ical_uid',
+    readOnly: true,
   }),
   messageId: Attributes.String({
     modelKey: 'messageId',
     jsonKey: 'message_id',
+    readOnly: true,
   }),
   title: Attributes.String({
     modelKey: 'title',
@@ -210,6 +212,7 @@ Event.attributes = {
   }),
   owner: Attributes.String({
     modelKey: 'owner',
+    readOnly: true,
   }),
   participants: Attributes.Collection({
     modelKey: 'participants',
@@ -231,6 +234,7 @@ Event.attributes = {
   }),
   status: Attributes.String({
     modelKey: 'status',
+    readOnly: true,
   }),
   recurrence: Attributes.Object({
     modelKey: 'recurrence',
@@ -255,5 +259,6 @@ Event.attributes = {
   jobStatusId: Attributes.String({
     modelKey: 'jobStatusId',
     jsonKey: 'job_status_id',
+    readOnly: true,
   }),
 };

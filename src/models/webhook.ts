@@ -16,7 +16,7 @@ export default class Webhook extends ManagementModel
   implements WebhookProperties {
   callbackUrl = '';
   state = '';
-  triggers = [];
+  triggers: string[] = [];
   id?: string;
   applicationId?: string;
   version?: string;

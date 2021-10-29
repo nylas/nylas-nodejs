@@ -12,9 +12,9 @@ export type CategorizeProperties = {
 
 export class Categorize extends Model implements CategorizeProperties {
   category = '';
-  categorizedAt = new Date();
+  categorizedAt: Date = new Date();
   modelVersion = '';
-  subcategories = [];
+  subcategories: string[] = [];
 
   constructor(props?: CategorizeProperties) {
     super();

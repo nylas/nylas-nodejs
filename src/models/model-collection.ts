@@ -8,12 +8,12 @@ const REQUEST_CHUNK_SIZE = 100;
 export default class ModelCollection<T extends Model> {
   connection: NylasConnection;
   modelClass: any;
-  path: string;
+  _path: string;
 
   constructor(modelClass: any, connection: NylasConnection, path: string) {
     this.modelClass = modelClass;
     this.connection = connection;
-    this.path = path;
+    this._path = path;
     if (!this.connection) {
       throw new Error('Connection object not provided');
     }
@@ -134,6 +134,10 @@ export default class ModelCollection<T extends Model> {
       });
   }
 
+  path(): string {
+    return this._path;
+  }
+
   protected range({
     params = {},
     offset = 0,
@@ -194,7 +198,7 @@ export default class ModelCollection<T extends Model> {
     // Items can be either models or ids
 
     if (!path) {
-      path = this.path;
+      path = this.path();
     }
 
     if (params.view == 'ids') {
@@ -219,7 +223,7 @@ export default class ModelCollection<T extends Model> {
     return this.connection
       .request({
         method: 'GET',
-        path: `${this.path}/${id}`,
+        path: `${this.path()}/${id}`,
         qs: params,
       })
       .then(json => {

@@ -2,16 +2,15 @@
 
 [![Travis build status](https://travis-ci.org/nylas/nylas-nodejs.svg?branch=master)](https://travis-ci.org/nylas/nylas-nodejs)
 
-This is the GitHub repository for the Nylas Node SDK and this repo is primarily for anyone who wants to make contributions to the SDK or install it from source. If you are looking to use Node to access the Nylas Email, Calendar, or Contacts API you should refer to our official [Node SDK Quickstart Guide](https://docs.nylas.com/docs/quickstart-node).
+This is the GitHub repository for the Nylas Node SDK and this repo is primarily for anyone who wants to make contributions to the SDK or install it from source. If you are looking to use Node to access the Nylas Email, Calendar, or Contacts API you should refer to our official [Node SDK Quickstart Guide](https://developer.nylas.com/docs/developer-tools/sdk/node-sdk/).
 
-The Nylas Communications Platform provides REST APIs for [Email](https://docs.nylas.com/docs/quickstart-email), [Calendar](https://docs.nylas.com/docs/quickstart-calendar), and [Contacts](https://docs.nylas.com/docs/quickstart-contacts), and the Node SDK is the quickest way to build your integration using JavaScript.
+The Nylas Communications Platform provides REST APIs for [Email](https://developer.nylas.com/docs/connectivity/email/), [Calendar](https://developer.nylas.com/docs/connectivity/calendar/), and [Contacts](https://developer.nylas.com/docs/connectivity/contacts/), and the Node SDK is the quickest way to build your integration using JavaScript.
 
 Here are some resources to help you get started:
 
-- [Nylas SDK Tutorials](https://docs.nylas.com/docs/tutorials#section-node-js)
-- [Get Started with the Nylas Communications Platform](https://docs.nylas.com/docs/getting-started)
-- [Sign up for your Nylas developer account.](https://nylas.com/register)
-- [Nylas API Reference](https://docs.nylas.com/reference)
+- [Nylas SDK Tutorials](https://developer.nylas.com/docs/the-basics/tutorials/nodejs/)
+- [Quickstart](https://developer.nylas.com/docs/the-basics/quickstart/)
+- [Nylas API Reference](https://developer.nylas.com/docs/api/)
 
 
 # Install
@@ -30,6 +29,7 @@ git clone https://github.com/nylas/nylas-nodejs.git
 cd nylas-nodejs
 npm install
 ```
+
 # Usage
 
 Every resource (i.e., messages, events, contacts) is accessed via an instance of `Nylas`. Before making any requests, be sure to call `config` and initialize the `Nylas` instance with your `clientId` and `clientSecret`. Then, call `with` and pass it your `accessToken`. The `accessToken` allows `Nylas` to make requests for a given account's resources.
@@ -52,7 +52,7 @@ nylas.threads.list({}).then(threads => {
 });
 ```
 
-For more information about how to use the Nylas Node SDK, [take a look at our quickstart guide](https://docs.nylas.com/docs/quickstart-node).
+For more information about how to use the Nylas Node SDK, [take a look at our quickstart guide](https://developer.nylas.com/docs/developer-tools/sdk/node-sdk/).
 
 # Contributing
 

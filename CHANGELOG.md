@@ -1,5 +1,15 @@
 # Changelog
 
+### 5.9.0 / 2021-09-24
+* Add Component CRUD Support
+* Add Scheduler support
+
+### 5.8.0 / 2021-09-16
+* Add support for consecutive availability
+* Fix issue where JSON.stringify would omit read-only values
+* Fix webhook example throwing error if body is not a raw body
+* Fix readonly calendar attributes being sent for POST and PUT calls
+
 ### 5.7.0 / 2021-08-18
 * Fix minor issues with Neural API implementation
 * Fix not rejecting uncaught errors during requests

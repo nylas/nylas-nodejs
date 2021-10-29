@@ -1,4 +1,4 @@
-import RestfulModel, { SaveCallback } from './restful-model';
+import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import File, { FileProperties } from './file';
 import Event, { EventProperties } from './event';
@@ -29,7 +29,7 @@ export type MessageProperties = {
 };
 
 export default class Message extends RestfulModel implements MessageProperties {
-  to = [];
+  to: EmailParticipant[] = [];
   subject?: string;
   from?: EmailParticipant[];
   replyTo?: EmailParticipant[];
@@ -67,7 +67,7 @@ export default class Message extends RestfulModel implements MessageProperties {
           `${contact.email || ''.toLowerCase().trim()} ${(contact.name || '')
             .toLowerCase()
             .trim()}`
-        ] = contact;
+        ] = new EmailParticipant(contact);
       }
     }
     return Object.values(participants);

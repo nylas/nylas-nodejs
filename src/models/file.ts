@@ -142,11 +142,9 @@ File.attributes = {
   }),
   size: Attributes.Number({
     modelKey: 'size',
-    jsonKey: 'size',
   }),
   filename: Attributes.String({
     modelKey: 'filename',
-    jsonKey: 'filename',
   }),
   messageIds: Attributes.StringList({
     modelKey: 'messageIds',
@@ -159,5 +157,9 @@ File.attributes = {
   contentDisposition: Attributes.String({
     modelKey: 'contentDisposition',
     jsonKey: 'content_disposition',
+  }),
+  data: Attributes.Object({
+    modelKey: 'data',
+    readOnly: true,
   }),
 };
