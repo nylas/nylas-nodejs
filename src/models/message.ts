@@ -1,4 +1,4 @@
-import RestfulModel, { SaveCallback } from './restful-model';
+import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import File, { FileProperties } from './file';
 import Event, { EventProperties } from './event';
