@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add support for Event notifications
+
 ### 5.9.0 / 2021-09-24
 * Add Component CRUD Support
 * Add Scheduler support
