@@ -2,7 +2,6 @@ import NylasConnection from '../src/nylas-connection';
 import Event from '../src/models/event';
 import Nylas from '../src/nylas';
 import fetch from 'node-fetch';
-import { EventNotification } from '../src/models/event-notification';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
