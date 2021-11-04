@@ -57,6 +57,7 @@ describe('Event', () => {
           location: undefined,
           when: undefined,
           participants: [],
+          notifications: [],
         });
         done();
       });
@@ -78,6 +79,7 @@ describe('Event', () => {
           location: undefined,
           when: undefined,
           participants: [],
+          notifications: [],
         });
         done();
       });
@@ -99,6 +101,7 @@ describe('Event', () => {
           location: undefined,
           when: undefined,
           participants: [],
+          notifications: [],
         });
         done();
       });
@@ -122,6 +125,7 @@ describe('Event', () => {
           location: undefined,
           when: undefined,
           participants: [],
+          notifications: [],
           recurrence: recurrence,
         });
         done();
@@ -148,6 +152,7 @@ describe('Event', () => {
             time: 1408875644,
           },
           participants: [],
+          notifications: [],
           read_only: undefined,
           status: undefined,
         });
@@ -176,6 +181,7 @@ describe('Event', () => {
             end_time: 1409598000,
           },
           participants: [],
+          notifications: [],
           read_only: undefined,
           status: undefined,
         });
@@ -203,6 +209,7 @@ describe('Event', () => {
             date: '1912-06-23',
           },
           participants: [],
+          notifications: [],
           read_only: undefined,
           status: undefined,
         });
@@ -231,6 +238,7 @@ describe('Event', () => {
             end_date: '1852-11-27',
           },
           participants: [],
+          notifications: [],
           read_only: undefined,
         });
         done();
@@ -255,6 +263,7 @@ describe('Event', () => {
             time: 1408875644,
           },
           participants: [],
+          notifications: [],
           read_only: undefined,
           status: undefined,
         });
@@ -283,6 +292,7 @@ describe('Event', () => {
             end_time: 1409598000,
           },
           participants: [],
+          notifications: [],
           read_only: undefined,
           status: undefined,
         });
@@ -310,6 +320,7 @@ describe('Event', () => {
             date: '1912-06-23',
           },
           participants: [],
+          notifications: [],
           read_only: undefined,
           status: undefined,
         });
@@ -341,6 +352,7 @@ describe('Event', () => {
             end_date: '1852-11-27',
           },
           participants: [],
+          notifications: [],
           read_only: undefined,
           status: undefined,
         });
@@ -375,6 +387,7 @@ describe('Event', () => {
             end_date: '1852-11-27',
           },
           participants: [],
+          notifications: [],
           read_only: undefined,
           status: undefined,
         });
@@ -398,6 +411,7 @@ describe('Event', () => {
           _start: undefined,
           _end: undefined,
           participants: [],
+          notifications: [],
           metadata: { hello: 'world' },
         });
         done();
@@ -433,6 +447,7 @@ describe('Event', () => {
             _start: undefined,
             _end: undefined,
             participants: [],
+            notifications: [],
             conferencing: {
               provider: 'Zoom Meeting',
               details: {
@@ -474,6 +489,7 @@ describe('Event', () => {
             _start: undefined,
             _end: undefined,
             participants: [],
+            notifications: [],
             conferencing: {
               provider: 'Zoom Meeting',
               autocreate: {
