@@ -2,6 +2,7 @@ import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import EventParticipant from './event-participant';
 import { EventConferencing } from './event-conferencing';
+import { EventNotification } from './event-notification';
 
 export default class Event extends RestfulModel {
   calendarId?: string;
@@ -31,6 +32,7 @@ export default class Event extends RestfulModel {
   masterEventId?: string;
   originalStartTime?: number;
   conferencing?: EventConferencing;
+  notifications?: EventNotification[];
   metadata?: object;
   jobStatusId?: string;
 
@@ -217,6 +219,10 @@ Event.attributes = {
   conferencing: Attributes.Object({
     modelKey: 'conferencing',
     itemClass: EventConferencing,
+  }),
+  notifications: Attributes.Collection({
+    modelKey: 'notifications',
+    itemClass: EventNotification,
   }),
   metadata: Attributes.Object({
     modelKey: 'metadata',
