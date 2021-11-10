@@ -14,7 +14,6 @@ describe('ManagementAccount', () => {
 
   describe('list', () => {
     test('should do a GET request to get the account list', done => {
-      expect.assertions(6);
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
           {
