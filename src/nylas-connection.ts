@@ -21,6 +21,7 @@ import Neural from './models/neural';
 import NylasApiError from './models/nylas-api-error';
 import ComponentRestfulModelCollection from './models/component-restful-model-collection';
 import Scheduler from './models/scheduler';
+import SchedulerRestfulModelCollection from './models/scheduler-restful-model-collection';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -96,10 +97,9 @@ export default class NylasConnection {
   component: ComponentRestfulModelCollection = new ComponentRestfulModelCollection(
     this
   );
-  scheduler: RestfulModelCollection<Scheduler> = new RestfulModelCollection(
-    Scheduler,
-    this
-  );
+  scheduler: RestfulModelCollection<
+    Scheduler
+  > = new SchedulerRestfulModelCollection(this);
 
   neural: Neural = new Neural(this);
 
