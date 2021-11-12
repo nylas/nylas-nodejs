@@ -97,9 +97,9 @@ export default class NylasConnection {
   component: ComponentRestfulModelCollection = new ComponentRestfulModelCollection(
     this
   );
-  scheduler: RestfulModelCollection<
-    Scheduler
-  > = new SchedulerRestfulModelCollection(this);
+  scheduler: SchedulerRestfulModelCollection = new SchedulerRestfulModelCollection(
+    this
+  );
 
   neural: Neural = new Neural(this);
 

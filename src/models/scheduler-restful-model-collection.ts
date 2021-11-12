@@ -2,7 +2,7 @@ import RestfulModelCollection from './restful-model-collection';
 import NylasConnection from '../nylas-connection';
 import Scheduler from './scheduler';
 import SchedulerTimeslot, {
-  BookingConfirmation,
+  SchedulerBookingConfirmation,
   SchedulerSlot,
 } from './scheduler-timeslot';
 
@@ -25,6 +25,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
 
   constructor(connection: NylasConnection) {
     super(Scheduler, connection);
+    connection.baseUrl = 'https://api.schedule.nylas.com';
     this.connection = connection;
     this.modelClass = Scheduler;
   }
@@ -85,7 +86,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
   bookTimeslot(
     slug: string,
     timeslot: SchedulerTimeslot
-  ): Promise<BookingConfirmation> {
+  ): Promise<SchedulerBookingConfirmation> {
     return this.connection
       .request({
         method: 'POST',
@@ -96,7 +97,9 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
         body: timeslot.toJSON(),
       })
       .then(json => {
-        return Promise.resolve(new BookingConfirmation(this.connection, json));
+        return Promise.resolve(
+          new SchedulerBookingConfirmation(this.connection, json)
+        );
       });
   }
 
@@ -121,7 +124,10 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       });
   }
 
-  confirmBooking(slug: string, editHash: string): Promise<BookingConfirmation> {
+  confirmBooking(
+    slug: string,
+    editHash: string
+  ): Promise<SchedulerBookingConfirmation> {
     return this.connection
       .request({
         method: 'POST',
@@ -132,7 +138,9 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
         body: {},
       })
       .then(json => {
-        return Promise.resolve(new BookingConfirmation(this.connection, json));
+        return Promise.resolve(
+          new SchedulerBookingConfirmation(this.connection, json)
+        );
       });
   }
 }

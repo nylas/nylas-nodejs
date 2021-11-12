@@ -1,14 +1,15 @@
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
 
-export class BookingConfirmation extends RestfulModel {
+export class SchedulerBookingConfirmation extends RestfulModel {
+  id?: string;
   accountId?: string;
   additionalFieldValues?: object;
   calendarEventId?: string;
   calendarId?: string;
   editHash?: string;
-  startTime?: number;
-  endTime?: number;
+  startTime?: Date;
+  endTime?: Date;
   isConfirmed?: boolean;
   location?: string;
   recipientEmail?: string;
@@ -17,8 +18,11 @@ export class BookingConfirmation extends RestfulModel {
   recipientTz?: string;
   title?: string;
 }
-BookingConfirmation.collectionName = 'booking_confirmation';
-BookingConfirmation.attributes = {
+SchedulerBookingConfirmation.collectionName = 'booking_confirmation';
+SchedulerBookingConfirmation.attributes = {
+  id: Attributes.Number({
+    modelKey: 'id',
+  }),
   accountId: Attributes.String({
     modelKey: 'accountId',
     jsonKey: 'account_id',
@@ -39,11 +43,11 @@ BookingConfirmation.attributes = {
     modelKey: 'editHash',
     jsonKey: 'edit_hash',
   }),
-  startTime: Attributes.Number({
+  startTime: Attributes.DateTime({
     modelKey: 'startTime',
     jsonKey: 'start_time',
   }),
-  endTime: Attributes.Number({
+  endTime: Attributes.DateTime({
     modelKey: 'endTime',
     jsonKey: 'end_time',
   }),
@@ -70,7 +74,7 @@ BookingConfirmation.attributes = {
     modelKey: 'recipientTz',
     jsonKey: 'recipient_tz',
   }),
-  title: Attributes.Number({
+  title: Attributes.String({
     modelKey: 'title',
   }),
 };
@@ -80,18 +84,8 @@ export class SchedulerSlot extends RestfulModel {
   calendarId?: string;
   hostName?: string;
   emails?: string[];
-  start?: number;
-  end?: number;
-
-  toJSON(): Record<string, any> {
-    return {
-      account_id: this.accountId,
-      calendar_id: this.calendarId,
-      emails: this.emails,
-      start: this.start,
-      end: this.end,
-    };
-  }
+  start?: Date;
+  end?: Date;
 }
 SchedulerSlot.collectionName = 'scheduler_slot';
 SchedulerSlot.attributes = {
@@ -110,10 +104,10 @@ SchedulerSlot.attributes = {
   emails: Attributes.StringList({
     modelKey: 'emails',
   }),
-  start: Attributes.Number({
+  start: Attributes.DateTime({
     modelKey: 'start',
   }),
-  end: Attributes.Number({
+  end: Attributes.DateTime({
     modelKey: 'end',
   }),
 };
@@ -139,8 +133,8 @@ SchedulerTimeslot.attributes = {
     modelKey: 'additionalValues',
     jsonKey: 'additional_values',
   }),
-  emails: Attributes.String({
-    modelKey: 'emails',
+  email: Attributes.String({
+    modelKey: 'email',
   }),
   locale: Attributes.String({
     modelKey: 'locale',
