@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Add support for Event notifications
+* Add support for remaining Scheduler endpoints
 
 ### 5.9.0 / 2021-09-24
 * Add Component CRUD Support
