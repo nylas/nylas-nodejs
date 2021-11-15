@@ -20,7 +20,6 @@ import FormData, { AppendOptions } from 'form-data';
 import Neural from './models/neural';
 import NylasApiError from './models/nylas-api-error';
 import ComponentRestfulModelCollection from './models/component-restful-model-collection';
-import Scheduler from './models/scheduler';
 import SchedulerRestfulModelCollection from './models/scheduler-restful-model-collection';
 
 const PACKAGE_JSON = require('../package.json');
