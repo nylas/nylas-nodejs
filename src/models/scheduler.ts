@@ -114,7 +114,7 @@ export default class Scheduler extends RestfulModel {
 
   constructor(connection: NylasConnection, json?: Record<string, any>) {
     super(connection, json);
-    connection.baseUrl = 'https://api.schedule.nylas.com';
+    this.baseUrl = 'https://api.schedule.nylas.com';
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
@@ -132,6 +132,7 @@ export default class Scheduler extends RestfulModel {
         headers: {
           'Content-Type': 'application/json',
         },
+        baseUrl: this.baseUrl,
       })
       .then(json => {
         const calendars = json.map((cal: { [key: string]: any }) => {
@@ -158,6 +159,7 @@ export default class Scheduler extends RestfulModel {
         contentType: contentType,
         objectName: objectName,
       },
+      baseUrl: this.baseUrl,
     });
   }
 }

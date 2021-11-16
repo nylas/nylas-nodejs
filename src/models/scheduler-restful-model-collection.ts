@@ -25,7 +25,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
 
   constructor(connection: NylasConnection) {
     super(Scheduler, connection);
-    connection.baseUrl = 'https://api.schedule.nylas.com';
+    this.baseUrl = 'https://api.schedule.nylas.com';
     this.connection = connection;
     this.modelClass = Scheduler;
   }
@@ -37,6 +37,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       headers: {
         'Content-Type': 'application/json',
       },
+      baseUrl: this.baseUrl,
     });
   }
 
@@ -47,6 +48,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       headers: {
         'Content-Type': 'application/json',
       },
+      baseUrl: this.baseUrl,
     });
   }
 
@@ -58,6 +60,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
         headers: {
           'Content-Type': 'application/json',
         },
+        baseUrl: this.baseUrl,
       })
       .then(json => {
         return Promise.resolve(new Scheduler(this.connection, json));
@@ -72,6 +75,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
         headers: {
           'Content-Type': 'application/json',
         },
+        baseUrl: this.baseUrl,
       })
       .then(json => {
         const timeslots: SchedulerSlot[] = json.map(
@@ -95,6 +99,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
           'Content-Type': 'application/json',
         },
         body: timeslot.toJSON(),
+        baseUrl: this.baseUrl,
       })
       .then(json => {
         return Promise.resolve(
@@ -118,6 +123,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
         body: {
           reason: reason,
         },
+        baseUrl: this.baseUrl,
       })
       .then(json => {
         return Promise.resolve(json);
@@ -136,6 +142,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
           'Content-Type': 'application/json',
         },
         body: {},
+        baseUrl: this.baseUrl,
       })
       .then(json => {
         return Promise.resolve(

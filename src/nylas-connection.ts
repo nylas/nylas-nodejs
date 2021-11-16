@@ -47,7 +47,6 @@ export type FormDataType = {
 export default class NylasConnection {
   accessToken: string | null | undefined;
   clientId: string | null | undefined;
-  baseUrl: string | null | undefined;
 
   threads: RestfulModelCollection<Thread> = new RestfulModelCollection(
     Thread,
@@ -111,7 +110,7 @@ export default class NylasConnection {
   }
 
   requestOptions(options: RequestOptions): RequestOptions {
-    const baseUrl = this.baseUrl ? this.baseUrl : config.apiServer;
+    const baseUrl = options.baseUrl ? options.baseUrl : config.apiServer;
     const url = new URL(`${baseUrl}${options.path}`);
     // map querystring to search params
     if (options.qs) {
