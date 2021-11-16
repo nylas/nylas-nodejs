@@ -1,5 +1,6 @@
 import ManagementModel from './management-model';
 import Attributes from './attributes';
+import { SaveCallback } from './restful-model';
 
 export default class ManagementAccount extends ManagementModel {
   billingState?: string;
@@ -8,6 +9,7 @@ export default class ManagementAccount extends ManagementModel {
   provider?: string;
   syncState?: string;
   trial?: boolean;
+  metadata?: object;
 
   upgrade() {
     return this.connection
@@ -42,6 +44,7 @@ export default class ManagementAccount extends ManagementModel {
       })
       .catch(err => Promise.reject(err));
   }
+
   ipAddresses() {
     return this.connection
       .request({
@@ -50,6 +53,7 @@ export default class ManagementAccount extends ManagementModel {
       })
       .catch(err => Promise.reject(err));
   }
+
   tokenInfo(accessToken?: string) {
     return this.connection
       .request({
@@ -62,6 +66,20 @@ export default class ManagementAccount extends ManagementModel {
         },
       })
       .catch(err => Promise.reject(err));
+  }
+
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+    return this._save(params, callback);
+  }
+
+  saveRequestBody() {
+    return {
+      metadata: this.metadata,
+    };
+  }
+
+  saveEndpoint(): string {
+    return `/a/${this.connection.clientId}/accounts`;
   }
 }
 ManagementAccount.collectionName = 'accounts';
@@ -88,5 +106,8 @@ ManagementAccount.attributes = {
   }),
   trial: Attributes.Boolean({
     modelKey: 'trial',
+  }),
+  metadata: Attributes.Object({
+    modelKey: 'metadata',
   }),
 };
