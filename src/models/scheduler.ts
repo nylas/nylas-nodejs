@@ -1,6 +1,37 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
+import Calendar from './calendar';
+
+export type SchedulerUploadImageResponse = {
+  filename: string;
+  originalFilename: string;
+  publicUrl: string;
+  signedUrl: string;
+};
+
+export class SchedulerAvailableCalendars extends RestfulModel {
+  calendars?: Calendar[];
+  email?: string;
+  id?: string;
+  name?: string;
+}
+SchedulerAvailableCalendars.collectionName = 'scheduler_available_calendars';
+SchedulerAvailableCalendars.attributes = {
+  calendars: Attributes.Collection({
+    modelKey: 'calendars',
+    itemClass: Calendar,
+  }),
+  email: Attributes.String({
+    modelKey: 'email',
+  }),
+  id: Attributes.String({
+    modelKey: 'id',
+  }),
+  name: Attributes.String({
+    modelKey: 'name',
+  }),
+};
 
 export default class Scheduler extends RestfulModel {
   accessTokens?: string[];
@@ -90,20 +121,30 @@ export default class Scheduler extends RestfulModel {
     return this._save(params, callback);
   }
 
-  getAvailableCalendars(): Record<string, any> {
+  getAvailableCalendars(): Promise<SchedulerAvailableCalendars[]> {
     if (!this.id) {
       throw new Error('Cannot get calendars for a page without an ID.');
     }
-    return this.connection.request({
-      method: 'GET',
-      path: `/manage/pages/${this.id}/calendars`,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return this.connection
+      .request({
+        method: 'GET',
+        path: `/manage/pages/${this.id}/calendars`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(json => {
+        const calendars = json.map((cal: { [key: string]: any }) => {
+          return new SchedulerAvailableCalendars(this.connection, cal);
+        });
+        return Promise.resolve(calendars);
+      });
   }
 
-  uploadImage(contentType: string, objectName: string): Record<string, any> {
+  uploadImage(
+    contentType: string,
+    objectName: string
+  ): Promise<SchedulerUploadImageResponse> {
     if (!this.id) {
       throw new Error('Cannot upload an image to a page without an ID.');
     }
