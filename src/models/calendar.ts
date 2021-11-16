@@ -10,6 +10,7 @@ export default class Calendar extends RestfulModel {
   timezone?: string;
   isPrimary?: boolean;
   jobStatusId?: string;
+  metadata?: object;
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
@@ -22,6 +23,7 @@ export default class Calendar extends RestfulModel {
       description: calendarJSON.description,
       location: calendarJSON.location,
       timezone: calendarJSON.timezone,
+      metadata: calendarJSON.metadata,
     };
   }
 
@@ -63,5 +65,8 @@ Calendar.attributes = {
   jobStatusId: Attributes.String({
     modelKey: 'jobStatusId',
     jsonKey: 'job_status_id',
+  }),
+  metadata: Attributes.Object({
+    modelKey: 'metadata',
   }),
 };

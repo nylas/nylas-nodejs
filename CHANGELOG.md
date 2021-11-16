@@ -3,6 +3,7 @@
 ### Unreleased
 * Add support for Event notifications
 * Add support for remaining Scheduler endpoints
+* Add metadata support for `Calendar` and `ManagementAccount`
 
 ### 5.9.0 / 2021-09-24
 * Add Component CRUD Support

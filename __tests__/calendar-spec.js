@@ -96,6 +96,9 @@ describe('Calendar', () => {
     expect.assertions(13);
     testContext.calendar.id = '8e570s302fdazx9zqwiuk9jqn';
     testContext.calendar.description = 'Updated description';
+    testContext.calendar.metadata = {
+      key: 'value',
+    };
     testContext.calendar.save().then(calendar => {
       const options = testContext.connection.request.mock.calls[0][0];
       expect(options.url.toString()).toEqual(
@@ -107,6 +110,9 @@ describe('Calendar', () => {
         description: 'Updated description',
         location: 'Santa Monica, CA',
         timezone: 'America/Los_Angeles',
+        metadata: {
+          key: 'value',
+        },
       });
       sharedCalendarEvaluation(calendar);
       expect(calendar.description).toEqual('Updated description');

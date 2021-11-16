@@ -1,4 +1,6 @@
 import Nylas from '../src/nylas';
+import NylasConnection from '../src/nylas-connection';
+import ManagementAccount from '../src/models/management-account';
 
 describe('ManagementAccount', () => {
   const CLIENT_ID = 'abc';
@@ -12,7 +14,6 @@ describe('ManagementAccount', () => {
 
   describe('list', () => {
     test('should do a GET request to get the account list', done => {
-      expect.assertions(6);
       Nylas.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
           {
@@ -23,6 +24,9 @@ describe('ManagementAccount', () => {
             provider: 'gmail',
             sync_state: 'running',
             trial: false,
+            metadata: {
+              test: 'true',
+            },
           },
         ])
       );
@@ -32,6 +36,9 @@ describe('ManagementAccount', () => {
         expect(accounts[0].billingState).toEqual('paid');
         expect(accounts[0].emailAddress).toEqual('margaret@hamilton.com');
         expect(accounts[0].provider).toEqual('gmail');
+        expect(accounts[0].metadata).toEqual({
+          test: 'true',
+        });
         expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
           method: 'GET',
           qs: { limit: 100, offset: 0 },
@@ -154,43 +161,43 @@ describe('ManagementAccount', () => {
           expect(resp.success).toBe('true');
           done();
         });
-    }),
-      test('should POST to revoke all tokens of an account except one token', done => {
-        expect.assertions(4);
-        const requestMock = jest.fn();
-        requestMock
-          .mockReturnValueOnce(
-            Promise.resolve([
-              {
-                account_id: '8rilmlwuo4zmpjedz8bcplclk',
-                billing_state: 'free',
-                id: ACCOUNT_ID,
-                sync_state: 'running',
-                trial: false,
-              },
-            ])
-          )
-          .mockReturnValueOnce(Promise.resolve({ success: 'true' }));
-        Nylas.accounts.connection.request = requestMock;
-        Nylas.accounts
-          .first()
-          .then(account => account.revokeAll('abc123'))
-          .then(resp => {
-            expect(Nylas.accounts.connection.request).toHaveBeenCalledTimes(2);
-            expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
-              method: 'GET',
-              qs: { limit: 1, offset: 0 },
-              path: `/a/${CLIENT_ID}/accounts`,
-            });
-            expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
-              method: 'POST',
-              path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/revoke-all`,
-              body: { keep_access_token: 'abc123' },
-            });
-            expect(resp.success).toBe('true');
-            done();
+    });
+    test('should POST to revoke all tokens of an account except one token', done => {
+      expect.assertions(4);
+      const requestMock = jest.fn();
+      requestMock
+        .mockReturnValueOnce(
+          Promise.resolve([
+            {
+              account_id: '8rilmlwuo4zmpjedz8bcplclk',
+              billing_state: 'free',
+              id: ACCOUNT_ID,
+              sync_state: 'running',
+              trial: false,
+            },
+          ])
+        )
+        .mockReturnValueOnce(Promise.resolve({ success: 'true' }));
+      Nylas.accounts.connection.request = requestMock;
+      Nylas.accounts
+        .first()
+        .then(account => account.revokeAll('abc123'))
+        .then(resp => {
+          expect(Nylas.accounts.connection.request).toHaveBeenCalledTimes(2);
+          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+            method: 'GET',
+            qs: { limit: 1, offset: 0 },
+            path: `/a/${CLIENT_ID}/accounts`,
           });
-      });
+          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+            method: 'POST',
+            path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/revoke-all`,
+            body: { keep_access_token: 'abc123' },
+          });
+          expect(resp.success).toBe('true');
+          done();
+        });
+    });
   });
 
   describe('ip_addresses', () => {
@@ -322,6 +329,46 @@ describe('ManagementAccount', () => {
           expect(resp).toBe('Error: No access_token passed.');
           done();
         });
+    });
+  });
+
+  describe('save', () => {
+    test('Should update only metadata when saving', async done => {
+      Nylas.accounts.connection = new NylasConnection('123', {
+        clientId: CLIENT_ID,
+      });
+      Nylas.accounts.connection.request = jest.fn(() => Promise.resolve({}));
+      const accJson = {
+        account_id: '8rilmlwuo4zmpjedz8bcplclk',
+        billing_state: 'paid',
+        email: 'margaret@hamilton.com',
+        id: ACCOUNT_ID,
+        provider: 'gmail',
+        sync_state: 'running',
+        trial: false,
+      };
+      const account = new ManagementAccount(
+        Nylas.accounts.connection,
+        CLIENT_ID,
+        accJson
+      );
+      account.metadata = {
+        test: 'true',
+      };
+
+      account.save().then(() => {
+        expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          method: 'PUT',
+          path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}`,
+          qs: {},
+          body: {
+            metadata: {
+              test: 'true',
+            },
+          },
+        });
+        done();
+      });
     });
   });
 });
