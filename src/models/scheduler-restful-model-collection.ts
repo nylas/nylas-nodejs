@@ -67,7 +67,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       });
   }
 
-  getAvailableTimeslots(slug: string): Promise<SchedulerTimeSlot[]> {
+  getAvailableTimeSlots(slug: string): Promise<SchedulerTimeSlot[]> {
     return this.connection
       .request({
         method: 'GET',
@@ -87,7 +87,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       });
   }
 
-  bookTimeslot(
+  bookTimeSlot(
     slug: string,
     bookingRequest: SchedulerBookingRequest
   ): Promise<SchedulerBookingConfirmation> {

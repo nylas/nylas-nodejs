@@ -162,7 +162,7 @@ describe('SchedulerRestfulModelCollection', () => {
         });
     });
 
-    test('getAvailableTimeslots should return an array of SchedulerTimeSlot', done => {
+    test('getAvailableTimeSlots should return an array of SchedulerTimeSlot', done => {
       const schedulerTimeSlots = [
         {
           account_id: 'test-account-id',
@@ -188,7 +188,7 @@ describe('SchedulerRestfulModelCollection', () => {
       fetch.mockImplementation(() => Promise.resolve(response));
 
       testContext.connection.scheduler
-        .getAvailableTimeslots('test-slug')
+        .getAvailableTimeSlots('test-slug')
         .then(timeslots => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
@@ -276,7 +276,7 @@ describe('SchedulerRestfulModelCollection', () => {
         fetch.mockImplementation(() => Promise.resolve(response));
       });
 
-      test('bookTimeslot should return a SchedulerBookingConfirmation type', done => {
+      test('bookTimeSlot should return a SchedulerBookingConfirmation type', done => {
         const slot = new SchedulerTimeSlot(testContext.connection);
         slot.accountId = 'test-account-id';
         slot.calendarId = 'test-calendar-id';
@@ -296,7 +296,7 @@ describe('SchedulerRestfulModelCollection', () => {
         timeslotToBook.slot = slot;
 
         testContext.connection.scheduler
-          .bookTimeslot('test-slug', timeslotToBook)
+          .bookTimeSlot('test-slug', timeslotToBook)
           .then(bookingConfirmation => {
             const options = testContext.connection.request.mock.calls[0][0];
             expect(options.url.toString()).toEqual(
