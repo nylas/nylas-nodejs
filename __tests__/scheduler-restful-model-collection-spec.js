@@ -1,9 +1,8 @@
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import fetch from 'node-fetch';
-import SchedulerTimeSlot, {
-  SchedulerBookingRequest,
-} from '../src/models/scheduler-time-slot';
+import SchedulerTimeSlot from '../src/models/scheduler-time-slot';
+import SchedulerBookingRequest from '../src/models/scheduler-booking-request';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');

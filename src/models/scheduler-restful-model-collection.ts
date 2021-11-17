@@ -1,10 +1,10 @@
 import RestfulModelCollection from './restful-model-collection';
 import NylasConnection from '../nylas-connection';
 import Scheduler from './scheduler';
-import SchedulerTimeSlot, {
+import SchedulerTimeSlot from './scheduler-time-slot';
+import SchedulerBookingRequest, {
   SchedulerBookingConfirmation,
-  SchedulerBookingRequest,
-} from './scheduler-time-slot';
+} from './scheduler-booking-request';
 
 export type ProviderAvailability = {
   busy: [
