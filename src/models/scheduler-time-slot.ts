@@ -87,12 +87,12 @@ export class SchedulerBookingRequest extends RestfulModel {
   name?: string;
   pageHostname?: string;
   replacesBookingHash?: string;
-  slot?: SchedulerTimeslot;
+  slot?: SchedulerTimeSlot;
   timezone?: string;
 }
 SchedulerBookingRequest.collectionName = 'scheduler_timeslot';
 
-export default class SchedulerTimeslot extends RestfulModel {
+export default class SchedulerTimeSlot extends RestfulModel {
   accountId?: string;
   calendarId?: string;
   hostName?: string;
@@ -100,8 +100,8 @@ export default class SchedulerTimeslot extends RestfulModel {
   start?: Date;
   end?: Date;
 }
-SchedulerTimeslot.collectionName = 'scheduler_slot';
-SchedulerTimeslot.attributes = {
+SchedulerTimeSlot.collectionName = 'scheduler_slot';
+SchedulerTimeSlot.attributes = {
   accountId: Attributes.String({
     modelKey: 'accountId',
     jsonKey: 'account_id',
@@ -152,7 +152,7 @@ SchedulerBookingRequest.attributes = {
   }),
   slot: Attributes.Object({
     modelKey: 'slot',
-    itemClass: SchedulerTimeslot,
+    itemClass: SchedulerTimeSlot,
   }),
   timezone: Attributes.String({
     modelKey: 'timezone',
