@@ -2,7 +2,7 @@ import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import fetch from 'node-fetch';
 import SchedulerTimeslot, {
-  SchedulerSlot,
+  SchedulerBookingRequest,
 } from '../src/models/scheduler-timeslot';
 
 jest.mock('node-fetch', () => {
@@ -163,8 +163,8 @@ describe('SchedulerRestfulModelCollection', () => {
         });
     });
 
-    test('getAvailableTimeslots should return an array of SchedulerSlots', done => {
-      const schedulerSlots = [
+    test('getAvailableTimeslots should return an array of SchedulerTimeslots', done => {
+      const SchedulerTimeslots = [
         {
           account_id: 'test-account-id',
           calendar_id: 'test-calendar-id',
@@ -181,7 +181,7 @@ describe('SchedulerRestfulModelCollection', () => {
           return Promise.resolve('body');
         },
         json: () => {
-          return Promise.resolve(schedulerSlots);
+          return Promise.resolve(SchedulerTimeslots);
         },
         headers: new Map(),
       };
@@ -278,13 +278,13 @@ describe('SchedulerRestfulModelCollection', () => {
       });
 
       test('bookTimeslot should return a SchedulerBookingConfirmation type', done => {
-        const slot = new SchedulerSlot(testContext.connection);
+        const slot = new SchedulerTimeslot(testContext.connection);
         slot.accountId = 'test-account-id';
         slot.calendarId = 'test-calendar-id';
         slot.emails = ['recipient@example.com'];
         slot.start = new Date(1636728347 * 1000);
         slot.end = new Date(1636731958 * 1000);
-        const timeslotToBook = new SchedulerTimeslot(testContext.connection);
+        const timeslotToBook = new SchedulerBookingRequest(testContext.connection);
         timeslotToBook.additionalValues = {
           test: 'yes',
         };

@@ -3,7 +3,7 @@ import NylasConnection from '../nylas-connection';
 import Scheduler from './scheduler';
 import SchedulerTimeslot, {
   SchedulerBookingConfirmation,
-  SchedulerSlot,
+  SchedulerBookingRequest,
 } from './scheduler-timeslot';
 
 export type ProviderAvailability = {
@@ -67,7 +67,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       });
   }
 
-  getAvailableTimeslots(slug: string): Promise<SchedulerSlot[]> {
+  getAvailableTimeslots(slug: string): Promise<SchedulerTimeslot[]> {
     return this.connection
       .request({
         method: 'GET',
@@ -78,9 +78,9 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
         baseUrl: this.baseUrl,
       })
       .then(json => {
-        const timeslots: SchedulerSlot[] = json.map(
+        const timeslots: SchedulerTimeslot[] = json.map(
           (timeslot: Record<string, any>) => {
-            return new SchedulerSlot(this.connection, timeslot);
+            return new SchedulerTimeslot(this.connection, timeslot);
           }
         );
         return Promise.resolve(timeslots);
@@ -89,7 +89,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
 
   bookTimeslot(
     slug: string,
-    timeslot: SchedulerTimeslot
+    bookingRequest: SchedulerBookingRequest
   ): Promise<SchedulerBookingConfirmation> {
     return this.connection
       .request({
@@ -98,7 +98,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
         headers: {
           'Content-Type': 'application/json',
         },
-        body: timeslot.toJSON(),
+        body: bookingRequest.toJSON(),
         baseUrl: this.baseUrl,
       })
       .then(json => {

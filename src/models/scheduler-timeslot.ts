@@ -79,7 +79,20 @@ SchedulerBookingConfirmation.attributes = {
   }),
 };
 
-export class SchedulerSlot extends RestfulModel {
+export class SchedulerBookingRequest extends RestfulModel {
+  additionalEmails?: string[];
+  additionalValues?: object;
+  email?: string;
+  locale?: string;
+  name?: string;
+  pageHostname?: string;
+  replacesBookingHash?: string;
+  slot?: SchedulerTimeslot;
+  timezone?: string;
+}
+SchedulerBookingRequest.collectionName = 'scheduler_timeslot';
+
+export default class SchedulerTimeslot extends RestfulModel {
   accountId?: string;
   calendarId?: string;
   hostName?: string;
@@ -87,8 +100,8 @@ export class SchedulerSlot extends RestfulModel {
   start?: Date;
   end?: Date;
 }
-SchedulerSlot.collectionName = 'scheduler_slot';
-SchedulerSlot.attributes = {
+SchedulerTimeslot.collectionName = 'scheduler_slot';
+SchedulerTimeslot.attributes = {
   accountId: Attributes.String({
     modelKey: 'accountId',
     jsonKey: 'account_id',
@@ -111,20 +124,7 @@ SchedulerSlot.attributes = {
     modelKey: 'end',
   }),
 };
-
-export default class SchedulerTimeslot extends RestfulModel {
-  additionalEmails?: string[];
-  additionalValues?: object;
-  email?: string;
-  locale?: string;
-  name?: string;
-  pageHostname?: string;
-  replacesBookingHash?: string;
-  slot?: SchedulerSlot;
-  timezone?: string;
-}
-SchedulerTimeslot.collectionName = 'scheduler_timeslot';
-SchedulerTimeslot.attributes = {
+SchedulerBookingRequest.attributes = {
   additionalEmails: Attributes.StringList({
     modelKey: 'additionalEmails',
     jsonKey: 'additional_emails',
@@ -152,7 +152,7 @@ SchedulerTimeslot.attributes = {
   }),
   slot: Attributes.Object({
     modelKey: 'slot',
-    itemClass: SchedulerSlot,
+    itemClass: SchedulerTimeslot,
   }),
   timezone: Attributes.String({
     modelKey: 'timezone',
