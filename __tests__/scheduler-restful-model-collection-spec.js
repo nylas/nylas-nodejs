@@ -284,7 +284,9 @@ describe('SchedulerRestfulModelCollection', () => {
         slot.emails = ['recipient@example.com'];
         slot.start = new Date(1636728347 * 1000);
         slot.end = new Date(1636731958 * 1000);
-        const timeslotToBook = new SchedulerBookingRequest(testContext.connection);
+        const timeslotToBook = new SchedulerBookingRequest(
+          testContext.connection
+        );
         timeslotToBook.additionalValues = {
           test: 'yes',
         };
