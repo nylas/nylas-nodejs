@@ -22,6 +22,7 @@ export default class Message extends RestfulModel {
   events?: Event[];
   folder?: Folder;
   labels?: Label[];
+  metadata?: object;
   headers?: { [key: string]: string };
   failures?: any;
 
@@ -80,6 +81,7 @@ export default class Message extends RestfulModel {
 
     json['starred'] = this.starred;
     json['unread'] = this.unread;
+    json['metadata'] = this.metadata;
     return json;
   }
 
@@ -149,6 +151,9 @@ Message.attributes = {
   labels: Attributes.Collection({
     modelKey: 'labels',
     itemClass: Label,
+  }),
+  metadata: Attributes.Object({
+    modelKey: 'metadata',
   }),
   headers: Attributes.Object({
     modelKey: 'headers',

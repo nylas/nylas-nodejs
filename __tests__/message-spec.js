@@ -95,6 +95,27 @@ describe('Message', () => {
       });
     });
 
+    test('should do a PUT with metadata if metadata is defined', done => {
+      testContext.message.metadata = {
+        test: 'yes',
+      };
+      return testContext.message.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/messages/4333'
+        );
+        expect(options.method).toEqual('PUT');
+        expect(JSON.parse(options.body)).toEqual({
+          metadata: {
+            test: 'yes',
+          },
+          starred: true,
+          unread: false,
+        });
+        done();
+      });
+    });
+
     test('should resolve with the message object', done => {
       return testContext.message.save().then(message => {
         expect(message.id).toBe('4333');
