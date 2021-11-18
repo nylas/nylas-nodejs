@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 5.10.0 / 2021-10-18
 * Add support for Event notifications
 * Add support for remaining Scheduler endpoints
 * Add metadata support for `Calendar`, `Message` and `ManagementAccount`
