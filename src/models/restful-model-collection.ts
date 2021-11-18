@@ -10,6 +10,7 @@ export type GetCallback = (error: Error | null, result?: RestfulModel) => void;
 export default class RestfulModelCollection<T extends RestfulModel> {
   connection: NylasConnection;
   modelClass: typeof RestfulModel;
+  baseUrl?: string;
 
   constructor(modelClass: typeof RestfulModel, connection: NylasConnection) {
     this.modelClass = modelClass;
@@ -73,6 +74,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         method: 'GET',
         path: this.path(),
         qs: { view: 'count', ...params },
+        baseUrl: this.baseUrl,
       })
       .then((json: any) => {
         if (callback) {
@@ -263,6 +265,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         qs: qs,
         body: body,
         path: `${this.path()}/${item.id}`,
+        baseUrl: this.baseUrl,
       })
       .then(data => {
         if (callback) {
@@ -359,6 +362,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         method: 'GET',
         path,
         qs: { ...params, offset, limit },
+        baseUrl: this.baseUrl,
       });
     }
 
@@ -375,6 +379,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         method: 'GET',
         path: `${this.path()}/${id}`,
         qs: params,
+        baseUrl: this.baseUrl,
       })
       .then((json: any) => {
         const model = this._createModel(json);
@@ -393,6 +398,7 @@ export default class RestfulModelCollection<T extends RestfulModel> {
         method: 'GET',
         path,
         qs: { ...params, offset, limit },
+        baseUrl: this.baseUrl,
       })
       .then((jsonArray: any) => {
         const models = jsonArray.map((json: any) => {

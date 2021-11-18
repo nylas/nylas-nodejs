@@ -19,6 +19,7 @@ export default class RestfulModel {
   connection: NylasConnection;
   id?: string;
   object?: string;
+  baseUrl?: string;
 
   constructor(connection: NylasConnection, json?: Partial<RestfulModelJSON>) {
     this.connection = connection;
@@ -117,6 +118,7 @@ export default class RestfulModel {
         path: this.id
           ? `${this.saveEndpoint()}/${this.id}`
           : `${this.saveEndpoint()}`,
+        baseUrl: this.baseUrl,
       })
       .then(json => {
         this.fromJSON(json as RestfulModelJSON);
@@ -144,6 +146,7 @@ export default class RestfulModel {
         method: 'GET',
         path: `/${collectionName}/${this.id}${pathSuffix}`,
         qs: params,
+        baseUrl: this.baseUrl,
       })
       .then(response => {
         if (callback) {

@@ -1,7 +1,10 @@
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import fetch from 'node-fetch';
-import Scheduler from '../src/models/scheduler';
+import Scheduler, {
+  SchedulerAvailableCalendars,
+} from '../src/models/scheduler';
+import Calendar from '../src/models/calendar';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -147,14 +150,56 @@ describe('Scheduler', () => {
   });
 
   describe('getAvailableCalendars', () => {
+    beforeEach(() => {
+      const calendarsJSON = [
+        {
+          calendars: [
+            {
+              id: 'test-calendar-id',
+              name: 'Test Calendar',
+              read_only: true,
+            },
+          ],
+          email: 'test@example.com',
+          id: 'test-response-id',
+          name: 'John Doe',
+        },
+      ];
+      const response = () => {
+        return {
+          status: 200,
+          buffer: () => {
+            return Promise.resolve('body');
+          },
+          json: () => {
+            return Promise.resolve(calendarsJSON);
+          },
+          headers: new Map(),
+        };
+      };
+
+      fetch.mockImplementation(() => Promise.resolve(response()));
+    });
+
     test('Should do a GET request if the scheduler has an id', done => {
       testContext.scheduler.id = 'abc-123';
-      testContext.scheduler.getAvailableCalendars().then(() => {
+      testContext.scheduler.getAvailableCalendars().then(calendars => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
           'https://api.schedule.nylas.com/manage/pages/abc-123/calendars'
         );
         expect(options.method).toEqual('GET');
+        expect(calendars.length).toBe(1);
+        expect(calendars[0] instanceof SchedulerAvailableCalendars).toEqual(
+          true
+        );
+        expect(calendars[0].calendars[0] instanceof Calendar).toEqual(true);
+        expect(calendars[0].calendars[0].id).toEqual('test-calendar-id');
+        expect(calendars[0].calendars[0].name).toEqual('Test Calendar');
+        expect(calendars[0].calendars[0].readOnly).toEqual(true);
+        expect(calendars[0].id).toEqual('test-response-id');
+        expect(calendars[0].name).toEqual('John Doe');
+        expect(calendars[0].email).toEqual('test@example.com');
         done();
       });
     });
