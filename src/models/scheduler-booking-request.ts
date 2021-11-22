@@ -90,6 +90,21 @@ export default class SchedulerBookingRequest extends RestfulModel {
   replacesBookingHash?: string;
   slot?: SchedulerTimeSlot;
   timezone?: string;
+
+  /*
+  * The booking endpoint requires additional_values and additional_emails
+    to exist regardless if they are empty or not
+  */
+  toJSON(enforceReadOnly?: boolean): Record<string, any> {
+    const json = super.toJSON(enforceReadOnly);
+    if(!this.additionalEmails) {
+      json["additional_emails"] = [];
+    }
+    if(!this.additionalValues) {
+      json["additional_values"] = {};
+    }
+    return json;
+  }
 }
 SchedulerBookingRequest.collectionName = 'booking_request';
 SchedulerBookingRequest.attributes = {
