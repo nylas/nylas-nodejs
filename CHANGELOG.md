@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix bug where booking a valid timeslot resulted in an API error
+
 ### 5.10.0 / 2021-10-18
 * Add support for Event notifications
 * Add support for remaining Scheduler endpoints
