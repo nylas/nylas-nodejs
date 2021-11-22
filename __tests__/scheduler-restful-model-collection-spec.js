@@ -304,6 +304,7 @@ describe('SchedulerRestfulModelCollection', () => {
             );
             expect(options.method).toEqual('POST');
             expect(JSON.parse(options.body)).toEqual({
+              additional_emails: [],
               additional_values: {
                 test: 'yes',
               },
