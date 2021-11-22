@@ -97,11 +97,11 @@ export default class SchedulerBookingRequest extends RestfulModel {
   */
   toJSON(enforceReadOnly?: boolean): Record<string, any> {
     const json = super.toJSON(enforceReadOnly);
-    if(!this.additionalEmails) {
-      json["additional_emails"] = [];
+    if (!this.additionalEmails) {
+      json['additional_emails'] = [];
     }
-    if(!this.additionalValues) {
-      json["additional_values"] = {};
+    if (!this.additionalValues) {
+      json['additional_values'] = {};
     }
     return json;
   }
