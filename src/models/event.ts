@@ -131,8 +131,8 @@ export default class Event extends RestfulModel {
 
   saveRequestBody(): any {
     const json = super.saveRequestBody();
-    if(json.when && json.when.object) {
-      delete(json.when.object);
+    if (json.when && json.when.object) {
+      delete json.when.object;
     }
 
     return json;
