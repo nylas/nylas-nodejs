@@ -32,7 +32,7 @@ export class Attribute {
   }
   saveRequestBody(val: any) {
     if (this.readOnly) {
-      return undefined;
+      return;
     }
     return this.toJSON(val);
   }
@@ -77,7 +77,7 @@ class AttributeObject extends Attribute {
 
   saveRequestBody(val: any) {
     if (this.readOnly) {
-      return undefined;
+      return;
     }
     return this.toJSON(val, true);
   }
@@ -218,7 +218,7 @@ class AttributeCollection extends Attribute {
 
   saveRequestBody(val: any) {
     if (this.readOnly) {
-      return undefined;
+      return;
     }
     return this.toJSON(val, true);
   }
