@@ -1,6 +1,8 @@
 # Changelog
 
 ### Unreleased
+* Fix Scheduler and Component types
+* Fix Component sending unmodifiable fields during update
 * Fix bug where updating an event resulted in an API error
 
 ### 5.10.1 / 2021-10-22
