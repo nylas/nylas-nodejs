@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix bug where updating an event resulted in an API error
+
 ### 5.10.1 / 2021-10-22
 * Fix bug where booking a valid timeslot resulted in an API error
 
