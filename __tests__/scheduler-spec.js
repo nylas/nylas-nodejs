@@ -56,8 +56,8 @@ describe('Scheduler', () => {
         edit_token: 'token',
         name: 'Test',
         slug: 'test-slug',
-        created_at: new Date('2021-06-24T21:28:09Z'),
-        modified_at: new Date('2021-06-24T21:28:09Z'),
+        created_at: new Date('2021-06-24'),
+        modified_at: new Date('2021-06-24'),
       };
       const scheduler = new Scheduler(testContext.connection, schedulerJSON);
 
@@ -67,8 +67,8 @@ describe('Scheduler', () => {
       expect(scheduler.editToken).toEqual('token');
       expect(scheduler.name).toEqual('Test');
       expect(scheduler.slug).toEqual('test-slug');
-      expect(scheduler.createdAt).toEqual(new Date('2021-06-24T21:28:09Z'));
-      expect(scheduler.modifiedAt).toEqual(new Date('2021-06-24T21:28:09Z'));
+      expect(scheduler.createdAt).toEqual(new Date('2021-06-24'));
+      expect(scheduler.modifiedAt).toEqual(new Date('2021-06-24'));
       done();
     });
 
@@ -82,8 +82,8 @@ describe('Scheduler', () => {
       testContext.scheduler.editToken = 'token';
       testContext.scheduler.name = 'Test';
       testContext.scheduler.slug = 'test-slug';
-      testContext.scheduler.createdAt = new Date('2021-06-24T21:28:09Z');
-      testContext.scheduler.modifiedAt = new Date('2021-06-24T21:28:09Z');
+      testContext.scheduler.createdAt = new Date('2021-06-24');
+      testContext.scheduler.modifiedAt = new Date('2021-06-24');
       testContext.scheduler.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(

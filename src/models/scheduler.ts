@@ -74,7 +74,7 @@ export default class Scheduler extends RestfulModel {
       name_field_hidden: boolean;
       opening_hours: Array<{
         account_id?: string;
-        days?: string;
+        days?: string[];
         end?: string;
         start?: string;
       }>;
@@ -92,7 +92,7 @@ export default class Scheduler extends RestfulModel {
       title?: string;
     };
     expire_after?: {
-      date?: number;
+      date?: Date;
       uses?: number;
     };
     locale?: string;
