@@ -1,14 +1,14 @@
 # Changelog
 
-### Unreleased
+### 5.10.2 / 2021-12-03
 * Fix Scheduler and Component types
 * Fix Component sending unmodifiable fields during update
 * Fix bug where updating an event resulted in an API error
 
-### 5.10.1 / 2021-10-22
+### 5.10.1 / 2021-11-22
 * Fix bug where booking a valid timeslot resulted in an API error
 
-### 5.10.0 / 2021-10-18
+### 5.10.0 / 2021-11-18
 * Add support for Event notifications
 * Add support for remaining Scheduler endpoints
 * Add metadata support for `Calendar`, `Message` and `ManagementAccount`
