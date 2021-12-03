@@ -11,6 +11,7 @@ export default class Component extends RestfulModel {
   publicAccountId?: string;
   publicTokenId?: string;
   publicApplicationId?: string;
+  accessToken?: string;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -55,6 +56,10 @@ Component.attributes = {
   publicApplicationId: Attributes.String({
     modelKey: 'publicApplicationId',
     jsonKey: 'public_application_id',
+  }),
+  accessToken: Attributes.String({
+    modelKey: 'accessToken',
+    jsonKey: 'access_token',
   }),
   createdAt: Attributes.Date({
     modelKey: 'createdAt',
