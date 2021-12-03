@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+* Fix Scheduler and Component types
+* Fix Component sending unmodifiable fields during update
+
 ### 5.10.1 / 2021-10-22
 * Fix bug where booking a valid timeslot resulted in an API error
 
