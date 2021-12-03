@@ -30,6 +30,12 @@ export class Attribute {
   fromJSON(val: any, _parent: any) {
     return val || null;
   }
+  saveRequestBody(val: any) {
+    if(this.readOnly) {
+      return undefined;
+    }
+    return this.toJSON(val);
+  }
 }
 
 class AttributeObject extends Attribute {
@@ -50,11 +56,13 @@ class AttributeObject extends Attribute {
     this.itemClass = itemClass;
   }
 
-  toJSON(val: any) {
+  toJSON(val: any, saveRequestBody?: boolean) {
     if (!val) {
       return val;
     }
-    if (val.toJSON != null) {
+    if (saveRequestBody === true && val.saveRequestBody != null) {
+      return val.saveRequestBody();
+    } else if (val.toJSON != null) {
       return val.toJSON();
     }
     return val;
@@ -65,6 +73,13 @@ class AttributeObject extends Attribute {
       return val;
     }
     return new this.itemClass(_parent.connection, val);
+  }
+
+  saveRequestBody(val: any) {
+    if(this.readOnly) {
+      return undefined;
+    }
+    return this.toJSON(val, true);
   }
 }
 
@@ -172,13 +187,15 @@ class AttributeCollection extends Attribute {
     this.itemClass = itemClass;
   }
 
-  toJSON(vals: any) {
+  toJSON(vals: any, saveRequestBody?: boolean) {
     if (!vals) {
       return [];
     }
     const json = [];
     for (const val of vals) {
-      if (val.toJSON != null) {
+      if (saveRequestBody === true && val.saveRequestBody != null) {
+        json.push(val.saveRequestBody());
+      } else if (val.toJSON != null) {
         json.push(val.toJSON());
       } else {
         json.push(val);
@@ -197,6 +214,13 @@ class AttributeCollection extends Attribute {
       objs.push(obj);
     }
     return objs;
+  }
+
+  saveRequestBody(val: any) {
+    if(this.readOnly) {
+      return undefined;
+    }
+    return this.toJSON(val, true);
   }
 }
 
