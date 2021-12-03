@@ -57,8 +57,10 @@ export default class RestfulModel {
     const json: any = {};
     const attributes = this.attributes();
     for (const attrName in attributes) {
-      if (!attributes[attrName].readOnly || enforceReadOnly !== true) {
-        const attr = attributes[attrName];
+      const attr = attributes[attrName];
+      if (enforceReadOnly === true) {
+        json[attr.jsonKey] = attr.saveRequestBody((this as any)[attrName]);
+      } else {
         json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
       }
     }
