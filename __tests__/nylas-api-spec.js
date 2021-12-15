@@ -211,6 +211,17 @@ describe('Nylas', () => {
       );
     });
 
+    test('should use a provider when provided in the options', () => {
+      const options = {
+        loginHint: 'ben@nylas.com',
+        redirectURI: 'https://localhost/callback',
+        provider: 'icloud',
+      };
+      expect(Nylas.urlForAuthentication(options)).toEqual(
+        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback&provider=icloud'
+      );
+    });
+
     test('should add scopes when provided in the options', () => {
       const options = {
         loginHint: 'test@nylas.com',
