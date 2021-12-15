@@ -176,10 +176,10 @@ describe('Job Status', () => {
     test('job status with status = successful should return true, otherwise false', done => {
       testContext.connection.jobStatuses.find('a1b2c3').then(jobStatus => {
         expect(jobStatus.isSuccessful()).toBe(true);
-        jobStatus.status = "failure";
+        jobStatus.status = 'failure';
         expect(jobStatus.isSuccessful()).toBe(false);
         done();
       });
     });
-  })
+  });
 });

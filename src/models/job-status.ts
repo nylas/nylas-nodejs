@@ -11,7 +11,7 @@ export default class JobStatus extends RestfulModel {
 
   // Returns the status of a job as a boolean
   isSuccessful(): boolean {
-    return this.status === "successful";
+    return this.status === 'successful';
   }
 }
 
@@ -20,25 +20,25 @@ JobStatus.attributes = {
   ...RestfulModel.attributes,
   action: Attributes.String({
     modelKey: 'action',
-    readOnly: true
+    readOnly: true,
   }),
   createdAt: Attributes.DateTime({
     modelKey: 'createdAt',
     jsonKey: 'created_at',
-    readOnly: true
+    readOnly: true,
   }),
   jobStatusId: Attributes.String({
     modelKey: 'jobStatusId',
     jsonKey: 'job_status_id',
-    readOnly: true
+    readOnly: true,
   }),
   status: Attributes.String({
     modelKey: 'status',
-    readOnly: true
+    readOnly: true,
   }),
   originalData: Attributes.Object({
     modelKey: 'originalData',
     jsonKey: 'original_data',
-    readOnly: true
+    readOnly: true,
   }),
 };
