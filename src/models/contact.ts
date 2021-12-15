@@ -189,6 +189,7 @@ export class Contact extends RestfulModel {
   webPages?: WebPage[];
   groups?: Group[];
   source?: string;
+  jobStatusId?: string;
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
     return this._save(params, callback);
@@ -279,5 +280,10 @@ Contact.attributes = {
   }),
   source: Attributes.String({
     modelKey: 'source',
+  }),
+  jobStatusId: Attributes.String({
+    modelKey: 'jobStatusId',
+    jsonKey: 'job_status_id',
+    readOnly: true,
   }),
 };
