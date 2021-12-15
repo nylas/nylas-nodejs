@@ -159,4 +159,27 @@ describe('Job Status', () => {
       });
     });
   });
+
+  describe('isSuccessful', () => {
+    beforeEach(() => {
+      const response = {
+        status: 200,
+        json: () => {
+          return Promise.resolve(testContext.getApiResponse);
+        },
+        headers: new Map(),
+      };
+
+      fetch.mockImplementation(() => Promise.resolve(response));
+    });
+
+    test('job status with status = successful should return true, otherwise false', done => {
+      testContext.connection.jobStatuses.find('a1b2c3').then(jobStatus => {
+        expect(jobStatus.isSuccessful()).toBe(true);
+        jobStatus.status = "failure";
+        expect(jobStatus.isSuccessful()).toBe(false);
+        done();
+      });
+    });
+  })
 });
