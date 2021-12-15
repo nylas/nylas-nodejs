@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add missing `provider` option for `urlForAuthentication`
+
 ### 5.10.2 / 2021-12-03
 * Fix Scheduler and Component types
 * Fix Component sending unmodifiable fields during update
