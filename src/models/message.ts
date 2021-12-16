@@ -25,6 +25,7 @@ export default class Message extends RestfulModel {
   metadata?: object;
   headers?: { [key: string]: string };
   failures?: any;
+  jobStatusId?: string;
 
   // We calculate the list of participants instead of grabbing it from
   // a parent because it is a better source of ground truth, and saves us
@@ -157,5 +158,10 @@ Message.attributes = {
   }),
   headers: Attributes.Object({
     modelKey: 'headers',
+  }),
+  jobStatusId: Attributes.String({
+    modelKey: 'jobStatusId',
+    jsonKey: 'job_status_id',
+    readOnly: true,
   }),
 };

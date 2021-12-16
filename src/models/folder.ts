@@ -4,6 +4,7 @@ import Attributes from './attributes';
 export class Folder extends RestfulModel {
   displayName?: string;
   name?: string;
+  jobStatusId?: string;
 
   saveRequestBody() {
     const json: { [key: string]: any } = {};
@@ -26,6 +27,11 @@ Folder.attributes = {
   displayName: Attributes.String({
     modelKey: 'displayName',
     jsonKey: 'display_name',
+  }),
+  jobStatusId: Attributes.String({
+    modelKey: 'jobStatusId',
+    jsonKey: 'job_status_id',
+    readOnly: true,
   }),
 };
 
