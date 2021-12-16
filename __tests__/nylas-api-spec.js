@@ -211,8 +211,9 @@ describe('Nylas', () => {
         redirectURI,
       };
 
-      expect(Nylas.urlForAuthentication(options))
-        .toEqual(`https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}`);
+      expect(Nylas.urlForAuthentication(options)).toEqual(
+        `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}`
+      );
     });
 
     test('should use a provider when provided in the options', () => {
@@ -225,8 +226,9 @@ describe('Nylas', () => {
         provider,
       };
 
-      expect(Nylas.urlForAuthentication(options))
-        .toEqual(`https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}&provider=${provider}`);
+      expect(Nylas.urlForAuthentication(options)).toEqual(
+        `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}&provider=${provider}`
+      );
     });
 
     test('should add scopes when provided in the options', () => {
@@ -239,8 +241,9 @@ describe('Nylas', () => {
         scopes,
       };
 
-      expect(Nylas.urlForAuthentication(options))
-        .toEqual(`https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}&scopes=${scopes[0]},${scopes[1]}`);
+      expect(Nylas.urlForAuthentication(options)).toEqual(
+        `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}&scopes=${scopes[0]},${scopes[1]}`
+      );
     });
   });
 
