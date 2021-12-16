@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Add missing `provider` option for `urlForAuthentication`
 * Job status improvements
 
 ### 5.10.2 / 2021-12-03

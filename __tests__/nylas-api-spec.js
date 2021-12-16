@@ -170,6 +170,8 @@ describe('Nylas', () => {
   });
 
   describe('urlForAuthentication', () => {
+    const redirectURI = 'https://localhost/callback';
+
     beforeEach(() =>
       Nylas.config({
         clientId: 'newId',
@@ -182,43 +184,65 @@ describe('Nylas', () => {
 
     test('should throw an exception if the client id has not been configured', () => {
       Nylas.clientId = undefined;
-      const options = { redirectURI: 'https://localhost/callback' };
+      const options = { redirectURI: redirectURI };
       expect(() => Nylas.urlForAuthentication(options)).toThrow();
     });
 
     test('should not throw an exception if the client secret has not been configured', () => {
       Nylas.clientSecret = undefined;
-      const options = { redirectURI: 'https://localhost/callback' };
+      const options = { redirectURI: redirectURI };
       expect(Nylas.urlForAuthentication(options)).toEqual(
-        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=&redirect_uri=https://localhost/callback'
+        `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=&redirect_uri=${redirectURI}`
       );
     });
 
     test('should generate the correct authentication URL', () => {
       const options = { redirectURI: 'https://localhost/callback' };
       expect(Nylas.urlForAuthentication(options)).toEqual(
-        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=&redirect_uri=https://localhost/callback'
+        `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=&redirect_uri=${redirectURI}`
       );
     });
 
     test('should use a login hint when provided in the options', () => {
+      const loginHint = 'ben@nylas.com';
+
       const options = {
-        loginHint: 'ben@nylas.com',
-        redirectURI: 'https://localhost/callback',
+        loginHint,
+        redirectURI,
       };
+
       expect(Nylas.urlForAuthentication(options)).toEqual(
-        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=ben@nylas.com&redirect_uri=https://localhost/callback'
+        `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}`
+      );
+    });
+
+    test('should use a provider when provided in the options', () => {
+      const loginHint = 'ben@nylas.com',
+        provider = 'icloud';
+
+      const options = {
+        loginHint,
+        redirectURI,
+        provider,
+      };
+
+      expect(Nylas.urlForAuthentication(options)).toEqual(
+        `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}&provider=${provider}`
       );
     });
 
     test('should add scopes when provided in the options', () => {
+      const loginHint = 'ben@nylas.com',
+        scopes = ['calendar', 'contacts'];
+
       const options = {
-        loginHint: 'test@nylas.com',
-        redirectURI: 'https://localhost/callback',
-        scopes: ['calendar', 'contacts'],
+        loginHint,
+        redirectURI,
+        scopes,
       };
+
       expect(Nylas.urlForAuthentication(options)).toEqual(
-        'https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=test@nylas.com&redirect_uri=https://localhost/callback&scopes=calendar,contacts'
+        `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}&scopes=${scopes[0]},${scopes[1]}`
       );
     });
   });

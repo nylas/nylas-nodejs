@@ -171,6 +171,7 @@ class Nylas {
       redirectURI?: string;
       loginHint?: string;
       state?: string;
+      provider?: string;
       scopes?: string[];
     } = {}
   ) {
@@ -191,6 +192,9 @@ class Nylas {
     }
     if (options.scopes != null) {
       url += `&scopes=${options.scopes.join(',')}`;
+    }
+    if (options.provider != null) {
+      url += `&provider=${options.provider}`;
     }
     return url;
   }
