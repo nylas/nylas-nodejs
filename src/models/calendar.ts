@@ -65,6 +65,7 @@ Calendar.attributes = {
   jobStatusId: Attributes.String({
     modelKey: 'jobStatusId',
     jsonKey: 'job_status_id',
+    readOnly: true,
   }),
   metadata: Attributes.Object({
     modelKey: 'metadata',
