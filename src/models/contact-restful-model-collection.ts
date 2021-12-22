@@ -1,4 +1,4 @@
-import { Contact, Group } from './contact';
+import Contact, { Group } from './contact';
 import NylasConnection from '../nylas-connection';
 import RestfulModelCollection from './restful-model-collection';
 
