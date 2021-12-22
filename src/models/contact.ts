@@ -237,7 +237,7 @@ export type ContactProperties = {
   source?: string;
 };
 
-export class Contact extends RestfulModel implements ContactProperties {
+export default class Contact extends RestfulModel implements ContactProperties {
   givenName?: string;
   middleName?: string;
   surname?: string;
