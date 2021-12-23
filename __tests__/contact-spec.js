@@ -1,5 +1,5 @@
 import NylasConnection from '../src/nylas-connection';
-import { Contact } from '../src/models/contact';
+import Contact from '../src/models/contact';
 import Nylas from '../src/nylas';
 import fetch from 'node-fetch';
 
