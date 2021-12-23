@@ -1,4 +1,4 @@
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import Model from './model';
 import NylasConnection from '../nylas-connection';
@@ -267,6 +267,10 @@ export default class Contact extends RestfulModel implements ContactProperties {
     callback?: (error: Error | null, result?: any) => void
   ): any {
     return this.get(params, callback, '/picture');
+  }
+
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    return super.save(params, callback);
   }
 }
 
