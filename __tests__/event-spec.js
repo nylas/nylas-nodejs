@@ -57,7 +57,7 @@ describe('Event', () => {
           location: undefined,
           when: undefined,
           participants: [],
-          notifications: [],
+          notifications: undefined,
         });
         done();
       });
@@ -79,7 +79,7 @@ describe('Event', () => {
           location: undefined,
           when: undefined,
           participants: [],
-          notifications: [],
+          notifications: undefined,
         });
         done();
       });
@@ -101,7 +101,7 @@ describe('Event', () => {
           location: undefined,
           when: undefined,
           participants: [],
-          notifications: [],
+          notifications: undefined,
         });
         done();
       });
@@ -125,7 +125,7 @@ describe('Event', () => {
           location: undefined,
           when: undefined,
           participants: [],
-          notifications: [],
+          notifications: undefined,
           recurrence: recurrence,
         });
         done();
@@ -152,7 +152,7 @@ describe('Event', () => {
             time: 1408875644,
           },
           participants: [],
-          notifications: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -181,7 +181,7 @@ describe('Event', () => {
             end_time: 1409598000,
           },
           participants: [],
-          notifications: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -209,7 +209,7 @@ describe('Event', () => {
             date: '1912-06-23',
           },
           participants: [],
-          notifications: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -238,7 +238,7 @@ describe('Event', () => {
             end_date: '1852-11-27',
           },
           participants: [],
-          notifications: [],
+          notifications: undefined,
           read_only: undefined,
         });
         done();
@@ -263,7 +263,7 @@ describe('Event', () => {
             time: 1408875644,
           },
           participants: [],
-          notifications: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -292,7 +292,7 @@ describe('Event', () => {
             end_time: 1409598000,
           },
           participants: [],
-          notifications: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -320,7 +320,7 @@ describe('Event', () => {
             date: '1912-06-23',
           },
           participants: [],
-          notifications: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -352,7 +352,7 @@ describe('Event', () => {
             end_date: '1852-11-27',
           },
           participants: [],
-          notifications: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -387,7 +387,7 @@ describe('Event', () => {
             end_date: '1852-11-27',
           },
           participants: [],
-          notifications: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -411,7 +411,7 @@ describe('Event', () => {
           _start: undefined,
           _end: undefined,
           participants: [],
-          notifications: [],
+          notifications: undefined,
           metadata: { hello: 'world' },
         });
         done();
@@ -447,7 +447,7 @@ describe('Event', () => {
             _start: undefined,
             _end: undefined,
             participants: [],
-            notifications: [],
+            notifications: undefined,
             conferencing: {
               provider: 'Zoom Meeting',
               details: {
@@ -489,7 +489,7 @@ describe('Event', () => {
             _start: undefined,
             _end: undefined,
             participants: [],
-            notifications: [],
+            notifications: undefined,
             conferencing: {
               provider: 'Zoom Meeting',
               autocreate: {
@@ -619,6 +619,46 @@ describe('Event', () => {
               },
             ],
           });
+          done();
+        });
+      });
+
+      test ('setting empty notifications array should send empty array', done => {
+        testContext.event.notifications = [];
+
+        testContext.event.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/events'
+          );
+          expect(options.method).toEqual('POST');
+          expect(JSON.parse(options.body)).toEqual({
+            calendar_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            location: undefined,
+            when: undefined,
+            _start: undefined,
+            _end: undefined,
+            participants: [],
+            conferencing: undefined,
+            notifications: [],
+          });
+          done();
+        });
+      });
+
+      test ('not setting notifications should not send notifications in json', done => {
+        testContext.event.notifications = undefined;
+
+        testContext.event.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/events'
+          );
+          expect(options.method).toEqual('POST');
+          expect('notifications' in JSON.parse(options.body)).toBe(false);
           done();
         });
       });
