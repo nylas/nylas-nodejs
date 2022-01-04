@@ -134,6 +134,9 @@ export default class Event extends RestfulModel {
     if (json.when && json.when.object) {
       delete json.when.object;
     }
+    if (!this.notifications) {
+      delete json.notifications;
+    }
 
     return json;
   }
