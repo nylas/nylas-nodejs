@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Prevent `Event` objects from sending an empty list of notifications when not set, causing errors for recurring events 
+
 ### 5.10.3 / 2021-12-16
 * Add missing `provider` option for `urlForAuthentication`
 * Job status improvements
