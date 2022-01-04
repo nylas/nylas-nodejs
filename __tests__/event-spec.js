@@ -623,7 +623,7 @@ describe('Event', () => {
         });
       });
 
-      test ('setting empty notifications array should send empty array', done => {
+      test('setting empty notifications array should send empty array', done => {
         testContext.event.notifications = [];
 
         testContext.event.save().then(() => {
@@ -649,7 +649,7 @@ describe('Event', () => {
         });
       });
 
-      test ('not setting notifications should not send notifications in json', done => {
+      test('not setting notifications should not send notifications in json', done => {
         testContext.event.notifications = undefined;
 
         testContext.event.save().then(() => {
