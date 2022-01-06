@@ -1,5 +1,5 @@
 import Attributes from './attributes';
-import { Contact, EmailAddress, PhoneNumber, WebPage } from './contact';
+import Contact, { EmailAddress, PhoneNumber, WebPage } from './contact';
 import Model from './model';
 import NylasConnection from '../nylas-connection';
 
