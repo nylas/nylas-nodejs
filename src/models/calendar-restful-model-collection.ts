@@ -4,6 +4,7 @@ import RestfulModelCollection from './restful-model-collection';
 import FreeBusy, { FreeBusyProperties } from './free-busy';
 import CalendarAvailability, {
   CalendarConsecutiveAvailability,
+  OpenHours,
   OpenHoursProperties,
   RoundRobin,
 } from './calendar-availability';
@@ -56,6 +57,8 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       });
   }
 
+  //TODO::Replace options with params?
+  //TODO::Enum for date?
   availability(
     options: {
       emails: string[];
@@ -70,6 +73,14 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     },
     callback?: (error: Error | null, data?: Record<string, any>) => void
   ): Promise<CalendarAvailability> {
+    // Instantiate objects from properties to get JSON formatted for the API call
+    const freeBusyJson = options.freeBusy
+      ? options.freeBusy.map(fb => new FreeBusy(fb).toJSON(true))
+      : [];
+    const openHoursJson = options.openHours
+      ? options.openHours.map(oh => new OpenHours(oh).toJSON(true))
+      : [];
+
     return this.connection
       .request({
         method: 'POST',
@@ -82,8 +93,8 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
           end_time: options.endTime,
           buffer: options.buffer,
           round_robin: options.roundRobin,
-          free_busy: options.freeBusy || [],
-          open_hours: options.openHours || [],
+          free_busy: freeBusyJson,
+          open_hours: openHoursJson,
         },
       })
       .then(json => {
@@ -113,6 +124,8 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     },
     callback?: (error: Error | null, data?: { [key: string]: any }) => void
   ): Promise<CalendarConsecutiveAvailability> {
+    // If open hours contains any emails not present in the main emails key
+    // or in the free busy email list as this would raise an error on the API side
     const freeBusyEmails = options.freeBusy
       ? options.freeBusy.map(fb => fb.email)
       : [];
@@ -131,6 +144,14 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       }
     }
 
+    // Instantiate objects from properties to get JSON formatted for the API call
+    const freeBusyJson = options.freeBusy
+      ? options.freeBusy.map(fb => new FreeBusy(fb).toJSON(true))
+      : [];
+    const openHoursJson = options.openHours
+      ? options.openHours.map(oh => new OpenHours(oh).toJSON(true))
+      : [];
+
     return this.connection
       .request({
         method: 'POST',
@@ -142,91 +163,17 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
           start_time: options.startTime,
           end_time: options.endTime,
           buffer: options.buffer,
-          free_busy: options.freeBusy || [],
-          open_hours: options.openHours || [],
+          free_busy: freeBusyJson,
+          open_hours: openHoursJson,
         },
       })
       .then(json => {
         if (callback) {
           callback(null, json);
         }
-        return Promise.resolve(json);
-      })
-      .catch(err => {
-        if (callback) {
-          callback(err);
-        }
-        return Promise.reject(err);
-      });
-  }
-
-  consecutiveAvailability(
-    options: {
-      emails: Array<string[]>;
-      duration: number;
-      interval: number;
-      start_time?: number;
-      startTime?: number;
-      end_time?: number;
-      endTime?: number;
-      buffer?: number;
-      free_busy?: Array<{
-        email: string;
-        object: string;
-        time_slots: Array<{
-          object: string;
-          status: string;
-          start_time: number;
-          end_time: number;
-        }>;
-      }>;
-      open_hours: Array<{
-        emails: string[];
-        days: number[];
-        timezone: string;
-        start: string;
-        end: string;
-        object_type: string;
-      }>;
-    },
-    callback?: (error: Error | null, data?: { [key: string]: any }) => void
-  ) {
-    const freeBusyEmails = options.free_busy
-      ? options.free_busy.map(freeBusy => freeBusy.email)
-      : [];
-    for (const openHour of options.open_hours) {
-      for (const email of openHour.emails) {
-        if (
-          !options.emails.some(row => row.includes(email)) &&
-          !freeBusyEmails.includes(email)
-        ) {
-          throw new Error(
-            'Open Hours cannot contain an email not present in the main email list or the free busy email list.'
-          );
-        }
-      }
-    }
-
-    return this.connection
-      .request({
-        method: 'POST',
-        path: `/calendars/availability/consecutive`,
-        body: {
-          emails: options.emails,
-          duration_minutes: options.duration,
-          interval_minutes: options.interval,
-          start_time: options.startTime || options.start_time,
-          end_time: options.endTime || options.end_time,
-          buffer: options.buffer,
-          free_busy: options.free_busy || [],
-          open_hours: options.open_hours,
-        },
-      })
-      .then(json => {
-        if (callback) {
-          callback(null, json);
-        }
-        return Promise.resolve(json);
+        return Promise.resolve(
+          new CalendarConsecutiveAvailability().fromJSON(json)
+        );
       })
       .catch(err => {
         if (callback) {

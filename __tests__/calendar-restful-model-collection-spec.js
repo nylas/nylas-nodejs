@@ -117,7 +117,7 @@ describe('CalendarRestfulModelCollection', () => {
       openHours: [
         {
           emails: ['swag@nylas.com'],
-          days: ['0'],
+          days: [0],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
@@ -141,10 +141,11 @@ describe('CalendarRestfulModelCollection', () => {
         open_hours: [
           {
             emails: ['swag@nylas.com'],
-            days: ['0'],
+            days: [0],
             timezone: 'America/Chicago',
             start: '10:00',
             end: '14:00',
+            object_type: 'open_hours',
           },
         ],
       });
@@ -165,13 +166,11 @@ describe('CalendarRestfulModelCollection', () => {
       freeBusy: [
         {
           email: 'jane@email.com',
-          object: 'free_busy',
-          time_slots: [
+          timeSlots: [
             {
-              object: 'time_slots',
               status: 'busy',
-              start_time: 1590454800,
-              end_time: 1590780800,
+              startTime: 1590454800,
+              endTime: 1590780800,
             },
           ],
         },
@@ -183,7 +182,6 @@ describe('CalendarRestfulModelCollection', () => {
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
-          object_type: 'open_hours',
         },
       ],
     };
@@ -208,7 +206,7 @@ describe('CalendarRestfulModelCollection', () => {
               object: 'free_busy',
               time_slots: [
                 {
-                  object: 'time_slots',
+                  object: 'time_slot',
                   status: 'busy',
                   start_time: 1590454800,
                   end_time: 1590780800,
@@ -246,13 +244,11 @@ describe('CalendarRestfulModelCollection', () => {
       freeBusy: [
         {
           email: 'jane@email.com',
-          object: 'free_busy',
-          time_slots: [
+          timeSlots: [
             {
-              object: 'time_slots',
               status: 'busy',
-              start_time: 1590454800,
-              end_time: 1590780800,
+              startTime: 1590454800,
+              endTime: 1590780800,
             },
           ],
         },
@@ -282,28 +278,26 @@ describe('CalendarRestfulModelCollection', () => {
       interval: 5,
       duration: 30,
       emails: [['jane@email.com'], ['swag@nylas.com']],
-      free_busy: [
+      freeBusy: [
         {
           email: 'jane@email.com',
           object: 'free_busy',
-          time_slots: [
+          timeSlots: [
             {
-              object: 'time_slots',
               status: 'busy',
-              start_time: 1590454800,
-              end_time: 1590780800,
+              startTime: 1590454800,
+              endTime: 1590780800,
             },
           ],
         },
       ],
-      open_hours: [
+      openHours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
           days: [0],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
-          object_type: 'open_hours',
         },
       ],
     };
@@ -328,7 +322,7 @@ describe('CalendarRestfulModelCollection', () => {
               object: 'free_busy',
               time_slots: [
                 {
-                  object: 'time_slots',
+                  object: 'time_slot',
                   status: 'busy',
                   start_time: 1590454800,
                   end_time: 1590780800,
@@ -363,28 +357,25 @@ describe('CalendarRestfulModelCollection', () => {
       interval: 5,
       duration: 30,
       emails: [['jane@email.com']],
-      free_busy: [
+      freeBusy: [
         {
           email: 'jane@email.com',
-          object: 'free_busy',
-          time_slots: [
+          timeSlots: [
             {
-              object: 'time_slots',
               status: 'busy',
-              start_time: 1590454800,
-              end_time: 1590780800,
+              startTime: 1590454800,
+              endTime: 1590780800,
             },
           ],
         },
       ],
-      open_hours: [
+      openHours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
           days: [0],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
-          object_type: 'open_hours',
         },
       ],
     };
