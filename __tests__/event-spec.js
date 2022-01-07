@@ -1,6 +1,6 @@
 import NylasConnection from '../src/nylas-connection';
 import Event from '../src/models/event';
-import { EventConferencing } from '../src/models/event-conferencing';
+import EventConferencing from '../src/models/event-conferencing';
 import Nylas from '../src/nylas';
 import fetch from 'node-fetch';
 import When from '../src/models/when';

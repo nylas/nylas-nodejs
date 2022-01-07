@@ -9,7 +9,7 @@ export type EventConferencingDetailsProperties = {
   url?: string;
 };
 
-class EventConferencingDetails extends Model
+export class EventConferencingDetails extends Model
   implements EventConferencingDetailsProperties {
   meetingCode?: string;
   phone?: string[];
@@ -50,7 +50,7 @@ export type EventConferencingProperties = {
   };
 };
 
-export class EventConferencing extends Model
+export default class EventConferencing extends Model
   implements EventConferencingProperties {
   provider = '';
   details?: EventConferencingDetails;
