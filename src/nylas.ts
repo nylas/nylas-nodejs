@@ -93,10 +93,7 @@ class Nylas {
     return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
-  //TODO::Deprecate the camel case property in the next major release
   static application(options?: {
-    application_name?: string;
-    redirect_uris?: string[];
     applicationName?: string;
     redirectUris?: string[];
   }) {
@@ -115,8 +112,8 @@ class Nylas {
 
     if (options) {
       requestOptions.body = {
-        application_name: options.applicationName || options.application_name,
-        redirect_uris: options.redirectUris || options.redirect_uris,
+        application_name: options.applicationName,
+        redirect_uris: options.redirectUris,
       };
       requestOptions.method = 'PUT';
     }
