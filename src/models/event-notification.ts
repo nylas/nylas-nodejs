@@ -1,28 +1,31 @@
-import RestfulModel from './restful-model';
 import Attributes from './attributes';
+import Model from './model';
 
-export class EventNotification extends RestfulModel {
-  type?: string;
-  minutesBeforeEvent?: number;
+export type EventNotificationProperties = {
+  type: string;
+  minutesBeforeEvent: number;
+  url?: string;
+  payload?: string;
+  subject?: string;
+  body?: string;
+  message?: string;
+};
+
+export default class EventNotification extends Model
+  implements EventNotificationProperties {
+  type = '';
+  minutesBeforeEvent = 0;
   url?: string;
   payload?: string;
   subject?: string;
   body?: string;
   message?: string;
 
-  toJSON(): any {
-    return {
-      type: this.type,
-      minutes_before_event: this.minutesBeforeEvent,
-      url: this.url,
-      payload: this.payload,
-      subject: this.subject,
-      body: this.body,
-      message: this.message,
-    };
+  constructor(props?: EventNotificationProperties) {
+    super();
+    this.initAttributes(props);
   }
 }
-EventNotification.collectionName = 'event_notification';
 EventNotification.attributes = {
   type: Attributes.String({
     modelKey: 'type',
