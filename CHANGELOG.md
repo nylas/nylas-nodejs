@@ -1,5 +1,25 @@
 # Changelog
 
+### 5.10.3 / 2022-01-04
+* Prevent `Event` objects from sending an empty list of notifications when not set, causing errors for recurring events 
+
+### 5.10.3 / 2021-12-16
+* Add missing `provider` option for `urlForAuthentication`
+* Job status improvements
+
+### 5.10.2 / 2021-12-03
+* Fix Scheduler and Component types
+* Fix Component sending unmodifiable fields during update
+* Fix bug where updating an event resulted in an API error
+
+### 5.10.1 / 2021-11-22
+* Fix bug where booking a valid timeslot resulted in an API error
+
+### 5.10.0 / 2021-11-18
+* Add support for Event notifications
+* Add support for remaining Scheduler endpoints
+* Add metadata support for `Calendar`, `Message` and `ManagementAccount`
+
 ### 5.9.0 / 2021-09-24
 * Add Component CRUD Support
 * Add Scheduler support

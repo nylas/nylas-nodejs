@@ -15,12 +15,12 @@ import Event from './models/event';
 import JobStatus from './models/job-status';
 import Resource from './models/resource';
 import Delta from './models/delta';
-import { Folder, Label } from './models/folder';
+import Folder, { Label } from './models/folder';
 import FormData, { AppendOptions } from 'form-data';
 import Neural from './models/neural';
 import NylasApiError from './models/nylas-api-error';
 import ComponentRestfulModelCollection from './models/component-restful-model-collection';
-import Scheduler from './models/scheduler';
+import SchedulerRestfulModelCollection from './models/scheduler-restful-model-collection';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -47,7 +47,6 @@ export type FormDataType = {
 export default class NylasConnection {
   accessToken: string | null | undefined;
   clientId: string | null | undefined;
-  baseUrl: string | null | undefined;
 
   threads: RestfulModelCollection<Thread> = new RestfulModelCollection(
     Thread,
@@ -96,8 +95,7 @@ export default class NylasConnection {
   component: ComponentRestfulModelCollection = new ComponentRestfulModelCollection(
     this
   );
-  scheduler: RestfulModelCollection<Scheduler> = new RestfulModelCollection(
-    Scheduler,
+  scheduler: SchedulerRestfulModelCollection = new SchedulerRestfulModelCollection(
     this
   );
 
@@ -112,7 +110,7 @@ export default class NylasConnection {
   }
 
   requestOptions(options: RequestOptions): RequestOptions {
-    const baseUrl = this.baseUrl ? this.baseUrl : config.apiServer;
+    const baseUrl = options.baseUrl ? options.baseUrl : config.apiServer;
     const url = new URL(`${baseUrl}${options.path}`);
     // map querystring to search params
     if (options.qs) {

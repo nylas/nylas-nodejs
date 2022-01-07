@@ -2,6 +2,62 @@ import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
 import Model from './model';
+import Calendar from './calendar';
+
+export type SchedulerUploadImageResponse = {
+  filename: string;
+  originalFilename: string;
+  publicUrl: string;
+  signedUrl: string;
+};
+
+export type SchedulerAvailableCalendarsProperties = {
+  id: string;
+  name: string;
+  email: string;
+  calendars: Calendar[];
+};
+
+export class SchedulerAvailableCalendars extends Model
+  implements SchedulerAvailableCalendarsProperties {
+  id = '';
+  name = '';
+  email = '';
+  calendars: Calendar[] = [];
+  private _connection?: NylasConnection;
+
+  constructor(props?: SchedulerAvailableCalendarsProperties) {
+    super();
+    this.initAttributes(props);
+  }
+
+  get connection(): NylasConnection | undefined {
+    return this._connection;
+  }
+
+  fromJSON(json: Record<string, unknown>, connection?: NylasConnection): this {
+    // Allow a connection object to be passed in to instantiate a Calendar sub object
+    if (connection) {
+      this._connection = connection;
+    }
+    return super.fromJSON(json);
+  }
+}
+SchedulerAvailableCalendars.attributes = {
+  calendars: Attributes.Collection({
+    modelKey: 'calendars',
+    itemClass: Calendar,
+  }),
+  email: Attributes.String({
+    modelKey: 'email',
+  }),
+  id: Attributes.String({
+    modelKey: 'id',
+  }),
+  name: Attributes.String({
+    modelKey: 'name',
+  }),
+};
 
 export type SchedulerAppearanceProperties = {
   color?: string;
@@ -426,27 +482,42 @@ export default class Scheduler extends RestfulModel
   constructor(connection: NylasConnection, props?: SchedulerProperties) {
     super(connection, props);
     this.initAttributes(props);
-    connection.baseUrl = 'https://api.schedule.nylas.com';
+    this.baseUrl = 'https://api.schedule.nylas.com';
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     return super.save(params, callback);
   }
 
-  getAvailableCalendars(): Record<string, any> {
+  getAvailableCalendars(): Promise<SchedulerAvailableCalendars[]> {
     if (!this.id) {
       throw new Error('Cannot get calendars for a page without an ID.');
     }
-    return this.connection.request({
-      method: 'GET',
-      path: `/manage/pages/${this.id}/calendars`,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+
+    return this.connection
+      .request({
+        method: 'GET',
+        path: `/manage/pages/${this.id}/calendars`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        baseUrl: this.baseUrl,
+      })
+      .then((json: Record<string, unknown>[]) => {
+        const calendars = json.map(cal => {
+          return new SchedulerAvailableCalendars().fromJSON(
+            cal,
+            this.connection
+          );
+        });
+        return Promise.resolve(calendars);
+      });
   }
 
-  uploadImage(contentType: string, objectName: string): Record<string, any> {
+  uploadImage(
+    contentType: string,
+    objectName: string
+  ): Promise<SchedulerUploadImageResponse> {
     if (!this.id) {
       throw new Error('Cannot upload an image to a page without an ID.');
     }
@@ -460,6 +531,7 @@ export default class Scheduler extends RestfulModel
         contentType: contentType,
         objectName: objectName,
       },
+      baseUrl: this.baseUrl,
     });
   }
 }

@@ -10,6 +10,7 @@ export default class RestfulModelCollection<
   T extends RestfulModel
 > extends ModelCollection<any> {
   modelClass: typeof RestfulModel;
+  baseUrl?: string;
 
   constructor(modelClass: typeof RestfulModel, connection: NylasConnection) {
     super(modelClass, connection, modelClass.collectionName);
@@ -26,6 +27,7 @@ export default class RestfulModelCollection<
         method: 'GET',
         path: this.path(),
         qs: { view: 'count', ...params },
+        baseUrl: this.baseUrl,
       })
       .then((json: any) => {
         if (callback) {
@@ -146,6 +148,7 @@ export default class RestfulModelCollection<
         qs: qs,
         body: body,
         path: `${this.path()}/${item.id}`,
+        baseUrl: this.baseUrl,
       })
       .then(data => {
         if (callback) {

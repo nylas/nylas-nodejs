@@ -27,6 +27,14 @@ export abstract class Attribute {
 
   abstract toJSON(val: any, _parent?: any): any;
   abstract fromJSON(val: any, _parent: any): any;
+
+  saveRequestBody(val: any): any {
+    if (this.readOnly) {
+      return undefined;
+    }
+
+    return this.toJSON(val);
+  }
 }
 
 class AttributeObject extends Attribute {
@@ -47,11 +55,13 @@ class AttributeObject extends Attribute {
     this.itemClass = itemClass;
   }
 
-  toJSON(val: any): unknown {
+  toJSON(val: any, saveRequestBody?: boolean): unknown {
     if (!val) {
       return val;
     }
-    if (val.toJSON != null) {
+    if (saveRequestBody === true && val.saveRequestBody != null) {
+      return val.saveRequestBody();
+    } else if (val.toJSON != null) {
       return val.toJSON();
     }
     return val;
@@ -66,6 +76,13 @@ class AttributeObject extends Attribute {
       return new this.itemClass(_parent.connection).fromJSON(val);
     }
     return new this.itemClass(val).fromJSON(val);
+  }
+
+  saveRequestBody(val: any): unknown {
+    if (this.readOnly) {
+      return;
+    }
+    return this.toJSON(val, true);
   }
 }
 
@@ -191,13 +208,15 @@ class AttributeCollection extends Attribute {
     this.itemClass = itemClass;
   }
 
-  toJSON(vals: any[]): unknown[] {
+  toJSON(vals: any, saveRequestBody?: boolean): unknown[] {
     if (!vals) {
       return [];
     }
     const json = [];
     for (const val of vals) {
-      if (val.toJSON != null) {
+      if (saveRequestBody === true && val.saveRequestBody != null) {
+        json.push(val.saveRequestBody());
+      } else if (val.toJSON != null) {
         json.push(val.toJSON());
       } else {
         json.push(val);
@@ -224,6 +243,13 @@ class AttributeCollection extends Attribute {
       objs.push(obj);
     }
     return objs;
+  }
+
+  saveRequestBody(val: any): unknown {
+    if (this.readOnly) {
+      return;
+    }
+    return this.toJSON(val, true);
   }
 }
 

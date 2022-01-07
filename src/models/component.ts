@@ -12,6 +12,7 @@ export type ComponentProperties = {
   publicAccountId?: string;
   publicTokenId?: string;
   publicApplicationId?: string;
+  accessToken?: string;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -27,6 +28,7 @@ export default class Component extends RestfulModel
   publicAccountId?: string;
   publicTokenId?: string;
   publicApplicationId?: string;
+  accessToken?: string;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -41,6 +43,17 @@ export default class Component extends RestfulModel
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     return super.save(params, callback);
+  }
+
+  saveRequestBody(): Record<string, unknown> {
+    const json = super.saveRequestBody();
+    if (this.id) {
+      // Cannot cannot send these values after creation
+      delete json.access_token;
+      delete json.public_application_id;
+      delete json.type;
+    }
+    return json;
   }
 }
 Component.collectionName = 'component';
@@ -76,6 +89,10 @@ Component.attributes = {
   publicApplicationId: Attributes.String({
     modelKey: 'publicApplicationId',
     jsonKey: 'public_application_id',
+  }),
+  accessToken: Attributes.String({
+    modelKey: 'accessToken',
+    jsonKey: 'access_token',
   }),
   createdAt: Attributes.Date({
     modelKey: 'createdAt',

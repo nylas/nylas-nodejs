@@ -100,6 +100,37 @@ describe('Component', () => {
         done();
       });
     });
+
+    test('should not send certain values if making a PUT', done => {
+      testContext.component.id = 'abc-123';
+      testContext.component.type = 'agenda';
+      testContext.component.publicApplicationId = 'test-123';
+      testContext.component.accessToken = 'access-123';
+      return testContext.component.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/component/myClientId/abc-123'
+        );
+        expect(options.method).toEqual('PUT');
+        expect(JSON.parse(options.body)).toEqual({
+          id: undefined,
+          account_id: undefined,
+          object: undefined,
+          name: undefined,
+          type: undefined,
+          action: undefined,
+          active: undefined,
+          settings: undefined,
+          allowed_domains: undefined,
+          public_account_id: undefined,
+          public_token_id: undefined,
+          public_application_id: undefined,
+          created_at: undefined,
+          updated_at: undefined,
+        });
+        done();
+      });
+    });
   });
 
   describe('fetching', () => {

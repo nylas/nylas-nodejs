@@ -36,5 +36,6 @@ EventParticipant.attributes = {
   }),
   status: Attributes.String({
     modelKey: 'status',
+    readOnly: true,
   }),
 };

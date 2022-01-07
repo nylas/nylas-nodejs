@@ -2,6 +2,7 @@ import ManagementModel from './management-model';
 import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
 import Model from './model';
+import { SaveCallback } from './restful-model';
 
 export type ApplicationIPAddressesProperties = {
   ipAddresses: string[];
@@ -72,6 +73,7 @@ export type ManagementAccountProperties = {
   provider: string;
   syncState: string;
   trial: boolean;
+  metadata?: object;
 };
 
 export type AccountOperationResponse = {
@@ -86,6 +88,7 @@ export default class ManagementAccount extends ManagementModel
   provider = '';
   syncState = '';
   trial = false;
+  metadata?: object;
 
   constructor(
     connection: NylasConnection,
@@ -159,6 +162,20 @@ export default class ManagementAccount extends ManagementModel
       .then(json => Promise.resolve(new AccountTokenInfo().fromJSON(json)))
       .catch(err => Promise.reject(err));
   }
+
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    return super.save(params, callback);
+  }
+
+  saveRequestBody(): Record<string, unknown> {
+    return {
+      metadata: this.metadata,
+    };
+  }
+
+  saveEndpoint(): string {
+    return `/a/${this.connection.clientId}/accounts`;
+  }
 }
 ManagementAccount.collectionName = 'accounts';
 ManagementAccount.attributes = {
@@ -184,5 +201,8 @@ ManagementAccount.attributes = {
   }),
   trial: Attributes.Boolean({
     modelKey: 'trial',
+  }),
+  metadata: Attributes.Object({
+    modelKey: 'metadata',
   }),
 };

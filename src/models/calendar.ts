@@ -12,6 +12,7 @@ export type CalendarProperties = {
   readOnly?: boolean;
   isPrimary?: boolean;
   jobStatusId?: string;
+  metadata?: object;
 };
 
 export default class Calendar extends RestfulModel
@@ -23,6 +24,7 @@ export default class Calendar extends RestfulModel
   readOnly?: boolean;
   isPrimary?: boolean;
   jobStatusId?: string;
+  metadata?: object;
 
   constructor(connection: NylasConnection, props?: CalendarProperties) {
     super(connection, props);
@@ -31,6 +33,17 @@ export default class Calendar extends RestfulModel
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
     return super.save(params, callback);
+  }
+
+  saveRequestBody(): Record<string, unknown> {
+    const calendarJSON = super.saveRequestBody();
+    return {
+      name: calendarJSON.name,
+      description: calendarJSON.description,
+      location: calendarJSON.location,
+      timezone: calendarJSON.timezone,
+      metadata: calendarJSON.metadata,
+    };
   }
 
   getJobStatus(callback?: GetCallback): Promise<JobStatus> {
@@ -74,5 +87,8 @@ Calendar.attributes = {
     modelKey: 'jobStatusId',
     jsonKey: 'job_status_id',
     readOnly: true,
+  }),
+  metadata: Attributes.Object({
+    modelKey: 'metadata',
   }),
 };

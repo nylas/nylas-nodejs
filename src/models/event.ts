@@ -3,12 +3,12 @@ import Attributes from './attributes';
 import EventParticipant, {
   EventParticipantProperties,
 } from './event-participant';
-import {
-  EventConferencing,
+import EventConferencing, {
   EventConferencingProperties,
 } from './event-conferencing';
 import When, { WhenProperties } from './when';
 import NylasConnection from '../nylas-connection';
+import EventNotification from './event-notification';
 
 export type EventProperties = {
   calendarId: string;
@@ -30,6 +30,8 @@ export type EventProperties = {
   masterEventId?: string;
   originalStartTime?: number;
   conferencing?: EventConferencingProperties;
+  //TODO::Create EventNotificationProperties
+  notifications?: EventNotification[];
   metadata?: object;
   jobStatusId?: string;
 };
@@ -54,6 +56,7 @@ export default class Event extends RestfulModel {
   masterEventId?: string;
   originalStartTime?: number;
   conferencing?: EventConferencing;
+  notifications?: EventNotification[];
   metadata?: object;
   jobStatusId?: string;
 
@@ -161,6 +164,18 @@ export default class Event extends RestfulModel {
     return super.save(params, callback);
   }
 
+  saveRequestBody(): Record<string, unknown> {
+    const json = super.saveRequestBody();
+    if (json.when && (json.when as WhenProperties).object) {
+      delete (json.when as WhenProperties).object;
+    }
+    if (!this.notifications) {
+      delete json.notifications;
+    }
+
+    return json;
+  }
+
   rsvp(
     status: string,
     comment: string,
@@ -252,6 +267,10 @@ Event.attributes = {
   conferencing: Attributes.Object({
     modelKey: 'conferencing',
     itemClass: EventConferencing,
+  }),
+  notifications: Attributes.Collection({
+    modelKey: 'notifications',
+    itemClass: EventNotification,
   }),
   metadata: Attributes.Object({
     modelKey: 'metadata',

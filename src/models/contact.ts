@@ -256,6 +256,7 @@ export default class Contact extends RestfulModel implements ContactProperties {
   webPages?: WebPage[];
   groups?: Group[];
   source?: string;
+  jobStatusId?: string;
 
   constructor(connection: NylasConnection, props?: ContactProperties) {
     super(connection);
@@ -351,5 +352,10 @@ Contact.attributes = {
   }),
   source: Attributes.String({
     modelKey: 'source',
+  }),
+  jobStatusId: Attributes.String({
+    modelKey: 'jobStatusId',
+    jsonKey: 'job_status_id',
+    readOnly: true,
   }),
 };

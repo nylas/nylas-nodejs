@@ -5,7 +5,7 @@ import Event, { EventProperties } from './event';
 import EmailParticipant, {
   EmailParticipantProperties,
 } from './email-participant';
-import { Label, Folder, FolderProperties } from './folder';
+import Folder, { Label, FolderProperties } from './folder';
 import NylasConnection from '../nylas-connection';
 
 export type MessageProperties = {
@@ -26,6 +26,8 @@ export type MessageProperties = {
   folder?: Folder;
   labels?: FolderProperties[];
   headers?: Record<string, string>;
+  metadata?: object;
+  jobStatusId?: string;
 };
 
 export default class Message extends RestfulModel implements MessageProperties {
@@ -46,6 +48,8 @@ export default class Message extends RestfulModel implements MessageProperties {
   folder?: Folder;
   labels?: Label[];
   headers?: Record<string, string>;
+  metadata?: object;
+  jobStatusId?: string;
 
   constructor(connection: NylasConnection, props?: MessageProperties) {
     super(connection, props);
@@ -105,6 +109,7 @@ export default class Message extends RestfulModel implements MessageProperties {
 
     json['starred'] = this.starred;
     json['unread'] = this.unread;
+    json['metadata'] = this.metadata;
     return json;
   }
 }
@@ -171,7 +176,15 @@ Message.attributes = {
     modelKey: 'labels',
     itemClass: Label,
   }),
+  metadata: Attributes.Object({
+    modelKey: 'metadata',
+  }),
   headers: Attributes.Object({
     modelKey: 'headers',
+  }),
+  jobStatusId: Attributes.String({
+    modelKey: 'jobStatusId',
+    jsonKey: 'job_status_id',
+    readOnly: true,
   }),
 };

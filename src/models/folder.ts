@@ -10,6 +10,7 @@ export type FolderProperties = {
 export class Folder extends RestfulModel implements FolderProperties {
   displayName?: string;
   name?: string;
+  jobStatusId?: string;
 
   constructor(connection: NylasConnection, props?: FolderProperties) {
     super(connection, props);
@@ -30,6 +31,11 @@ Folder.attributes = {
   displayName: Attributes.String({
     modelKey: 'displayName',
     jsonKey: 'display_name',
+  }),
+  jobStatusId: Attributes.String({
+    modelKey: 'jobStatusId',
+    jsonKey: 'job_status_id',
+    readOnly: true,
   }),
 };
 

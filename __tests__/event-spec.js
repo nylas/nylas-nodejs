@@ -59,6 +59,7 @@ describe('Event', () => {
           location: undefined,
           when: {},
           participants: [],
+          notifications: undefined,
         });
         done();
       });
@@ -80,6 +81,7 @@ describe('Event', () => {
           location: undefined,
           when: {},
           participants: [],
+          notifications: undefined,
         });
         done();
       });
@@ -101,6 +103,7 @@ describe('Event', () => {
           location: undefined,
           when: {},
           participants: [],
+          notifications: undefined,
         });
         done();
       });
@@ -124,6 +127,7 @@ describe('Event', () => {
           location: undefined,
           when: {},
           participants: [],
+          notifications: undefined,
           recurrence: recurrence,
         });
         done();
@@ -150,6 +154,7 @@ describe('Event', () => {
             time: 1408875644,
           },
           participants: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -177,6 +182,7 @@ describe('Event', () => {
             end_time: 1409598000,
           },
           participants: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -203,6 +209,7 @@ describe('Event', () => {
             date: '1912-06-23',
           },
           participants: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -230,6 +237,7 @@ describe('Event', () => {
             end_date: '1852-11-27',
           },
           participants: [],
+          notifications: undefined,
           read_only: undefined,
         });
         done();
@@ -254,6 +262,7 @@ describe('Event', () => {
             time: 1408875644,
           },
           participants: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -285,6 +294,7 @@ describe('Event', () => {
             end_time: 1409598000,
           },
           participants: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -313,6 +323,7 @@ describe('Event', () => {
             date: '1912-06-23',
           },
           participants: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -344,6 +355,7 @@ describe('Event', () => {
             end_date: '1852-11-27',
           },
           participants: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -378,6 +390,7 @@ describe('Event', () => {
             end_date: '1852-11-27',
           },
           participants: [],
+          notifications: undefined,
           read_only: undefined,
           status: undefined,
         });
@@ -399,6 +412,7 @@ describe('Event', () => {
           location: undefined,
           when: {},
           participants: [],
+          notifications: undefined,
           metadata: { hello: 'world' },
         });
         done();
@@ -432,6 +446,7 @@ describe('Event', () => {
             _start: undefined,
             _end: undefined,
             participants: [],
+            notifications: undefined,
             conferencing: {
               provider: 'Zoom Meeting',
               details: {
@@ -469,6 +484,7 @@ describe('Event', () => {
             location: undefined,
             when: {},
             participants: [],
+            notifications: undefined,
             conferencing: {
               provider: 'Zoom Meeting',
               autocreate: {
@@ -505,6 +521,139 @@ describe('Event', () => {
           );
         });
         done();
+      });
+    });
+
+    describe('notification', () => {
+      test('should create an event with notifications', done => {
+        const notificationEvent = testContext.event.fromJSON({
+          notifications: [
+            {
+              body: 'Reminding you about our meeting.',
+              minutes_before_event: 600,
+              subject: 'Test Event Notification',
+              type: 'email',
+            },
+            {
+              type: 'webhook',
+              minutes_before_event: 600,
+              url:
+                'https://hooks.service.com/services/T01A03EEXDE/B01TBNH532R/HubIZu1zog4oYdFqQ8VUcuiW',
+              payload: JSON.stringify({
+                text: 'Your reminder goes here!',
+              }),
+            },
+            {
+              type: 'sms',
+              minutes_before_event: 60,
+              message: 'Test Event Notification',
+            },
+          ],
+        });
+
+        expect(notificationEvent.notifications.length).toBe(3);
+        expect(notificationEvent.notifications[0].body).toEqual(
+          'Reminding you about our meeting.'
+        );
+        expect(notificationEvent.notifications[0].minutesBeforeEvent).toBe(600);
+        expect(notificationEvent.notifications[0].subject).toEqual(
+          'Test Event Notification'
+        );
+        expect(notificationEvent.notifications[0].type).toEqual('email');
+        expect(notificationEvent.notifications[1].type).toEqual('webhook');
+        expect(notificationEvent.notifications[1].minutesBeforeEvent).toBe(600);
+        expect(notificationEvent.notifications[1].url).toEqual(
+          'https://hooks.service.com/services/T01A03EEXDE/B01TBNH532R/HubIZu1zog4oYdFqQ8VUcuiW'
+        );
+        expect(notificationEvent.notifications[1].payload).toEqual(
+          '{"text":"Your reminder goes here!"}'
+        );
+        expect(notificationEvent.notifications[2].type).toEqual('sms');
+        expect(notificationEvent.notifications[2].minutesBeforeEvent).toBe(60);
+        expect(notificationEvent.notifications[2].message).toEqual(
+          'Test Event Notification'
+        );
+
+        notificationEvent.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/events'
+          );
+          expect(options.method).toEqual('POST');
+          expect(JSON.parse(options.body)).toEqual({
+            calendar_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            location: undefined,
+            when: undefined,
+            _start: undefined,
+            _end: undefined,
+            participants: [],
+            conferencing: undefined,
+            notifications: [
+              {
+                body: 'Reminding you about our meeting.',
+                minutes_before_event: 600,
+                subject: 'Test Event Notification',
+                type: 'email',
+              },
+              {
+                minutes_before_event: 600,
+                payload: '{"text":"Your reminder goes here!"}',
+                type: 'webhook',
+                url:
+                  'https://hooks.service.com/services/T01A03EEXDE/B01TBNH532R/HubIZu1zog4oYdFqQ8VUcuiW',
+              },
+              {
+                message: 'Test Event Notification',
+                minutes_before_event: 60,
+                type: 'sms',
+              },
+            ],
+          });
+          done();
+        });
+      });
+
+      test('setting empty notifications array should send empty array', done => {
+        testContext.event.notifications = [];
+
+        testContext.event.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/events'
+          );
+          expect(options.method).toEqual('POST');
+          expect(JSON.parse(options.body)).toEqual({
+            calendar_id: undefined,
+            busy: undefined,
+            title: undefined,
+            description: undefined,
+            location: undefined,
+            when: undefined,
+            _start: undefined,
+            _end: undefined,
+            participants: [],
+            conferencing: undefined,
+            notifications: [],
+          });
+          done();
+        });
+      });
+
+      test('not setting notifications should not send notifications in json', done => {
+        testContext.event.notifications = undefined;
+
+        testContext.event.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/events'
+          );
+          expect(options.method).toEqual('POST');
+          expect('notifications' in JSON.parse(options.body)).toBe(false);
+          done();
+        });
       });
     });
 
