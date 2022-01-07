@@ -51,9 +51,11 @@ export default class Model {
     const json: Record<string, unknown> = {};
     const attributes = this.attributes();
     for (const attrName in attributes) {
-      if (!enforceReadOnly || !attributes[attrName].readOnly) {
-        const attr = attributes[attrName];
-        json[attr.jsonKey] = attr.toJSON((this as any)[attrName], this);
+      const attr = attributes[attrName];
+      if (enforceReadOnly === true) {
+        json[attr.jsonKey] = attr.saveRequestBody((this as any)[attrName]);
+      } else {
+        json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
       }
     }
     return json;
