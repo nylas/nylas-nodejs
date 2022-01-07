@@ -581,12 +581,12 @@ describe('Event', () => {
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
-            calendar_id: undefined,
+            calendar_id: '',
             busy: undefined,
             title: undefined,
             description: undefined,
             location: undefined,
-            when: undefined,
+            when: {},
             _start: undefined,
             _end: undefined,
             participants: [],
@@ -626,12 +626,12 @@ describe('Event', () => {
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
-            calendar_id: undefined,
+            calendar_id: '',
             busy: undefined,
             title: undefined,
             description: undefined,
             location: undefined,
-            when: undefined,
+            when: {},
             _start: undefined,
             _end: undefined,
             participants: [],
