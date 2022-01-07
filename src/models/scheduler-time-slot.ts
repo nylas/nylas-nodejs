@@ -1,15 +1,29 @@
-import RestfulModel from './restful-model';
 import Attributes from './attributes';
+import Model from './model';
 
-export default class SchedulerTimeSlot extends RestfulModel {
+export type SchedulerTimeSlotProperties = {
   accountId?: string;
   calendarId?: string;
   hostName?: string;
   emails?: string[];
   start?: Date;
   end?: Date;
+};
+
+export default class SchedulerTimeSlot extends Model
+  implements SchedulerTimeSlotProperties {
+  accountId?: string;
+  calendarId?: string;
+  hostName?: string;
+  emails?: string[];
+  start?: Date;
+  end?: Date;
+
+  constructor(props?: SchedulerTimeSlotProperties) {
+    super();
+    this.initAttributes(props);
+  }
 }
-SchedulerTimeSlot.collectionName = 'scheduler_slot';
 SchedulerTimeSlot.attributes = {
   accountId: Attributes.String({
     modelKey: 'accountId',

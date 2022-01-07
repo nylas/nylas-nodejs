@@ -1,8 +1,8 @@
-import RestfulModel from './restful-model';
 import Attributes from './attributes';
 import SchedulerTimeSlot from './scheduler-time-slot';
+import Model from './model';
 
-export class SchedulerBookingConfirmation extends RestfulModel {
+export type SchedulerBookingConfirmationProperties = {
   id?: string;
   accountId?: string;
   additionalFieldValues?: object;
@@ -18,8 +18,31 @@ export class SchedulerBookingConfirmation extends RestfulModel {
   recipientName?: string;
   recipientTz?: string;
   title?: string;
+};
+
+export class SchedulerBookingConfirmation extends Model
+  implements SchedulerBookingConfirmationProperties {
+  id?: string;
+  accountId?: string;
+  additionalFieldValues?: object;
+  calendarEventId?: string;
+  calendarId?: string;
+  editHash?: string;
+  startTime?: Date;
+  endTime?: Date;
+  isConfirmed?: boolean;
+  location?: string;
+  recipientEmail?: string;
+  recipientLocale?: string;
+  recipientName?: string;
+  recipientTz?: string;
+  title?: string;
+
+  constructor(props?: SchedulerBookingConfirmationProperties) {
+    super();
+    this.initAttributes(props);
+  }
 }
-SchedulerBookingConfirmation.collectionName = 'booking_confirmation';
 SchedulerBookingConfirmation.attributes = {
   id: Attributes.Number({
     modelKey: 'id',
@@ -80,7 +103,7 @@ SchedulerBookingConfirmation.attributes = {
   }),
 };
 
-export default class SchedulerBookingRequest extends RestfulModel {
+export type SchedulerBookingRequestProperties = {
   additionalEmails?: string[];
   additionalValues?: object;
   email?: string;
@@ -90,6 +113,24 @@ export default class SchedulerBookingRequest extends RestfulModel {
   replacesBookingHash?: string;
   slot?: SchedulerTimeSlot;
   timezone?: string;
+};
+
+export default class SchedulerBookingRequest extends Model
+  implements SchedulerBookingRequestProperties {
+  additionalEmails?: string[];
+  additionalValues?: object;
+  email?: string;
+  locale?: string;
+  name?: string;
+  pageHostname?: string;
+  replacesBookingHash?: string;
+  slot?: SchedulerTimeSlot;
+  timezone?: string;
+
+  constructor(props?: SchedulerBookingRequestProperties) {
+    super();
+    this.initAttributes(props);
+  }
 
   /*
   * The booking endpoint requires additional_values and additional_emails
@@ -106,7 +147,6 @@ export default class SchedulerBookingRequest extends RestfulModel {
     return json;
   }
 }
-SchedulerBookingRequest.collectionName = 'booking_request';
 SchedulerBookingRequest.attributes = {
   additionalEmails: Attributes.StringList({
     modelKey: 'additionalEmails',
