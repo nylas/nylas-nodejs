@@ -110,28 +110,6 @@ export default class File extends RestfulModel implements FileProperties {
         return Promise.reject(err);
       });
   }
-
-  //TODO::Probably deprecate this? All it does is call /files/{id}
-  metadata(
-    callback?: (error: Error | null, data?: Record<string, any>) => void
-  ) {
-    return this.connection
-      .request({
-        path: `/files/${this.id}`,
-      })
-      .then(response => {
-        if (callback) {
-          callback(null, response);
-        }
-        return Promise.resolve(response);
-      })
-      .catch(err => {
-        if (callback) {
-          callback(err);
-        }
-        return Promise.reject(err);
-      });
-  }
 }
 File.collectionName = 'files';
 File.attributes = {
