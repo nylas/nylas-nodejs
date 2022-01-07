@@ -8,7 +8,7 @@ import EventConferencing, {
 } from './event-conferencing';
 import When, { WhenProperties } from './when';
 import NylasConnection from '../nylas-connection';
-import EventNotification from './event-notification';
+import EventNotification, { EventNotificationProperties } from './event-notification';
 
 export type EventProperties = {
   calendarId: string;
@@ -30,8 +30,7 @@ export type EventProperties = {
   masterEventId?: string;
   originalStartTime?: number;
   conferencing?: EventConferencingProperties;
-  //TODO::Create EventNotificationProperties
-  notifications?: EventNotification[];
+  notifications?: EventNotificationProperties[];
   metadata?: object;
   jobStatusId?: string;
 };
