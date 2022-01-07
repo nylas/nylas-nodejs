@@ -7,7 +7,7 @@ export type FolderProperties = {
   name?: string;
 };
 
-export class Folder extends RestfulModel implements FolderProperties {
+export default class Folder extends RestfulModel implements FolderProperties {
   displayName?: string;
   name?: string;
   jobStatusId?: string;

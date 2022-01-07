@@ -4,7 +4,7 @@ import Attributes from './attributes';
 import EmailParticipant, {
   EmailParticipantProperties,
 } from './email-participant';
-import { Label, Folder, FolderProperties } from './folder';
+import Folder, { Label, FolderProperties } from './folder';
 import NylasConnection from '../nylas-connection';
 
 export type ThreadProperties = {
