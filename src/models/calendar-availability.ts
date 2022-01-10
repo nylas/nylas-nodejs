@@ -26,16 +26,16 @@ type AvailabilityQuery = {
   tentativeBusy?: boolean;
   freeBusy?: FreeBusyProperties[];
   openHours?: OpenHoursProperties[];
-}
+};
 
 export type SingleAvailabilityQuery = AvailabilityQuery & {
   emails: string[];
   roundRobin?: RoundRobin;
-}
+};
 
 export type ConsecutiveAvailabilityQuery = AvailabilityQuery & {
   emails: Array<string[]>;
-}
+};
 
 export type OpenHoursProperties = {
   emails: string[];

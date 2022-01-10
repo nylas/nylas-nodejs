@@ -8,7 +8,9 @@ import EventConferencing, {
 } from './event-conferencing';
 import When, { WhenProperties } from './when';
 import NylasConnection from '../nylas-connection';
-import EventNotification, { EventNotificationProperties } from './event-notification';
+import EventNotification, {
+  EventNotificationProperties,
+} from './event-notification';
 
 export type EventProperties = {
   calendarId: string;

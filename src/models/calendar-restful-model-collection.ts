@@ -3,8 +3,10 @@ import NylasConnection from '../nylas-connection';
 import RestfulModelCollection from './restful-model-collection';
 import FreeBusy, { FreeBusyQuery } from './free-busy';
 import CalendarAvailability, {
-  CalendarConsecutiveAvailability, ConsecutiveAvailabilityQuery,
-  OpenHours, SingleAvailabilityQuery,
+  CalendarConsecutiveAvailability,
+  ConsecutiveAvailabilityQuery,
+  OpenHours,
+  SingleAvailabilityQuery,
 } from './calendar-availability';
 
 export default class CalendarRestfulModelCollection extends RestfulModelCollection<
