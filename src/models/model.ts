@@ -23,7 +23,6 @@ export default class Model {
     return (this.constructor as any).attributes;
   }
 
-  //TODO::Maybe come up with a better name?
   initAttributes(props?: Record<string, unknown>): void {
     const attributes = this.attributes();
     for (const prop in props) {

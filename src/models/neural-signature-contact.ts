@@ -84,7 +84,6 @@ export default class NeuralSignatureContact extends Model
     };
   }
 
-  //TODO::Perhaps this gets moved out to Neural?
   toContactObject(connection: NylasConnection): Contact {
     const contact = new Contact(connection);
 
