@@ -51,7 +51,6 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       });
   }
 
-  //TODO::Enum for date?
   availability(
     options: SingleAvailabilityQuery,
     callback?: (error: Error | null, data?: Record<string, any>) => void

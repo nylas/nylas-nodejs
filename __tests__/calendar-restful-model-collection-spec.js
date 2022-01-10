@@ -2,6 +2,7 @@ import fetch from 'node-fetch';
 
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
+import { Days, RoundRobin } from '../src/models/calendar-availability';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -114,10 +115,11 @@ describe('CalendarRestfulModelCollection', () => {
       interval: 5,
       duration: 30,
       emails: ['jane@email.com'],
+      roundRobin: RoundRobin.MaxAvailability,
       openHours: [
         {
           emails: ['swag@nylas.com'],
-          days: [0],
+          days: [Days.Sunday],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
@@ -137,6 +139,7 @@ describe('CalendarRestfulModelCollection', () => {
         interval_minutes: 5,
         duration_minutes: 30,
         emails: ['jane@email.com'],
+        round_robin: 'max-availability',
         free_busy: [],
         open_hours: [
           {
@@ -178,7 +181,7 @@ describe('CalendarRestfulModelCollection', () => {
       openHours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
-          days: [0],
+          days: [Days.Sunday],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
@@ -256,7 +259,7 @@ describe('CalendarRestfulModelCollection', () => {
       openHours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
-          days: [0],
+          days: [Days.Sunday],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
@@ -292,7 +295,7 @@ describe('CalendarRestfulModelCollection', () => {
       openHours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
-          days: [0],
+          days: [Days.Sunday],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
@@ -370,7 +373,7 @@ describe('CalendarRestfulModelCollection', () => {
       openHours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
-          days: [0],
+          days: [Days.Sunday],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',

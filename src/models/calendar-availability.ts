@@ -7,6 +7,16 @@ export enum RoundRobin {
   MaxFairness = 'max-fairness',
 }
 
+export enum Days {
+  Monday = 0,
+  Tuesday = 1,
+  Wednesday = 2,
+  Thursday = 3,
+  Friday = 4,
+  Saturday = 5,
+  Sunday = 6,
+}
+
 type AvailabilityQuery = {
   duration: number;
   interval: number;
@@ -29,7 +39,7 @@ export type ConsecutiveAvailabilityQuery = AvailabilityQuery & {
 
 export type OpenHoursProperties = {
   emails: string[];
-  days: number[];
+  days: Days[];
   timezone: string;
   start: string;
   end: string;
@@ -38,7 +48,7 @@ export type OpenHoursProperties = {
 export class OpenHours extends Model implements OpenHoursProperties {
   objectType = 'open_hours';
   emails: string[] = [];
-  days: number[] = [];
+  days: Days[] = [];
   timezone = '';
   start = '';
   end = '';
