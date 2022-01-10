@@ -1,10 +1,30 @@
 import Model from './model';
 import Attributes from './attributes';
-import { TimeSlot, TimeSlotProperties } from './free-busy';
+import { FreeBusyProperties, TimeSlot, TimeSlotProperties } from './free-busy';
 
 export enum RoundRobin {
   MaxAvailability = 'max-availability',
   MaxFairness = 'max-fairness',
+}
+
+type AvailabilityQuery = {
+  duration: number;
+  interval: number;
+  startTime: number;
+  endTime: number;
+  buffer?: number;
+  tentativeBusy?: boolean;
+  freeBusy?: FreeBusyProperties[];
+  openHours?: OpenHoursProperties[];
+}
+
+export type SingleAvailabilityQuery = AvailabilityQuery & {
+  emails: string[];
+  roundRobin?: RoundRobin;
+}
+
+export type ConsecutiveAvailabilityQuery = AvailabilityQuery & {
+  emails: Array<string[]>;
 }
 
 export type OpenHoursProperties = {

@@ -1,6 +1,12 @@
 import Model from './model';
 import Attributes from './attributes';
 
+export type FreeBusyQuery = {
+  startTime: number;
+  endTime: number;
+  emails: string[];
+}
+
 export type TimeSlotProperties = {
   status: string;
   startTime: number;
