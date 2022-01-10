@@ -109,8 +109,8 @@ describe('CalendarRestfulModelCollection', () => {
 
   test('[AVAILABILITY] should fetch results with params', done => {
     const params = {
-      startTime: '1590454800',
-      endTime: '1590780800',
+      startTime: 1590454800,
+      endTime: 1590780800,
       interval: 5,
       duration: 30,
       emails: ['jane@email.com'],
@@ -132,8 +132,8 @@ describe('CalendarRestfulModelCollection', () => {
       );
       expect(options.method).toEqual('POST');
       expect(JSON.parse(options.body)).toEqual({
-        start_time: '1590454800',
-        end_time: '1590780800',
+        start_time: 1590454800,
+        end_time: 1590780800,
         interval_minutes: 5,
         duration_minutes: 30,
         emails: ['jane@email.com'],
@@ -260,7 +260,6 @@ describe('CalendarRestfulModelCollection', () => {
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
-          object_type: 'open_hours',
         },
       ],
     };
@@ -281,7 +280,6 @@ describe('CalendarRestfulModelCollection', () => {
       freeBusy: [
         {
           email: 'jane@email.com',
-          object: 'free_busy',
           timeSlots: [
             {
               status: 'busy',

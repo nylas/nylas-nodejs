@@ -9,6 +9,32 @@ import CalendarAvailability, {
   RoundRobin,
 } from './calendar-availability';
 
+type AvailabilityOptions = {
+  duration: number;
+  interval: number;
+  startTime: number;
+  endTime: number;
+  buffer?: number;
+  tentativeBusy?: boolean;
+  freeBusy?: FreeBusyProperties[];
+  openHours?: OpenHoursProperties[];
+}
+
+export type SingleAvailabilityOptions = AvailabilityOptions & {
+  emails: string[];
+  roundRobin?: RoundRobin;
+}
+
+export type ConsecutiveAvailabilityOptions = AvailabilityOptions & {
+  emails: Array<string[]>;
+}
+
+export type FreeBusyOptions = {
+  startTime: number;
+  endTime: number;
+  emails: string[];
+}
+
 export default class CalendarRestfulModelCollection extends RestfulModelCollection<
   Calendar
 > {
@@ -22,11 +48,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
   }
 
   freeBusy(
-    options: {
-      startTime: number;
-      endTime: number;
-      emails: string[];
-    },
+    options: FreeBusyOptions,
     callback?: (error: Error | null, data?: Record<string, unknown>) => void
   ): Promise<FreeBusy[]> {
     return this.connection
@@ -57,20 +79,9 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       });
   }
 
-  //TODO::Replace options with params?
   //TODO::Enum for date?
   availability(
-    options: {
-      emails: string[];
-      duration: number;
-      interval: number;
-      startTime: number;
-      endTime: number;
-      buffer?: number;
-      roundRobin?: RoundRobin;
-      freeBusy?: FreeBusyProperties[];
-      openHours?: OpenHoursProperties[];
-    },
+    options: SingleAvailabilityOptions,
     callback?: (error: Error | null, data?: Record<string, any>) => void
   ): Promise<CalendarAvailability> {
     // Instantiate objects from properties to get JSON formatted for the API call
@@ -92,6 +103,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
           start_time: options.startTime,
           end_time: options.endTime,
           buffer: options.buffer,
+          tentative_busy: options.tentativeBusy,
           round_robin: options.roundRobin,
           free_busy: freeBusyJson,
           open_hours: openHoursJson,
@@ -112,16 +124,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
   }
 
   consecutiveAvailability(
-    options: {
-      emails: Array<string[]>;
-      duration: number;
-      interval: number;
-      startTime: number;
-      endTime: number;
-      buffer?: number;
-      freeBusy?: FreeBusyProperties[];
-      openHours?: OpenHoursProperties[];
-    },
+    options: ConsecutiveAvailabilityOptions,
     callback?: (error: Error | null, data?: { [key: string]: any }) => void
   ): Promise<CalendarConsecutiveAvailability> {
     // If open hours contains any emails not present in the main emails key
@@ -163,6 +166,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
           start_time: options.startTime,
           end_time: options.endTime,
           buffer: options.buffer,
+          tentative_busy: options.tentativeBusy,
           free_busy: freeBusyJson,
           open_hours: openHoursJson,
         },
