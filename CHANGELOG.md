@@ -1,5 +1,24 @@
 # Changelog
 
+### 6.0.0 / 2022-01-tbd
+* **BREAKING CHANGE**: Refactored `RestfulModel` and `RestfulModelCollection`, introduced `Model` and `ModelCollection` superclass for models that do not directly interact with the Nylas API
+* **BREAKING CHANGE**: Introduction of interfaces that accompany models to improve experience when instantiating API models and provides better insight on "required" fields
+* **BREAKING CHANGE**: Applied missing variable and return types, and applied stricter typing to improve deserialization and to adhere Typescript best practice
+* **BREAKING CHANGE**: `Event.when` is now of `When` type
+* **BREAKING CHANGE**: `NeuralMessageOptions` is now a `Model` class instead of an interface type
+* **BREAKING CHANGE**: `CalendarRestfulModelCollection.freeBusy()` now returns a (new) `FreeBusy` type instead of a JSON
+* **BREAKING CHANGE**: `CalendarRestfulModelCollection.availability()` now returns a (new) `CalendarAvailability` type instead of a JSON
+* **BREAKING CHANGE**: `CalendarRestfulModelCollection.consecutiveAvailability()` now returns a (new) `CalendarConsecutiveAvailability` type instead of a JSON
+* **BREAKING CHANGE**: `Connect.authorize()` now takes in a parameter of `VirtualCalendarProperties | NativeAuthenticationProperties` type (new) instead of an object and returns `AuthorizationCode` type (new) instead of a JSON
+* **BREAKING CHANGE**: `Connect.token()` now returns an `Account` type instead of a JSON
+* **BREAKING CHANGE**: `Contact`, `EventConferencing`, and `Folder` are now default exports
+* **BREAKING CHANGE**: `Nylas.application()` deprecates `application_name` and `redirect_uris` in favour of camelCase
+* **DEPRECATED**: `RestfulModelCollection.build()` as it does not allow for proper property and type hinting in favor of instantiating via `new Model()`
+* **DEPRECATED**: `Connect.newAccount()` as it had no functionality
+* **DEPRECATED**: `File.metadata()` as it doesn't appear any different than making a `NylasConnection.files().find()` call
+* Lots of new models are introduced, almost all API objects are represented as a model in the SDK now
+* Introduction of `Enum` types
+
 ### 5.10.3 / 2022-01-04
 * Prevent `Event` objects from sending an empty list of notifications when not set, causing errors for recurring events 
 
