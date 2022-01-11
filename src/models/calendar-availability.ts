@@ -82,21 +82,34 @@ OpenHours.attributes = {
 
 export type CalendarConsecutiveAvailabilityProperties = {
   emails: string[];
-  start_time: number;
-  end_time: number;
+  startTime: number;
+  endTime: number;
 };
 
 export class CalendarConsecutiveAvailability extends Model
   implements CalendarConsecutiveAvailabilityProperties {
   emails: string[] = [];
-  start_time = 0;
-  end_time = 0;
+  startTime = 0;
+  endTime = 0;
 
   constructor(props?: CalendarConsecutiveAvailabilityProperties) {
     super();
     this.initAttributes(props);
   }
 }
+CalendarConsecutiveAvailability.attributes = {
+  emails: Attributes.StringList({
+    modelKey: 'emails',
+  }),
+  startTime: Attributes.Number({
+    modelKey: 'startTime',
+    jsonKey: 'start_time',
+  }),
+  endTime: Attributes.Number({
+    modelKey: 'endTime',
+    jsonKey: 'end_time',
+  }),
+};
 
 export type CalendarAvailabilityProperties = {
   timeSlots: TimeSlotProperties[];
@@ -112,3 +125,10 @@ export default class CalendarAvailability extends Model
     this.initAttributes(props);
   }
 }
+CalendarAvailability.attributes = {
+  timeSlots: Attributes.Collection({
+    modelKey: 'timeSlots',
+    jsonKey: 'time_slots',
+    itemClass: TimeSlot,
+  }),
+};
