@@ -3,22 +3,37 @@ import Model from './model';
 import Attributes from './attributes';
 import Account from './account';
 
+export enum Scope {
+  Email = 'email',
+  EmailModify = 'email.modify',
+  EmailReadOnly = 'email.read_only',
+  EmailSend = 'email.send',
+  EmailFoldersAndLabels = 'email.folders_and_labels',
+  EmailMetadata = 'email.metadata',
+  EmailDrafts = 'email.drafts',
+  Calendar = 'calendar',
+  CalendarReadOnly = 'calendar.read_only',
+  RoomResourcesReadOnly = 'room_resources.read_only',
+  Contacts = 'contacts',
+  ContactsReadOnly = 'contacts.read_only',
+}
+
 export type VirtualCalendarProperties = {
-  scopes: string;
-  email: string;
   name: string;
-  clientId?: string;
+  emailAddress: string;
+  clientId: string;
+  scopes: Scope[];
   settings?: Record<string, string>;
 };
 
 export class VirtualCalendar extends Model
   implements VirtualCalendarProperties {
   provider = 'nylas';
-  clientId = '';
-  scopes = '';
-  email = '';
   name = '';
-  settings?: Record<string, string>;
+  emailAddress = '';
+  clientId = '';
+  scopes: Scope[] = [];
+  settings = {};
 
   constructor(props?: VirtualCalendarProperties) {
     super();
@@ -33,33 +48,21 @@ VirtualCalendar.attributes = {
     modelKey: 'clientId',
     jsonKey: 'client_id',
   }),
-  scopes: Attributes.String({
-    modelKey: 'scopes',
-  }),
-  email: Attributes.String({
-    modelKey: 'email',
+  emailAddress: Attributes.String({
+    modelKey: 'emailAddress',
+    jsonKey: "email",
   }),
   name: Attributes.String({
     modelKey: 'name',
+  }),
+  scopes: Attributes.EnumList({
+    modelKey: 'scopes',
+    itemClass: Scope,
   }),
   settings: Attributes.Object({
     modelKey: 'settings',
   }),
 };
-
-export enum Scope {
-  EmailModify = 'email.modify',
-  EmailReadOnly = 'email.read_only',
-  EmailSend = 'email.send',
-  EmailFoldersAndLabels = 'email.folders_and_labels',
-  EmailMetadata = 'email.metadata',
-  EmailDrafts = 'email.drafts',
-  Calendar = 'calendar',
-  CalendarReadOnly = 'calendar.read_only',
-  RoomResourcesReadOnly = 'room_resources.read_only',
-  Contacts = 'contacts',
-  ContactsReadOnly = 'contacts.read_only',
-}
 
 export enum NativeAuthenticationProvider {
   Gmail = 'gmail',
@@ -73,13 +76,9 @@ export enum NativeAuthenticationProvider {
   Office365 = 'office365',
 }
 
-export type NativeAuthenticationProperties = {
-  name: string;
-  emailAddress: string;
+export type NativeAuthenticationProperties = VirtualCalendarProperties & {
+  settings: Record<string, string>;
   provider: NativeAuthenticationProvider;
-  scopes: Scope[];
-  clientId?: string;
-  settings?: Record<string, string>;
 };
 
 type AuthorizationCode = {
@@ -92,8 +91,8 @@ export class NativeAuthentication extends Model
   name = '';
   emailAddress = '';
   provider = NativeAuthenticationProvider.Gmail;
+  settings = {};
   scopes: Scope[] = [];
-  settings?: Record<string, string>;
 
   constructor(props?: NativeAuthenticationProperties) {
     super();
