@@ -50,7 +50,7 @@ VirtualCalendar.attributes = {
   }),
   emailAddress: Attributes.String({
     modelKey: 'emailAddress',
-    jsonKey: "email",
+    jsonKey: 'email',
   }),
   name: Attributes.String({
     modelKey: 'name',
