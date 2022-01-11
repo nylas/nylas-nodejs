@@ -12,10 +12,10 @@
 * **BREAKING CHANGE**: `Connect.authorize()` now takes in a parameter of `VirtualCalendarProperties | NativeAuthenticationProperties` type (new) instead of an object and returns `AuthorizationCode` type (new) instead of a JSON
 * **BREAKING CHANGE**: `Connect.token()` now returns an `Account` type instead of a JSON
 * **BREAKING CHANGE**: `Contact`, `EventConferencing`, and `Folder` are now default exports
-* **BREAKING CHANGE**: `Nylas.application()` deprecates `application_name` and `redirect_uris` in favour of camelCase
-* **DEPRECATED**: `RestfulModelCollection.build()` as it does not allow for proper property and type hinting in favor of instantiating via `new Model()`
-* **DEPRECATED**: `Connect.newAccount()` as it had no functionality
-* **DEPRECATED**: `File.metadata()` as it doesn't appear any different than making a `NylasConnection.files().find()` call
+* **BREAKING CHANGE**: `Nylas.application()` no longer takes `application_name` and `redirect_uris` as parameters, only the camelCase'd parameters
+* **BREAKING CHANGE**: Removed `RestfulModelCollection.build()` as it does not allow for proper property and type hinting in favor of instantiating via `new Model()`
+* **BREAKING CHANGE**: Removed `Connect.newAccount()` as it had no functionality
+* **BREAKING CHANGE**: Removed `File.metadata()` as it doesn't appear any different than making a `NylasConnection.files().find()` call
 * Lots of new models are introduced, almost all API objects are represented as a model in the SDK now
 * Introduction of `Enum` types
 
