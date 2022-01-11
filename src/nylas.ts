@@ -24,11 +24,11 @@ class Nylas {
   static set apiServer(newApiServer: string | null) {
     config.setApiServer(newApiServer);
   }
-  static accounts?:
+  static accounts:
     | ManagementModelCollection<ManagementAccount>
     | RestfulModelCollection<Account>;
-  static connect?: Connect;
-  static webhooks?: ManagementModelCollection<Webhook>;
+  static connect: Connect;
+  static webhooks: ManagementModelCollection<Webhook>;
 
   static config({
     clientId,
