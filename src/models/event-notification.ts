@@ -1,8 +1,14 @@
 import Attributes from './attributes';
 import Model from './model';
 
+export enum EventNotificationType {
+  Email = 'email',
+  Sms = 'sms',
+  Webhook = 'webhook',
+}
+
 export type EventNotificationProperties = {
-  type: string;
+  type: EventNotificationType;
   minutesBeforeEvent: number;
   url?: string;
   payload?: string;
@@ -13,7 +19,7 @@ export type EventNotificationProperties = {
 
 export default class EventNotification extends Model
   implements EventNotificationProperties {
-  type = '';
+  type = EventNotificationType.Email;
   minutesBeforeEvent = 0;
   url?: string;
   payload?: string;
