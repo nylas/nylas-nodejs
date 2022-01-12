@@ -12,6 +12,7 @@
 * **BREAKING CHANGE**: `Connect.authorize()` now takes in a parameter of `VirtualCalendarProperties | NativeAuthenticationProperties` type (new) instead of an object and returns `AuthorizationCode` type (new) instead of a JSON
 * **BREAKING CHANGE**: `Connect.token()` now returns an `Account` type instead of a JSON
 * **BREAKING CHANGE**: `Contact`, `EventConferencing`, and `Folder` are now default exports
+* **BREAKING CHANGE**: `Nylas` has stricter parameters and introduction of defined return types
 * **BREAKING CHANGE**: `Nylas.application()` no longer takes `application_name` and `redirect_uris` as parameters, only the camelCase'd parameters
 * **BREAKING CHANGE**: Removed `RestfulModelCollection.build()` as it does not allow for proper property and type hinting in favor of instantiating via `new Model()`
 * **BREAKING CHANGE**: Removed `Connect.newAccount()` as it had no functionality

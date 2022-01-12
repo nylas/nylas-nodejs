@@ -9,6 +9,8 @@ import Connect from './models/connect';
 import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
+import { AuthenticateUrlConfig, NylasConfig } from './config';
+import AccessToken from './models/access-token'
 
 class Nylas {
   static clientId = '';
@@ -30,29 +32,21 @@ class Nylas {
   static connect: Connect;
   static webhooks: ManagementModelCollection<Webhook>;
 
-  static config({
-    clientId,
-    clientSecret,
-    apiServer,
-  }: {
-    clientId: string;
-    clientSecret: string;
-    apiServer?: string;
-  }) {
-    if (apiServer && apiServer.indexOf('://') === -1) {
+  static config(config: NylasConfig): Nylas {
+    if (config.apiServer && config.apiServer.indexOf('://') === -1) {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
       );
     }
 
-    if (clientId) {
-      this.clientId = clientId;
+    if (config.clientId) {
+      this.clientId = config.clientId;
     }
-    if (clientSecret) {
-      this.clientSecret = clientSecret;
+    if (config.clientSecret) {
+      this.clientSecret = config.clientSecret;
     }
-    if (apiServer) {
-      this.apiServer = apiServer;
+    if (config.apiServer) {
+      this.apiServer = config.apiServer;
     } else {
       this.apiServer = 'https://api.nylas.com';
     }
@@ -64,13 +58,13 @@ class Nylas {
     this.webhooks = new ManagementModelCollection(
       Webhook,
       conn,
-      this.clientId!
+      this.clientId
     );
     if (this.clientCredentials()) {
       this.accounts = new ManagementModelCollection(
         ManagementAccount,
         conn,
-        this.clientId!
+        this.clientId
       ) as ManagementModelCollection<ManagementAccount>;
     } else {
       this.accounts = new RestfulModelCollection(
@@ -82,11 +76,11 @@ class Nylas {
     return this;
   }
 
-  static clientCredentials() {
+  static clientCredentials(): boolean {
     return this.clientId != null && this.clientSecret != null;
   }
 
-  static with(accessToken: string) {
+  static with(accessToken: string): NylasConnection {
     if (!accessToken) {
       throw new Error('This function requires an access token');
     }
@@ -96,7 +90,7 @@ class Nylas {
   static application(options?: {
     applicationName?: string;
     redirectUris?: string[];
-  }) {
+  }): Promise<Record<string, unknown>> {
     if (!this.clientId) {
       throw new Error('This function requires a clientId');
     }
@@ -166,15 +160,7 @@ class Nylas {
       );
   }
 
-  static urlForAuthentication(
-    options: {
-      redirectURI?: string;
-      loginHint?: string;
-      state?: string;
-      provider?: string;
-      scopes?: string[];
-    } = {}
-  ) {
+  static urlForAuthentication(options: AuthenticateUrlConfig): string {
     if (!this.clientId) {
       throw new Error(
         'urlForAuthentication() cannot be called until you provide a clientId via config()'
