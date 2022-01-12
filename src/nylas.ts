@@ -11,6 +11,7 @@ import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
 import { AuthenticateUrlConfig, NylasConfig } from './config';
 import AccessToken from './models/access-token';
+import { ApplicationDetailsProperties } from './models/application-details';
 
 class Nylas {
   static clientId = '';
@@ -83,10 +84,9 @@ class Nylas {
     return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
-  static application(options?: {
-    applicationName?: string;
-    redirectUris?: string[];
-  }): Promise<Record<string, unknown>> {
+  static application(
+    options?: ApplicationDetailsProperties
+  ): Promise<Record<string, unknown>> {
     if (!this.clientId) {
       throw new Error('This function requires a clientId');
     }
@@ -103,6 +103,7 @@ class Nylas {
     if (options) {
       requestOptions.body = {
         application_name: options.applicationName,
+        icon_url: options.iconUrl,
         redirect_uris: options.redirectUris,
       };
       requestOptions.method = 'PUT';

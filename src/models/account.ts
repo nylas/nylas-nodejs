@@ -20,8 +20,8 @@ export default class Account extends RestfulModel implements AccountProperties {
   organizationUnit = '';
   syncState = '';
   linkedAt = new Date();
+  accessToken = '';
   billingState?: string;
-  accessToken?: string;
 
   constructor(connection: NylasConnection, props?: AccountProperties) {
     super(connection, props);
