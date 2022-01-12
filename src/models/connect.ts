@@ -21,8 +21,8 @@ export enum Scope {
 export type VirtualCalendarProperties = {
   name: string;
   emailAddress: string;
-  clientId: string;
   scopes: Scope[];
+  clientId?: string;
   settings?: Record<string, string>;
 };
 
@@ -31,9 +31,9 @@ export class VirtualCalendar extends Model
   provider = 'nylas';
   name = '';
   emailAddress = '';
-  clientId = '';
   scopes: Scope[] = [];
   settings = {};
+  clientId?: string;
 
   constructor(props?: VirtualCalendarProperties) {
     super();
@@ -87,12 +87,12 @@ type AuthorizationCode = {
 
 export class NativeAuthentication extends Model
   implements NativeAuthenticationProperties {
-  clientId = '';
   name = '';
   emailAddress = '';
   provider = NativeAuthenticationProvider.Gmail;
   settings = {};
   scopes: Scope[] = [];
+  clientId?: string;
 
   constructor(props?: NativeAuthenticationProperties) {
     super();
