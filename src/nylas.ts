@@ -11,7 +11,9 @@ import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
 import { AuthenticateUrlConfig, NylasConfig } from './config';
 import AccessToken from './models/access-token';
-import ApplicationDetails, { ApplicationDetailsProperties } from './models/application-details';
+import ApplicationDetails, {
+  ApplicationDetailsProperties,
+} from './models/application-details';
 
 class Nylas {
   static clientId = '';

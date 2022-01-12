@@ -63,7 +63,8 @@ export type PhysicalAddressProperties = {
   address?: string;
 };
 
-export class PhysicalAddress extends Model implements PhysicalAddressProperties {
+export class PhysicalAddress extends Model
+  implements PhysicalAddressProperties {
   type = '';
   format = '';
   streetAddress = '';
