@@ -10,7 +10,7 @@ import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
 import { AuthenticateUrlConfig, NylasConfig } from './config';
-import AccessToken from './models/access-token'
+import AccessToken from './models/access-token';
 
 class Nylas {
   static clientId = '';
@@ -113,7 +113,7 @@ class Nylas {
   static exchangeCodeForToken(
     code: string,
     callback?: (error: Error | null, accessToken?: string) => void
-  ) {
+  ): Promise<AccessToken> {
     if (!this.clientId || !this.clientSecret) {
       throw new Error(
         'exchangeCodeForToken() cannot be called until you provide a clientId and secret via config()'
@@ -144,7 +144,7 @@ class Nylas {
           if (callback) {
             callback(null, body);
           }
-          return body;
+          return new AccessToken().fromJSON(body);
         },
         error => {
           const newError = new Error(error.message);
