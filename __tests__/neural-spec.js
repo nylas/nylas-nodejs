@@ -54,7 +54,7 @@ describe('Neural', () => {
         },
       ];
 
-      testContext.connection.neural._request = jest.fn(() =>
+      testContext.connection.neural.request = jest.fn(() =>
         Promise.resolve(serverResponse)
       );
     });
@@ -106,7 +106,7 @@ describe('Neural', () => {
         text: 'This is some text',
       };
 
-      testContext.connection.neural._request = jest.fn((path, body) => {
+      testContext.connection.neural.request = jest.fn((path, body) => {
         if (body['message_id']) {
           return Promise.resolve([sentiment]);
         }
@@ -127,7 +127,7 @@ describe('Neural', () => {
         .sentimentAnalysisMessage(['abc123'])
         .then(convoList => {
           const sentBody =
-            testContext.connection.neural._request.mock.calls[0][1];
+            testContext.connection.neural.request.mock.calls[0][1];
           expect(sentBody).toEqual({ message_id: ['abc123'] });
           expect(convoList.length).toEqual(1);
           evaluateSentiment(convoList[0]);
@@ -140,7 +140,7 @@ describe('Neural', () => {
         .sentimentAnalysisText('This is some text')
         .then(convo => {
           const sentBody =
-            testContext.connection.neural._request.mock.calls[0][1];
+            testContext.connection.neural.request.mock.calls[0][1];
           expect(sentBody).toEqual({ text: 'This is some text' });
           evaluateSentiment(convo);
           done();
@@ -195,7 +195,7 @@ describe('Neural', () => {
         },
       ];
 
-      testContext.connection.neural._request = jest.fn(() =>
+      testContext.connection.neural.request = jest.fn(() =>
         Promise.resolve(serverResponse)
       );
     });
@@ -235,7 +235,9 @@ describe('Neural', () => {
       return testContext.connection.neural
         .extractSignature(['abc123'])
         .then(sigList => {
-          const contact = sigList[0].contacts.toContactObject();
+          const contact = sigList[0].contacts.toContactObject(
+            testContext.connection
+          );
 
           expect(contact.givenName).toEqual('Nylas');
           expect(contact.surname).toEqual('Swag');
@@ -359,7 +361,7 @@ describe('Neural', () => {
         size: 20,
       };
 
-      testContext.connection.neural._request = jest.fn(() =>
+      testContext.connection.neural.request = jest.fn(() =>
         Promise.resolve(serverResponse)
       );
     });

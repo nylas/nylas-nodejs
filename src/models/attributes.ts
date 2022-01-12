@@ -1,3 +1,4 @@
+import Model from './model';
 import RestfulModel from './restful-model';
 
 // The Attribute class represents a single model attribute, like 'namespace_id'
@@ -5,7 +6,7 @@ import RestfulModel from './restful-model';
 // the JSON representation of that type and the javascript representation.
 // The Attribute class also exposes convenience methods for generating Matchers.
 
-export class Attribute {
+export abstract class Attribute {
   modelKey: string;
   jsonKey: string;
   readOnly: boolean;
@@ -24,22 +25,20 @@ export class Attribute {
     this.readOnly = readOnly || false;
   }
 
-  toJSON(val: any) {
-    return val;
-  }
-  fromJSON(val: any, _parent: any) {
-    return val || null;
-  }
-  saveRequestBody(val: any) {
+  abstract toJSON(val: any, _parent?: any): any;
+  abstract fromJSON(val: any, _parent: any): any;
+
+  saveRequestBody(val: any): any {
     if (this.readOnly) {
-      return;
+      return undefined;
     }
+
     return this.toJSON(val);
   }
 }
 
 class AttributeObject extends Attribute {
-  itemClass?: typeof RestfulModel;
+  itemClass?: any;
 
   constructor({
     modelKey,
@@ -49,14 +48,14 @@ class AttributeObject extends Attribute {
   }: {
     modelKey: string;
     jsonKey?: string;
-    itemClass?: typeof RestfulModel;
+    itemClass?: typeof Model | typeof RestfulModel;
     readOnly?: boolean;
   }) {
     super({ modelKey, jsonKey, readOnly });
     this.itemClass = itemClass;
   }
 
-  toJSON(val: any, saveRequestBody?: boolean) {
+  toJSON(val: any, saveRequestBody?: boolean): unknown {
     if (!val) {
       return val;
     }
@@ -68,14 +67,18 @@ class AttributeObject extends Attribute {
     return val;
   }
 
-  fromJSON(val: any, _parent: any) {
+  fromJSON(val: any, _parent: any): any {
     if (!val || !this.itemClass) {
       return val;
     }
-    return new this.itemClass(_parent.connection, val);
+
+    if (this.itemClass.prototype instanceof RestfulModel) {
+      return new this.itemClass(_parent.connection).fromJSON(val);
+    }
+    return new this.itemClass(val).fromJSON(val);
   }
 
-  saveRequestBody(val: any) {
+  saveRequestBody(val: any): unknown {
     if (this.readOnly) {
       return;
     }
@@ -84,11 +87,11 @@ class AttributeObject extends Attribute {
 }
 
 class AttributeNumber extends Attribute {
-  toJSON(val: any) {
+  toJSON(val: number): number {
     return val;
   }
-  fromJSON(val: any, _parent: any) {
-    if (!isNaN(val)) {
+  fromJSON(val: any): number | null {
+    if (!isNaN(Number(val))) {
       return Number(val);
     } else {
       return null;
@@ -96,35 +99,53 @@ class AttributeNumber extends Attribute {
   }
 }
 
-class AttributeBoolean extends Attribute {
-  toJSON(val: any) {
+class AttributeNumberList extends Attribute {
+  toJSON(val: any): number {
     return val;
   }
-  fromJSON(val: any, _parent: any) {
+  fromJSON(json: any, _parent: any): number[] {
+    if (!json || !(json instanceof Array)) {
+      return [];
+    }
+    const nums = [];
+    for (const num in json) {
+      if (!isNaN(Number(num))) {
+        nums.push(Number(num));
+      }
+    }
+    return nums;
+  }
+}
+
+class AttributeBoolean extends Attribute {
+  toJSON(val: boolean): boolean {
+    return val;
+  }
+  fromJSON(val: string | boolean): boolean {
     return val === 'true' || val === true || false;
   }
 }
 
 class AttributeString extends Attribute {
-  toJSON(val: any) {
+  toJSON(val: string): string {
     return val;
   }
-  fromJSON(val: any, _parent: any) {
+  fromJSON(val: string): string {
     return val || '';
   }
 }
 
 class AttributeStringList extends Attribute {
-  toJSON(val: any) {
+  toJSON(val: []): [] {
     return val;
   }
-  fromJSON(val: any, _parent: any) {
+  fromJSON(val: []): [] {
     return val || [];
   }
 }
 
 class AttributeDate extends Attribute {
-  toJSON(val: any) {
+  toJSON(val: Date): string {
     if (!val) {
       return val;
     }
@@ -138,7 +159,7 @@ class AttributeDate extends Attribute {
     return val.toISOString();
   }
 
-  fromJSON(val: any, _parent: any) {
+  fromJSON(val: any, _parent: any): Date | null {
     if (!val) {
       return null;
     }
@@ -147,7 +168,7 @@ class AttributeDate extends Attribute {
 }
 
 class AttributeDateTime extends Attribute {
-  toJSON(val: any) {
+  toJSON(val: Date): number | null {
     if (!val) {
       return null;
     }
@@ -161,7 +182,7 @@ class AttributeDateTime extends Attribute {
     return val.getTime() / 1000.0;
   }
 
-  fromJSON(val: any, _parent: any) {
+  fromJSON(val: number, _parent: any): Date | null {
     if (!val) {
       return null;
     }
@@ -170,7 +191,7 @@ class AttributeDateTime extends Attribute {
 }
 
 class AttributeCollection extends Attribute {
-  itemClass: typeof RestfulModel;
+  itemClass: any;
 
   constructor({
     modelKey,
@@ -180,14 +201,14 @@ class AttributeCollection extends Attribute {
   }: {
     modelKey: string;
     jsonKey?: string;
-    itemClass: typeof RestfulModel;
+    itemClass: typeof Model | typeof RestfulModel;
     readOnly?: boolean;
   }) {
     super({ modelKey, jsonKey, readOnly });
     this.itemClass = itemClass;
   }
 
-  toJSON(vals: any, saveRequestBody?: boolean) {
+  toJSON(vals: any, saveRequestBody?: boolean): unknown[] {
     if (!vals) {
       return [];
     }
@@ -204,19 +225,27 @@ class AttributeCollection extends Attribute {
     return json;
   }
 
-  fromJSON(json: any, _parent: any) {
+  fromJSON(
+    json: unknown[],
+    _parent: any
+  ): typeof Model[] | typeof RestfulModel[] | unknown[] {
     if (!json || !(json instanceof Array)) {
       return [];
     }
     const objs = [];
     for (const objJSON of json) {
-      const obj = new this.itemClass(_parent.connection, objJSON);
+      let obj;
+      if (this.itemClass.prototype instanceof RestfulModel) {
+        obj = new this.itemClass(_parent.connection).fromJSON(objJSON);
+      } else {
+        obj = new this.itemClass(objJSON).fromJSON(objJSON);
+      }
       objs.push(obj);
     }
     return objs;
   }
 
-  saveRequestBody(val: any) {
+  saveRequestBody(val: any): unknown {
     if (this.readOnly) {
       return;
     }
@@ -224,30 +253,124 @@ class AttributeCollection extends Attribute {
   }
 }
 
+class AttributeEnum extends Attribute {
+  itemClass: any;
+
+  constructor({
+    modelKey,
+    itemClass,
+    jsonKey,
+    readOnly,
+  }: {
+    modelKey: string;
+    itemClass: any;
+    jsonKey?: string;
+    readOnly?: boolean;
+  }) {
+    super({ modelKey, jsonKey, readOnly });
+    this.itemClass = itemClass;
+  }
+
+  toJSON(val: any): string {
+    return val.toString();
+  }
+
+  fromJSON(val: unknown): unknown {
+    if (Object.values(this.itemClass).includes(val)) {
+      return val;
+    }
+    return;
+  }
+}
+
+class AttributeEnumList extends Attribute {
+  itemClass: any;
+
+  constructor({
+    modelKey,
+    itemClass,
+    jsonKey,
+    readOnly,
+  }: {
+    modelKey: string;
+    itemClass: any;
+    jsonKey?: string;
+    readOnly?: boolean;
+  }) {
+    super({ modelKey, jsonKey, readOnly });
+    this.itemClass = itemClass;
+  }
+
+  toJSON(val: any[]): string[] {
+    const enumList: string[] = [];
+    for (const v in val) {
+      enumList.push(v.toString());
+    }
+    return enumList;
+  }
+
+  fromJSON(val: any[], _parent: any): any[] {
+    const enumList: any[] = [];
+    for (const v in val) {
+      if (Object.values(this.itemClass).includes(val[v])) {
+        enumList.push(val[v]);
+      }
+    }
+    return enumList;
+  }
+}
+
 const Attributes = {
-  Number(...args: ConstructorParameters<typeof AttributeNumber>) {
+  Number(
+    ...args: ConstructorParameters<typeof AttributeNumber>
+  ): AttributeNumber {
     return new AttributeNumber(...args);
   },
-  String(...args: ConstructorParameters<typeof AttributeString>) {
+  NumberList(
+    ...args: ConstructorParameters<typeof AttributeNumberList>
+  ): AttributeNumberList {
+    return new AttributeNumberList(...args);
+  },
+  String(
+    ...args: ConstructorParameters<typeof AttributeString>
+  ): AttributeString {
     return new AttributeString(...args);
   },
-  StringList(...args: ConstructorParameters<typeof AttributeStringList>) {
+  StringList(
+    ...args: ConstructorParameters<typeof AttributeStringList>
+  ): AttributeStringList {
     return new AttributeStringList(...args);
   },
-  DateTime(...args: ConstructorParameters<typeof AttributeDateTime>) {
+  DateTime(
+    ...args: ConstructorParameters<typeof AttributeDateTime>
+  ): AttributeDateTime {
     return new AttributeDateTime(...args);
   },
-  Date(...args: ConstructorParameters<typeof AttributeDate>) {
+  Date(...args: ConstructorParameters<typeof AttributeDate>): AttributeDate {
     return new AttributeDate(...args);
   },
-  Collection(...args: ConstructorParameters<typeof AttributeCollection>) {
+  Collection(
+    ...args: ConstructorParameters<typeof AttributeCollection>
+  ): AttributeCollection {
     return new AttributeCollection(...args);
   },
-  Boolean(...args: ConstructorParameters<typeof AttributeBoolean>) {
+  Boolean(
+    ...args: ConstructorParameters<typeof AttributeBoolean>
+  ): AttributeBoolean {
     return new AttributeBoolean(...args);
   },
-  Object(...args: ConstructorParameters<typeof AttributeObject>) {
+  Object(
+    ...args: ConstructorParameters<typeof AttributeObject>
+  ): AttributeObject {
     return new AttributeObject(...args);
+  },
+  Enum(...args: ConstructorParameters<typeof AttributeEnum>): AttributeEnum {
+    return new AttributeEnum(...args);
+  },
+  EnumList(
+    ...args: ConstructorParameters<typeof AttributeEnumList>
+  ): AttributeEnumList {
+    return new AttributeEnumList(...args);
   },
 };
 export default Attributes;

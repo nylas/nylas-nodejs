@@ -1,5 +1,6 @@
-import Attributes, { Attribute } from './attributes';
+import Attributes from './attributes';
 import NylasConnection from '../nylas-connection';
+import Model from './model';
 
 export type SaveCallback = (error: Error | null, result?: RestfulModel) => void;
 
@@ -10,10 +11,14 @@ interface RestfulModelJSON {
   [key: string]: any;
 }
 
-export default class RestfulModel {
+type requestOptions = {
+  body: Record<string, unknown>;
+  qs: Record<string, unknown>;
+};
+
+export default class RestfulModel extends Model {
   static endpointName = ''; // overrridden in subclasses
   static collectionName = ''; // overrridden in subclasses
-  static attributes: { [key: string]: Attribute };
 
   accountId?: string;
   connection: NylasConnection;
@@ -21,93 +26,78 @@ export default class RestfulModel {
   object?: string;
   baseUrl?: string;
 
-  constructor(connection: NylasConnection, json?: Partial<RestfulModelJSON>) {
+  constructor(connection: NylasConnection, props?: Partial<RestfulModelJSON>) {
+    super();
     this.connection = connection;
-    if (!(this.connection instanceof NylasConnection)) {
+    if (!this.connection) {
       throw new Error('Connection object not provided');
     }
-    if (json) {
-      this.fromJSON(json);
-    }
+
+    this.id = props?.id ? props.id : undefined;
+    this.accountId = props?.accountId ? props.accountId : undefined;
+    this.object = props?.object ? props.object : undefined;
   }
 
-  attributes(): { [key: string]: Attribute } {
-    return (this.constructor as any).attributes;
+  static propsFromJSON(
+    json: Partial<RestfulModelJSON> = {},
+    parent: unknown
+  ): Partial<RestfulModelJSON> {
+    return super.propsFromJSON(json, parent);
   }
 
-  isEqual(other: RestfulModel) {
+  isEqual(other: RestfulModel): boolean {
     return (
       (other ? other.id : undefined) === this.id &&
       (other ? other.constructor : undefined) === this.constructor
     );
   }
 
-  fromJSON(json: Partial<RestfulModelJSON> = {}) {
-    const attributes = this.attributes();
-    for (const attrName in attributes) {
-      const attr = attributes[attrName];
-      if (json[attr.jsonKey] !== undefined) {
-        (this as any)[attrName] = attr.fromJSON(json[attr.jsonKey], this);
-      }
-    }
-    return this;
-  }
-
-  toJSON(enforceReadOnly?: boolean) {
-    const json: any = {};
-    const attributes = this.attributes();
-    for (const attrName in attributes) {
-      const attr = attributes[attrName];
-      if (enforceReadOnly === true) {
-        json[attr.jsonKey] = attr.saveRequestBody((this as any)[attrName]);
-      } else {
-        json[attr.jsonKey] = attr.toJSON((this as any)[attrName]);
-      }
-    }
-    return json;
+  fromJSON(json: Partial<RestfulModelJSON> = {}): this {
+    return super.fromJSON(json) as this;
   }
 
   // Subclasses should override this method.
-  pathPrefix() {
+  pathPrefix(): string {
     return '';
   }
 
-  saveEndpoint() {
+  saveEndpoint(): string {
     const collectionName = (this.constructor as any).collectionName;
     return `${this.pathPrefix()}/${collectionName}`;
   }
 
   // saveRequestBody is used by save(). It returns a JSON dict containing only the
   // fields the API allows updating. Subclasses should override this method.
-  saveRequestBody() {
+  saveRequestBody(): Record<string, unknown> {
     return this.toJSON(true);
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
-  deleteRequestQueryString(_params: { [key: string]: any }) {
+  deleteRequestQueryString(
+    _params: Record<string, unknown>
+  ): Record<string, unknown> {
     return {};
   }
   // deleteRequestBody is used by delete(). Subclasses should override this method.
-  deleteRequestBody(_params: { [key: string]: any }) {
+  deleteRequestBody(_params: Record<string, unknown>): Record<string, unknown> {
     return {};
   }
 
   // deleteRequestOptions is used by delete(). Subclasses should override this method.
-  deleteRequestOptions(params: { [key: string]: any }) {
+  deleteRequestOptions(params: Record<string, unknown>): requestOptions {
     return {
       body: this.deleteRequestBody(params),
       qs: this.deleteRequestQueryString(params),
     };
   }
 
-  toString() {
-    return JSON.stringify(this.toJSON());
-  }
-
   // Not every model needs to have a save function, but those who
   // do shouldn't have to reimplement the same boilerplate.
   // They should instead define a save() function which calls _save.
-  _save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
+  protected save(
+    params: {} | SaveCallback = {},
+    callback?: SaveCallback
+  ): Promise<this> {
     if (typeof params === 'function') {
       callback = params as SaveCallback;
       params = {};
@@ -123,11 +113,11 @@ export default class RestfulModel {
         baseUrl: this.baseUrl,
       })
       .then(json => {
-        this.fromJSON(json as RestfulModelJSON);
+        const newModel = this.fromJSON(json as RestfulModelJSON);
         if (callback) {
           callback(null, this);
         }
-        return Promise.resolve(this);
+        return Promise.resolve(newModel);
       })
       .catch(err => {
         if (callback) {
@@ -137,11 +127,11 @@ export default class RestfulModel {
       });
   }
 
-  _get(
-    params: { [key: string]: any } = {},
+  protected get(
+    params: Record<string, any> = {},
     callback?: (error: Error | null, result?: any) => void,
     pathSuffix = ''
-  ) {
+  ): Promise<any> {
     const collectionName = (this.constructor as any).collectionName;
     return this.connection
       .request({

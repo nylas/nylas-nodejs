@@ -1,24 +1,28 @@
-import RestfulModel from './restful-model';
 import Attributes from './attributes';
+import Model from './model';
 
-class EventConferencingDetails extends RestfulModel {
+export type EventConferencingDetailsProperties = {
+  meetingCode?: string;
+  phone?: string[];
+  password?: string;
+  pin?: string;
+  url?: string;
+};
+
+export class EventConferencingDetails extends Model
+  implements EventConferencingDetailsProperties {
   meetingCode?: string;
   phone?: string[];
   password?: string;
   pin?: string;
   url?: string;
 
-  toJSON() {
-    return {
-      meeting_code: this.meetingCode,
-      phone: this.phone,
-      password: this.password,
-      pin: this.pin,
-      url: this.url,
-    };
+  constructor(props?: EventConferencingProperties) {
+    super();
+    this.initAttributes(props);
   }
 }
-EventConferencingDetails.collectionName = 'event_conferencing_details';
+
 EventConferencingDetails.attributes = {
   meetingCode: Attributes.String({
     modelKey: 'meetingCode',
@@ -38,22 +42,28 @@ EventConferencingDetails.attributes = {
   }),
 };
 
-export class EventConferencing extends RestfulModel {
-  details?: EventConferencingDetails;
-  provider?: string;
+export type EventConferencingProperties = {
+  provider: string;
+  details?: EventConferencingDetailsProperties;
   autocreate?: {
     settings?: object;
   };
+};
 
-  toJSON(): any {
-    return {
-      details: this.details,
-      provider: this.provider,
-      autocreate: this.autocreate,
-    };
+export default class EventConferencing extends Model
+  implements EventConferencingProperties {
+  provider = '';
+  details?: EventConferencingDetails;
+  autocreate?: {
+    settings?: Record<string, string>;
+  };
+
+  constructor(props?: EventConferencingProperties) {
+    super();
+    this.initAttributes(props);
   }
 }
-EventConferencing.collectionName = 'event_conferencing';
+
 EventConferencing.attributes = {
   details: Attributes.Object({
     modelKey: 'details',

@@ -11,6 +11,7 @@ import { URL } from 'url';
 import fetch, { Response } from 'node-fetch';
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
+import AccessToken from '../src/models/access-token';
 
 describe('Nylas', () => {
   beforeEach(() => {
@@ -19,7 +20,17 @@ describe('Nylas', () => {
     Nylas.apiServer = 'https://api.nylas.com';
 
     fetch.mockImplementation(() =>
-      Promise.resolve(new Response('{"access_token":"12345"}'))
+      Promise.resolve(
+        new Response(
+          JSON.stringify({
+            access_token: '12345',
+            account_id: 'test_account_id',
+            email_address: 'test@email.com',
+            provider: 'gmail',
+            token_type: 'bearer',
+          })
+        )
+      )
     );
   });
 
@@ -107,9 +118,14 @@ describe('Nylas', () => {
       expect(fetch).lastCalledWith(url);
     });
 
-    test('should resolve with the returned access_token', async () => {
+    test('should resolve with the returned AccessToken type', async () => {
       const accessToken = await Nylas.exchangeCodeForToken('code-from-server');
-      expect(accessToken).toEqual('12345');
+      expect(accessToken).toBeInstanceOf(AccessToken);
+      expect(accessToken.accessToken).toEqual('12345');
+      expect(accessToken.accountId).toEqual('test_account_id');
+      expect(accessToken.emailAddress).toEqual('test@email.com');
+      expect(accessToken.provider).toEqual('gmail');
+      expect(accessToken.tokenType).toEqual('bearer');
     });
 
     test('should reject with the request error', async () => {
@@ -145,12 +161,12 @@ describe('Nylas', () => {
     describe('when provided an optional callback', () => {
       test('should call it with the returned access_token', done => {
         fetch.mockImplementation(() =>
-          Promise.resolve(new Response('{"access_token":"12345"}'))
+          Promise.resolve(new Response('{"access_token": "12345"}'))
         );
         Nylas.exchangeCodeForToken(
           'code-from-server',
           (returnedError, accessToken) => {
-            expect(accessToken).toBe('12345');
+            expect(accessToken).toStrictEqual({ access_token: '12345' });
             done();
           }
         );

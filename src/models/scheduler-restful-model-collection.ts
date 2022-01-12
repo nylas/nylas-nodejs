@@ -63,7 +63,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
         baseUrl: this.baseUrl,
       })
       .then(json => {
-        return Promise.resolve(new Scheduler(this.connection, json));
+        return Promise.resolve(new Scheduler(this.connection).fromJSON(json));
       });
   }
 
@@ -80,7 +80,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       .then(json => {
         const timeslots: SchedulerTimeSlot[] = json.map(
           (timeslot: Record<string, any>) => {
-            return new SchedulerTimeSlot(this.connection, timeslot);
+            return new SchedulerTimeSlot().fromJSON(timeslot);
           }
         );
         return Promise.resolve(timeslots);
@@ -103,7 +103,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       })
       .then(json => {
         return Promise.resolve(
-          new SchedulerBookingConfirmation(this.connection, json)
+          new SchedulerBookingConfirmation().fromJSON(json)
         );
       });
   }
@@ -146,7 +146,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       })
       .then(json => {
         return Promise.resolve(
-          new SchedulerBookingConfirmation(this.connection, json)
+          new SchedulerBookingConfirmation().fromJSON(json)
         );
       });
   }

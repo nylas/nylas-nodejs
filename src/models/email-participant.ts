@@ -1,19 +1,29 @@
-import RestfulModel from './restful-model';
 import Attributes from './attributes';
+import Model from './model';
 
-export default class EmailParticipant extends RestfulModel {
+export type EmailParticipantProperties = {
+  email: string;
   name?: string;
-  email?: string;
+};
 
-  toJSON(enforceReadOnly?: boolean) {
-    const json = super.toJSON(enforceReadOnly);
+export default class EmailParticipant extends Model
+  implements EmailParticipantProperties {
+  email = '';
+  name?: string;
+
+  constructor(props?: EmailParticipantProperties) {
+    super();
+    this.initAttributes(props);
+  }
+
+  toJSON(): Record<string, unknown> {
+    const json = super.toJSON();
     if (!json['name']) {
       json['name'] = json['email'];
     }
     return json;
   }
 }
-EmailParticipant.collectionName = 'email-participants';
 EmailParticipant.attributes = {
   name: Attributes.String({
     modelKey: 'name',

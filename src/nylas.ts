@@ -9,6 +9,11 @@ import Connect from './models/connect';
 import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
+import { AuthenticateUrlConfig, NylasConfig } from './config';
+import AccessToken from './models/access-token';
+import ApplicationDetails, {
+  ApplicationDetailsProperties,
+} from './models/application-details';
 
 class Nylas {
   static clientId = '';
@@ -24,35 +29,27 @@ class Nylas {
   static set apiServer(newApiServer: string | null) {
     config.setApiServer(newApiServer);
   }
-  static accounts?:
+  static accounts:
     | ManagementModelCollection<ManagementAccount>
     | RestfulModelCollection<Account>;
-  static connect?: Connect;
-  static webhooks?: ManagementModelCollection<Webhook>;
+  static connect: Connect;
+  static webhooks: ManagementModelCollection<Webhook>;
 
-  static config({
-    clientId,
-    clientSecret,
-    apiServer,
-  }: {
-    clientId: string;
-    clientSecret: string;
-    apiServer?: string;
-  }) {
-    if (apiServer && apiServer.indexOf('://') === -1) {
+  static config(config: NylasConfig): Nylas {
+    if (config.apiServer && config.apiServer.indexOf('://') === -1) {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
       );
     }
 
-    if (clientId) {
-      this.clientId = clientId;
+    if (config.clientId) {
+      this.clientId = config.clientId;
     }
-    if (clientSecret) {
-      this.clientSecret = clientSecret;
+    if (config.clientSecret) {
+      this.clientSecret = config.clientSecret;
     }
-    if (apiServer) {
-      this.apiServer = apiServer;
+    if (config.apiServer) {
+      this.apiServer = config.apiServer;
     } else {
       this.apiServer = 'https://api.nylas.com';
     }
@@ -61,42 +58,37 @@ class Nylas {
       clientId: this.clientId,
     });
     this.connect = new Connect(conn, this.clientId, this.clientSecret);
-    this.webhooks = new ManagementModelCollection(
-      Webhook,
-      conn,
-      this.clientId!
-    );
+    this.webhooks = new ManagementModelCollection(Webhook, conn, this.clientId);
     if (this.clientCredentials()) {
       this.accounts = new ManagementModelCollection(
         ManagementAccount,
         conn,
-        this.clientId!
-      );
+        this.clientId
+      ) as ManagementModelCollection<ManagementAccount>;
     } else {
-      this.accounts = new RestfulModelCollection(Account, conn);
+      this.accounts = new RestfulModelCollection(
+        Account,
+        conn
+      ) as RestfulModelCollection<Account>;
     }
 
     return this;
   }
 
-  static clientCredentials() {
+  static clientCredentials(): boolean {
     return this.clientId != null && this.clientSecret != null;
   }
 
-  static with(accessToken: string) {
+  static with(accessToken: string): NylasConnection {
     if (!accessToken) {
       throw new Error('This function requires an access token');
     }
     return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
-  //TODO::Deprecate the camel case property in the next major release
-  static application(options?: {
-    application_name?: string;
-    redirect_uris?: string[];
-    applicationName?: string;
-    redirectUris?: string[];
-  }) {
+  static application(
+    options?: ApplicationDetailsProperties
+  ): Promise<ApplicationDetails> {
     if (!this.clientId) {
       throw new Error('This function requires a clientId');
     }
@@ -112,18 +104,21 @@ class Nylas {
 
     if (options) {
       requestOptions.body = {
-        application_name: options.applicationName || options.application_name,
-        redirect_uris: options.redirectUris || options.redirect_uris,
+        application_name: options.applicationName,
+        icon_url: options.iconUrl,
+        redirect_uris: options.redirectUris,
       };
       requestOptions.method = 'PUT';
     }
-    return connection.request(requestOptions);
+    return connection.request(requestOptions).then(res => {
+      return new ApplicationDetails().fromJSON(res);
+    });
   }
 
   static exchangeCodeForToken(
     code: string,
     callback?: (error: Error | null, accessToken?: string) => void
-  ) {
+  ): Promise<AccessToken> {
     if (!this.clientId || !this.clientSecret) {
       throw new Error(
         'exchangeCodeForToken() cannot be called until you provide a clientId and secret via config()'
@@ -152,9 +147,9 @@ class Nylas {
             throw new Error(errorMessage);
           }
           if (callback) {
-            callback(null, body['access_token']);
+            callback(null, body);
           }
-          return body['access_token'];
+          return new AccessToken().fromJSON(body);
         },
         error => {
           const newError = new Error(error.message);
@@ -166,15 +161,7 @@ class Nylas {
       );
   }
 
-  static urlForAuthentication(
-    options: {
-      redirectURI?: string;
-      loginHint?: string;
-      state?: string;
-      provider?: string;
-      scopes?: string[];
-    } = {}
-  ) {
+  static urlForAuthentication(options: AuthenticateUrlConfig): string {
     if (!this.clientId) {
       throw new Error(
         'urlForAuthentication() cannot be called until you provide a clientId via config()'

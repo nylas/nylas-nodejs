@@ -1,35 +1,58 @@
-import Message from './message';
+import Message, { MessageProperties } from './message';
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
-import EmailParticipant from './email-participant';
-import { Label, Folder } from './folder';
+import EmailParticipant, {
+  EmailParticipantProperties,
+} from './email-participant';
+import Folder, { Label, FolderProperties } from './folder';
+import NylasConnection from '../nylas-connection';
 
-export default class Thread extends RestfulModel {
-  subject?: string;
-  participants?: EmailParticipant[];
-  lastMessageTimestamp?: Date;
-  lastMessageReceivedTimestamp?: Date;
-  lastMessageSentTimestamp?: Date;
-  firstMessageTimestamp?: Date;
-  snippet?: string;
-  unread?: boolean;
-  starred?: boolean;
+export type ThreadProperties = {
+  subject: string;
+  participants: EmailParticipantProperties[];
+  lastMessageTimestamp: Date;
+  lastMessageReceivedTimestamp: Date;
+  firstMessageTimestamp: Date;
+  messageIds: string[];
+  snippet: string;
+  unread: boolean;
+  starred: boolean;
+  version: string;
   hasAttachments?: boolean;
-  version?: string;
+  lastMessageSentTimestamp?: Date;
+  folders?: FolderProperties[];
+  labels?: FolderProperties[];
+  draftIds?: string[];
+  messages?: MessageProperties[];
+  drafts?: MessageProperties[];
+};
+
+export default class Thread extends RestfulModel implements ThreadProperties {
+  subject = '';
+  participants: EmailParticipant[] = [];
+  lastMessageTimestamp: Date = new Date();
+  lastMessageReceivedTimestamp: Date = new Date();
+  firstMessageTimestamp: Date = new Date();
+  messageIds: string[] = [];
+  snippet = '';
+  unread = false;
+  starred = false;
+  version = '';
+  hasAttachments?: boolean;
+  lastMessageSentTimestamp?: Date;
   folders?: Folder[];
   labels?: Label[];
-  messageIds?: string[];
   draftIds?: string[];
   messages?: Message[];
   drafts?: Message[];
 
-  fromJSON(json: { [key: string]: any }) {
-    super.fromJSON(json);
-    return this;
+  constructor(connection: NylasConnection, props?: ThreadProperties) {
+    super(connection, props);
+    this.initAttributes(props);
   }
 
-  saveRequestBody() {
-    const json: { [key: string]: any } = {};
+  saveRequestBody(): Record<string, unknown> {
+    const json: Record<string, unknown> = {};
     if (this.labels) {
       json['label_ids'] = this.labels.map(label => label.id);
     } else if (this.folders && this.folders.length === 1) {
@@ -41,8 +64,8 @@ export default class Thread extends RestfulModel {
     return json;
   }
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    return super.save(params, callback);
   }
 }
 Thread.collectionName = 'threads';

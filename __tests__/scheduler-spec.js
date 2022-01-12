@@ -48,16 +48,16 @@ describe('Scheduler', () => {
   describe('json', () => {
     test('Should deserialize the object properly', done => {
       const schedulerJSON = {
-        app_client_id: 'test-client-id',
-        app_organization_id: 0,
+        appClientId: 'test-client-id',
+        appOrganizationId: 0,
         config: {
           timezone: 'America/Los_Angeles',
         },
-        edit_token: 'token',
+        editToken: 'token',
         name: 'Test',
         slug: 'test-slug',
-        created_at: new Date('2021-06-24'),
-        modified_at: new Date('2021-06-24'),
+        createdAt: new Date('2021-06-24'),
+        modifiedAt: new Date('2021-06-24'),
       };
       const scheduler = new Scheduler(testContext.connection, schedulerJSON);
 

@@ -1,24 +1,27 @@
 import Attributes from './attributes';
-import Message from './message';
-import RestfulModel from './restful-model';
+import Message, { MessageProperties } from './message';
+import Model from './model';
+import NylasConnection from '../nylas-connection';
 
-export class Categorize extends RestfulModel {
-  category?: string;
-  categorizedAt?: Date;
-  modelVersion?: string;
-  subcategories?: string[];
+export type CategorizeProperties = {
+  category: string;
+  categorizedAt: Date;
+  modelVersion: string;
+  subcategories: string[];
+};
 
-  toJSON() {
-    return {
-      category: this.category,
-      categorized_at: this.categorizedAt,
-      model_version: this.modelVersion,
-      subcategories: this.subcategories,
-    };
+export class Categorize extends Model implements CategorizeProperties {
+  category = '';
+  categorizedAt: Date = new Date();
+  modelVersion = '';
+  subcategories: string[] = [];
+
+  constructor(props?: CategorizeProperties) {
+    super();
+    this.initAttributes(props);
   }
 }
 
-Categorize.collectionName = 'categorize';
 Categorize.attributes = {
   category: Attributes.String({
     modelKey: 'category',
@@ -36,8 +39,21 @@ Categorize.attributes = {
   }),
 };
 
-export default class NeuralCategorizer extends Message {
-  categorizer?: Categorize;
+export type NeuralCategorizerProperties = MessageProperties & {
+  categorizer: Categorize;
+};
+
+export default class NeuralCategorizer extends Message
+  implements NeuralCategorizerProperties {
+  categorizer = new Categorize();
+
+  constructor(
+    connection: NylasConnection,
+    props?: NeuralCategorizerProperties
+  ) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
 
   reCategorize(category: string): Promise<NeuralCategorizer> {
     return this.connection

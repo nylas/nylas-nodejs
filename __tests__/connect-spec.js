@@ -1,16 +1,23 @@
 import Nylas from '../src/nylas';
+import { NativeAuthenticationProvider, Scope } from '../src/models/connect';
 
 describe('Connect', () => {
   const name = 'Connect Test';
   const password = 'connecting123';
-  const scopes = 'email.modify,email.send,calendar,contacts';
+  const scopeString = 'email.modify,email.send,calendar,contacts';
+  const scopes = [
+    Scope.EmailModify,
+    Scope.EmailSend,
+    Scope.Calendar,
+    Scope.Contacts,
+  ];
   const exchangeEmail = 'connect_test@outlook.com';
   const CLIENT_ID = 'abc';
   const CLIENT_SECRET = 'xyz';
   const authorizeOptions = (email, provider, settings) => {
     return {
       name: name,
-      email_address: email,
+      emailAddress: email,
       provider: provider,
       settings: settings,
       scopes: scopes,
@@ -43,7 +50,11 @@ describe('Connect', () => {
       const settings = { username: exchangeEmail, password: password };
       expect(() =>
         Nylas.connect.authorize(
-          authorizeOptions(exchangeEmail, 'exchange', settings)
+          authorizeOptions(
+            exchangeEmail,
+            NativeAuthenticationProvider.Exchange,
+            settings
+          )
         )
       ).toThrow();
       expect(() => Nylas.connect.token(authorizeJSON.code)).toThrow();
@@ -66,7 +77,13 @@ describe('Connect', () => {
         Promise.resolve(authorizeJSON)
       );
       Nylas.connect
-        .authorize(authorizeOptions(exchangeEmail, 'exchange', settings))
+        .authorize(
+          authorizeOptions(
+            exchangeEmail,
+            NativeAuthenticationProvider.Exchange,
+            settings
+          )
+        )
         .then(resp => {
           expect(resp).toEqual(authorizeJSON);
           expect(Nylas.connect.connection.request).toHaveBeenCalledWith({
@@ -78,7 +95,7 @@ describe('Connect', () => {
               email_address: exchangeEmail,
               provider: 'exchange',
               settings: { username: exchangeEmail, password: password },
-              scopes: scopes,
+              scopes: scopeString,
             },
           });
           done();
@@ -91,7 +108,7 @@ describe('Connect', () => {
         Promise.resolve(tokenJSON)
       );
       Nylas.connect.token(authorizeJSON.code).then(resp => {
-        expect(resp).toEqual(tokenJSON);
+        expect(resp.toJSON()).toEqual(tokenJSON);
         expect(Nylas.connect.connection.request).toHaveBeenCalledWith({
           method: 'POST',
           path: '/connect/token',

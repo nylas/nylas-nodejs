@@ -1,15 +1,40 @@
-import RestfulModel, { SaveCallback } from './restful-model';
+import RestfulModel from './restful-model';
 import Attributes from './attributes';
-import File from './file';
-import Event from './event';
-import EmailParticipant from './email-participant';
-import { Label, Folder } from './folder';
+import File, { FileProperties } from './file';
+import Event, { EventProperties } from './event';
+import EmailParticipant, {
+  EmailParticipantProperties,
+} from './email-participant';
+import Folder, { Label, FolderProperties } from './folder';
+import NylasConnection from '../nylas-connection';
 
-export default class Message extends RestfulModel {
+export type MessageProperties = {
+  to: EmailParticipantProperties[];
+  subject?: string;
+  from?: EmailParticipantProperties[];
+  replyTo?: EmailParticipantProperties[];
+  cc?: EmailParticipantProperties[];
+  bcc?: EmailParticipantProperties[];
+  date?: Date;
+  threadId?: string;
+  snippet?: string;
+  body?: string;
+  unread?: boolean;
+  starred?: boolean;
+  files?: FileProperties[];
+  events?: EventProperties[];
+  folder?: Folder;
+  labels?: FolderProperties[];
+  headers?: Record<string, string>;
+  metadata?: object;
+  jobStatusId?: string;
+};
+
+export default class Message extends RestfulModel implements MessageProperties {
+  to: EmailParticipant[] = [];
   subject?: string;
   from?: EmailParticipant[];
   replyTo?: EmailParticipant[];
-  to?: EmailParticipant[];
   cc?: EmailParticipant[];
   bcc?: EmailParticipant[];
   date?: Date;
@@ -22,39 +47,41 @@ export default class Message extends RestfulModel {
   events?: Event[];
   folder?: Folder;
   labels?: Label[];
+  headers?: Record<string, string>;
   metadata?: object;
-  headers?: { [key: string]: string };
-  failures?: any;
   jobStatusId?: string;
+
+  constructor(connection: NylasConnection, props?: MessageProperties) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
 
   // We calculate the list of participants instead of grabbing it from
   // a parent because it is a better source of ground truth, and saves us
   // from more dependencies.
-  participants() {
-    const participants: { [key: string]: EmailParticipant } = {};
+  participants(): EmailParticipant[] {
+    const participants: Record<string, EmailParticipant> = {};
     const to = this.to || [];
     const cc = this.cc || [];
     const from = this.from || [];
     const contacts = Array.from(new Set([...to, ...cc, ...from]));
     for (const contact of contacts) {
       if (contact && (contact.email ? contact.email.length : '') > 0) {
-        if (contact) {
-          participants[
-            `${contact.email || ''.toLowerCase().trim()} ${(contact.name || '')
-              .toLowerCase()
-              .trim()}`
-          ] = contact;
-        }
+        participants[
+          `${contact.email || ''.toLowerCase().trim()} ${(contact.name || '')
+            .toLowerCase()
+            .trim()}`
+        ] = new EmailParticipant(contact);
       }
     }
     return Object.values(participants);
   }
 
-  fileIds() {
+  fileIds(): (string | undefined)[] {
     return this.files ? this.files.map(file => file.id) : [];
   }
 
-  getRaw() {
+  getRaw(): Promise<string> {
     return this.connection
       .request({
         method: 'GET',
@@ -66,14 +93,14 @@ export default class Message extends RestfulModel {
       .catch(err => Promise.reject(err));
   }
 
-  saveRequestBody() {
+  saveRequestBody(): Record<string, unknown> {
     // It's possible to update most of the fields of a draft.
     if (this.constructor.name === 'Draft') {
       return super.saveRequestBody();
     }
 
     // Messages are more limited, though.
-    const json: { [key: string]: any } = {};
+    const json: Record<string, unknown> = {};
     if (this.labels) {
       json['label_ids'] = Array.from(this.labels).map(label => label.id);
     } else if (this.folder) {
@@ -84,10 +111,6 @@ export default class Message extends RestfulModel {
     json['unread'] = this.unread;
     json['metadata'] = this.metadata;
     return json;
-  }
-
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
   }
 }
 Message.collectionName = 'messages';

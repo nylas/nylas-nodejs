@@ -2,7 +2,7 @@ import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import Thread from '../src/models/thread';
 import Message from '../src/models/message';
-import { Folder, Label } from '../src/models/folder';
+import Folder, { Label } from '../src/models/folder';
 import EmailParticipant from '../src/models/email-participant';
 import fetch from 'node-fetch';
 

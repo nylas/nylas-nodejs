@@ -46,7 +46,7 @@ export default class DeltaStream extends EventEmitter {
   constructor(
     connection: NylasConnection,
     cursor: string,
-    params: { [key: string]: any } = {}
+    params: Record<string, unknown> = {}
   ) {
     super();
     this.connection = connection;
@@ -57,7 +57,7 @@ export default class DeltaStream extends EventEmitter {
     }
     this.restartBackoff.failAfter(DeltaStream.MAX_RESTART_RETRIES);
     this.restartBackoff
-      .on('backoff', this._restartConnection.bind(this))
+      .on('backoff', this.restartConnection.bind(this))
       .on('fail', () => {
         return this.emit(
           'error',
@@ -68,7 +68,7 @@ export default class DeltaStream extends EventEmitter {
       });
   }
 
-  close() {
+  close(): void {
     clearTimeout(this.timeoutId);
     delete this.timeoutId;
     this.restartBackoff.reset();
@@ -78,12 +78,12 @@ export default class DeltaStream extends EventEmitter {
     delete this.requestInfo;
   }
 
-  async open() {
+  async open(): Promise<void> {
     this.close();
     const path = '/delta/streaming';
     const { excludeTypes = [], includeTypes = [], ...params } = this.params;
 
-    const queryObj: { [key: string]: any } = {
+    const queryObj: Record<string, unknown> = {
       ...params,
       cursor: this.cursor,
     };
@@ -115,16 +115,16 @@ export default class DeltaStream extends EventEmitter {
             // Do nothing
           }
           // Do nothing, keep err as string.
-          return this._onError(err);
+          return this.onError(err);
         });
         return;
       }
       // Successfully established connection
       this.emit('response', response);
-      this._onDataReceived();
+      this.onDataReceived();
       return (
         response.body
-          .on('data', this._onDataReceived.bind(this))
+          .on('data', this.onDataReceived.bind(this))
           // Each data block received may not be a complete JSON object. Pipe through
           // JSONStream.parse(), which handles converting data blocks to JSON objects.
           .pipe(JSONStream.parse())
@@ -136,11 +136,11 @@ export default class DeltaStream extends EventEmitter {
           })
       );
     } catch (error) {
-      this._onError(error);
+      this.onError(error);
     }
   }
 
-  _onDataReceived() {
+  private onDataReceived(): void {
     // Nylas sends a newline heartbeat in the raw data stream once every 5 seconds.
     // Automatically restart the connection if we haven't gotten any data in
     // Delta.streamingTimeoutMs. The connection will restart with the last
@@ -153,12 +153,12 @@ export default class DeltaStream extends EventEmitter {
     ) as any;
   }
 
-  _onError(err: Error) {
+  private onError(err: Error): void {
     this.emit('error', err);
     return this.restartBackoff.reset();
   }
 
-  _restartConnection(n: number) {
+  private restartConnection(n: number): Promise<void> {
     this.emit(
       'info',
       `Restarting Nylas DeltaStream connection (attempt ${n + 1}): ${

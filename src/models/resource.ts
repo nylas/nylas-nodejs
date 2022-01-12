@@ -1,13 +1,28 @@
 import RestfulModel from './restful-model';
 import Attributes from './attributes';
+import NylasConnection from '../nylas-connection';
+
+export type ResourceProperties = {
+  email: string;
+  name: string;
+  capacity: string;
+  building: string;
+  floorNumber: string;
+  floorName?: string;
+};
 
 export default class Resource extends RestfulModel {
-  email?: string;
-  name?: string;
-  capacity?: string;
-  building?: string;
+  email = '';
+  name = '';
+  capacity = '';
+  building = '';
+  floorNumber = '';
   floorName?: string;
-  floorNumber?: string;
+
+  constructor(connection: NylasConnection, props?: ResourceProperties) {
+    super(connection, props);
+    this.initAttributes(props);
+  }
 }
 
 Resource.collectionName = 'resources';

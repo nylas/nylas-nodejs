@@ -16,11 +16,16 @@ export default class ManagementModelCollection<
     this.clientId = clientId;
   }
 
-  path() {
+  build(args: Record<string, unknown>): T {
+    return super.build(args);
+  }
+
+  path(): string {
     return `/a/${this.clientId}/${this.modelClass.collectionName}`;
   }
 
-  _createModel(json: { [key: string]: any }) {
-    return new (this.modelClass as any)(this.connection, this.clientId, json);
+  protected createModel(json: Record<string, unknown>): T {
+    const props = this.modelClass.propsFromJSON(json, this);
+    return new (this.modelClass as any)(this.connection, this.clientId, props);
   }
 }

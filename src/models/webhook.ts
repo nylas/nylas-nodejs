@@ -1,20 +1,40 @@
 import ManagementModel from './management-model';
 import Attributes from './attributes';
 import { SaveCallback } from './restful-model';
+import NylasConnection from '../nylas-connection';
 
-export default class Webhook extends ManagementModel {
+export type WebhookProperties = {
+  callbackUrl: string;
+  state: string;
+  triggers: string[];
   id?: string;
   applicationId?: string;
-  callbackUrl?: string;
-  state?: string;
-  triggers?: string[];
+  version?: string;
+};
+
+export default class Webhook extends ManagementModel
+  implements WebhookProperties {
+  callbackUrl = '';
+  state = '';
+  triggers: string[] = [];
+  id?: string;
+  applicationId?: string;
   version?: string;
 
-  pathPrefix() {
+  constructor(
+    connection: NylasConnection,
+    clientId: string,
+    props: WebhookProperties
+  ) {
+    super(connection, clientId, props);
+    this.initAttributes(props);
+  }
+
+  pathPrefix(): string {
     return `/a/${this.clientId}`;
   }
-  saveRequestBody() {
-    const json: { [key: string]: any } = {};
+  saveRequestBody(): Record<string, unknown> {
+    const json: Record<string, unknown> = {};
     // We can only update the state of an existing webhook
     if (this.id) {
       json['state'] = this.state;
@@ -25,8 +45,8 @@ export default class Webhook extends ManagementModel {
     }
     return json;
   }
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    return super.save(params, callback);
   }
 }
 

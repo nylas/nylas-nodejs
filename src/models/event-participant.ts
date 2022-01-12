@@ -1,20 +1,32 @@
-import RestfulModel from './restful-model';
 import Attributes from './attributes';
+import Model from './model';
 
-export default class EventParticipant extends RestfulModel {
+export type EventParticipantProperties = {
+  email: string;
   name?: string;
-  email?: string;
+  status?: string;
+};
+
+export default class EventParticipant extends Model
+  implements EventParticipantProperties {
+  email = '';
+  name?: string;
   status?: string;
 
-  toJSON(enforceReadOnly?: boolean) {
-    const json = super.toJSON(enforceReadOnly);
+  constructor(props?: EventParticipantProperties) {
+    super();
+    this.initAttributes(props);
+  }
+
+  toJSON(enforceReadOnly?: boolean): Record<string, string> {
+    const json = super.toJSON(enforceReadOnly) as Record<string, string>;
     if (!json['name']) {
       json['name'] = json['email'];
     }
     return json;
   }
 }
-EventParticipant.collectionName = 'event-participants';
+
 EventParticipant.attributes = {
   name: Attributes.String({
     modelKey: 'name',

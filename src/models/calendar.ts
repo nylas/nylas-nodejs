@@ -1,22 +1,41 @@
 import RestfulModel, { SaveCallback } from './restful-model';
-import { GetCallback } from './restful-model-collection';
+import { GetCallback } from './model-collection';
 import Attributes from './attributes';
+import NylasConnection from '../nylas-connection';
+import JobStatus from './job-status';
 
-export default class Calendar extends RestfulModel {
-  name?: string;
-  description?: string;
+export type CalendarProperties = {
+  name: string;
+  description: string;
+  location: string;
+  timezone: string;
   readOnly?: boolean;
-  location?: string;
-  timezone?: string;
+  isPrimary?: boolean;
+  jobStatusId?: string;
+  metadata?: object;
+};
+
+export default class Calendar extends RestfulModel
+  implements CalendarProperties {
+  name = '';
+  description = '';
+  location = '';
+  timezone = '';
+  readOnly?: boolean;
   isPrimary?: boolean;
   jobStatusId?: string;
   metadata?: object;
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+  constructor(connection: NylasConnection, props?: CalendarProperties) {
+    super(connection, props);
+    this.initAttributes(props);
   }
 
-  saveRequestBody() {
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    return super.save(params, callback);
+  }
+
+  saveRequestBody(): Record<string, unknown> {
     const calendarJSON = super.saveRequestBody();
     return {
       name: calendarJSON.name,
@@ -27,7 +46,7 @@ export default class Calendar extends RestfulModel {
     };
   }
 
-  getJobStatus(callback?: GetCallback) {
+  getJobStatus(callback?: GetCallback): Promise<JobStatus> {
     if (typeof this.jobStatusId === 'undefined') {
       const err = new Error('jobStatusId must be defined');
       if (callback) {
@@ -51,6 +70,7 @@ Calendar.attributes = {
   readOnly: Attributes.Boolean({
     modelKey: 'readOnly',
     jsonKey: 'read_only',
+    readOnly: true,
   }),
   location: Attributes.String({
     modelKey: 'location',
@@ -61,6 +81,7 @@ Calendar.attributes = {
   isPrimary: Attributes.Boolean({
     modelKey: 'isPrimary',
     jsonKey: 'is_primary',
+    readOnly: true,
   }),
   jobStatusId: Attributes.String({
     modelKey: 'jobStatusId',

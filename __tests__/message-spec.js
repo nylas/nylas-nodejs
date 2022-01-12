@@ -5,6 +5,7 @@ import Message from '../src/models/message';
 import { Label } from '../src/models/folder';
 import RestfulModelCollection from '../src/models/restful-model-collection';
 import fetch from 'node-fetch';
+import EmailParticipant from '../src/models/email-participant';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -52,7 +53,9 @@ describe('Message', () => {
     testContext.message.body = 'bar';
     testContext.message.starred = true;
     testContext.message.unread = false;
-    testContext.message.to = [{ email: 'foo', name: 'bar' }];
+    testContext.message.to = [
+      new EmailParticipant({ email: 'foo', name: 'bar' }),
+    ];
   });
 
   describe('save', () => {
@@ -149,7 +152,7 @@ describe('Message', () => {
         Message,
         testContext.connection
       );
-      testContext.collection._getModelCollection = jest.fn(() => {
+      testContext.collection.getModelCollection = jest.fn(() => {
         return Promise.resolve([testContext.message]);
       });
     });
@@ -165,7 +168,8 @@ describe('Message', () => {
         message_ids: [],
         size: 123,
       };
-      const file = new File(testContext.connection, fileObj);
+      const file = new File(testContext.connection);
+      file.fromJSON(fileObj);
       testContext.message.files = [file];
       return testContext.collection.first().then(message => {
         expect(message instanceof Message).toBe(true);

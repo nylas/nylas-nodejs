@@ -1,21 +1,24 @@
 import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes from './attributes';
+import Model from './model';
+import NylasConnection from '../nylas-connection';
 
-export class EmailAddress extends RestfulModel {
-  type?: string;
-  email?: string;
+export type EmailAddressProperties = {
+  type: string;
+  email: string;
+};
 
-  toJSON() {
-    return {
-      type: this.type,
-      email: this.email,
-    };
+export class EmailAddress extends Model implements EmailAddressProperties {
+  type = '';
+  email = '';
+
+  constructor(props?: EmailAddressProperties) {
+    super();
+    this.initAttributes(props);
   }
 }
 
-EmailAddress.collectionName = 'email_addresses';
 EmailAddress.attributes = {
-  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -24,21 +27,22 @@ EmailAddress.attributes = {
   }),
 };
 
-class IMAddress extends RestfulModel {
-  type?: string;
-  imAddress?: string;
+export type IMAddressProperties = {
+  type: string;
+  imAddress: string;
+};
 
-  toJSON() {
-    return {
-      type: this.type,
-      im_address: this.imAddress,
-    };
+export class IMAddress extends Model implements IMAddressProperties {
+  type = '';
+  imAddress = '';
+
+  constructor(props?: IMAddressProperties) {
+    super();
+    this.initAttributes(props);
   }
 }
 
-IMAddress.collectionName = 'im_addresses';
 IMAddress.attributes = {
-  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -48,18 +52,35 @@ IMAddress.attributes = {
   }),
 };
 
-class PhysicalAddress extends RestfulModel {
-  type?: string;
-  format?: string;
+export type PhysicalAddressProperties = {
+  type: string;
+  format: string;
+  streetAddress: string;
+  city: string;
+  postalCode: string;
+  state: string;
+  country: string;
   address?: string;
-  streetAddress?: string;
-  city?: string;
-  postalCode?: string;
-  state?: string;
-  country?: string;
+};
 
-  toJSON() {
-    const json: { [key: string]: any } = {
+export class PhysicalAddress extends Model
+  implements PhysicalAddressProperties {
+  type = '';
+  format = '';
+  streetAddress = '';
+  city = '';
+  postalCode = '';
+  state = '';
+  country = '';
+  address = '';
+
+  constructor(props?: PhysicalAddressProperties) {
+    super();
+    this.initAttributes(props);
+  }
+
+  toJSON(): Record<string, string> {
+    const json: Record<string, string> = {
       type: this.type,
       format: this.format,
     };
@@ -76,9 +97,7 @@ class PhysicalAddress extends RestfulModel {
   }
 }
 
-PhysicalAddress.collectionName = 'physical_addresses';
 PhysicalAddress.attributes = {
-  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -107,21 +126,22 @@ PhysicalAddress.attributes = {
   }),
 };
 
-export class PhoneNumber extends RestfulModel {
-  type?: string;
-  number?: string;
+export type PhoneNumberProperties = {
+  type: string;
+  number: string;
+};
 
-  toJSON() {
-    return {
-      type: this.type,
-      number: this.number,
-    };
+export class PhoneNumber extends Model implements PhoneNumberProperties {
+  type = '';
+  number = '';
+
+  constructor(props?: PhoneNumberProperties) {
+    super();
+    this.initAttributes(props);
   }
 }
 
-PhoneNumber.collectionName = 'phone_numbers';
 PhoneNumber.attributes = {
-  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -130,22 +150,22 @@ PhoneNumber.attributes = {
   }),
 };
 
-export class WebPage extends RestfulModel {
-  type?: string;
-  url?: string;
+export type WebPageProperties = {
+  type: string;
+  url: string;
+};
 
-  toJSON() {
-    const json = {
-      type: this.type,
-      url: this.url,
-    };
-    return json;
+export class WebPage extends Model implements WebPageProperties {
+  type = '';
+  url = '';
+
+  constructor(props?: WebPageProperties) {
+    super();
+    this.initAttributes(props);
   }
 }
 
-WebPage.collectionName = 'web_pages';
 WebPage.attributes = {
-  ...RestfulModel.attributes,
   type: Attributes.String({
     modelKey: 'type',
   }),
@@ -154,23 +174,71 @@ WebPage.attributes = {
   }),
 };
 
-export class Group extends RestfulModel {
-  type?: string;
-  path?: string;
+export type GroupProperties = {
+  name: string;
+  path: string;
+  id?: string;
+  accountId?: string;
+  object?: string;
+};
+
+export class Group extends Model implements GroupProperties {
+  name = '';
+  path = '';
+  id?: string;
+  accountId?: string;
+  object?: string;
+
+  constructor(props?: GroupProperties) {
+    super();
+    this.initAttributes(props);
+  }
 }
 
-Group.collectionName = 'groups';
 Group.attributes = {
-  ...RestfulModel.attributes,
   name: Attributes.String({
     modelKey: 'name',
   }),
   path: Attributes.String({
     modelKey: 'path',
   }),
+  id: Attributes.String({
+    modelKey: 'id',
+    readOnly: true,
+  }),
+  object: Attributes.String({
+    modelKey: 'object',
+    readOnly: true,
+  }),
+  accountId: Attributes.String({
+    modelKey: 'accountId',
+    jsonKey: 'account_id',
+    readOnly: true,
+  }),
 };
 
-export class Contact extends RestfulModel {
+export type ContactProperties = {
+  givenName?: string;
+  middleName?: string;
+  surname?: string;
+  suffix?: string;
+  nickname?: string;
+  birthday?: string;
+  companyName?: string;
+  jobTitle?: string;
+  officeLocation?: string;
+  notes?: string;
+  pictureUrl?: string;
+  emailAddresses?: EmailAddressProperties[];
+  imAddresses?: IMAddressProperties[];
+  physicalAddresses?: PhysicalAddressProperties[];
+  phoneNumbers?: PhoneNumberProperties[];
+  webPages?: WebPageProperties[];
+  groups?: GroupProperties[];
+  source?: string;
+};
+
+export default class Contact extends RestfulModel implements ContactProperties {
   givenName?: string;
   middleName?: string;
   surname?: string;
@@ -191,15 +259,20 @@ export class Contact extends RestfulModel {
   source?: string;
   jobStatusId?: string;
 
-  save(params: {} | SaveCallback = {}, callback?: SaveCallback) {
-    return this._save(params, callback);
+  constructor(connection: NylasConnection, props?: ContactProperties) {
+    super(connection);
+    this.initAttributes(props);
   }
 
   getPicture(
-    params: { [key: string]: any } = {},
+    params: Record<string, any> = {},
     callback?: (error: Error | null, result?: any) => void
-  ) {
-    return this._get(params, callback, '/picture');
+  ): any {
+    return this.get(params, callback, '/picture');
+  }
+
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    return super.save(params, callback);
   }
 }
 

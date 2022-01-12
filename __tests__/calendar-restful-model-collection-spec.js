@@ -2,6 +2,7 @@ import fetch from 'node-fetch';
 
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
+import { Days, RoundRobin } from '../src/models/calendar-availability';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -45,123 +46,115 @@ describe('CalendarRestfulModelCollection', () => {
     fetch.mockImplementation(() => Promise.resolve(response));
   });
 
-  const evaluateFreeBusy = () => {
-    const options = testContext.connection.request.mock.calls[0][0];
-    expect(options.url.toString()).toEqual(
-      'https://api.nylas.com/calendars/free-busy'
-    );
-    expect(options.method).toEqual('POST');
-    expect(JSON.parse(options.body)).toEqual({
-      start_time: '1590454800',
-      end_time: '1590780800',
-      emails: ['jane@email.com'],
-    });
-    expect(options.headers['authorization']).toEqual(
-      `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
-    );
-  };
+  test('[FREE BUSY] should fetch results with params', done => {
+    const response = {
+      status: 200,
+      buffer: () => {
+        return Promise.resolve('body');
+      },
+      json: () => {
+        return Promise.resolve(
+          JSON.stringify([
+            {
+              object: 'free_busy',
+              email: 'jane@email.com',
+              time_slots: [
+                {
+                  object: 'time_slot',
+                  status: 'busy',
+                  start_time: 1590454800,
+                  end_time: 1590780800,
+                },
+              ],
+            },
+          ])
+        );
+      },
+      headers: new Map(),
+    };
+    fetch.mockImplementation(() => Promise.resolve(response));
 
-  test('[FREE BUSY] should fetch results with snakecase params', done => {
     const params = {
-      start_time: '1590454800',
-      end_time: '1590780800',
+      startTime: 1590454800,
+      endTime: 1590780800,
       emails: ['jane@email.com'],
     };
 
-    return testContext.connection.calendars.freeBusy(params).then(() => {
-      evaluateFreeBusy();
+    return testContext.connection.calendars.freeBusy(params).then(freeBusy => {
+      const options = testContext.connection.request.mock.calls[0][0];
+      expect(options.url.toString()).toEqual(
+        'https://api.nylas.com/calendars/free-busy'
+      );
+      expect(options.method).toEqual('POST');
+      expect(JSON.parse(options.body)).toEqual({
+        start_time: '1590454800',
+        end_time: '1590780800',
+        emails: ['jane@email.com'],
+      });
+      expect(options.headers['authorization']).toEqual(
+        `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
+      );
+      expect(freeBusy.length).toEqual(1);
+      freeBusy = freeBusy[0];
+      expect(freeBusy.object).toEqual('free_busy');
+      expect(freeBusy.email).toEqual('jane@email.com');
+      expect(freeBusy.timeSlots.length).toEqual(1);
+      const timeSlots = freeBusy.timeSlots[0];
+      expect(timeSlots.object).toEqual('time_slot');
+      expect(timeSlots.status).toEqual('busy');
+      expect(timeSlots.startTime).toEqual(1590454800);
+      expect(timeSlots.endTime).toEqual(1590780800);
       done();
     });
   });
 
-  test('[FREE BUSY] should fetch results with camelcase params', done => {
+  test('[AVAILABILITY] should fetch results with params', done => {
     const params = {
-      startTime: '1590454800',
-      endTime: '1590780800',
-      emails: ['jane@email.com'],
-    };
-
-    return testContext.connection.calendars.freeBusy(params).then(() => {
-      evaluateFreeBusy();
-      done();
-    });
-  });
-
-  const evaluateAvailability = () => {
-    const options = testContext.connection.request.mock.calls[0][0];
-    expect(options.url.toString()).toEqual(
-      'https://api.nylas.com/calendars/availability'
-    );
-    expect(options.method).toEqual('POST');
-    expect(JSON.parse(options.body)).toEqual({
-      start_time: '1590454800',
-      end_time: '1590780800',
-      interval_minutes: 5,
-      duration_minutes: 30,
-      emails: ['jane@email.com'],
-      free_busy: [],
-      open_hours: [
-        {
-          emails: ['swag@nylas.com'],
-          days: ['0'],
-          timezone: 'America/Chicago',
-          start: '10:00',
-          end: '14:00',
-          object_type: 'open_hours',
-        },
-      ],
-    });
-    expect(options.headers['authorization']).toEqual(
-      `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
-    );
-  };
-
-  test('[AVAILABILITY] should fetch results with snakecase params', done => {
-    const params = {
-      start_time: '1590454800',
-      end_time: '1590780800',
+      startTime: 1590454800,
+      endTime: 1590780800,
       interval: 5,
       duration: 30,
       emails: ['jane@email.com'],
-      open_hours: [
+      roundRobin: RoundRobin.MaxAvailability,
+      openHours: [
         {
           emails: ['swag@nylas.com'],
-          days: ['0'],
+          days: [Days.Sunday],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
-          object_type: 'open_hours',
         },
       ],
     };
 
     return testContext.connection.calendars.availability(params).then(() => {
-      evaluateAvailability();
-      done();
-    });
-  });
-
-  test('[AVAILABILITY] should fetch results with camelcase params', done => {
-    const params = {
-      startTime: '1590454800',
-      endTime: '1590780800',
-      interval: 5,
-      duration: 30,
-      emails: ['jane@email.com'],
-      open_hours: [
-        {
-          emails: ['swag@nylas.com'],
-          days: ['0'],
-          timezone: 'America/Chicago',
-          start: '10:00',
-          end: '14:00',
-          object_type: 'open_hours',
-        },
-      ],
-    };
-
-    return testContext.connection.calendars.availability(params).then(() => {
-      evaluateAvailability();
+      const options = testContext.connection.request.mock.calls[0][0];
+      expect(options.url.toString()).toEqual(
+        'https://api.nylas.com/calendars/availability'
+      );
+      expect(options.method).toEqual('POST');
+      expect(JSON.parse(options.body)).toEqual({
+        start_time: 1590454800,
+        end_time: 1590780800,
+        interval_minutes: 5,
+        duration_minutes: 30,
+        emails: ['jane@email.com'],
+        round_robin: 'max-availability',
+        free_busy: [],
+        open_hours: [
+          {
+            emails: ['swag@nylas.com'],
+            days: [0],
+            timezone: 'America/Chicago',
+            start: '10:00',
+            end: '14:00',
+            object_type: 'open_hours',
+          },
+        ],
+      });
+      expect(options.headers['authorization']).toEqual(
+        `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
+      );
       done();
     });
   });
@@ -173,28 +166,25 @@ describe('CalendarRestfulModelCollection', () => {
       interval: 5,
       duration: 30,
       emails: [['jane@email.com'], ['swag@nylas.com']],
-      free_busy: [
+      freeBusy: [
         {
           email: 'jane@email.com',
-          object: 'free_busy',
-          time_slots: [
+          timeSlots: [
             {
-              object: 'time_slots',
               status: 'busy',
-              start_time: 1590454800,
-              end_time: 1590780800,
+              startTime: 1590454800,
+              endTime: 1590780800,
             },
           ],
         },
       ],
-      open_hours: [
+      openHours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
-          days: [0],
+          days: [Days.Sunday],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
-          object_type: 'open_hours',
         },
       ],
     };
@@ -219,7 +209,7 @@ describe('CalendarRestfulModelCollection', () => {
               object: 'free_busy',
               time_slots: [
                 {
-                  object: 'time_slots',
+                  object: 'time_slot',
                   status: 'busy',
                   start_time: 1590454800,
                   end_time: 1590780800,
@@ -254,28 +244,139 @@ describe('CalendarRestfulModelCollection', () => {
       interval: 5,
       duration: 30,
       emails: [['jane@email.com']],
-      free_busy: [
+      freeBusy: [
         {
           email: 'jane@email.com',
-          object: 'free_busy',
-          time_slots: [
+          timeSlots: [
             {
-              object: 'time_slots',
               status: 'busy',
-              start_time: 1590454800,
-              end_time: 1590780800,
+              startTime: 1590454800,
+              endTime: 1590780800,
             },
           ],
         },
       ],
-      open_hours: [
+      openHours: [
         {
           emails: ['jane@email.com', 'swag@nylas.com'],
-          days: [0],
+          days: [Days.Sunday],
           timezone: 'America/Chicago',
           start: '10:00',
           end: '14:00',
-          object_type: 'open_hours',
+        },
+      ],
+    };
+
+    expect(() =>
+      testContext.connection.calendars.consecutiveAvailability(params)
+    ).toThrow();
+    done();
+  });
+
+  test('[CONSECUTIVE AVAILABILITY] should fetch results with params', done => {
+    const params = {
+      startTime: 1590454800,
+      endTime: 1590780800,
+      interval: 5,
+      duration: 30,
+      emails: [['jane@email.com'], ['swag@nylas.com']],
+      freeBusy: [
+        {
+          email: 'jane@email.com',
+          timeSlots: [
+            {
+              status: 'busy',
+              startTime: 1590454800,
+              endTime: 1590780800,
+            },
+          ],
+        },
+      ],
+      openHours: [
+        {
+          emails: ['jane@email.com', 'swag@nylas.com'],
+          days: [Days.Sunday],
+          timezone: 'America/Chicago',
+          start: '10:00',
+          end: '14:00',
+        },
+      ],
+    };
+
+    return testContext.connection.calendars
+      .consecutiveAvailability(params)
+      .then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/calendars/availability/consecutive'
+        );
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          start_time: 1590454800,
+          end_time: 1590780800,
+          interval_minutes: 5,
+          duration_minutes: 30,
+          emails: [['jane@email.com'], ['swag@nylas.com']],
+          free_busy: [
+            {
+              email: 'jane@email.com',
+              object: 'free_busy',
+              time_slots: [
+                {
+                  object: 'time_slot',
+                  status: 'busy',
+                  start_time: 1590454800,
+                  end_time: 1590780800,
+                },
+              ],
+            },
+          ],
+          open_hours: [
+            {
+              emails: ['jane@email.com', 'swag@nylas.com'],
+              days: [0],
+              timezone: 'America/Chicago',
+              start: '10:00',
+              end: '14:00',
+              object_type: 'open_hours',
+            },
+          ],
+        });
+        expect(options.headers['authorization']).toEqual(
+          `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString(
+            'base64'
+          )}`
+        );
+        done();
+      });
+  });
+
+  test('[CONSECUTIVE AVAILABILITY] should throw error if open hour emails dont match free busy emails', done => {
+    const params = {
+      startTime: 1590454800,
+      endTime: 1590780800,
+      interval: 5,
+      duration: 30,
+      emails: [['jane@email.com']],
+      freeBusy: [
+        {
+          email: 'jane@email.com',
+          timeSlots: [
+            {
+              status: 'busy',
+              startTime: 1590454800,
+              endTime: 1590780800,
+            },
+          ],
+        },
+      ],
+      openHours: [
+        {
+          emails: ['jane@email.com', 'swag@nylas.com'],
+          days: [Days.Sunday],
+          timezone: 'America/Chicago',
+          start: '10:00',
+          end: '14:00',
         },
       ],
     };
