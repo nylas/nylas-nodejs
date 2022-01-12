@@ -23,7 +23,7 @@ export type VirtualCalendarProperties = {
   emailAddress: string;
   scopes: Scope[];
   clientId?: string;
-  settings?: Record<string, string>;
+  settings?: Record<string, any>;
 };
 
 export class VirtualCalendar extends Model
@@ -77,7 +77,7 @@ export enum NativeAuthenticationProvider {
 }
 
 export type NativeAuthenticationProperties = VirtualCalendarProperties & {
-  settings: Record<string, string>;
+  settings: Record<string, any>;
   provider: NativeAuthenticationProvider;
 };
 
