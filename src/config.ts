@@ -12,7 +12,7 @@ export type NylasConfig = {
   clientId: string;
   clientSecret: string;
   apiServer?: string;
-}
+};
 
 export type AuthenticateUrlConfig = {
   redirectURI: string;
@@ -20,4 +20,4 @@ export type AuthenticateUrlConfig = {
   state?: string;
   provider?: string;
   scopes?: string[];
-}
+};
