@@ -5,6 +5,7 @@ export type FreeBusyQuery = {
   startTime: number;
   endTime: number;
   emails?: string[];
+  calendars?: FreeBusyCalendarsProperties[];
 };
 
 export type FreeBusyCalendarsProperties = {
