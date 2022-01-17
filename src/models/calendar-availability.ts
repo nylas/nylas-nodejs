@@ -29,12 +29,12 @@ type AvailabilityQuery = {
 };
 
 export type SingleAvailabilityQuery = AvailabilityQuery & {
-  emails: string[];
+  emails?: string[];
   roundRobin?: RoundRobin;
 };
 
 export type ConsecutiveAvailabilityQuery = AvailabilityQuery & {
-  emails: Array<string[]>;
+  emails?: Array<string[]>;
 };
 
 export type OpenHoursProperties = {
