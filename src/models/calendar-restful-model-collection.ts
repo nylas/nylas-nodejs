@@ -25,6 +25,12 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     options: FreeBusyQuery,
     callback?: (error: Error | null, data?: Record<string, unknown>) => void
   ): Promise<FreeBusy[]> {
+    if (!options.emails && !options.calendars) {
+      throw new Error(
+        "Must set either 'emails' or 'calendars' in the free busy query."
+      );
+    }
+
     const calendarsJson = options.calendars
       ? options.calendars.map(cal => new FreeBusyCalendars(cal).toJSON(true))
       : [];
@@ -62,6 +68,11 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     options: SingleAvailabilityQuery,
     callback?: (error: Error | null, data?: Record<string, any>) => void
   ): Promise<CalendarAvailability> {
+    if (!options.emails && !options.calendars) {
+      throw new Error(
+        "Must set either 'emails' or 'calendars' in the free busy query."
+      );
+    }
 
     return this.connection
       .request({
@@ -90,6 +101,12 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     options: ConsecutiveAvailabilityQuery,
     callback?: (error: Error | null, data?: { [key: string]: any }) => void
   ): Promise<CalendarConsecutiveAvailability> {
+    if (!options.emails && !options.calendars) {
+      throw new Error(
+        "Must set either 'emails' or 'calendars' in the free busy query."
+      );
+    }
+
     if (options.emails) {
       // If open hours contains any emails not present in the main emails key
       // or in the free busy email list as this would raise an error on the API side
