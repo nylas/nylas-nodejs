@@ -78,6 +78,13 @@ describe('CalendarRestfulModelCollection', () => {
       startTime: 1590454800,
       endTime: 1590780800,
       emails: ['jane@email.com'],
+      calendars: [{
+        accountId: "test_account_id",
+        calendarIds: [
+          "example_calendar_id_A",
+          "example_calendar_id_B",
+        ],
+      }],
     };
 
     return testContext.connection.calendars.freeBusy(params).then(freeBusy => {
@@ -90,6 +97,13 @@ describe('CalendarRestfulModelCollection', () => {
         start_time: '1590454800',
         end_time: '1590780800',
         emails: ['jane@email.com'],
+        calendars: [{
+          account_id: "test_account_id",
+          calendar_ids: [
+            "example_calendar_id_A",
+            "example_calendar_id_B",
+          ],
+        }],
       });
       expect(options.headers['authorization']).toEqual(
         `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
@@ -125,6 +139,13 @@ describe('CalendarRestfulModelCollection', () => {
           end: '14:00',
         },
       ],
+      calendars: [{
+        accountId: "test_account_id",
+        calendarIds: [
+          "example_calendar_id_A",
+          "example_calendar_id_B",
+        ],
+      }],
     };
 
     return testContext.connection.calendars.availability(params).then(() => {
@@ -151,6 +172,13 @@ describe('CalendarRestfulModelCollection', () => {
             object_type: 'open_hours',
           },
         ],
+        calendars: [{
+          account_id: "test_account_id",
+          calendar_ids: [
+            "example_calendar_id_A",
+            "example_calendar_id_B",
+          ],
+        }],
       });
       expect(options.headers['authorization']).toEqual(
         `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
@@ -187,6 +215,13 @@ describe('CalendarRestfulModelCollection', () => {
           end: '14:00',
         },
       ],
+      calendars: [{
+        accountId: "test_account_id",
+        calendarIds: [
+          "example_calendar_id_A",
+          "example_calendar_id_B",
+        ],
+      }],
     };
 
     return testContext.connection.calendars
@@ -227,6 +262,13 @@ describe('CalendarRestfulModelCollection', () => {
               object_type: 'open_hours',
             },
           ],
+          calendars: [{
+            account_id: "test_account_id",
+            calendar_ids: [
+              "example_calendar_id_A",
+              "example_calendar_id_B",
+            ],
+          }],
         });
         expect(options.headers['authorization']).toEqual(
           `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString(
