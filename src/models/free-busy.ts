@@ -7,6 +7,32 @@ export type FreeBusyQuery = {
   emails?: string[];
 };
 
+export type FreeBusyCalendarsProperties = {
+  accountId: string;
+  calendarIds: string[];
+};
+
+export class FreeBusyCalendars extends Model
+  implements FreeBusyCalendarsProperties {
+  accountId = '';
+  calendarIds: string[] = [];
+
+  constructor(props?: FreeBusyCalendarsProperties) {
+    super();
+    this.initAttributes(props);
+  }
+}
+FreeBusyCalendars.attributes = {
+  accountId: Attributes.String({
+    modelKey: 'accountId',
+    jsonKey: 'account_id',
+  }),
+  calendarIds: Attributes.StringList({
+    modelKey: 'calendarIds',
+    jsonKey: 'calendar_ids',
+  }),
+};
+
 export type TimeSlotProperties = {
   status: string;
   startTime: number;
