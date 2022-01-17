@@ -138,6 +138,18 @@ describe('CalendarRestfulModelCollection', () => {
         done();
       });
     });
+
+    test('Should throw error if neither emails or calendars are passed in', done => {
+      const params = {
+        startTime: 1590454800,
+        endTime: 1590780800,
+      };
+
+      expect(() =>
+        testContext.connection.calendars.freeBusy(params)
+      ).toThrow();
+      done();
+    });
   });
 
   describe('Availability', () => {
@@ -204,6 +216,20 @@ describe('CalendarRestfulModelCollection', () => {
         );
         done();
       });
+    });
+
+    test('Should throw error if neither emails or calendars are passed in', done => {
+      const params = {
+        startTime: 1590454800,
+        endTime: 1590780800,
+        interval: 5,
+        duration: 30,
+      };
+
+      expect(() =>
+        testContext.connection.calendars.availability(params)
+      ).toThrow();
+      done();
     });
   });
 
@@ -328,6 +354,20 @@ describe('CalendarRestfulModelCollection', () => {
             end: '14:00',
           },
         ],
+      };
+
+      expect(() =>
+        testContext.connection.calendars.consecutiveAvailability(params)
+      ).toThrow();
+      done();
+    });
+
+    test('Should throw error if neither emails or calendars are passed in', done => {
+      const params = {
+        startTime: 1590454800,
+        endTime: 1590780800,
+        interval: 5,
+        duration: 30,
       };
 
       expect(() =>
