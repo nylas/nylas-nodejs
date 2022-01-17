@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add `comment` and `phoneNumber` fields to `EventParticipant`
+
 ### 6.0.0 / 2022-01-12
 * **BREAKING CHANGE**: Refactored `RestfulModel` and `RestfulModelCollection`, introduced `Model` and `ModelCollection` superclass for models that do not directly interact with the Nylas API
 * **BREAKING CHANGE**: Introduction of interfaces that accompany models to improve experience when instantiating API models and provides better insight on "required" fields

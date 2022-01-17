@@ -4,6 +4,8 @@ import Model from './model';
 export type EventParticipantProperties = {
   email: string;
   name?: string;
+  comment?: string;
+  phoneNumber?: string;
   status?: string;
 };
 
@@ -11,6 +13,8 @@ export default class EventParticipant extends Model
   implements EventParticipantProperties {
   email = '';
   name?: string;
+  comment?: string;
+  phoneNumber?: string;
   status?: string;
 
   constructor(props?: EventParticipantProperties) {
@@ -33,6 +37,13 @@ EventParticipant.attributes = {
   }),
   email: Attributes.String({
     modelKey: 'email',
+  }),
+  comment: Attributes.String({
+    modelKey: 'comment',
+  }),
+  phoneNumber: Attributes.String({
+    modelKey: 'phoneNumber',
+    jsonKey: 'phone_number',
   }),
   status: Attributes.String({
     modelKey: 'status',
