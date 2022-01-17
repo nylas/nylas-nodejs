@@ -664,7 +664,15 @@ describe('Event', () => {
             id: 'id-1234',
             title: 'test event',
             when: { time: 1409594400, object: 'time' },
-            participants: [{ name: 'foo', email: 'bar', status: 'noreply' }],
+            participants: [
+              {
+                name: 'foo',
+                email: 'bar',
+                status: 'noreply',
+                comment: 'This is a comment',
+                phone_number: '416-000-0000',
+              },
+            ],
             ical_uid: 'id-5678',
             master_event_id: 'master-1234',
             original_start_time: 1409592400,
@@ -685,11 +693,11 @@ describe('Event', () => {
             new Date(1409592400 * 1000).toString()
           );
           const participant = event.participants[0];
-          expect(participant.toJSON()).toEqual({
-            name: 'foo',
-            email: 'bar',
-            status: 'noreply',
-          });
+          expect(participant.name).toEqual('foo');
+          expect(participant.email).toEqual('bar');
+          expect(participant.status).toEqual('noreply');
+          expect(participant.comment).toEqual('This is a comment');
+          expect(participant.phoneNumber).toEqual('416-000-0000');
           done();
         });
       });
