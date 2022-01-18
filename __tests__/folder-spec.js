@@ -77,7 +77,7 @@ describe('Label', () => {
 
   describe('delete', () => {
     test('should do a DELETE if delete is requested', done => {
-      return testContext.connection.folders.delete("folder_id").then(() => {
+      return testContext.connection.folders.delete('folder_id').then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
           'https://api.nylas.com/folders/folder_id'
