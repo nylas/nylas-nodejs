@@ -12,6 +12,21 @@ import EventNotification, {
   EventNotificationProperties,
 } from './event-notification';
 
+export enum ICSMethod {
+  Request = 'request',
+  Publish = 'publish',
+  Reply = 'reply',
+  Add = 'add',
+  Cancel = 'cancel',
+  Refresh = 'refresh',
+}
+
+export type ICSOptions = {
+  iCalUID?: string;
+  prodId?: string;
+  method?: ICSMethod;
+};
+
 export type EventProperties = {
   calendarId: string;
   when: WhenProperties;
