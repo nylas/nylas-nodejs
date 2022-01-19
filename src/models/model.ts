@@ -60,6 +60,12 @@ export default class Model {
     return json;
   }
 
+  // saveRequestBody is used by save(). It returns a JSON dict containing only the
+  // fields the API allows updating. Subclasses should override this method.
+  saveRequestBody(): Record<string, unknown> {
+    return this.toJSON(true);
+  }
+
   toString(): string {
     return JSON.stringify(this.toJSON());
   }
