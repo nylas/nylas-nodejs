@@ -771,7 +771,7 @@ describe('Event', () => {
           },
           json: () => {
             return Promise.resolve({
-              ics: "ics_string",
+              ics: 'ics_string',
             });
           },
           headers: new Map(),
@@ -811,10 +811,10 @@ describe('Event', () => {
       testContext.event.calendarId = 'calendar_id';
       testContext.event.when.date = '1912-06-23';
       const icsOptions = {
-        iCalUID: "aaa",
+        iCalUID: 'aaa',
         method: ICSMethod.Request,
-        prodId: "prodId"
-      }
+        prodId: 'prodId',
+      };
 
       return testContext.event.generateICS(icsOptions).then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
@@ -834,9 +834,9 @@ describe('Event', () => {
           participants: [],
           notifications: undefined,
           ics_options: {
-            ical_uid: "aaa",
-            method: "request",
-            prodid: "prodId"
+            ical_uid: 'aaa',
+            method: 'request',
+            prodid: 'prodId',
           },
         });
         done();
