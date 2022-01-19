@@ -217,6 +217,42 @@ export default class Event extends RestfulModel {
         return Promise.reject(err);
       });
   }
+
+  generateICS(options?: ICSOptions): Promise<string> {
+    if (this.calendarId == '' || !this.when.isSet()) {
+      throw new Error(
+        'Cannot generate an ICS file for an event without a Calendar ID or when set'
+      );
+    }
+
+    let optionsPayload = {};
+    if (options) {
+      optionsPayload = {
+        ical_uid: options.iCalUID,
+        prodid: options.prodId,
+        method: options.method,
+      };
+    }
+
+    return this.connection
+      .request({
+        method: 'POST',
+        body: {
+          ...this.saveRequestBody(),
+          ics_options: optionsPayload,
+        },
+        path: '/events/to-ics',
+      })
+      .then((response: Record<string, string>) => {
+        if (!response.ics) {
+          throw new Error(
+            "Unexpected response from the API server. Returned 200 but no 'ics' string found."
+          );
+        }
+
+        return response.ics;
+      });
+  }
 }
 Event.collectionName = 'events';
 Event.attributes = {
