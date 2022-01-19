@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Add `comment` and `phoneNumber` fields to `EventParticipant`
+* Add support for `Event` to ICS
 
 ### 6.0.0 / 2022-01-12
 * **BREAKING CHANGE**: Refactored `RestfulModel` and `RestfulModelCollection`, introduced `Model` and `ModelCollection` superclass for models that do not directly interact with the Nylas API
