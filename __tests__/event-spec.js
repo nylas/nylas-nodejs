@@ -138,6 +138,7 @@ describe('Event', () => {
       testContext.event.when = new When();
       testContext.event.start = 1408875644;
       testContext.event.end = 1408875644;
+      testContext.event.when.object = "timespan";
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
