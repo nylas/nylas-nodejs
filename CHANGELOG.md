@@ -3,6 +3,7 @@
 ### Unreleased
 * Add `comment` and `phoneNumber` fields to `EventParticipant`
 * Add support for `calendar` field in free-busy, availability, and consecutive availability queries
+* Fix issue where properties of `Model` type were sending read-only attributes to the API
 
 ### 6.0.0 / 2022-01-12
 * **BREAKING CHANGE**: Refactored `RestfulModel` and `RestfulModelCollection`, introduced `Model` and `ModelCollection` superclass for models that do not directly interact with the Nylas API

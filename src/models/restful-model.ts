@@ -66,12 +66,6 @@ export default class RestfulModel extends Model {
     return `${this.pathPrefix()}/${collectionName}`;
   }
 
-  // saveRequestBody is used by save(). It returns a JSON dict containing only the
-  // fields the API allows updating. Subclasses should override this method.
-  saveRequestBody(): Record<string, unknown> {
-    return this.toJSON(true);
-  }
-
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
   deleteRequestQueryString(
     _params: Record<string, unknown>

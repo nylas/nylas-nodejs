@@ -51,5 +51,6 @@ When.attributes = {
   }),
   object: Attributes.String({
     modelKey: 'object',
+    readOnly: true,
   }),
 };
