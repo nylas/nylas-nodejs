@@ -80,6 +80,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
         path: `/calendars/availability`,
         body: {
           ...this.buildAvailabilityPayload(options),
+          event_collection_id: options.eventCollectionId,
           round_robin: options.roundRobin,
         },
       })

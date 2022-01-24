@@ -36,6 +36,7 @@ type AvailabilityQuery = {
 
 export type SingleAvailabilityQuery = AvailabilityQuery & {
   emails?: string[];
+  eventCollectionId?: string;
   roundRobin?: RoundRobin;
 };
 
