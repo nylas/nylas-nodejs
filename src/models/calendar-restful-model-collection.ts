@@ -25,11 +25,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     options: FreeBusyQuery,
     callback?: (error: Error | null, data?: Record<string, unknown>) => void
   ): Promise<FreeBusy[]> {
-    if (!options.emails && !options.calendars) {
-      throw new Error(
-        "Must set either 'emails' or 'calendars' in the free busy query."
-      );
-    }
+    this.queryIsValid(options);
 
     const calendarsJson = options.calendars
       ? options.calendars.map(cal => new FreeBusyCalendars(cal).toJSON(true))
@@ -68,11 +64,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     options: SingleAvailabilityQuery,
     callback?: (error: Error | null, data?: Record<string, any>) => void
   ): Promise<CalendarAvailability> {
-    if (!options.emails && !options.calendars) {
-      throw new Error(
-        "Must set either 'emails' or 'calendars' in the free busy query."
-      );
-    }
+    this.queryIsValid(options);
 
     return this.connection
       .request({
@@ -102,11 +94,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     options: ConsecutiveAvailabilityQuery,
     callback?: (error: Error | null, data?: { [key: string]: any }) => void
   ): Promise<CalendarConsecutiveAvailability> {
-    if (!options.emails && !options.calendars) {
-      throw new Error(
-        "Must set either 'emails' or 'calendars' in the free busy query."
-      );
-    }
+    this.queryIsValid(options);
 
     if (options.emails) {
       // If open hours contains any emails not present in the main emails key
@@ -178,5 +166,21 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       open_hours: openHoursJson,
       calendars: calendarsJson,
     };
+  }
+
+  // Helper function to check if a query is valid
+  private queryIsValid(
+    query:
+      | FreeBusyQuery
+      | SingleAvailabilityQuery
+      | ConsecutiveAvailabilityQuery
+  ): boolean {
+    if (
+      (!query.emails || query.emails.length == 0) &&
+      (!query.calendars || query.calendars.length == 0)
+    ) {
+      throw new Error("Must set either 'emails' or 'calendars' in the query.");
+    }
+    return true;
   }
 }
