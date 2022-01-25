@@ -1,5 +1,5 @@
 import NeuralSignatureContact from './neural-signature-contact';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import Message, { MessageProperties } from './message';
 import NylasConnection from '../nylas-connection';
 
@@ -14,6 +14,21 @@ export default class NeuralSignatureExtraction extends Message
   signature = '';
   modelVersion = '';
   contacts?: NeuralSignatureContact;
+  static collectionName = 'signature';
+  static attributes: Record<string, Attribute> = {
+    ...Message.attributes,
+    signature: Attributes.String({
+      modelKey: 'signature',
+    }),
+    modelVersion: Attributes.String({
+      modelKey: 'modelVersion',
+      jsonKey: 'model_version',
+    }),
+    contacts: Attributes.Object({
+      modelKey: 'contacts',
+      itemClass: NeuralSignatureContact,
+    }),
+  };
 
   constructor(
     connection: NylasConnection,
@@ -23,19 +38,3 @@ export default class NeuralSignatureExtraction extends Message
     this.initAttributes(props);
   }
 }
-
-NeuralSignatureExtraction.collectionName = 'signature';
-NeuralSignatureExtraction.attributes = {
-  ...Message.attributes,
-  signature: Attributes.String({
-    modelKey: 'signature',
-  }),
-  modelVersion: Attributes.String({
-    modelKey: 'modelVersion',
-    jsonKey: 'model_version',
-  }),
-  contacts: Attributes.Object({
-    modelKey: 'contacts',
-    itemClass: NeuralSignatureContact,
-  }),
-};

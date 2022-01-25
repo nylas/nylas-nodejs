@@ -1,4 +1,4 @@
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import Message, { MessageProperties } from './message';
 import Model from './model';
 import NylasConnection from '../nylas-connection';
@@ -15,29 +15,28 @@ export class Categorize extends Model implements CategorizeProperties {
   categorizedAt: Date = new Date();
   modelVersion = '';
   subcategories: string[] = [];
+  static attributes: Record<string, Attribute> = {
+    category: Attributes.String({
+      modelKey: 'category',
+    }),
+    categorizedAt: Attributes.DateTime({
+      modelKey: 'categorizedAt',
+      jsonKey: 'categorized_at',
+    }),
+    modelVersion: Attributes.String({
+      modelKey: 'modelVersion',
+      jsonKey: 'model_version',
+    }),
+    subcategories: Attributes.StringList({
+      modelKey: 'subcategories',
+    }),
+  };
 
   constructor(props?: CategorizeProperties) {
     super();
     this.initAttributes(props);
   }
 }
-
-Categorize.attributes = {
-  category: Attributes.String({
-    modelKey: 'category',
-  }),
-  categorizedAt: Attributes.DateTime({
-    modelKey: 'categorizedAt',
-    jsonKey: 'categorized_at',
-  }),
-  modelVersion: Attributes.String({
-    modelKey: 'modelVersion',
-    jsonKey: 'model_version',
-  }),
-  subcategories: Attributes.StringList({
-    modelKey: 'subcategories',
-  }),
-};
 
 export type NeuralCategorizerProperties = MessageProperties & {
   categorizer: Categorize;
@@ -46,6 +45,14 @@ export type NeuralCategorizerProperties = MessageProperties & {
 export default class NeuralCategorizer extends Message
   implements NeuralCategorizerProperties {
   categorizer = new Categorize();
+  static collectionName = 'categorizer';
+  static attributes: Record<string, Attribute> = {
+    ...Message.attributes,
+    categorizer: Attributes.Object({
+      modelKey: 'categorizer',
+      itemClass: Categorize,
+    }),
+  };
 
   constructor(
     connection: NylasConnection,
@@ -73,12 +80,3 @@ export default class NeuralCategorizer extends Message
       });
   }
 }
-
-NeuralCategorizer.collectionName = 'categorizer';
-NeuralCategorizer.attributes = {
-  ...Message.attributes,
-  categorizer: Attributes.Object({
-    modelKey: 'categorizer',
-    itemClass: Categorize,
-  }),
-};

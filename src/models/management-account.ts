@@ -1,5 +1,5 @@
 import ManagementModel from './management-model';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import NylasConnection from '../nylas-connection';
 import Model from './model';
 import { SaveCallback } from './restful-model';
@@ -13,22 +13,22 @@ export class ApplicationIPAddresses extends Model
   implements ApplicationIPAddressesProperties {
   ipAddresses: string[] = [];
   updatedAt = 0;
+  static attributes: Record<string, Attribute> = {
+    ipAddresses: Attributes.StringList({
+      modelKey: 'ipAddresses',
+      jsonKey: 'ip_addresses',
+    }),
+    updatedAt: Attributes.Number({
+      modelKey: 'updatedAt',
+      jsonKey: 'updated_at',
+    }),
+  };
 
   constructor(props?: ApplicationIPAddressesProperties) {
     super();
     this.initAttributes(props);
   }
 }
-ApplicationIPAddresses.attributes = {
-  ipAddresses: Attributes.StringList({
-    modelKey: 'ipAddresses',
-    jsonKey: 'ip_addresses',
-  }),
-  updatedAt: Attributes.Number({
-    modelKey: 'updatedAt',
-    jsonKey: 'updated_at',
-  }),
-};
 
 export type AccountTokenInfoProperties = {
   scopes: string;
@@ -43,28 +43,28 @@ export class AccountTokenInfo extends Model
   state = '';
   createdAt = 0;
   updatedAt = 0;
+  static attributes: Record<string, Attribute> = {
+    scopes: Attributes.String({
+      modelKey: 'scopes',
+    }),
+    state: Attributes.String({
+      modelKey: 'state',
+    }),
+    createdAt: Attributes.Number({
+      modelKey: 'createdAt',
+      jsonKey: 'created_at',
+    }),
+    updatedAt: Attributes.Number({
+      modelKey: 'updatedAt',
+      jsonKey: 'updated_at',
+    }),
+  };
 
   constructor(props?: AccountTokenInfoProperties) {
     super();
     this.initAttributes(props);
   }
 }
-AccountTokenInfo.attributes = {
-  scopes: Attributes.String({
-    modelKey: 'scopes',
-  }),
-  state: Attributes.String({
-    modelKey: 'state',
-  }),
-  createdAt: Attributes.Number({
-    modelKey: 'createdAt',
-    jsonKey: 'created_at',
-  }),
-  updatedAt: Attributes.Number({
-    modelKey: 'updatedAt',
-    jsonKey: 'updated_at',
-  }),
-};
 
 export type ManagementAccountProperties = {
   billingState: string;
@@ -89,6 +89,35 @@ export default class ManagementAccount extends ManagementModel
   syncState = '';
   trial = false;
   metadata?: object;
+  static collectionName = 'accounts';
+  static attributes: Record<string, Attribute> = {
+    ...ManagementModel.attributes,
+    billingState: Attributes.String({
+      modelKey: 'billingState',
+      jsonKey: 'billing_state',
+    }),
+    emailAddress: Attributes.String({
+      modelKey: 'emailAddress',
+      jsonKey: 'email',
+    }),
+    namespaceId: Attributes.String({
+      modelKey: 'namespaceId',
+      jsonKey: 'namespace_id',
+    }),
+    provider: Attributes.String({
+      modelKey: 'provider',
+    }),
+    syncState: Attributes.String({
+      modelKey: 'syncState',
+      jsonKey: 'sync_state',
+    }),
+    trial: Attributes.Boolean({
+      modelKey: 'trial',
+    }),
+    metadata: Attributes.Object({
+      modelKey: 'metadata',
+    }),
+  };
 
   constructor(
     connection: NylasConnection,
@@ -177,32 +206,3 @@ export default class ManagementAccount extends ManagementModel
     return `/a/${this.connection.clientId}/accounts`;
   }
 }
-ManagementAccount.collectionName = 'accounts';
-ManagementAccount.attributes = {
-  ...ManagementModel.attributes,
-  billingState: Attributes.String({
-    modelKey: 'billingState',
-    jsonKey: 'billing_state',
-  }),
-  emailAddress: Attributes.String({
-    modelKey: 'emailAddress',
-    jsonKey: 'email',
-  }),
-  namespaceId: Attributes.String({
-    modelKey: 'namespaceId',
-    jsonKey: 'namespace_id',
-  }),
-  provider: Attributes.String({
-    modelKey: 'provider',
-  }),
-  syncState: Attributes.String({
-    modelKey: 'syncState',
-    jsonKey: 'sync_state',
-  }),
-  trial: Attributes.Boolean({
-    modelKey: 'trial',
-  }),
-  metadata: Attributes.Object({
-    modelKey: 'metadata',
-  }),
-};

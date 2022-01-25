@@ -1,5 +1,5 @@
 import RestfulModel from './restful-model';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import File, { FileProperties } from './file';
 import Event, { EventProperties } from './event';
 import EmailParticipant, {
@@ -50,6 +50,81 @@ export default class Message extends RestfulModel implements MessageProperties {
   headers?: Record<string, string>;
   metadata?: object;
   jobStatusId?: string;
+  static collectionName = 'messages';
+  static attributes: Record<string, Attribute> = {
+    ...RestfulModel.attributes,
+    subject: Attributes.String({
+      modelKey: 'subject',
+    }),
+    from: Attributes.Collection({
+      modelKey: 'from',
+      itemClass: EmailParticipant,
+    }),
+    replyTo: Attributes.Collection({
+      modelKey: 'replyTo',
+      jsonKey: 'reply_to',
+      itemClass: EmailParticipant,
+    }),
+    to: Attributes.Collection({
+      modelKey: 'to',
+      itemClass: EmailParticipant,
+    }),
+    cc: Attributes.Collection({
+      modelKey: 'cc',
+      itemClass: EmailParticipant,
+    }),
+    bcc: Attributes.Collection({
+      modelKey: 'bcc',
+      itemClass: EmailParticipant,
+    }),
+    date: Attributes.DateTime({
+      modelKey: 'date',
+    }),
+    threadId: Attributes.String({
+      modelKey: 'threadId',
+      jsonKey: 'thread_id',
+    }),
+    snippet: Attributes.String({
+      modelKey: 'snippet',
+    }),
+    body: Attributes.String({
+      modelKey: 'body',
+    }),
+    unread: Attributes.Boolean({
+      modelKey: 'unread',
+    }),
+    starred: Attributes.Boolean({
+      modelKey: 'starred',
+    }),
+    files: Attributes.Collection({
+      modelKey: 'files',
+      itemClass: File,
+      readOnly: true,
+    }),
+    events: Attributes.Collection({
+      modelKey: 'events',
+      itemClass: Event,
+    }),
+    folder: Attributes.Object({
+      modelKey: 'folder',
+      itemClass: Folder,
+    }),
+    labels: Attributes.Collection({
+      modelKey: 'labels',
+      itemClass: Label,
+    }),
+    metadata: Attributes.Object({
+      modelKey: 'metadata',
+    }),
+    headers: Attributes.Object({
+      modelKey: 'headers',
+    }),
+    jobStatusId: Attributes.String({
+      modelKey: 'jobStatusId',
+      jsonKey: 'job_status_id',
+      readOnly: true,
+    }),
+  };
 
   constructor(connection: NylasConnection, props?: MessageProperties) {
     super(connection, props);
@@ -113,78 +188,3 @@ export default class Message extends RestfulModel implements MessageProperties {
     return json;
   }
 }
-Message.collectionName = 'messages';
-Message.attributes = {
-  ...RestfulModel.attributes,
-  subject: Attributes.String({
-    modelKey: 'subject',
-  }),
-  from: Attributes.Collection({
-    modelKey: 'from',
-    itemClass: EmailParticipant,
-  }),
-  replyTo: Attributes.Collection({
-    modelKey: 'replyTo',
-    jsonKey: 'reply_to',
-    itemClass: EmailParticipant,
-  }),
-  to: Attributes.Collection({
-    modelKey: 'to',
-    itemClass: EmailParticipant,
-  }),
-  cc: Attributes.Collection({
-    modelKey: 'cc',
-    itemClass: EmailParticipant,
-  }),
-  bcc: Attributes.Collection({
-    modelKey: 'bcc',
-    itemClass: EmailParticipant,
-  }),
-  date: Attributes.DateTime({
-    modelKey: 'date',
-  }),
-  threadId: Attributes.String({
-    modelKey: 'threadId',
-    jsonKey: 'thread_id',
-  }),
-  snippet: Attributes.String({
-    modelKey: 'snippet',
-  }),
-  body: Attributes.String({
-    modelKey: 'body',
-  }),
-  unread: Attributes.Boolean({
-    modelKey: 'unread',
-  }),
-  starred: Attributes.Boolean({
-    modelKey: 'starred',
-  }),
-  files: Attributes.Collection({
-    modelKey: 'files',
-    itemClass: File,
-    readOnly: true,
-  }),
-  events: Attributes.Collection({
-    modelKey: 'events',
-    itemClass: Event,
-  }),
-  folder: Attributes.Object({
-    modelKey: 'folder',
-    itemClass: Folder,
-  }),
-  labels: Attributes.Collection({
-    modelKey: 'labels',
-    itemClass: Label,
-  }),
-  metadata: Attributes.Object({
-    modelKey: 'metadata',
-  }),
-  headers: Attributes.Object({
-    modelKey: 'headers',
-  }),
-  jobStatusId: Attributes.String({
-    modelKey: 'jobStatusId',
-    jsonKey: 'job_status_id',
-    readOnly: true,
-  }),
-};

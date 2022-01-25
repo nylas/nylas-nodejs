@@ -1,5 +1,5 @@
 import Message, { MessageProperties } from './message';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import { SaveCallback } from './restful-model';
 import NylasConnection from '../nylas-connection';
 
@@ -18,6 +18,21 @@ export default class Draft extends Message implements DraftProperties {
   rawMime?: string;
   replyToMessageId?: string;
   version?: number;
+  static collectionName = 'drafts';
+  static attributes: Record<string, Attribute> = {
+    ...Message.attributes,
+    version: Attributes.Number({
+      modelKey: 'version',
+    }),
+    replyToMessageId: Attributes.String({
+      modelKey: 'replyToMessageId',
+      jsonKey: 'reply_to_message_id',
+    }),
+    rawMime: Attributes.String({
+      modelKey: 'rawMime',
+      readOnly: true,
+    }),
+  };
 
   constructor(connection: NylasConnection, props?: DraftProperties) {
     super(connection, props);
@@ -131,18 +146,3 @@ export default class Draft extends Message implements DraftProperties {
       });
   }
 }
-Draft.collectionName = 'drafts';
-Draft.attributes = {
-  ...Message.attributes,
-  version: Attributes.Number({
-    modelKey: 'version',
-  }),
-  replyToMessageId: Attributes.String({
-    modelKey: 'replyToMessageId',
-    jsonKey: 'reply_to_message_id',
-  }),
-  rawMime: Attributes.String({
-    modelKey: 'rawMime',
-    readOnly: true,
-  }),
-};

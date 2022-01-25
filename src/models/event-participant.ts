@@ -1,4 +1,4 @@
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import Model from './model';
 
 export type EventParticipantProperties = {
@@ -16,6 +16,25 @@ export default class EventParticipant extends Model
   comment?: string;
   phoneNumber?: string;
   status?: string;
+  static attributes: Record<string, Attribute> = {
+    name: Attributes.String({
+      modelKey: 'name',
+    }),
+    email: Attributes.String({
+      modelKey: 'email',
+    }),
+    comment: Attributes.String({
+      modelKey: 'comment',
+    }),
+    phoneNumber: Attributes.String({
+      modelKey: 'phoneNumber',
+      jsonKey: 'phone_number',
+    }),
+    status: Attributes.String({
+      modelKey: 'status',
+      readOnly: true,
+    }),
+  };
 
   constructor(props?: EventParticipantProperties) {
     super();
@@ -30,23 +49,3 @@ export default class EventParticipant extends Model
     return json;
   }
 }
-
-EventParticipant.attributes = {
-  name: Attributes.String({
-    modelKey: 'name',
-  }),
-  email: Attributes.String({
-    modelKey: 'email',
-  }),
-  comment: Attributes.String({
-    modelKey: 'comment',
-  }),
-  phoneNumber: Attributes.String({
-    modelKey: 'phoneNumber',
-    jsonKey: 'phone_number',
-  }),
-  status: Attributes.String({
-    modelKey: 'status',
-    readOnly: true,
-  }),
-};

@@ -1,5 +1,5 @@
 import Message, { MessageProperties } from './message';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import File from './file';
 import NylasConnection from '../nylas-connection';
 
@@ -14,6 +14,17 @@ export default class NeuralCleanConversation extends Message
   implements NeuralCleanConversationProperties {
   conversation = '';
   modelVersion = '';
+  static collectionName = 'conversation';
+  static attributes: Record<string, Attribute> = {
+    ...Message.attributes,
+    conversation: Attributes.String({
+      modelKey: 'conversation',
+    }),
+    modelVersion: Attributes.String({
+      modelKey: 'modelVersion',
+      jsonKey: 'model_version',
+    }),
+  };
 
   constructor(
     connection: NylasConnection,
@@ -41,15 +52,3 @@ export default class NeuralCleanConversation extends Message
     return Promise.resolve(f);
   }
 }
-
-NeuralCleanConversation.collectionName = 'conversation';
-NeuralCleanConversation.attributes = {
-  ...Message.attributes,
-  conversation: Attributes.String({
-    modelKey: 'conversation',
-  }),
-  modelVersion: Attributes.String({
-    modelKey: 'modelVersion',
-    jsonKey: 'model_version',
-  }),
-};

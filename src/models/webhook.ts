@@ -1,5 +1,5 @@
 import ManagementModel from './management-model';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import { SaveCallback } from './restful-model';
 import NylasConnection from '../nylas-connection';
 
@@ -20,6 +20,34 @@ export default class Webhook extends ManagementModel
   id?: string;
   applicationId?: string;
   version?: string;
+  static collectionName = 'webhooks';
+  static attributes: Record<string, Attribute> = {
+    id: Attributes.String({
+      modelKey: 'id',
+    }),
+
+    applicationId: Attributes.String({
+      modelKey: 'applicationId',
+      jsonKey: 'application_id',
+    }),
+
+    callbackUrl: Attributes.String({
+      modelKey: 'callbackUrl',
+      jsonKey: 'callback_url',
+    }),
+
+    state: Attributes.String({
+      modelKey: 'state',
+    }),
+
+    triggers: Attributes.StringList({
+      modelKey: 'triggers',
+    }),
+
+    version: Attributes.String({
+      modelKey: 'version',
+    }),
+  };
 
   constructor(
     connection: NylasConnection,
@@ -49,32 +77,3 @@ export default class Webhook extends ManagementModel
     return super.save(params, callback);
   }
 }
-
-Webhook.collectionName = 'webhooks';
-Webhook.attributes = {
-  id: Attributes.String({
-    modelKey: 'id',
-  }),
-
-  applicationId: Attributes.String({
-    modelKey: 'applicationId',
-    jsonKey: 'application_id',
-  }),
-
-  callbackUrl: Attributes.String({
-    modelKey: 'callbackUrl',
-    jsonKey: 'callback_url',
-  }),
-
-  state: Attributes.String({
-    modelKey: 'state',
-  }),
-
-  triggers: Attributes.StringList({
-    modelKey: 'triggers',
-  }),
-
-  version: Attributes.String({
-    modelKey: 'version',
-  }),
-};
