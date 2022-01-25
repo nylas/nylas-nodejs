@@ -1,7 +1,7 @@
 import Calendar from './calendar';
 import NylasConnection from '../nylas-connection';
 import RestfulModelCollection from './restful-model-collection';
-import FreeBusy, { FreeBusyCalendars, FreeBusyQuery } from './free-busy';
+import FreeBusy, { FreeBusyCalendar, FreeBusyQuery } from './free-busy';
 import CalendarAvailability, {
   CalendarConsecutiveAvailability,
   ConsecutiveAvailabilityQuery,
@@ -28,7 +28,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     this.queryIsValid(options);
 
     const calendarsJson = options.calendars
-      ? options.calendars.map(cal => new FreeBusyCalendars(cal).toJSON(true))
+      ? options.calendars.map(cal => new FreeBusyCalendar(cal).toJSON(true))
       : [];
 
     return this.connection
@@ -151,7 +151,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       ? options.openHours.map(oh => new OpenHours(oh).toJSON(true))
       : [];
     const calendarsJson = options.calendars
-      ? options.calendars.map(cal => new FreeBusyCalendars(cal).toJSON(true))
+      ? options.calendars.map(cal => new FreeBusyCalendar(cal).toJSON(true))
       : [];
 
     return {

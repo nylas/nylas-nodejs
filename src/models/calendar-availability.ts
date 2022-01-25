@@ -4,7 +4,7 @@ import {
   FreeBusyProperties,
   TimeSlot,
   TimeSlotProperties,
-  FreeBusyCalendarsProperties,
+  FreeBusyCalendarProperties,
 } from './free-busy';
 
 export enum RoundRobin {
@@ -31,7 +31,7 @@ type AvailabilityQuery = {
   tentativeBusy?: boolean;
   freeBusy?: FreeBusyProperties[];
   openHours?: OpenHoursProperties[];
-  calendars?: FreeBusyCalendarsProperties[];
+  calendars?: FreeBusyCalendarProperties[];
 };
 
 export type SingleAvailabilityQuery = AvailabilityQuery & {

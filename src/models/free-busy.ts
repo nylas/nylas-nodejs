@@ -5,25 +5,25 @@ export type FreeBusyQuery = {
   startTime: number;
   endTime: number;
   emails?: string[];
-  calendars?: FreeBusyCalendarsProperties[];
+  calendars?: FreeBusyCalendarProperties[];
 };
 
-export type FreeBusyCalendarsProperties = {
+export type FreeBusyCalendarProperties = {
   accountId: string;
   calendarIds: string[];
 };
 
-export class FreeBusyCalendars extends Model
-  implements FreeBusyCalendarsProperties {
+export class FreeBusyCalendar extends Model
+  implements FreeBusyCalendarProperties {
   accountId = '';
   calendarIds: string[] = [];
 
-  constructor(props?: FreeBusyCalendarsProperties) {
+  constructor(props?: FreeBusyCalendarProperties) {
     super();
     this.initAttributes(props);
   }
 }
-FreeBusyCalendars.attributes = {
+FreeBusyCalendar.attributes = {
   accountId: Attributes.String({
     modelKey: 'accountId',
     jsonKey: 'account_id',
