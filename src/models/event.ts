@@ -1,5 +1,5 @@
 import RestfulModel, { SaveCallback } from './restful-model';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import EventParticipant, {
   EventParticipantProperties,
 } from './event-participant';
@@ -75,6 +75,85 @@ export default class Event extends RestfulModel {
   notifications?: EventNotification[];
   metadata?: object;
   jobStatusId?: string;
+  static collectionName = 'events';
+  static attributes: Record<string, Attribute> = {
+    ...RestfulModel.attributes,
+    calendarId: Attributes.String({
+      modelKey: 'calendarId',
+      jsonKey: 'calendar_id',
+    }),
+    iCalUID: Attributes.String({
+      modelKey: 'iCalUID',
+      jsonKey: 'ical_uid',
+      readOnly: true,
+    }),
+    messageId: Attributes.String({
+      modelKey: 'messageId',
+      jsonKey: 'message_id',
+      readOnly: true,
+    }),
+    title: Attributes.String({
+      modelKey: 'title',
+    }),
+    description: Attributes.String({
+      modelKey: 'description',
+    }),
+    owner: Attributes.String({
+      modelKey: 'owner',
+      readOnly: true,
+    }),
+    participants: Attributes.Collection({
+      modelKey: 'participants',
+      itemClass: EventParticipant,
+    }),
+    readOnly: Attributes.Boolean({
+      modelKey: 'readOnly',
+      jsonKey: 'read_only',
+    }),
+    location: Attributes.String({
+      modelKey: 'location',
+    }),
+    when: Attributes.Object({
+      modelKey: 'when',
+      itemClass: When,
+    }),
+    busy: Attributes.Boolean({
+      modelKey: 'busy',
+    }),
+    status: Attributes.String({
+      modelKey: 'status',
+      readOnly: true,
+    }),
+    recurrence: Attributes.Object({
+      modelKey: 'recurrence',
+    }),
+    masterEventId: Attributes.String({
+      modelKey: 'masterEventId',
+      jsonKey: 'master_event_id',
+      readOnly: true,
+    }),
+    originalStartTime: Attributes.DateTime({
+      modelKey: 'originalStartTime',
+      jsonKey: 'original_start_time',
+      readOnly: true,
+    }),
+    conferencing: Attributes.Object({
+      modelKey: 'conferencing',
+      itemClass: EventConferencing,
+    }),
+    notifications: Attributes.Collection({
+      modelKey: 'notifications',
+      itemClass: EventNotification,
+    }),
+    metadata: Attributes.Object({
+      modelKey: 'metadata',
+    }),
+    jobStatusId: Attributes.String({
+      modelKey: 'jobStatusId',
+      jsonKey: 'job_status_id',
+      readOnly: true,
+    }),
+  };
 
   constructor(connection: NylasConnection, props?: EventProperties) {
     super(connection, props);
@@ -182,9 +261,6 @@ export default class Event extends RestfulModel {
 
   saveRequestBody(): Record<string, unknown> {
     const json = super.saveRequestBody();
-    if (json.when && (json.when as WhenProperties).object) {
-      delete (json.when as WhenProperties).object;
-    }
     if (!this.notifications) {
       delete json.notifications;
     }
@@ -254,82 +330,3 @@ export default class Event extends RestfulModel {
       });
   }
 }
-Event.collectionName = 'events';
-Event.attributes = {
-  ...RestfulModel.attributes,
-  calendarId: Attributes.String({
-    modelKey: 'calendarId',
-    jsonKey: 'calendar_id',
-  }),
-  iCalUID: Attributes.String({
-    modelKey: 'iCalUID',
-    jsonKey: 'ical_uid',
-    readOnly: true,
-  }),
-  messageId: Attributes.String({
-    modelKey: 'messageId',
-    jsonKey: 'message_id',
-    readOnly: true,
-  }),
-  title: Attributes.String({
-    modelKey: 'title',
-  }),
-  description: Attributes.String({
-    modelKey: 'description',
-  }),
-  owner: Attributes.String({
-    modelKey: 'owner',
-    readOnly: true,
-  }),
-  participants: Attributes.Collection({
-    modelKey: 'participants',
-    itemClass: EventParticipant,
-  }),
-  readOnly: Attributes.Boolean({
-    modelKey: 'readOnly',
-    jsonKey: 'read_only',
-  }),
-  location: Attributes.String({
-    modelKey: 'location',
-  }),
-  when: Attributes.Object({
-    modelKey: 'when',
-    itemClass: When,
-  }),
-  busy: Attributes.Boolean({
-    modelKey: 'busy',
-  }),
-  status: Attributes.String({
-    modelKey: 'status',
-    readOnly: true,
-  }),
-  recurrence: Attributes.Object({
-    modelKey: 'recurrence',
-  }),
-  masterEventId: Attributes.String({
-    modelKey: 'masterEventId',
-    jsonKey: 'master_event_id',
-    readOnly: true,
-  }),
-  originalStartTime: Attributes.DateTime({
-    modelKey: 'originalStartTime',
-    jsonKey: 'original_start_time',
-    readOnly: true,
-  }),
-  conferencing: Attributes.Object({
-    modelKey: 'conferencing',
-    itemClass: EventConferencing,
-  }),
-  notifications: Attributes.Collection({
-    modelKey: 'notifications',
-    itemClass: EventNotification,
-  }),
-  metadata: Attributes.Object({
-    modelKey: 'metadata',
-  }),
-  jobStatusId: Attributes.String({
-    modelKey: 'jobStatusId',
-    jsonKey: 'job_status_id',
-    readOnly: true,
-  }),
-};

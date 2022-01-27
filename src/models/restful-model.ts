@@ -1,4 +1,4 @@
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import NylasConnection from '../nylas-connection';
 import Model from './model';
 
@@ -25,6 +25,21 @@ export default class RestfulModel extends Model {
   id?: string;
   object?: string;
   baseUrl?: string;
+  static attributes: Record<string, Attribute> = {
+    id: Attributes.String({
+      modelKey: 'id',
+      readOnly: true,
+    }),
+    object: Attributes.String({
+      modelKey: 'object',
+      readOnly: true,
+    }),
+    accountId: Attributes.String({
+      modelKey: 'accountId',
+      jsonKey: 'account_id',
+      readOnly: true,
+    }),
+  };
 
   constructor(connection: NylasConnection, props?: Partial<RestfulModelJSON>) {
     super();
@@ -64,12 +79,6 @@ export default class RestfulModel extends Model {
   saveEndpoint(): string {
     const collectionName = (this.constructor as any).collectionName;
     return `${this.pathPrefix()}/${collectionName}`;
-  }
-
-  // saveRequestBody is used by save(). It returns a JSON dict containing only the
-  // fields the API allows updating. Subclasses should override this method.
-  saveRequestBody(): Record<string, unknown> {
-    return this.toJSON(true);
   }
 
   // deleteRequestQueryString is used by delete(). Subclasses should override this method.
@@ -154,18 +163,3 @@ export default class RestfulModel extends Model {
       });
   }
 }
-(RestfulModel as any).attributes = {
-  id: Attributes.String({
-    modelKey: 'id',
-    readOnly: true,
-  }),
-  object: Attributes.String({
-    modelKey: 'object',
-    readOnly: true,
-  }),
-  accountId: Attributes.String({
-    modelKey: 'accountId',
-    jsonKey: 'account_id',
-    readOnly: true,
-  }),
-};

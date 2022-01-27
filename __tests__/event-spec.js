@@ -4,6 +4,7 @@ import EventConferencing from '../src/models/event-conferencing';
 import Nylas from '../src/nylas';
 import fetch from 'node-fetch';
 import When from '../src/models/when';
+import EventParticipant from '../src/models/event-participant';
 import { ICSMethod } from '../src/models/event';
 
 jest.mock('node-fetch', () => {
@@ -139,6 +140,7 @@ describe('Event', () => {
       testContext.event.when = new When();
       testContext.event.start = 1408875644;
       testContext.event.end = 1408875644;
+      testContext.event.when.object = 'timespan';
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
@@ -708,6 +710,35 @@ describe('Event', () => {
           expect(err).toBe(null);
           expect(event.id).toBe('id-1234');
           expect(event.title).toBe('test event');
+          done();
+        });
+      });
+
+      test('should not send the status object within the participant object', done => {
+        testContext.event.participants = [
+          new EventParticipant({
+            name: 'foo',
+            email: 'bar',
+            status: 'noreply',
+            comment: 'This is a comment',
+            phoneNumber: '416-000-0000',
+          }),
+        ];
+        return testContext.event.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.body).toEqual({
+            calendar_id: '',
+            when: {},
+            participants: [
+              {
+                name: 'foo',
+                email: 'bar',
+                comment: 'This is a comment',
+                phone_number: '416-000-0000',
+                status: undefined,
+              },
+            ],
+          });
           done();
         });
       });
