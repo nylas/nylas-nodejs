@@ -1,5 +1,5 @@
 import RestfulModel, { SaveCallback } from './restful-model';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import EventParticipant, {
   EventParticipantProperties,
 } from './event-participant';
@@ -11,6 +11,21 @@ import NylasConnection from '../nylas-connection';
 import EventNotification, {
   EventNotificationProperties,
 } from './event-notification';
+
+export enum ICSMethod {
+  Request = 'request',
+  Publish = 'publish',
+  Reply = 'reply',
+  Add = 'add',
+  Cancel = 'cancel',
+  Refresh = 'refresh',
+}
+
+export type ICSOptions = {
+  iCalUID?: string;
+  prodId?: string;
+  method?: ICSMethod;
+};
 
 export type EventProperties = {
   calendarId: string;
@@ -60,6 +75,85 @@ export default class Event extends RestfulModel {
   notifications?: EventNotification[];
   metadata?: object;
   jobStatusId?: string;
+  static collectionName = 'events';
+  static attributes: Record<string, Attribute> = {
+    ...RestfulModel.attributes,
+    calendarId: Attributes.String({
+      modelKey: 'calendarId',
+      jsonKey: 'calendar_id',
+    }),
+    iCalUID: Attributes.String({
+      modelKey: 'iCalUID',
+      jsonKey: 'ical_uid',
+      readOnly: true,
+    }),
+    messageId: Attributes.String({
+      modelKey: 'messageId',
+      jsonKey: 'message_id',
+      readOnly: true,
+    }),
+    title: Attributes.String({
+      modelKey: 'title',
+    }),
+    description: Attributes.String({
+      modelKey: 'description',
+    }),
+    owner: Attributes.String({
+      modelKey: 'owner',
+      readOnly: true,
+    }),
+    participants: Attributes.Collection({
+      modelKey: 'participants',
+      itemClass: EventParticipant,
+    }),
+    readOnly: Attributes.Boolean({
+      modelKey: 'readOnly',
+      jsonKey: 'read_only',
+    }),
+    location: Attributes.String({
+      modelKey: 'location',
+    }),
+    when: Attributes.Object({
+      modelKey: 'when',
+      itemClass: When,
+    }),
+    busy: Attributes.Boolean({
+      modelKey: 'busy',
+    }),
+    status: Attributes.String({
+      modelKey: 'status',
+      readOnly: true,
+    }),
+    recurrence: Attributes.Object({
+      modelKey: 'recurrence',
+    }),
+    masterEventId: Attributes.String({
+      modelKey: 'masterEventId',
+      jsonKey: 'master_event_id',
+      readOnly: true,
+    }),
+    originalStartTime: Attributes.DateTime({
+      modelKey: 'originalStartTime',
+      jsonKey: 'original_start_time',
+      readOnly: true,
+    }),
+    conferencing: Attributes.Object({
+      modelKey: 'conferencing',
+      itemClass: EventConferencing,
+    }),
+    notifications: Attributes.Collection({
+      modelKey: 'notifications',
+      itemClass: EventNotification,
+    }),
+    metadata: Attributes.Object({
+      modelKey: 'metadata',
+    }),
+    jobStatusId: Attributes.String({
+      modelKey: 'jobStatusId',
+      jsonKey: 'job_status_id',
+      readOnly: true,
+    }),
+  };
 
   constructor(connection: NylasConnection, props?: EventProperties) {
     super(connection, props);
@@ -199,83 +293,40 @@ export default class Event extends RestfulModel {
         return Promise.reject(err);
       });
   }
+
+  generateICS(options?: ICSOptions): Promise<string> {
+    if (this.calendarId == '' || !this.when.isSet()) {
+      throw new Error(
+        'Cannot generate an ICS file for an event without a Calendar ID or when set'
+      );
+    }
+
+    let optionsPayload = {};
+    if (options) {
+      optionsPayload = {
+        ical_uid: options.iCalUID,
+        prodid: options.prodId,
+        method: options.method,
+      };
+    }
+
+    return this.connection
+      .request({
+        method: 'POST',
+        body: {
+          ...this.saveRequestBody(),
+          ics_options: optionsPayload,
+        },
+        path: '/events/to-ics',
+      })
+      .then((response: Record<string, string>) => {
+        if (!response.ics) {
+          throw new Error(
+            "Unexpected response from the API server. Returned 200 but no 'ics' string found."
+          );
+        }
+
+        return response.ics;
+      });
+  }
 }
-Event.collectionName = 'events';
-Event.attributes = {
-  ...RestfulModel.attributes,
-  calendarId: Attributes.String({
-    modelKey: 'calendarId',
-    jsonKey: 'calendar_id',
-  }),
-  iCalUID: Attributes.String({
-    modelKey: 'iCalUID',
-    jsonKey: 'ical_uid',
-    readOnly: true,
-  }),
-  messageId: Attributes.String({
-    modelKey: 'messageId',
-    jsonKey: 'message_id',
-    readOnly: true,
-  }),
-  title: Attributes.String({
-    modelKey: 'title',
-  }),
-  description: Attributes.String({
-    modelKey: 'description',
-  }),
-  owner: Attributes.String({
-    modelKey: 'owner',
-    readOnly: true,
-  }),
-  participants: Attributes.Collection({
-    modelKey: 'participants',
-    itemClass: EventParticipant,
-  }),
-  readOnly: Attributes.Boolean({
-    modelKey: 'readOnly',
-    jsonKey: 'read_only',
-  }),
-  location: Attributes.String({
-    modelKey: 'location',
-  }),
-  when: Attributes.Object({
-    modelKey: 'when',
-    itemClass: When,
-  }),
-  busy: Attributes.Boolean({
-    modelKey: 'busy',
-  }),
-  status: Attributes.String({
-    modelKey: 'status',
-    readOnly: true,
-  }),
-  recurrence: Attributes.Object({
-    modelKey: 'recurrence',
-  }),
-  masterEventId: Attributes.String({
-    modelKey: 'masterEventId',
-    jsonKey: 'master_event_id',
-    readOnly: true,
-  }),
-  originalStartTime: Attributes.DateTime({
-    modelKey: 'originalStartTime',
-    jsonKey: 'original_start_time',
-    readOnly: true,
-  }),
-  conferencing: Attributes.Object({
-    modelKey: 'conferencing',
-    itemClass: EventConferencing,
-  }),
-  notifications: Attributes.Collection({
-    modelKey: 'notifications',
-    itemClass: EventNotification,
-  }),
-  metadata: Attributes.Object({
-    modelKey: 'metadata',
-  }),
-  jobStatusId: Attributes.String({
-    modelKey: 'jobStatusId',
-    jsonKey: 'job_status_id',
-    readOnly: true,
-  }),
-};

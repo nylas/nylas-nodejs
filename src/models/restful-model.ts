@@ -1,4 +1,4 @@
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import NylasConnection from '../nylas-connection';
 import Model from './model';
 
@@ -25,6 +25,21 @@ export default class RestfulModel extends Model {
   id?: string;
   object?: string;
   baseUrl?: string;
+  static attributes: Record<string, Attribute> = {
+    id: Attributes.String({
+      modelKey: 'id',
+      readOnly: true,
+    }),
+    object: Attributes.String({
+      modelKey: 'object',
+      readOnly: true,
+    }),
+    accountId: Attributes.String({
+      modelKey: 'accountId',
+      jsonKey: 'account_id',
+      readOnly: true,
+    }),
+  };
 
   constructor(connection: NylasConnection, props?: Partial<RestfulModelJSON>) {
     super();
@@ -148,18 +163,3 @@ export default class RestfulModel extends Model {
       });
   }
 }
-(RestfulModel as any).attributes = {
-  id: Attributes.String({
-    modelKey: 'id',
-    readOnly: true,
-  }),
-  object: Attributes.String({
-    modelKey: 'object',
-    readOnly: true,
-  }),
-  accountId: Attributes.String({
-    modelKey: 'accountId',
-    jsonKey: 'account_id',
-    readOnly: true,
-  }),
-};

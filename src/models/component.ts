@@ -1,5 +1,5 @@
 import RestfulModel, { SaveCallback } from './restful-model';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import NylasConnection from '../nylas-connection';
 
 export type ComponentProperties = {
@@ -31,6 +31,53 @@ export default class Component extends RestfulModel
   accessToken?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  static collectionName = 'component';
+  static attributes: Record<string, Attribute> = {
+    ...RestfulModel.attributes,
+    name: Attributes.String({
+      modelKey: 'name',
+    }),
+    type: Attributes.String({
+      modelKey: 'type',
+    }),
+    action: Attributes.Number({
+      modelKey: 'action',
+    }),
+    active: Attributes.Boolean({
+      modelKey: 'active',
+    }),
+    settings: Attributes.Object({
+      modelKey: 'settings',
+    }),
+    allowedDomains: Attributes.StringList({
+      modelKey: 'allowedDomains',
+      jsonKey: 'allowed_domains',
+    }),
+    publicAccountId: Attributes.String({
+      modelKey: 'publicAccountId',
+      jsonKey: 'public_account_id',
+    }),
+    publicTokenId: Attributes.String({
+      modelKey: 'publicTokenId',
+      jsonKey: 'public_token_id',
+    }),
+    publicApplicationId: Attributes.String({
+      modelKey: 'publicApplicationId',
+      jsonKey: 'public_application_id',
+    }),
+    accessToken: Attributes.String({
+      modelKey: 'accessToken',
+      jsonKey: 'access_token',
+    }),
+    createdAt: Attributes.Date({
+      modelKey: 'createdAt',
+      jsonKey: 'created_at',
+    }),
+    updatedAt: Attributes.Date({
+      modelKey: 'updatedAt',
+      jsonKey: 'updated_at',
+    }),
+  };
 
   constructor(connection: NylasConnection, props?: ComponentProperties) {
     super(connection, props);
@@ -56,50 +103,3 @@ export default class Component extends RestfulModel
     return json;
   }
 }
-Component.collectionName = 'component';
-Component.attributes = {
-  ...RestfulModel.attributes,
-  name: Attributes.String({
-    modelKey: 'name',
-  }),
-  type: Attributes.String({
-    modelKey: 'type',
-  }),
-  action: Attributes.Number({
-    modelKey: 'action',
-  }),
-  active: Attributes.Boolean({
-    modelKey: 'active',
-  }),
-  settings: Attributes.Object({
-    modelKey: 'settings',
-  }),
-  allowedDomains: Attributes.StringList({
-    modelKey: 'allowedDomains',
-    jsonKey: 'allowed_domains',
-  }),
-  publicAccountId: Attributes.String({
-    modelKey: 'publicAccountId',
-    jsonKey: 'public_account_id',
-  }),
-  publicTokenId: Attributes.String({
-    modelKey: 'publicTokenId',
-    jsonKey: 'public_token_id',
-  }),
-  publicApplicationId: Attributes.String({
-    modelKey: 'publicApplicationId',
-    jsonKey: 'public_application_id',
-  }),
-  accessToken: Attributes.String({
-    modelKey: 'accessToken',
-    jsonKey: 'access_token',
-  }),
-  createdAt: Attributes.Date({
-    modelKey: 'createdAt',
-    jsonKey: 'created_at',
-  }),
-  updatedAt: Attributes.Date({
-    modelKey: 'updatedAt',
-    jsonKey: 'updated_at',
-  }),
-};

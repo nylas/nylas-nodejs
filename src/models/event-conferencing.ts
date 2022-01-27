@@ -1,4 +1,4 @@
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import Model from './model';
 
 export type EventConferencingDetailsProperties = {
@@ -16,31 +16,30 @@ export class EventConferencingDetails extends Model
   password?: string;
   pin?: string;
   url?: string;
+  static attributes: Record<string, Attribute> = {
+    meetingCode: Attributes.String({
+      modelKey: 'meetingCode',
+      jsonKey: 'meeting_code',
+    }),
+    phone: Attributes.StringList({
+      modelKey: 'phone',
+    }),
+    password: Attributes.String({
+      modelKey: 'password',
+    }),
+    pin: Attributes.String({
+      modelKey: 'pin',
+    }),
+    url: Attributes.String({
+      modelKey: 'url',
+    }),
+  };
 
   constructor(props?: EventConferencingProperties) {
     super();
     this.initAttributes(props);
   }
 }
-
-EventConferencingDetails.attributes = {
-  meetingCode: Attributes.String({
-    modelKey: 'meetingCode',
-    jsonKey: 'meeting_code',
-  }),
-  phone: Attributes.StringList({
-    modelKey: 'phone',
-  }),
-  password: Attributes.String({
-    modelKey: 'password',
-  }),
-  pin: Attributes.String({
-    modelKey: 'pin',
-  }),
-  url: Attributes.String({
-    modelKey: 'url',
-  }),
-};
 
 export type EventConferencingProperties = {
   provider: string;
@@ -57,22 +56,21 @@ export default class EventConferencing extends Model
   autocreate?: {
     settings?: Record<string, string>;
   };
+  static attributes: Record<string, Attribute> = {
+    details: Attributes.Object({
+      modelKey: 'details',
+      itemClass: EventConferencingDetails,
+    }),
+    provider: Attributes.String({
+      modelKey: 'provider',
+    }),
+    autocreate: Attributes.Object({
+      modelKey: 'autocreate',
+    }),
+  };
 
   constructor(props?: EventConferencingProperties) {
     super();
     this.initAttributes(props);
   }
 }
-
-EventConferencing.attributes = {
-  details: Attributes.Object({
-    modelKey: 'details',
-    itemClass: EventConferencingDetails,
-  }),
-  provider: Attributes.String({
-    modelKey: 'provider',
-  }),
-  autocreate: Attributes.Object({
-    modelKey: 'autocreate',
-  }),
-};

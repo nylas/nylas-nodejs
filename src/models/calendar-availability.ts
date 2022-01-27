@@ -1,5 +1,5 @@
 import Model from './model';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import {
   FreeBusyProperties,
   TimeSlot,
@@ -59,33 +59,33 @@ export class OpenHours extends Model implements OpenHoursProperties {
   timezone = '';
   start = '';
   end = '';
+  static attributes: Record<string, Attribute> = {
+    objectType: Attributes.String({
+      modelKey: 'objectType',
+      jsonKey: 'object_type',
+    }),
+    emails: Attributes.StringList({
+      modelKey: 'emails',
+    }),
+    days: Attributes.NumberList({
+      modelKey: 'days',
+    }),
+    timezone: Attributes.String({
+      modelKey: 'timezone',
+    }),
+    start: Attributes.String({
+      modelKey: 'start',
+    }),
+    end: Attributes.String({
+      modelKey: 'end',
+    }),
+  };
 
   constructor(props?: OpenHoursProperties) {
     super();
     this.initAttributes(props);
   }
 }
-OpenHours.attributes = {
-  objectType: Attributes.String({
-    modelKey: 'objectType',
-    jsonKey: 'object_type',
-  }),
-  emails: Attributes.StringList({
-    modelKey: 'emails',
-  }),
-  days: Attributes.NumberList({
-    modelKey: 'days',
-  }),
-  timezone: Attributes.String({
-    modelKey: 'timezone',
-  }),
-  start: Attributes.String({
-    modelKey: 'start',
-  }),
-  end: Attributes.String({
-    modelKey: 'end',
-  }),
-};
 
 export type CalendarConsecutiveAvailabilityProperties = {
   emails: string[];
@@ -98,25 +98,25 @@ export class CalendarConsecutiveAvailability extends Model
   emails: string[] = [];
   startTime = 0;
   endTime = 0;
+  static attributes: Record<string, Attribute> = {
+    emails: Attributes.StringList({
+      modelKey: 'emails',
+    }),
+    startTime: Attributes.Number({
+      modelKey: 'startTime',
+      jsonKey: 'start_time',
+    }),
+    endTime: Attributes.Number({
+      modelKey: 'endTime',
+      jsonKey: 'end_time',
+    }),
+  };
 
   constructor(props?: CalendarConsecutiveAvailabilityProperties) {
     super();
     this.initAttributes(props);
   }
 }
-CalendarConsecutiveAvailability.attributes = {
-  emails: Attributes.StringList({
-    modelKey: 'emails',
-  }),
-  startTime: Attributes.Number({
-    modelKey: 'startTime',
-    jsonKey: 'start_time',
-  }),
-  endTime: Attributes.Number({
-    modelKey: 'endTime',
-    jsonKey: 'end_time',
-  }),
-};
 
 export type CalendarAvailabilityProperties = {
   timeSlots: TimeSlotProperties[];
@@ -126,16 +126,16 @@ export default class CalendarAvailability extends Model
   implements CalendarAvailabilityProperties {
   object = 'availability';
   timeSlots: TimeSlot[] = [];
+  static attributes: Record<string, Attribute> = {
+    timeSlots: Attributes.Collection({
+      modelKey: 'timeSlots',
+      jsonKey: 'time_slots',
+      itemClass: TimeSlot,
+    }),
+  };
 
   constructor(props?: CalendarAvailabilityProperties) {
     super();
     this.initAttributes(props);
   }
 }
-CalendarAvailability.attributes = {
-  timeSlots: Attributes.Collection({
-    modelKey: 'timeSlots',
-    jsonKey: 'time_slots',
-    itemClass: TimeSlot,
-  }),
-};

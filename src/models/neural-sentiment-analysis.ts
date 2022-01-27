@@ -1,4 +1,4 @@
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import RestfulModel from './restful-model';
 import NylasConnection from '../nylas-connection';
 
@@ -17,6 +17,27 @@ export default class NeuralSentimentAnalysis extends RestfulModel
   sentimentScore = 0;
   processedLength = 0;
   text = '';
+  static collectionName = 'sentiment';
+  static attributes: Record<string, Attribute> = {
+    accountId: Attributes.String({
+      modelKey: 'accountId',
+      jsonKey: 'account_id',
+    }),
+    sentiment: Attributes.String({
+      modelKey: 'sentiment',
+    }),
+    sentimentScore: Attributes.Number({
+      modelKey: 'sentimentScore',
+      jsonKey: 'sentiment_score',
+    }),
+    processedLength: Attributes.Number({
+      modelKey: 'processedLength',
+      jsonKey: 'processed_length',
+    }),
+    text: Attributes.String({
+      modelKey: 'text',
+    }),
+  };
 
   constructor(
     connection: NylasConnection,
@@ -26,25 +47,3 @@ export default class NeuralSentimentAnalysis extends RestfulModel
     this.initAttributes(props);
   }
 }
-
-NeuralSentimentAnalysis.collectionName = 'sentiment';
-NeuralSentimentAnalysis.attributes = {
-  accountId: Attributes.String({
-    modelKey: 'accountId',
-    jsonKey: 'account_id',
-  }),
-  sentiment: Attributes.String({
-    modelKey: 'sentiment',
-  }),
-  sentimentScore: Attributes.Number({
-    modelKey: 'sentimentScore',
-    jsonKey: 'sentiment_score',
-  }),
-  processedLength: Attributes.Number({
-    modelKey: 'processedLength',
-    jsonKey: 'processed_length',
-  }),
-  text: Attributes.String({
-    modelKey: 'text',
-  }),
-};

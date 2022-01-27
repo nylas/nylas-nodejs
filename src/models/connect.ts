@@ -1,6 +1,6 @@
 import NylasConnection from '../nylas-connection';
 import Model from './model';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import Account from './account';
 
 export enum Scope {
@@ -34,35 +34,35 @@ export class VirtualCalendar extends Model
   scopes: Scope[] = [];
   settings = {};
   clientId?: string;
+  static attributes: Record<string, Attribute> = {
+    provider: Attributes.String({
+      modelKey: 'provider',
+    }),
+    clientId: Attributes.String({
+      modelKey: 'clientId',
+      jsonKey: 'client_id',
+    }),
+    emailAddress: Attributes.String({
+      modelKey: 'emailAddress',
+      jsonKey: 'email',
+    }),
+    name: Attributes.String({
+      modelKey: 'name',
+    }),
+    scopes: Attributes.EnumList({
+      modelKey: 'scopes',
+      itemClass: Scope,
+    }),
+    settings: Attributes.Object({
+      modelKey: 'settings',
+    }),
+  };
 
   constructor(props?: VirtualCalendarProperties) {
     super();
     this.initAttributes(props);
   }
 }
-VirtualCalendar.attributes = {
-  provider: Attributes.String({
-    modelKey: 'provider',
-  }),
-  clientId: Attributes.String({
-    modelKey: 'clientId',
-    jsonKey: 'client_id',
-  }),
-  emailAddress: Attributes.String({
-    modelKey: 'emailAddress',
-    jsonKey: 'email',
-  }),
-  name: Attributes.String({
-    modelKey: 'name',
-  }),
-  scopes: Attributes.EnumList({
-    modelKey: 'scopes',
-    itemClass: Scope,
-  }),
-  settings: Attributes.Object({
-    modelKey: 'settings',
-  }),
-};
 
 export enum NativeAuthenticationProvider {
   Gmail = 'gmail',
@@ -93,6 +93,30 @@ export class NativeAuthentication extends Model
   settings = {};
   scopes: Scope[] = [];
   clientId?: string;
+  static attributes: Record<string, Attribute> = {
+    clientId: Attributes.String({
+      modelKey: 'clientId',
+      jsonKey: 'client_id',
+    }),
+    name: Attributes.String({
+      modelKey: 'name',
+    }),
+    emailAddress: Attributes.String({
+      modelKey: 'emailAddress',
+      jsonKey: 'email_address',
+    }),
+    provider: Attributes.Enum({
+      modelKey: 'provider',
+      itemClass: NativeAuthenticationProvider,
+    }),
+    scopes: Attributes.EnumList({
+      modelKey: 'scopes',
+      itemClass: Scope,
+    }),
+    settings: Attributes.Object({
+      modelKey: 'settings',
+    }),
+  };
 
   constructor(props?: NativeAuthenticationProperties) {
     super();
@@ -112,30 +136,6 @@ export class NativeAuthentication extends Model
     return super.fromJSON(json);
   }
 }
-NativeAuthentication.attributes = {
-  clientId: Attributes.String({
-    modelKey: 'clientId',
-    jsonKey: 'client_id',
-  }),
-  name: Attributes.String({
-    modelKey: 'name',
-  }),
-  emailAddress: Attributes.String({
-    modelKey: 'emailAddress',
-    jsonKey: 'email_address',
-  }),
-  provider: Attributes.Enum({
-    modelKey: 'provider',
-    itemClass: NativeAuthenticationProvider,
-  }),
-  scopes: Attributes.EnumList({
-    modelKey: 'scopes',
-    itemClass: Scope,
-  }),
-  settings: Attributes.Object({
-    modelKey: 'settings',
-  }),
-};
 
 export default class Connect {
   connection: NylasConnection;
