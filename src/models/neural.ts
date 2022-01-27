@@ -5,7 +5,7 @@ import NeuralOcr from './neural-ocr';
 import NeuralCategorizer from './neural-categorizer';
 import NeuralCleanConversation from './neural-clean-conversation';
 import Model from './model';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 
 export type NeuralMessageOptionsProperties = {
   ignoreLinks?: boolean;
@@ -24,6 +24,32 @@ export class NeuralMessageOptions extends Model
   removeConclusionPhrases?: boolean;
   imagesAsMarkdown?: boolean;
   parseContacts?: boolean;
+  static attributes: Record<string, Attribute> = {
+    ignoreLinks: Attributes.Boolean({
+      modelKey: 'ignoreLinks',
+      jsonKey: 'ignore_links',
+    }),
+    ignoreImages: Attributes.Boolean({
+      modelKey: 'ignoreImages',
+      jsonKey: 'ignore_images',
+    }),
+    ignoreTables: Attributes.Boolean({
+      modelKey: 'ignoreTables',
+      jsonKey: 'ignore_tables',
+    }),
+    removeConclusionPhrases: Attributes.Boolean({
+      modelKey: 'removeConclusionPhrases',
+      jsonKey: 'remove_conclusion_phrases',
+    }),
+    imagesAsMarkdown: Attributes.Boolean({
+      modelKey: 'imagesAsMarkdown',
+      jsonKey: 'images_as_markdown',
+    }),
+    parseContacts: Attributes.Boolean({
+      modelKey: 'parseContacts',
+      jsonKey: 'parse_contacts',
+    }),
+  };
 
   constructor(props?: NeuralMessageOptionsProperties) {
     super();
@@ -38,32 +64,6 @@ export class NeuralMessageOptions extends Model
     return body;
   }
 }
-NeuralMessageOptions.attributes = {
-  ignoreLinks: Attributes.Boolean({
-    modelKey: 'ignoreLinks',
-    jsonKey: 'ignore_links',
-  }),
-  ignoreImages: Attributes.Boolean({
-    modelKey: 'ignoreImages',
-    jsonKey: 'ignore_images',
-  }),
-  ignoreTables: Attributes.Boolean({
-    modelKey: 'ignoreTables',
-    jsonKey: 'ignore_tables',
-  }),
-  removeConclusionPhrases: Attributes.Boolean({
-    modelKey: 'removeConclusionPhrases',
-    jsonKey: 'remove_conclusion_phrases',
-  }),
-  imagesAsMarkdown: Attributes.Boolean({
-    modelKey: 'imagesAsMarkdown',
-    jsonKey: 'images_as_markdown',
-  }),
-  parseContacts: Attributes.Boolean({
-    modelKey: 'parseContacts',
-    jsonKey: 'parse_contacts',
-  }),
-};
 
 export default class Neural extends RestfulModel {
   sentimentAnalysisMessage(

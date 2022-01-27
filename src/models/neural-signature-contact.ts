@@ -1,4 +1,4 @@
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import Contact, { EmailAddress, PhoneNumber, WebPage } from './contact';
 import Model from './model';
 import NylasConnection from '../nylas-connection';
@@ -11,21 +11,20 @@ type LinkProperties = {
 class Link extends Model implements LinkProperties {
   description = '';
   url = '';
+  static attributes: Record<string, Attribute> = {
+    description: Attributes.String({
+      modelKey: 'description',
+    }),
+    url: Attributes.String({
+      modelKey: 'url',
+    }),
+  };
 
   constructor(props?: LinkProperties) {
     super();
     this.initAttributes(props);
   }
 }
-
-Link.attributes = {
-  description: Attributes.String({
-    modelKey: 'description',
-  }),
-  url: Attributes.String({
-    modelKey: 'url',
-  }),
-};
 
 type NameProperties = {
   firstName?: string;
@@ -35,23 +34,22 @@ type NameProperties = {
 class Name extends Model implements NameProperties {
   firstName = '';
   lastName = '';
+  static attributes: Record<string, Attribute> = {
+    firstName: Attributes.String({
+      modelKey: 'firstName',
+      jsonKey: 'first_name',
+    }),
+    lastName: Attributes.String({
+      modelKey: 'lastName',
+      jsonKey: 'last_name',
+    }),
+  };
 
   constructor(props?: NameProperties) {
     super();
     this.initAttributes(props);
   }
 }
-
-Name.attributes = {
-  firstName: Attributes.String({
-    modelKey: 'firstName',
-    jsonKey: 'first_name',
-  }),
-  lastName: Attributes.String({
-    modelKey: 'lastName',
-    jsonKey: 'last_name',
-  }),
-};
 
 export type NeuralSignatureContactProperties = {
   jobTitles?: string[];
@@ -68,6 +66,27 @@ export default class NeuralSignatureContact extends Model
   phoneNumbers?: string[];
   emails?: string[];
   names?: Name[];
+  static attributes: Record<string, Attribute> = {
+    jobTitles: Attributes.StringList({
+      modelKey: 'jobTitles',
+      jsonKey: 'job_titles',
+    }),
+    links: Attributes.Collection({
+      modelKey: 'links',
+      itemClass: Link,
+    }),
+    phoneNumbers: Attributes.StringList({
+      modelKey: 'phoneNumbers',
+      jsonKey: 'phone_numbers',
+    }),
+    emails: Attributes.StringList({
+      modelKey: 'emails',
+    }),
+    names: Attributes.Collection({
+      modelKey: 'names',
+      itemClass: Name,
+    }),
+  };
 
   constructor(props?: NeuralSignatureContactProperties) {
     super();
@@ -121,25 +140,3 @@ export default class NeuralSignatureContact extends Model
     return contact;
   }
 }
-
-NeuralSignatureContact.attributes = {
-  jobTitles: Attributes.StringList({
-    modelKey: 'jobTitles',
-    jsonKey: 'job_titles',
-  }),
-  links: Attributes.Collection({
-    modelKey: 'links',
-    itemClass: Link,
-  }),
-  phoneNumbers: Attributes.StringList({
-    modelKey: 'phoneNumbers',
-    jsonKey: 'phone_numbers',
-  }),
-  emails: Attributes.StringList({
-    modelKey: 'emails',
-  }),
-  names: Attributes.Collection({
-    modelKey: 'names',
-    itemClass: Name,
-  }),
-};

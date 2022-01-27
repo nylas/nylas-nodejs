@@ -1,4 +1,4 @@
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import Model from './model';
 
 export enum EventNotificationType {
@@ -26,33 +26,33 @@ export default class EventNotification extends Model
   subject?: string;
   body?: string;
   message?: string;
+  static attributes: Record<string, Attribute> = {
+    type: Attributes.String({
+      modelKey: 'type',
+    }),
+    minutesBeforeEvent: Attributes.Number({
+      modelKey: 'minutesBeforeEvent',
+      jsonKey: 'minutes_before_event',
+    }),
+    url: Attributes.String({
+      modelKey: 'url',
+    }),
+    payload: Attributes.String({
+      modelKey: 'payload',
+    }),
+    subject: Attributes.String({
+      modelKey: 'subject',
+    }),
+    body: Attributes.String({
+      modelKey: 'body',
+    }),
+    message: Attributes.String({
+      modelKey: 'message',
+    }),
+  };
 
   constructor(props?: EventNotificationProperties) {
     super();
     this.initAttributes(props);
   }
 }
-EventNotification.attributes = {
-  type: Attributes.String({
-    modelKey: 'type',
-  }),
-  minutesBeforeEvent: Attributes.Number({
-    modelKey: 'minutesBeforeEvent',
-    jsonKey: 'minutes_before_event',
-  }),
-  url: Attributes.String({
-    modelKey: 'url',
-  }),
-  payload: Attributes.String({
-    modelKey: 'payload',
-  }),
-  subject: Attributes.String({
-    modelKey: 'subject',
-  }),
-  body: Attributes.String({
-    modelKey: 'body',
-  }),
-  message: Attributes.String({
-    modelKey: 'message',
-  }),
-};

@@ -1,4 +1,4 @@
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import RestfulModel from './restful-model';
 import NylasConnection from '../nylas-connection';
 
@@ -20,6 +20,36 @@ export default class File extends RestfulModel implements FileProperties {
   contentId?: string;
   contentDisposition?: string;
   data?: unknown;
+  static collectionName = 'files';
+  static attributes: Record<string, Attribute> = {
+    ...RestfulModel.attributes,
+    contentType: Attributes.String({
+      modelKey: 'contentType',
+      jsonKey: 'content_type',
+    }),
+    size: Attributes.Number({
+      modelKey: 'size',
+    }),
+    filename: Attributes.String({
+      modelKey: 'filename',
+    }),
+    messageIds: Attributes.StringList({
+      modelKey: 'messageIds',
+      jsonKey: 'message_ids',
+    }),
+    contentId: Attributes.String({
+      modelKey: 'contentId',
+      jsonKey: 'content_id',
+    }),
+    contentDisposition: Attributes.String({
+      modelKey: 'contentDisposition',
+      jsonKey: 'content_disposition',
+    }),
+    data: Attributes.Object({
+      modelKey: 'data',
+      readOnly: true,
+    }),
+  };
 
   constructor(connection: NylasConnection, props?: FileProperties) {
     super(connection, props);
@@ -111,33 +141,3 @@ export default class File extends RestfulModel implements FileProperties {
       });
   }
 }
-File.collectionName = 'files';
-File.attributes = {
-  ...RestfulModel.attributes,
-  contentType: Attributes.String({
-    modelKey: 'contentType',
-    jsonKey: 'content_type',
-  }),
-  size: Attributes.Number({
-    modelKey: 'size',
-  }),
-  filename: Attributes.String({
-    modelKey: 'filename',
-  }),
-  messageIds: Attributes.StringList({
-    modelKey: 'messageIds',
-    jsonKey: 'message_ids',
-  }),
-  contentId: Attributes.String({
-    modelKey: 'contentId',
-    jsonKey: 'content_id',
-  }),
-  contentDisposition: Attributes.String({
-    modelKey: 'contentDisposition',
-    jsonKey: 'content_disposition',
-  }),
-  data: Attributes.Object({
-    modelKey: 'data',
-    readOnly: true,
-  }),
-};

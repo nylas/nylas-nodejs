@@ -1,4 +1,4 @@
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 import Model from './model';
 
 export type EmailParticipantProperties = {
@@ -10,6 +10,14 @@ export default class EmailParticipant extends Model
   implements EmailParticipantProperties {
   email = '';
   name?: string;
+  static attributes: Record<string, Attribute> = {
+    name: Attributes.String({
+      modelKey: 'name',
+    }),
+    email: Attributes.String({
+      modelKey: 'email',
+    }),
+  };
 
   constructor(props?: EmailParticipantProperties) {
     super();
@@ -24,11 +32,3 @@ export default class EmailParticipant extends Model
     return json;
   }
 }
-EmailParticipant.attributes = {
-  name: Attributes.String({
-    modelKey: 'name',
-  }),
-  email: Attributes.String({
-    modelKey: 'email',
-  }),
-};

@@ -1,5 +1,5 @@
 import Model from './model';
-import Attributes from './attributes';
+import Attributes, { Attribute } from './attributes';
 
 export type AccessTokenProperties = {
   accessToken: string;
@@ -16,31 +16,30 @@ export default class AccessToken extends Model
   emailAddress = '';
   provider = '';
   tokenType = 'bearer';
+  static attributes: Record<string, Attribute> = {
+    accessToken: Attributes.String({
+      modelKey: 'accessToken',
+      jsonKey: 'access_token',
+    }),
+    accountId: Attributes.String({
+      modelKey: 'accountId',
+      jsonKey: 'account_id',
+    }),
+    emailAddress: Attributes.String({
+      modelKey: 'emailAddress',
+      jsonKey: 'email_address',
+    }),
+    provider: Attributes.String({
+      modelKey: 'provider',
+    }),
+    tokenType: Attributes.String({
+      modelKey: 'tokenType',
+      jsonKey: 'token_type',
+    }),
+  };
 
   constructor(props?: AccessTokenProperties) {
     super();
     this.initAttributes(props);
   }
 }
-
-AccessToken.attributes = {
-  accessToken: Attributes.String({
-    modelKey: 'accessToken',
-    jsonKey: 'access_token',
-  }),
-  accountId: Attributes.String({
-    modelKey: 'accountId',
-    jsonKey: 'account_id',
-  }),
-  emailAddress: Attributes.String({
-    modelKey: 'emailAddress',
-    jsonKey: 'email_address',
-  }),
-  provider: Attributes.String({
-    modelKey: 'provider',
-  }),
-  tokenType: Attributes.String({
-    modelKey: 'tokenType',
-    jsonKey: 'token_type',
-  }),
-};
