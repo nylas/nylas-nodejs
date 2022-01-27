@@ -4,7 +4,34 @@ import Attributes, { Attribute } from './attributes';
 export type FreeBusyQuery = {
   startTime: number;
   endTime: number;
-  emails: string[];
+  emails?: string[];
+  calendars?: FreeBusyCalendarProperties[];
+};
+
+export type FreeBusyCalendarProperties = {
+  accountId: string;
+  calendarIds: string[];
+};
+
+export class FreeBusyCalendar extends Model
+  implements FreeBusyCalendarProperties {
+  accountId = '';
+  calendarIds: string[] = [];
+
+  constructor(props?: FreeBusyCalendarProperties) {
+    super();
+    this.initAttributes(props);
+  }
+}
+FreeBusyCalendar.attributes = {
+  accountId: Attributes.String({
+    modelKey: 'accountId',
+    jsonKey: 'account_id',
+  }),
+  calendarIds: Attributes.StringList({
+    modelKey: 'calendarIds',
+    jsonKey: 'calendar_ids',
+  }),
 };
 
 export type TimeSlotProperties = {

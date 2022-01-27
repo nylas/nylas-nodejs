@@ -1,6 +1,11 @@
 import Model from './model';
 import Attributes, { Attribute } from './attributes';
-import { FreeBusyProperties, TimeSlot, TimeSlotProperties } from './free-busy';
+import {
+  FreeBusyProperties,
+  TimeSlot,
+  TimeSlotProperties,
+  FreeBusyCalendarProperties,
+} from './free-busy';
 
 export enum RoundRobin {
   MaxAvailability = 'max-availability',
@@ -26,15 +31,17 @@ type AvailabilityQuery = {
   tentativeBusy?: boolean;
   freeBusy?: FreeBusyProperties[];
   openHours?: OpenHoursProperties[];
+  calendars?: FreeBusyCalendarProperties[];
 };
 
 export type SingleAvailabilityQuery = AvailabilityQuery & {
-  emails: string[];
+  emails?: string[];
+  eventCollectionId?: string;
   roundRobin?: RoundRobin;
 };
 
 export type ConsecutiveAvailabilityQuery = AvailabilityQuery & {
-  emails: Array<string[]>;
+  emails?: Array<string[]>;
 };
 
 export type OpenHoursProperties = {

@@ -3,6 +3,7 @@
 ### Unreleased
 * Add support for `Event` to ICS
 * Add `comment` and `phoneNumber` fields to `EventParticipant`
+* Add support for `calendar` field in free-busy, availability, and consecutive availability queries
 * Fix issue where properties of `Model` type were sending read-only attributes to the API
 
 ### 6.0.0 / 2022-01-12
