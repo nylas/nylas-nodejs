@@ -52,4 +52,14 @@ export default class When extends Model implements WhenProperties {
     super();
     this.initAttributes(props);
   }
+
+  // Helper method to check if the When object is actually set properly or not
+  isSet(): boolean {
+    return (
+      (this.startTime != undefined && this.endTime != undefined) ||
+      this.time != undefined ||
+      (this.startDate != undefined && this.endDate != undefined) ||
+      this.date != undefined
+    );
+  }
 }

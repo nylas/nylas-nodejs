@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Add support for `Event` to ICS
 * Add `comment` and `phoneNumber` fields to `EventParticipant`
 * Fix issue where properties of `Model` type were sending read-only attributes to the API
 

@@ -5,6 +5,7 @@ import Nylas from '../src/nylas';
 import fetch from 'node-fetch';
 import When from '../src/models/when';
 import EventParticipant from '../src/models/event-participant';
+import { ICSMethod } from '../src/models/event';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -788,6 +789,103 @@ describe('Event', () => {
         });
         done();
       });
+    });
+  });
+
+  describe('generateICS', () => {
+    beforeEach(() => {
+      const response = () => {
+        return {
+          status: 200,
+          buffer: () => {
+            return Promise.resolve('body');
+          },
+          json: () => {
+            return Promise.resolve({
+              ics: 'ics_string',
+            });
+          },
+          headers: new Map(),
+        };
+      };
+
+      fetch.mockImplementation(() => Promise.resolve(response()));
+    });
+
+    test('should do a POST request to the /to-ics endpoint', done => {
+      testContext.event.calendarId = 'calendar_id';
+      testContext.event.when.date = '1912-06-23';
+      return testContext.event.generateICS().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/events/to-ics'
+        );
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: 'calendar_id',
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: {
+            date: '1912-06-23',
+          },
+          participants: [],
+          notifications: undefined,
+          ics_options: {},
+        });
+        done();
+      });
+    });
+
+    test('should do a POST request to the /to-ics endpoint with options set', done => {
+      testContext.event.calendarId = 'calendar_id';
+      testContext.event.when.date = '1912-06-23';
+      const icsOptions = {
+        iCalUID: 'aaa',
+        method: ICSMethod.Request,
+        prodId: 'prodId',
+      };
+
+      return testContext.event.generateICS(icsOptions).then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/events/to-ics'
+        );
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: 'calendar_id',
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: {
+            date: '1912-06-23',
+          },
+          participants: [],
+          notifications: undefined,
+          ics_options: {
+            ical_uid: 'aaa',
+            method: 'request',
+            prodid: 'prodId',
+          },
+        });
+        done();
+      });
+    });
+
+    test('should do throw an error if calendar id is not set', done => {
+      testContext.event.when.date = '1912-06-23';
+
+      expect(() => testContext.event.generateICS()).toThrow();
+      done();
+    });
+
+    test('should do throw an error if when is not properly set', done => {
+      testContext.event.calendarId = 'calendar_id';
+
+      expect(() => testContext.event.generateICS()).toThrow();
+      done();
     });
   });
 });
