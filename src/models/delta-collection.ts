@@ -39,6 +39,26 @@ export default class DeltaCollection {
       });
   }
 
+  since(cursor: string, params?: DeltaParams): Promise<Deltas> {
+    return this.connection
+      .request({
+        method: 'GET',
+        path: `${this.path}`,
+        qs: {
+          cursor: cursor,
+          view: params?.view,
+          excluded_types: params?.excludeTypes,
+          include_types: params?.includeTypes,
+        },
+      })
+      .then(response => {
+        return Promise.resolve(new Deltas(this.connection).fromJSON(response));
+      })
+      .catch(err => {
+        return Promise.reject(err);
+      });
+  }
+
   async startStream(
     cursor: string,
     params: Record<string, unknown> = {}
