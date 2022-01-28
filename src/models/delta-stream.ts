@@ -13,7 +13,7 @@ import fetch, { Request } from 'node-fetch';
 import AbortController from 'abort-controller';
 import backoff from 'backoff';
 import JSONStream from 'JSONStream';
-import Delta from './delta';
+import Delta, { DeltaParams } from './delta';
 
 export default class DeltaStream extends EventEmitter {
   // Max number of times to retry a connection if we receive no data heartbeats
@@ -21,11 +21,7 @@ export default class DeltaStream extends EventEmitter {
   static MAX_RESTART_RETRIES = 5;
   connection: NylasConnection;
   cursor?: string;
-  params: {
-    includeTypes?: string[];
-    excludeTypes?: string[];
-    expanded?: boolean;
-  };
+  params: DeltaParams;
   requestInfo?: {
     request: Request;
     controller: AbortController;
