@@ -17,22 +17,22 @@ export class FreeBusyCalendar extends Model
   implements FreeBusyCalendarProperties {
   accountId = '';
   calendarIds: string[] = [];
+  static attributes: Record<string, Attribute> = {
+    accountId: Attributes.String({
+      modelKey: 'accountId',
+      jsonKey: 'account_id',
+    }),
+    calendarIds: Attributes.StringList({
+      modelKey: 'calendarIds',
+      jsonKey: 'calendar_ids',
+    }),
+  };
 
   constructor(props?: FreeBusyCalendarProperties) {
     super();
     this.initAttributes(props);
   }
 }
-FreeBusyCalendar.attributes = {
-  accountId: Attributes.String({
-    modelKey: 'accountId',
-    jsonKey: 'account_id',
-  }),
-  calendarIds: Attributes.StringList({
-    modelKey: 'calendarIds',
-    jsonKey: 'calendar_ids',
-  }),
-};
 
 export type TimeSlotProperties = {
   status: string;

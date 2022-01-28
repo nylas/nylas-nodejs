@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 6.1.0 / 2022-01-28
 * Add support for `Event` to ICS
 * Add `comment` and `phoneNumber` fields to `EventParticipant`
 * Add support for `calendar` field in free-busy, availability, and consecutive availability queries
