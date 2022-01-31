@@ -62,7 +62,7 @@ export default class DeltaCollection {
   async longPoll(
     cursor: string,
     timeout: number,
-    params?: Record<string, unknown>
+    params?: DeltaParams
   ): Promise<DeltaLongPoll> {
     const stream = new DeltaLongPoll(this.connection, cursor, timeout, params);
     await stream.open(true);
