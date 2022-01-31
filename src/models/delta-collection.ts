@@ -1,5 +1,5 @@
 import NylasConnection from '../nylas-connection';
-import DeltaStream from './delta-stream';
+import DeltaStream, { DeltaLongPoll } from './delta-stream';
 import { DeltaParams } from './delta';
 import { Deltas } from './deltas';
 
@@ -57,6 +57,16 @@ export default class DeltaCollection {
       .catch(err => {
         return Promise.reject(err);
       });
+  }
+
+  async longPoll(
+    cursor: string,
+    timeout: number,
+    params?: Record<string, unknown>
+  ): Promise<DeltaLongPoll> {
+    const stream = new DeltaLongPoll(this.connection, cursor, timeout, params);
+    await stream.open(true);
+    return stream;
   }
 
   async startStream(

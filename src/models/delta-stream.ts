@@ -14,12 +14,15 @@ import AbortController from 'abort-controller';
 import backoff from 'backoff';
 import JSONStream from 'JSONStream';
 import Delta, { DeltaParams } from './delta';
+import { Deltas } from './deltas';
 
 export default class DeltaStream extends EventEmitter {
   // Max number of times to retry a connection if we receive no data heartbeats
   // from the Nylas server.
   static MAX_RESTART_RETRIES = 5;
   connection: NylasConnection;
+  path: string;
+  modelClass: typeof Deltas | typeof Delta;
   cursor?: string;
   params: DeltaParams;
   requestInfo?: {
@@ -48,6 +51,8 @@ export default class DeltaStream extends EventEmitter {
     this.connection = connection;
     this.cursor = cursor;
     this.params = params;
+    this.path = '/delta/streaming';
+    this.modelClass = Delta;
     if (!(this.connection instanceof NylasConnection)) {
       throw new Error('Connection object not provided');
     }
@@ -74,9 +79,8 @@ export default class DeltaStream extends EventEmitter {
     delete this.requestInfo;
   }
 
-  async open(): Promise<void> {
+  async open(emitAsModel?: boolean): Promise<void> {
     this.close();
-    const path = '/delta/streaming';
     const { excludeTypes = [], includeTypes = [], ...params } = this.params;
 
     const queryObj: Record<string, unknown> = {
@@ -92,7 +96,7 @@ export default class DeltaStream extends EventEmitter {
 
     const request = this.connection.newRequest({
       method: 'GET',
-      path,
+      path: this.path,
       qs: queryObj,
     });
     try {
@@ -125,6 +129,9 @@ export default class DeltaStream extends EventEmitter {
           // JSONStream.parse(), which handles converting data blocks to JSON objects.
           .pipe(JSONStream.parse())
           .on('data', (obj: any) => {
+            if (emitAsModel === true) {
+              obj = new this.modelClass(this.connection).fromJSON(obj);
+            }
             if (obj.cursor) {
               this.cursor = obj.cursor;
             }
@@ -136,7 +143,7 @@ export default class DeltaStream extends EventEmitter {
     }
   }
 
-  private onDataReceived(): void {
+  protected onDataReceived(): void {
     // Nylas sends a newline heartbeat in the raw data stream once every 5 seconds.
     // Automatically restart the connection if we haven't gotten any data in
     // Delta.streamingTimeoutMs. The connection will restart with the last
@@ -163,5 +170,27 @@ export default class DeltaStream extends EventEmitter {
     );
     this.close();
     return this.open();
+  }
+}
+
+export class DeltaLongPoll extends DeltaStream {
+  constructor(
+    connection: NylasConnection,
+    cursor: string,
+    timeout: number,
+    params: Record<string, unknown> = {}
+  ) {
+    super(connection, cursor, params);
+    params['timeout'] = timeout;
+    this.params = params;
+    this.path = '/delta/longpoll';
+    this.modelClass = Deltas;
+  }
+
+  protected onDataReceived(): void {
+    // For streaming we restart the connection on every data received in order
+    // to keep the connection alive. For long polling this is not needed as the
+    // server terminates the connection when data is sent
+    return;
   }
 }
