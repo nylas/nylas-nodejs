@@ -40,15 +40,14 @@ export default class DeltaCollection {
   }
 
   since(cursor: string, params?: DeltaParams): Promise<Deltas> {
+    const queryParams = this.buildDeltaParams(params);
     return this.connection
       .request({
         method: 'GET',
         path: `${this.path}`,
         qs: {
           cursor: cursor,
-          view: params?.view,
-          excluded_types: params?.excludeTypes,
-          include_types: params?.includeTypes,
+          ...queryParams,
         },
       })
       .then(response => {
@@ -64,7 +63,8 @@ export default class DeltaCollection {
     timeout: number,
     params?: DeltaParams
   ): Promise<DeltaLongPoll> {
-    const stream = new DeltaLongPoll(this.connection, cursor, timeout, params);
+    const queryParams = this.buildDeltaParams(params);
+    const stream = new DeltaLongPoll(this.connection, cursor, timeout, queryParams);
     await stream.open(true);
     return stream;
   }
@@ -76,5 +76,21 @@ export default class DeltaCollection {
     const stream = new DeltaStream(this.connection, cursor, params);
     await stream.open();
     return stream;
+  }
+
+  private buildDeltaParams(params?: DeltaParams): Record<string, unknown> {
+    const queryString: Record<string, unknown> = {};
+    if (params) {
+      if (params.view) {
+        queryString.view = params.view;
+      }
+      if (params.excludeTypes) {
+        queryString.exclude_types = params.excludeTypes.join();
+      }
+      if (params.includeTypes) {
+        queryString.include_types = params.includeTypes.join();
+      }
+    }
+    return queryString;
   }
 }
