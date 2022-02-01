@@ -13,7 +13,6 @@ import File from './models/file';
 import Event from './models/event';
 import JobStatus from './models/job-status';
 import Resource from './models/resource';
-import Delta from './models/delta';
 import Folder, { Label } from './models/folder';
 import FormData, { AppendOptions } from 'form-data';
 import Neural from './models/neural';
@@ -21,6 +20,7 @@ import NylasApiError from './models/nylas-api-error';
 import ComponentRestfulModelCollection from './models/component-restful-model-collection';
 import SchedulerRestfulModelCollection from './models/scheduler-restful-model-collection';
 import MessageRestfulModelCollection from './models/message-restful-model-collection';
+import DeltaCollection from './models/delta-collection';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -78,7 +78,7 @@ export default class NylasConnection {
     Resource,
     this
   );
-  deltas = new Delta(this);
+  deltas = new DeltaCollection(this);
   labels: RestfulModelCollection<Label> = new RestfulModelCollection(
     Label,
     this
