@@ -83,19 +83,12 @@ export default class DeltaCollection {
     return stream;
   }
 
-  private buildDeltaParams(params?: DeltaParams): Record<string, unknown> {
-    const queryString: Record<string, unknown> = {};
-    if (params) {
-      if (params.view) {
-        queryString.view = params.view;
-      }
-      if (params.excludeTypes) {
-        queryString.exclude_types = params.excludeTypes.join();
-      }
-      if (params.includeTypes) {
-        queryString.include_types = params.includeTypes.join();
-      }
-    }
+  private buildDeltaParams(params?: DeltaParams): Partial<DeltaParams> {
+    const queryString: Partial<DeltaParams> = {
+       ...(params?.view && {view: params.view}),
+       ...(params?.exclude_types && {exclude_types: params.exclude_types.join()}),
+       ...(params?.includeTypes && {includeTypes: params.includeTypes.join()})
+    };
     return queryString;
   }
 }
