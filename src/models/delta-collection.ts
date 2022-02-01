@@ -64,7 +64,12 @@ export default class DeltaCollection {
     params?: DeltaParams
   ): Promise<DeltaLongPoll> {
     const queryParams = this.buildDeltaParams(params);
-    const stream = new DeltaLongPoll(this.connection, cursor, timeout, queryParams);
+    const stream = new DeltaLongPoll(
+      this.connection,
+      cursor,
+      timeout,
+      queryParams
+    );
     await stream.open(true);
     return stream;
   }

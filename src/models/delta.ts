@@ -32,7 +32,7 @@ export type DeltaProperties = {
   cursor: string;
   event: string;
   object: string;
-  deltaAttributes?: unknown;
+  objectAttributes?: unknown;
 };
 
 export default class Delta extends RestfulModel implements DeltaProperties {
@@ -41,7 +41,7 @@ export default class Delta extends RestfulModel implements DeltaProperties {
   event = '';
   object = '';
   connection: NylasConnection;
-  deltaAttributes?: RestfulModel;
+  objectAttributes?: RestfulModel;
   static streamingTimeoutMs = 15000;
   static attributes: Record<string, Attribute> = {
     id: Attributes.String({
@@ -56,8 +56,8 @@ export default class Delta extends RestfulModel implements DeltaProperties {
     object: Attributes.String({
       modelKey: 'object',
     }),
-    deltaAttributes: Attributes.Object({
-      modelKey: 'deltaAttributes',
+    objectAttributes: Attributes.Object({
+      modelKey: 'objectAttributes',
       jsonKey: 'attributes',
     }),
   };
@@ -66,20 +66,20 @@ export default class Delta extends RestfulModel implements DeltaProperties {
     super(connection);
     this.connection = connection;
     this.initAttributes(props);
-    if (this.deltaAttributes && DeltaClassMap[this.object]) {
-      this.deltaAttributes = new DeltaClassMap[this.object](
+    if (this.objectAttributes && DeltaClassMap[this.object]) {
+      this.objectAttributes = new DeltaClassMap[this.object](
         connection,
-        this.deltaAttributes
+        this.objectAttributes
       );
     }
   }
 
   fromJSON(json: Record<string, unknown>): this {
     super.fromJSON(json);
-    if (this.deltaAttributes && DeltaClassMap[this.object]) {
-      this.deltaAttributes = new DeltaClassMap[this.object](
+    if (this.objectAttributes && DeltaClassMap[this.object]) {
+      this.objectAttributes = new DeltaClassMap[this.object](
         this.connection
-      ).fromJSON(this.deltaAttributes);
+      ).fromJSON(this.objectAttributes);
     }
     return this;
   }

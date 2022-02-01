@@ -337,16 +337,16 @@ describe('Delta', () => {
       expect(deltas.deltas[0].event).toEqual('create');
       expect(deltas.deltas[0].id).toEqual('delta-1');
       expect(deltas.deltas[0].object).toEqual('contact');
-      expect(deltas.deltas[0].deltaAttributes.givenName).toEqual('First');
-      expect(deltas.deltas[0].deltaAttributes.surname).toEqual('Last');
+      expect(deltas.deltas[0].objectAttributes.givenName).toEqual('First');
+      expect(deltas.deltas[0].objectAttributes.surname).toEqual('Last');
 
       expect(deltas.deltas[1].cursor).toEqual('file_cursor');
       expect(deltas.deltas[1].event).toEqual('create');
       expect(deltas.deltas[1].id).toEqual('delta-2');
       expect(deltas.deltas[1].object).toEqual('file');
-      expect(deltas.deltas[1].deltaAttributes.filename).toEqual('sample.txt');
-      expect(deltas.deltas[1].deltaAttributes.size).toEqual(123);
-      expect(deltas.deltas[1].deltaAttributes.contentType).toEqual(
+      expect(deltas.deltas[1].objectAttributes.filename).toEqual('sample.txt');
+      expect(deltas.deltas[1].objectAttributes.size).toEqual(123);
+      expect(deltas.deltas[1].objectAttributes.contentType).toEqual(
         'text/plain'
       );
 
@@ -354,50 +354,50 @@ describe('Delta', () => {
       expect(deltas.deltas[2].event).toEqual('create');
       expect(deltas.deltas[2].id).toEqual('delta-3');
       expect(deltas.deltas[2].object).toEqual('message');
-      expect(deltas.deltas[2].deltaAttributes.to[0].email).toEqual('foo');
-      expect(deltas.deltas[2].deltaAttributes.to[0].name).toEqual('bar');
-      expect(deltas.deltas[2].deltaAttributes.subject).toEqual('foo');
+      expect(deltas.deltas[2].objectAttributes.to[0].email).toEqual('foo');
+      expect(deltas.deltas[2].objectAttributes.to[0].name).toEqual('bar');
+      expect(deltas.deltas[2].objectAttributes.subject).toEqual('foo');
 
       expect(deltas.deltas[3].cursor).toEqual('draft_cursor');
       expect(deltas.deltas[3].event).toEqual('create');
       expect(deltas.deltas[3].id).toEqual('delta-4');
       expect(deltas.deltas[3].object).toEqual('draft');
-      expect(deltas.deltas[3].deltaAttributes.to[0].email).toEqual('foo');
-      expect(deltas.deltas[3].deltaAttributes.to[0].name).toEqual('bar');
-      expect(deltas.deltas[3].deltaAttributes.subject).toEqual('foo');
+      expect(deltas.deltas[3].objectAttributes.to[0].email).toEqual('foo');
+      expect(deltas.deltas[3].objectAttributes.to[0].name).toEqual('bar');
+      expect(deltas.deltas[3].objectAttributes.subject).toEqual('foo');
 
       expect(deltas.deltas[4].cursor).toEqual('thread_cursor');
       expect(deltas.deltas[4].event).toEqual('create');
       expect(deltas.deltas[4].id).toEqual('delta-5');
       expect(deltas.deltas[4].object).toEqual('thread');
-      expect(deltas.deltas[4].deltaAttributes.subject).toEqual('Subject');
+      expect(deltas.deltas[4].objectAttributes.subject).toEqual('Subject');
 
       expect(deltas.deltas[5].cursor).toEqual('event_cursor');
       expect(deltas.deltas[5].event).toEqual('create');
       expect(deltas.deltas[5].id).toEqual('delta-6');
       expect(deltas.deltas[5].object).toEqual('event');
-      expect(deltas.deltas[5].deltaAttributes.participants[0].name).toEqual(
+      expect(deltas.deltas[5].objectAttributes.participants[0].name).toEqual(
         'foo'
       );
-      expect(deltas.deltas[5].deltaAttributes.participants[0].email).toEqual(
+      expect(deltas.deltas[5].objectAttributes.participants[0].email).toEqual(
         'bar'
       );
-      expect(deltas.deltas[5].deltaAttributes.participants[0].status).toEqual(
+      expect(deltas.deltas[5].objectAttributes.participants[0].status).toEqual(
         'noreply'
       );
-      expect(deltas.deltas[5].deltaAttributes.participants[0].comment).toEqual(
+      expect(deltas.deltas[5].objectAttributes.participants[0].comment).toEqual(
         'This is a comment'
       );
       expect(
-        deltas.deltas[5].deltaAttributes.participants[0].phoneNumber
+        deltas.deltas[5].objectAttributes.participants[0].phoneNumber
       ).toEqual('416-000-0000');
-      expect(deltas.deltas[5].deltaAttributes.title).toEqual('test event');
-      expect(deltas.deltas[5].deltaAttributes.when.time).toEqual(1409594400);
-      expect(deltas.deltas[5].deltaAttributes.iCalUID).toEqual('id-5678');
-      expect(deltas.deltas[5].deltaAttributes.masterEventId).toEqual(
+      expect(deltas.deltas[5].objectAttributes.title).toEqual('test event');
+      expect(deltas.deltas[5].objectAttributes.when.time).toEqual(1409594400);
+      expect(deltas.deltas[5].objectAttributes.iCalUID).toEqual('id-5678');
+      expect(deltas.deltas[5].objectAttributes.masterEventId).toEqual(
         'master-1234'
       );
-      expect(deltas.deltas[5].deltaAttributes.originalStartTime).toEqual(
+      expect(deltas.deltas[5].objectAttributes.originalStartTime).toEqual(
         new Date(1409592400 * 1000)
       );
 
@@ -405,14 +405,14 @@ describe('Delta', () => {
       expect(deltas.deltas[6].event).toEqual('create');
       expect(deltas.deltas[6].id).toEqual('delta-7');
       expect(deltas.deltas[6].object).toEqual('folder');
-      expect(deltas.deltas[6].deltaAttributes.name).toEqual('inbox');
-      expect(deltas.deltas[6].deltaAttributes.displayName).toEqual('name');
+      expect(deltas.deltas[6].objectAttributes.name).toEqual('inbox');
+      expect(deltas.deltas[6].objectAttributes.displayName).toEqual('name');
 
       expect(deltas.deltas[7].cursor).toEqual('label_cursor');
       expect(deltas.deltas[7].event).toEqual('create');
       expect(deltas.deltas[7].id).toEqual('delta-8');
       expect(deltas.deltas[7].object).toEqual('label');
-      expect(deltas.deltas[7].deltaAttributes.name).toEqual('inbox');
+      expect(deltas.deltas[7].objectAttributes.name).toEqual('inbox');
       done();
     });
   });
