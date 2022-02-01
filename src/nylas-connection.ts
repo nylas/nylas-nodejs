@@ -8,7 +8,6 @@ import ContactRestfulModelCollection from './models/contact-restful-model-collec
 import RestfulModelInstance from './models/restful-model-instance';
 import Account from './models/account';
 import Thread from './models/thread';
-import Message from './models/message';
 import Draft from './models/draft';
 import File from './models/file';
 import Event from './models/event';
@@ -21,6 +20,7 @@ import Neural from './models/neural';
 import NylasApiError from './models/nylas-api-error';
 import ComponentRestfulModelCollection from './models/component-restful-model-collection';
 import SchedulerRestfulModelCollection from './models/scheduler-restful-model-collection';
+import MessageRestfulModelCollection from './models/message-restful-model-collection';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -55,8 +55,7 @@ export default class NylasConnection {
   contacts: ContactRestfulModelCollection = new ContactRestfulModelCollection(
     this
   );
-  messages: RestfulModelCollection<Message> = new RestfulModelCollection(
-    Message,
+  messages: MessageRestfulModelCollection = new MessageRestfulModelCollection(
     this
   );
   drafts: RestfulModelCollection<Draft> = new RestfulModelCollection(
