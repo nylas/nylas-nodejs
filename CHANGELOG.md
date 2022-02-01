@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Improved `Delta` support: added `Delta` model and two new methods; `since` and `longpoll`.
+
 ### 6.1.0 / 2022-01-28
 * Add support for `Event` to ICS
 * Add `comment` and `phoneNumber` fields to `EventParticipant`
