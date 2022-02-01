@@ -442,7 +442,7 @@ describe('Delta', () => {
 
       testContext.connection.request = jest.fn(() => Promise.resolve(json));
 
-      return testContext.delta.since('end_cursor').then(cursor => {
+      return testContext.delta.since('end_cursor').then(() => {
         expect(testContext.connection.request).toHaveBeenCalledWith({
           method: 'GET',
           path: '/delta',
