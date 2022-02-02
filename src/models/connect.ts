@@ -165,7 +165,7 @@ export default class Connect {
     if (!auth.clientId) {
       auth.clientId = this.clientId;
     }
-    if (auth.hasOwnProperty('provider')) {
+    if (auth.hasOwnProperty('provider') && (auth as any).provider != 'nylas') {
       authClass = new NativeAuthentication(
         auth as NativeAuthenticationProperties
       );
