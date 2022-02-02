@@ -166,7 +166,7 @@ export default class Connect {
     if (!auth.clientId) {
       auth.clientId = this.clientId;
     }
-    if (auth.hasOwnProperty('scopes')) {
+    if (auth.hasOwnProperty('provider')) {
       authClass = new NativeAuthentication(
         auth as NativeAuthenticationProperties
       );
