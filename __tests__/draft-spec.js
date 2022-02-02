@@ -3,6 +3,7 @@ import Draft from '../src/models/draft';
 import Message from '../src/models/message';
 import Nylas from '../src/nylas';
 import fetch from 'node-fetch';
+import File from '../src/models/file';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -160,6 +161,183 @@ describe('Draft', () => {
             done();
           })
           .catch(() => {});
+      });
+    });
+
+    describe('files', () => {
+      test('setting fileIdsToAttach should set file_ids on a save', done => {
+        testContext.draft.id = undefined;
+        testContext.draft.fileIdsToAttach = [
+          'file_id1',
+          'file_id2',
+          'file_id3',
+        ];
+        return testContext.draft.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/drafts'
+          );
+          expect(options.method).toEqual('POST');
+          expect(JSON.parse(options.body)).toEqual({
+            to: [],
+            cc: [],
+            bcc: [],
+            from: [],
+            date: null,
+            body: undefined,
+            events: [],
+            unread: undefined,
+            snippet: undefined,
+            thread_id: undefined,
+            subject: undefined,
+            version: undefined,
+            folder: undefined,
+            starred: undefined,
+            labels: [],
+            file_ids: ['file_id1', 'file_id2', 'file_id3'],
+            headers: undefined,
+            reply_to: [],
+            reply_to_message_id: undefined,
+          });
+          done();
+        });
+      });
+
+      test('setting only files set should parse and send file_ids on a save', done => {
+        testContext.draft.id = undefined;
+        testContext.draft.files = [
+          new File(testContext.connection).fromJSON({ id: 'file_id4' }),
+          new File(testContext.connection).fromJSON({ id: 'file_id5' }),
+          new File(testContext.connection).fromJSON({ id: 'file_id6' }),
+        ];
+        return testContext.draft.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/drafts'
+          );
+          expect(options.method).toEqual('POST');
+          expect(JSON.parse(options.body)).toEqual({
+            to: [],
+            cc: [],
+            bcc: [],
+            from: [],
+            date: null,
+            body: undefined,
+            events: [],
+            unread: undefined,
+            snippet: undefined,
+            thread_id: undefined,
+            subject: undefined,
+            version: undefined,
+            folder: undefined,
+            starred: undefined,
+            labels: [],
+            file_ids: ['file_id4', 'file_id5', 'file_id6'],
+            headers: undefined,
+            reply_to: [],
+            reply_to_message_id: undefined,
+          });
+          done();
+        });
+      });
+
+      test('setting fileIdsToAttach with files already set should merge onto file_ids on a save', done => {
+        testContext.draft.id = undefined;
+        testContext.draft.fileIdsToAttach = [
+          'file_id1',
+          'file_id2',
+          'file_id3',
+        ];
+        testContext.draft.files = [
+          new File(testContext.connection).fromJSON({ id: 'file_id4' }),
+          new File(testContext.connection).fromJSON({ id: 'file_id5' }),
+          new File(testContext.connection).fromJSON({ id: 'file_id6' }),
+        ];
+        return testContext.draft.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/drafts'
+          );
+          expect(options.method).toEqual('POST');
+          expect(JSON.parse(options.body)).toEqual({
+            to: [],
+            cc: [],
+            bcc: [],
+            from: [],
+            date: null,
+            body: undefined,
+            events: [],
+            unread: undefined,
+            snippet: undefined,
+            thread_id: undefined,
+            subject: undefined,
+            version: undefined,
+            folder: undefined,
+            starred: undefined,
+            labels: [],
+            file_ids: [
+              'file_id4',
+              'file_id5',
+              'file_id6',
+              'file_id1',
+              'file_id2',
+              'file_id3',
+            ],
+            headers: undefined,
+            reply_to: [],
+            reply_to_message_id: undefined,
+          });
+          done();
+        });
+      });
+
+      test('setting fileIdsToAttach with duplicate ids in files set should only save unique file_ids on a save', done => {
+        testContext.draft.id = undefined;
+        testContext.draft.fileIdsToAttach = [
+          'file_id1',
+          'file_id2',
+          'file_id3',
+        ];
+        testContext.draft.files = [
+          new File(testContext.connection).fromJSON({ id: 'file_id3' }),
+          new File(testContext.connection).fromJSON({ id: 'file_id4' }),
+          new File(testContext.connection).fromJSON({ id: 'file_id5' }),
+        ];
+        return testContext.draft.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/drafts'
+          );
+          expect(options.method).toEqual('POST');
+          expect(JSON.parse(options.body)).toEqual({
+            to: [],
+            cc: [],
+            bcc: [],
+            from: [],
+            date: null,
+            body: undefined,
+            events: [],
+            unread: undefined,
+            snippet: undefined,
+            thread_id: undefined,
+            subject: undefined,
+            version: undefined,
+            folder: undefined,
+            starred: undefined,
+            labels: [],
+            file_ids: [
+              'file_id3',
+              'file_id4',
+              'file_id5',
+              'file_id1',
+              'file_id2',
+            ],
+            headers: undefined,
+            reply_to: [],
+            reply_to_message_id: undefined,
+          });
+          done();
+        });
       });
     });
   });
