@@ -29,7 +29,7 @@ export class VirtualCalendar extends Model
   provider = 'nylas';
   name = '';
   emailAddress = '';
-  scopes: Scope[] = [Scope.Calendar];
+  scopes: Scope[];
   settings = {};
   clientId?: string;
   static attributes: Record<string, Attribute> = {
@@ -59,6 +59,7 @@ export class VirtualCalendar extends Model
   constructor(props?: VirtualCalendarProperties) {
     super();
     this.initAttributes(props);
+    this.scopes = [Scope.Calendar];
   }
 }
 
