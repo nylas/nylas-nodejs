@@ -312,8 +312,8 @@ class AttributeEnumList extends Attribute {
   fromJSON(val: any[], _parent: any): any[] {
     const enumList: any[] = [];
     for (const v of val) {
-      if (Object.values(this.itemClass).includes(val[v])) {
-        enumList.push(val[v]);
+      if (Object.values(this.itemClass).includes(v)) {
+        enumList.push(v);
       }
     }
     return enumList;
