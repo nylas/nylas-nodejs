@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Add new field in `Draft` for adding files by file IDs
 * Improved `Delta` support: added `Delta` model and two new methods; `since` and `longpoll`.
 
 ### 6.1.0 / 2022-01-28
