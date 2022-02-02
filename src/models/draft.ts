@@ -18,6 +18,7 @@ export default class Draft extends Message implements DraftProperties {
   rawMime?: string;
   replyToMessageId?: string;
   version?: number;
+  fileIdsToAttach?: string[];
   static collectionName = 'drafts';
   static attributes: Record<string, Attribute> = {
     ...Message.attributes,
@@ -39,12 +40,22 @@ export default class Draft extends Message implements DraftProperties {
     this.initAttributes(props);
   }
 
+  fileIds(): (string | undefined)[] {
+    let fileIds: (string | undefined)[] = super.fileIds();
+    if (this.fileIdsToAttach) {
+      fileIds = fileIds
+        .concat(this.fileIdsToAttach)
+        .filter((item, idx, mergedArray) => mergedArray.indexOf(item) === idx);
+    }
+    return fileIds;
+  }
+
   toJSON(enforceReadOnly?: boolean): Record<string, any> {
     if (this.rawMime) {
       throw Error('toJSON() cannot be called for raw MIME drafts');
     }
     const json = super.toJSON(enforceReadOnly);
-    json.file_ids = super.fileIds();
+    json.file_ids = this.fileIds();
 
     return json;
   }
