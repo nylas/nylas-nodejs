@@ -303,7 +303,7 @@ class AttributeEnumList extends Attribute {
 
   toJSON(val: any[]): string[] {
     const enumList: string[] = [];
-    for (const v in val) {
+    for (const v of val) {
       enumList.push(v.toString());
     }
     return enumList;
@@ -311,7 +311,7 @@ class AttributeEnumList extends Attribute {
 
   fromJSON(val: any[], _parent: any): any[] {
     const enumList: any[] = [];
-    for (const v in val) {
+    for (const v of val) {
       if (Object.values(this.itemClass).includes(val[v])) {
         enumList.push(val[v]);
       }
