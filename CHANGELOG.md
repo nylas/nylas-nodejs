@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Add new field in `Draft` for adding files by file IDs
+* Add Webhook Notification models
 * Improved `Delta` support: added `Delta` model and two new methods; `since` and `longpoll`.
 * Fix Virtual Calendar logic and serialization
 
