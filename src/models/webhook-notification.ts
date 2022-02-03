@@ -7,7 +7,7 @@ export type LinkClickProperties = {
   userAgent: string;
   timestamp: Date;
   linkIndex?: number;
-}
+};
 
 export class LinkClick extends Model implements LinkClickProperties {
   id = 0;
@@ -44,7 +44,7 @@ export class LinkClick extends Model implements LinkClickProperties {
 export type LinkClickCountProperties = {
   url: string;
   count: number;
-}
+};
 
 export class LinkClickCount extends Model implements LinkClickCountProperties {
   url = '';
@@ -75,7 +75,7 @@ export type MessageTrackingDataProperties = {
   fromSelf?: boolean;
   recents?: LinkClickProperties[];
   linkData?: LinkClickCountProperties[];
-}
+};
 
 export class MessageTrackingData extends Model
   implements MessageTrackingDataProperties {
@@ -111,14 +111,14 @@ export class MessageTrackingData extends Model
     }),
     replyToMessageId: Attributes.String({
       modelKey: 'replyToMessageId',
-      jsonKey: 'reply_to_message_id'
+      jsonKey: 'reply_to_message_id',
     }),
     timestamp: Attributes.DateTime({
       modelKey: 'timestamp',
     }),
     threadId: Attributes.String({
       modelKey: 'threadId',
-      jsonKey: 'thread_id'
+      jsonKey: 'thread_id',
     }),
     fromSelf: Attributes.Boolean({
       modelKey: 'fromSelf',
@@ -149,7 +149,7 @@ export type WebhookObjectAttributesProperties = {
   jobStatusId?: string;
   threadId?: string;
   receivedDate?: Date;
-}
+};
 
 export class WebhookObjectAttributes extends Model
   implements WebhookObjectAttributesProperties {
@@ -191,7 +191,7 @@ export type WebhookObjectDataProperties = {
   object: string;
   metadata?: MessageTrackingDataProperties;
   objectAttributes?: WebhookObjectAttributesProperties;
-}
+};
 
 export class WebhookObjectData extends Model
   implements WebhookObjectDataProperties {
@@ -242,10 +242,9 @@ export type WebhookDeltaProperties = {
   type: string;
   date: Date;
   objectData: WebhookObjectDataProperties;
-}
+};
 
-export class WebhookDelta extends Model
-  implements WebhookDeltaProperties {
+export class WebhookDelta extends Model implements WebhookDeltaProperties {
   date = new Date();
   object = '';
   type = '';
@@ -265,7 +264,7 @@ export class WebhookDelta extends Model
       jsonKey: 'object_data',
       itemClass: WebhookObjectData,
     }),
-  }
+  };
 
   constructor(props?: WebhookDeltaProperties) {
     super();
@@ -275,7 +274,7 @@ export class WebhookDelta extends Model
 
 export type WebhookNotificationProperties = {
   deltas: WebhookDeltaProperties[];
-}
+};
 
 export default class WebhookNotification extends Model
   implements WebhookNotificationProperties {
