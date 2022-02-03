@@ -70,7 +70,7 @@ export type MessageTrackingDataProperties = {
   senderAppId: number;
   threadId?: string;
   replyToMessageId?: string;
-  timestamp?: number;
+  timestamp?: Date;
   count?: number;
   fromSelf?: boolean;
   recents?: LinkClickProperties[];
@@ -85,7 +85,7 @@ export class MessageTrackingData extends Model
 
   // thread.replied specific fields
   replyToMessageId?: string;
-  timestamp?: number;
+  timestamp?: Date;
   threadId?: string;
   fromSelf?: boolean;
 
@@ -113,7 +113,7 @@ export class MessageTrackingData extends Model
       modelKey: 'replyToMessageId',
       jsonKey: 'reply_to_message_id'
     }),
-    timestamp: Attributes.Number({
+    timestamp: Attributes.DateTime({
       modelKey: 'timestamp',
     }),
     threadId: Attributes.String({

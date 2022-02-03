@@ -92,7 +92,7 @@ describe('Webhook Notification', () => {
     expect(webhookMessageTrackingData instanceof MessageTrackingData);
     expect(webhookMessageTrackingData.messageId).toEqual("4utnziee7bu2ohak56wfxe39p");
     expect(webhookMessageTrackingData.payload).toEqual("Tracking enabled");
-    expect(webhookMessageTrackingData.timestamp).toEqual(1602623966);
+    expect(webhookMessageTrackingData.timestamp).toEqual(new Date(1602623966 * 1000));
     expect(webhookMessageTrackingData.senderAppId).toBe(64280);
     expect(webhookMessageTrackingData.linkData.length).toBe(1);
     expect(webhookMessageTrackingData.recents.length).toBe(1);
