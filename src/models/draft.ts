@@ -43,9 +43,7 @@ export default class Draft extends Message implements DraftProperties {
   fileIds(): (string | undefined)[] {
     let fileIds: (string | undefined)[] = super.fileIds();
     if (this.fileIdsToAttach) {
-      fileIds = fileIds
-        .concat(this.fileIdsToAttach)
-        .filter((item, idx, mergedArray) => mergedArray.indexOf(item) === idx);
+      fileIds = Array.from(new Set(fileIds.concat(this.fileIdsToAttach)));
     }
     return fileIds;
   }
