@@ -73,13 +73,13 @@ describe('Webhook Notification', () => {
     expect(webhookNotification.deltas.length).toBe(1);
 
     const webhookDelta = webhookNotification.deltas[0];
-    expect(webhookDelta instanceof WebhookDelta);
+    expect(webhookDelta instanceof WebhookDelta).toBe(true);
     expect(webhookDelta.date).toEqual(new Date(1602623196 * 1000));
     expect(webhookDelta.object).toEqual('message');
     expect(webhookDelta.type).toEqual(WebhookTriggers.MessageCreated);
 
     const webhookDeltaObjectData = webhookDelta.objectData;
-    expect(webhookDeltaObjectData instanceof WebhookObjectData);
+    expect(webhookDeltaObjectData instanceof WebhookObjectData).toBe(true);
     expect(webhookDeltaObjectData.id).toEqual('93mgpjynqqu5fohl2dvv6ray7');
     expect(webhookDeltaObjectData.accountId).toEqual(
       'aaz875kwuvxik6ku7pwkqp3ah'
@@ -91,7 +91,9 @@ describe('Webhook Notification', () => {
 
     const webhookDeltaObjectAttributes =
       webhookDeltaObjectData.objectAttributes;
-    expect(webhookDeltaObjectAttributes instanceof WebhookObjectAttributes);
+    expect(
+      webhookDeltaObjectAttributes instanceof WebhookObjectAttributes
+    ).toBe(true);
     expect(webhookDeltaObjectAttributes.action).toEqual('save_draft');
     expect(webhookDeltaObjectAttributes.jobStatusId).toEqual('abc1234');
     expect(webhookDeltaObjectAttributes.threadId).toEqual(
@@ -102,7 +104,9 @@ describe('Webhook Notification', () => {
     );
 
     const webhookMessageTrackingData = webhookDeltaObjectData.metadata;
-    expect(webhookMessageTrackingData instanceof MessageTrackingData);
+    expect(webhookMessageTrackingData instanceof MessageTrackingData).toBe(
+      true
+    );
     expect(webhookMessageTrackingData.messageId).toEqual(
       '4utnziee7bu2ohak56wfxe39p'
     );
@@ -115,12 +119,12 @@ describe('Webhook Notification', () => {
     expect(webhookMessageTrackingData.recents.length).toBe(1);
 
     const linkData = webhookMessageTrackingData.linkData[0];
-    expect(linkData instanceof LinkClickCount);
+    expect(linkData instanceof LinkClickCount).toBe(true);
     expect(linkData.url).toEqual('https://nylas.com/');
     expect(linkData.count).toBe(1);
 
     const recents = webhookMessageTrackingData.recents[0];
-    expect(recents instanceof LinkClick);
+    expect(recents instanceof LinkClick).toBe(true);
     expect(recents.id).toBe(0);
     expect(recents.ip).toEqual('24.243.155.85');
     expect(recents.userAgent).toEqual(
