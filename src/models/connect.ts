@@ -21,9 +21,7 @@ export enum Scope {
 export type VirtualCalendarProperties = {
   name: string;
   emailAddress: string;
-  scopes: Scope[];
   clientId?: string;
-  settings?: Record<string, any>;
 };
 
 export class VirtualCalendar extends Model
@@ -31,7 +29,7 @@ export class VirtualCalendar extends Model
   provider = 'nylas';
   name = '';
   emailAddress = '';
-  scopes: Scope[] = [];
+  scopes: Scope[];
   settings = {};
   clientId?: string;
   static attributes: Record<string, Attribute> = {
@@ -61,6 +59,7 @@ export class VirtualCalendar extends Model
   constructor(props?: VirtualCalendarProperties) {
     super();
     this.initAttributes(props);
+    this.scopes = [Scope.Calendar];
   }
 }
 
@@ -77,6 +76,7 @@ export enum NativeAuthenticationProvider {
 }
 
 export type NativeAuthenticationProperties = VirtualCalendarProperties & {
+  scopes: Scope[];
   settings: Record<string, any>;
   provider: NativeAuthenticationProvider;
 };
@@ -166,7 +166,7 @@ export default class Connect {
     if (!auth.clientId) {
       auth.clientId = this.clientId;
     }
-    if (auth.hasOwnProperty('scopes')) {
+    if (auth.hasOwnProperty('provider') && (auth as any).provider != 'nylas') {
       authClass = new NativeAuthentication(
         auth as NativeAuthenticationProperties
       );
