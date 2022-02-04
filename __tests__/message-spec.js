@@ -3,7 +3,7 @@ import NylasConnection from '../src/nylas-connection';
 import File from '../src/models/file';
 import Message from '../src/models/message';
 import { Label } from '../src/models/folder';
-import RestfulModelCollection from '../src/models/restful-model-collection';
+import MessageRestfulModelCollection from '../src/models/message-restful-model-collection';
 import fetch from 'node-fetch';
 import EmailParticipant from '../src/models/email-participant';
 
@@ -146,17 +146,32 @@ describe('Message', () => {
     });
   });
 
-  describe('first', () => {
+  describe('MessageRestfulModelCollection', () => {
     beforeEach(() => {
-      testContext.collection = new RestfulModelCollection(
-        Message,
+      const secondMessage = new Message(testContext.connection);
+      secondMessage.id = '5333';
+      secondMessage.subject = 'subject2';
+      secondMessage.body = 'body';
+      secondMessage.unread = false;
+      secondMessage.to = [new EmailParticipant({ email: 'foo', name: 'bar' })];
+
+      testContext.connection.request = jest.fn(() =>
+        Promise.resolve([
+          testContext.message.toJSON(false),
+          secondMessage.toJSON(false),
+        ])
+      );
+      jest.spyOn(testContext.connection, 'request');
+
+      testContext.collection = new MessageRestfulModelCollection(
         testContext.connection
       );
       testContext.collection.getModelCollection = jest.fn(() => {
         return Promise.resolve([testContext.message]);
       });
     });
-    test('should resolve with the first item', done => {
+
+    test('first should resolve with the first item', done => {
       const fileObj = {
         account_id: 'foo',
         content_disposition: 'inline',
@@ -179,6 +194,30 @@ describe('Message', () => {
         expect(file.contentDisposition).toEqual(fileObj.content_disposition);
         done();
       });
+    });
+
+    test('should return multiple messages', done => {
+      return testContext.connection.messages
+        .findMultiple(['4333', '5333'])
+        .then(messages => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.path.toString()).toEqual(`/messages/4333,5333`);
+          expect(options.method).toEqual('GET');
+          expect(options.qs).toEqual({
+            offset: 0,
+            limit: 100,
+          });
+          expect(messages.length).toBe(2);
+          expect(messages[0] instanceof Message).toBe(true);
+          expect(messages[1] instanceof Message).toBe(true);
+          expect(messages[0].id).toBe('4333');
+          expect(messages[0].subject).toBe('foo');
+          expect(messages[0].body).toBe('bar');
+          expect(messages[1].id).toBe('5333');
+          expect(messages[1].subject).toBe('subject2');
+          expect(messages[1].body).toBe('body');
+          done();
+        });
     });
   });
 });

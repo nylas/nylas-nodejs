@@ -1,9 +1,10 @@
 # Changelog
 
 ### Unreleased
+* Add support for returning multiple messages by a list of message IDs
 * Add new field in `Draft` for adding files by file IDs
 * Add Webhook Notification models
-* Improved `Delta` support: added `Delta` model and two new methods; `since` and `longpoll`.
+* Improved `Delta` support: added `Delta` model and two new methods; `since` and `longpoll`
 * Fix Virtual Calendar logic and serialization
 
 ### 6.1.0 / 2022-01-28
