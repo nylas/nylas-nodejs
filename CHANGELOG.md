@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix circular dependency issue in `Attribute`
+
 ### 6.2.0 / 2022-02-04
 * Add support for returning multiple messages by a list of message IDs
 * Add new field in `Draft` for adding files by file IDs
