@@ -4,7 +4,7 @@ import Model from './model';
 // the JSON representation of that type and the javascript representation.
 // The Attribute class also exposes convenience methods for generating Matchers.
 
-type AnyModel = (new (...args: any[]) => Model);
+type AnyModel = new (...args: any[]) => Model;
 
 export abstract class Attribute {
   modelKey: string;
@@ -72,7 +72,7 @@ class AttributeObject extends Attribute {
       return val;
     }
 
-    if (this.itemClass.constructor.name == "RestfulModel") {
+    if (this.itemClass.constructor.name == 'RestfulModel') {
       return new this.itemClass(_parent.connection).fromJSON(val);
     }
     return new this.itemClass(val).fromJSON(val);
@@ -225,17 +225,14 @@ class AttributeCollection extends Attribute {
     return json;
   }
 
-  fromJSON(
-    json: unknown[],
-    _parent: any
-  ): AnyModel[] {
+  fromJSON(json: unknown[], _parent: any): AnyModel[] {
     if (!json || !(json instanceof Array)) {
       return [];
     }
     const objs = [];
     for (const objJSON of json) {
       let obj;
-      if (this.itemClass.constructor.name == "RestfulModel") {
+      if (this.itemClass.constructor.name == 'RestfulModel') {
         obj = new this.itemClass(_parent.connection).fromJSON(objJSON);
       } else {
         obj = new this.itemClass(objJSON).fromJSON(objJSON);
