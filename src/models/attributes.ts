@@ -1,10 +1,10 @@
 import Model from './model';
-import RestfulModel from './restful-model';
-
 // The Attribute class represents a single model attribute, like 'namespace_id'
 // Subclasses of Attribute like AttributeDateTime know how to covert between
 // the JSON representation of that type and the javascript representation.
 // The Attribute class also exposes convenience methods for generating Matchers.
+
+type AnyModel = (new (...args: any[]) => Model);
 
 export abstract class Attribute {
   modelKey: string;
@@ -48,7 +48,7 @@ class AttributeObject extends Attribute {
   }: {
     modelKey: string;
     jsonKey?: string;
-    itemClass?: typeof Model | typeof RestfulModel;
+    itemClass?: AnyModel;
     readOnly?: boolean;
   }) {
     super({ modelKey, jsonKey, readOnly });
@@ -72,7 +72,7 @@ class AttributeObject extends Attribute {
       return val;
     }
 
-    if (this.itemClass.prototype instanceof RestfulModel) {
+    if (this.itemClass.constructor.name == "RestfulModel") {
       return new this.itemClass(_parent.connection).fromJSON(val);
     }
     return new this.itemClass(val).fromJSON(val);
@@ -201,14 +201,14 @@ class AttributeCollection extends Attribute {
   }: {
     modelKey: string;
     jsonKey?: string;
-    itemClass: typeof Model | typeof RestfulModel;
+    itemClass: AnyModel;
     readOnly?: boolean;
   }) {
     super({ modelKey, jsonKey, readOnly });
     this.itemClass = itemClass;
   }
 
-  toJSON(vals: any, saveRequestBody?: boolean): unknown[] {
+  toJSON(vals: any, saveRequestBody?: boolean): AnyModel[] {
     if (!vals) {
       return [];
     }
@@ -228,14 +228,14 @@ class AttributeCollection extends Attribute {
   fromJSON(
     json: unknown[],
     _parent: any
-  ): typeof Model[] | typeof RestfulModel[] | unknown[] {
+  ): AnyModel[] {
     if (!json || !(json instanceof Array)) {
       return [];
     }
     const objs = [];
     for (const objJSON of json) {
       let obj;
-      if (this.itemClass.prototype instanceof RestfulModel) {
+      if (this.itemClass.constructor.name == "RestfulModel") {
         obj = new this.itemClass(_parent.connection).fromJSON(objJSON);
       } else {
         obj = new this.itemClass(objJSON).fromJSON(objJSON);
@@ -245,7 +245,7 @@ class AttributeCollection extends Attribute {
     return objs;
   }
 
-  saveRequestBody(val: any): unknown {
+  saveRequestBody(val: any): AnyModel[] | undefined {
     if (this.readOnly) {
       return;
     }
