@@ -5,6 +5,10 @@ import Model from './model';
 // The Attribute class also exposes convenience methods for generating Matchers.
 
 type AnyModel = new (...args: any[]) => Model;
+const isRestfulModel = (cls: any): boolean => {
+  // A 'RestfulModel' has 'endpointName' and 'collectionName' unlike 'Model'
+  return cls.endpointName !== undefined && cls.collectionName !== undefined;
+};
 
 export abstract class Attribute {
   modelKey: string;
@@ -72,8 +76,8 @@ class AttributeObject extends Attribute {
       return val;
     }
 
-    if (this.itemClass.constructor.name == 'RestfulModel') {
-      return new this.itemClass(_parent.connection).fromJSON(val);
+    if (isRestfulModel(this.itemClass)) {
+      return new this.itemClass(_parent.connection, val).fromJSON(val);
     }
     return new this.itemClass(val).fromJSON(val);
   }
@@ -232,8 +236,8 @@ class AttributeCollection extends Attribute {
     const objs = [];
     for (const objJSON of json) {
       let obj;
-      if (this.itemClass.constructor.name == 'RestfulModel') {
-        obj = new this.itemClass(_parent.connection).fromJSON(objJSON);
+      if (isRestfulModel(this.itemClass)) {
+        obj = new this.itemClass(_parent.connection, objJSON).fromJSON(objJSON);
       } else {
         obj = new this.itemClass(objJSON).fromJSON(objJSON);
       }
