@@ -5,10 +5,10 @@ import Model from './model';
 // The Attribute class also exposes convenience methods for generating Matchers.
 
 type AnyModel = new (...args: any[]) => Model;
-const isRestfulModel = (cls: any): boolean => {
+function isRestfulModel(cls: any): boolean {
   // A 'RestfulModel' has 'endpointName' and 'collectionName' unlike 'Model'
   return cls.endpointName !== undefined && cls.collectionName !== undefined;
-};
+}
 
 export abstract class Attribute {
   modelKey: string;
