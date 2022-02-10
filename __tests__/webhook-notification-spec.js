@@ -1,5 +1,3 @@
-import NylasConnection from '../src/nylas-connection';
-import Nylas from '../src/nylas';
 import WebhookNotification, {
   LinkClick,
   LinkClickCount,
@@ -11,18 +9,6 @@ import WebhookNotification, {
 import { WebhookTriggers } from '../src/models/webhook';
 
 describe('Webhook Notification', () => {
-  let testContext;
-
-  beforeEach(() => {
-    Nylas.config({
-      clientId: 'myClientId',
-      clientSecret: 'myClientSecret',
-      apiServer: 'https://api.nylas.com',
-    });
-    testContext = {};
-    testContext.connection = new NylasConnection('123', { clientId: 'foo' });
-  });
-
   test('Should deserialize from JSON properly', done => {
     const webhookNotificationJSON = {
       deltas: [
