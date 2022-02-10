@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Fix circular dependency issue in `Attribute`
+* Bump `node-fetch` dependency from 2.6.1 to 2.6.7
 
 ### 6.2.0 / 2022-02-04
 * Add support for returning multiple messages by a list of message IDs
