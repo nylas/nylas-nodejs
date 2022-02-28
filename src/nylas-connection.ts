@@ -26,6 +26,11 @@ const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
 const SUPPORTED_API_VERSION = '2.3';
 
+export enum AuthMethod {
+  BASIC,
+  BEARER,
+}
+
 export type RequestOptions = {
   path: string;
   method?: string;
@@ -37,6 +42,7 @@ export type RequestOptions = {
   body?: any;
   baseUrl?: string;
   url?: URL;
+  authMethod?: AuthMethod;
 };
 
 export type FormDataType = {
@@ -145,10 +151,16 @@ export default class NylasConnection {
       options.path.substr(0, 3) === '/a/' || options.path.includes('/component')
         ? config.clientSecret
         : this.accessToken;
+
     if (user) {
-      headers['authorization'] =
-        'Basic ' + Buffer.from(`${user}:`, 'utf8').toString('base64');
+      if (options.authMethod === AuthMethod.BEARER) {
+        headers['authorization'] = `Bearer ${user}`;
+      } else {
+        headers['authorization'] =
+          'Basic ' + Buffer.from(`${user}:`, 'utf8').toString('base64');
+      }
     }
+
     if (!headers['User-Agent']) {
       headers['User-Agent'] = `Nylas Node SDK v${SDK_VERSION}`;
     }
