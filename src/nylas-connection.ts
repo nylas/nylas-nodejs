@@ -21,6 +21,7 @@ import ComponentRestfulModelCollection from './models/component-restful-model-co
 import SchedulerRestfulModelCollection from './models/scheduler-restful-model-collection';
 import MessageRestfulModelCollection from './models/message-restful-model-collection';
 import DeltaCollection from './models/delta-collection';
+import Outbox from './models/outbox';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -103,7 +104,7 @@ export default class NylasConnection {
   scheduler: SchedulerRestfulModelCollection = new SchedulerRestfulModelCollection(
     this
   );
-
+  outbox: Outbox = new Outbox(this);
   neural: Neural = new Neural(this);
 
   constructor(
