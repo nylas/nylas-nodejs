@@ -277,6 +277,11 @@ export default class NylasConnection {
                   return reject(e);
                 });
             } else if (
+              response.headers.get('content-length') &&
+              Number(response.headers.get('content-length')) == 0
+            ) {
+              return resolve();
+            } else if (
               response.headers.get('Content-Type') === 'message/rfc822'
             ) {
               return resolve(response.text());
