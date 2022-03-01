@@ -5,16 +5,16 @@ import Model from './model';
 import Attributes, { Attribute } from './attributes';
 
 type SendParams = {
-  sendAt: Date;
-  retryLimitDatetime?: Date;
+  sendAt: Date | number;
+  retryLimitDatetime?: Date | number;
   tracking?: Record<string, any>;
   callback?: SendCallback;
 };
 
 type UpdateParams = {
   updatedMessage?: Draft;
-  sendAt?: Date;
-  retryLimitDatetime?: Date;
+  sendAt?: Date | number;
+  retryLimitDatetime?: Date | number;
 };
 
 export class SendGridVerifiedStatus extends Model {
@@ -42,15 +42,16 @@ export default class Outbox {
 
   send(draft: Draft, options: SendParams): Promise<OutboxJobStatus> {
     const body = draft.saveRequestBody();
-    body['send_at'] = Math.floor(options.sendAt.getTime() / 1000.0);
-    if (options.retryLimitDatetime) {
-      body['retry_limit_datetime'] = Math.floor(
-        options.retryLimitDatetime.getTime() / 1000.0
-      );
-    }
     if (options.tracking) {
       body['tracking'] = options.tracking;
     }
+
+    const [sendAt, retryLimitDatetime] = Outbox.validateAndFormatDateTime(
+      options.sendAt,
+      options.retryLimitDatetime
+    );
+    body['send_at'] = sendAt;
+    body['retry_limit_datetime'] = retryLimitDatetime;
 
     return this.request({
       method: 'POST',
@@ -75,18 +76,16 @@ export default class Outbox {
 
   update(jobStatusId: string, options: UpdateParams): Promise<OutboxJobStatus> {
     let body: Record<string, unknown> = {};
-
     if (options.updatedMessage) {
       body = options.updatedMessage.saveRequestBody();
     }
-    if (options.sendAt) {
-      body['send_at'] = Math.floor(options.sendAt.getTime() / 1000.0);
-    }
-    if (options.retryLimitDatetime) {
-      body['retry_limit_datetime'] = Math.floor(
-        options.retryLimitDatetime.getTime() / 1000.0
-      );
-    }
+
+    const [sendAt, retryLimitDatetime] = Outbox.validateAndFormatDateTime(
+      options.sendAt,
+      options.retryLimitDatetime
+    );
+    body['send_at'] = sendAt;
+    body['retry_limit_datetime'] = retryLimitDatetime;
 
     return this.request({
       method: 'PATCH',
@@ -144,5 +143,43 @@ export default class Outbox {
       headers: header,
       authMethod: AuthMethod.BEARER,
     });
+  }
+
+  private static validateAndFormatDateTime(
+    sendAt?: Date | number,
+    retryLimitDatetime?: Date | number
+  ): [number | undefined, number | undefined] {
+    const sendAtEpoch =
+      sendAt instanceof Date ? Outbox.dateToEpoch(sendAt) : sendAt;
+    const retryLimitDatetimeEpoch =
+      retryLimitDatetime instanceof Date
+        ? Outbox.dateToEpoch(retryLimitDatetime)
+        : retryLimitDatetime;
+
+    if (sendAtEpoch && sendAtEpoch !== 0) {
+      if (sendAtEpoch < Outbox.dateToEpoch(new Date())) {
+        throw new Error(
+          'Cannot set message to be sent at a time before the current time.'
+        );
+      }
+    }
+
+    if (retryLimitDatetimeEpoch && retryLimitDatetimeEpoch !== 0) {
+      let validSendAt = sendAtEpoch;
+      if (!validSendAt || validSendAt === 0) {
+        validSendAt = Outbox.dateToEpoch(new Date());
+      }
+      if (retryLimitDatetimeEpoch < validSendAt) {
+        throw new Error(
+          'Cannot set message to stop retrying before time to send at.'
+        );
+      }
+    }
+
+    return [sendAtEpoch, retryLimitDatetimeEpoch];
+  }
+
+  private static dateToEpoch(date: Date): number {
+    return Math.floor(date.getTime() / 1000.0);
   }
 }
