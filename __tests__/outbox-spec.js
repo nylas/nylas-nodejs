@@ -281,4 +281,40 @@ describe('Outbox', () => {
         });
     });
   });
+
+  describe('Date Validation', () => {
+    test('Setting sendAt to older than today throws an error', done => {
+      expect(() =>
+        testContext.connection.outbox.update('string', {
+          sendAt: 636309514, // 1990
+        })
+      ).toThrow();
+      done();
+    });
+
+    test('Setting retryLimitDatetime to older than sendAt', done => {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const dayAfter = new Date(tomorrow);
+      dayAfter.setDate(dayAfter.getDate() + 1);
+
+      expect(() =>
+        testContext.connection.outbox.update('string', {
+          sendAt: dayAfter,
+          retryLimitDatetime: tomorrow,
+        })
+      ).toThrow();
+      done();
+    });
+
+    test('Setting retryLimitDatetime to older than today without sendAt date', done => {
+      expect(() =>
+        testContext.connection.outbox.update('string', {
+          retryLimitDatetime: 636309514, // 1990
+        })
+      ).toThrow();
+      done();
+    });
+  });
 });
