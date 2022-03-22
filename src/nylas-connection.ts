@@ -25,7 +25,7 @@ import Outbox from './models/outbox';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
-const SUPPORTED_API_VERSION = '2.3';
+const SUPPORTED_API_VERSION = '2.5';
 
 export enum AuthMethod {
   BASIC,
