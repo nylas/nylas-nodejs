@@ -67,6 +67,7 @@ export type SchedulerAppearanceProperties = {
   showAutoschedule?: boolean;
   showNylasBranding?: boolean;
   showTimezoneOptions?: boolean;
+  showWeekView?: boolean;
   submitText?: string;
   thankYouRedirect?: string;
   thankYouText?: string;
@@ -82,6 +83,7 @@ export class SchedulerAppearance extends Model
   showAutoschedule?: boolean;
   showNylasBranding?: boolean;
   showTimezoneOptions?: boolean;
+  showWeekView?: boolean;
   submitText?: string;
   thankYouRedirect?: string;
   thankYouText?: string;
@@ -112,6 +114,10 @@ export class SchedulerAppearance extends Model
     showTimezoneOptions: Attributes.Boolean({
       modelKey: 'showTimezoneOptions',
       jsonKey: 'show_timezone_options',
+    }),
+    showWeekView: Attributes.Boolean({
+      modelKey: 'showWeekView',
+      jsonKey: 'show_week_view',
     }),
     submitText: Attributes.String({
       modelKey: 'submitText',
@@ -230,6 +236,7 @@ export class SchedulerBookingOpeningHours extends Model
 
 export type SchedulerBookingProperties = {
   additionalFields?: SchedulerBookingAdditionalFieldsProperties[];
+  additionalGuestsHidden?: boolean;
   availableDaysInFuture?: number;
   calendarInviteToGuests?: boolean;
   cancellationPolicy?: string;
@@ -247,6 +254,7 @@ export type SchedulerBookingProperties = {
 export class SchedulerBooking extends Model
   implements SchedulerBookingProperties {
   additionalFields?: SchedulerBookingAdditionalFields[];
+  additionalGuestsHidden?: boolean;
   availableDaysInFuture?: number;
   calendarInviteToGuests?: boolean;
   cancellationPolicy?: string;
@@ -264,6 +272,10 @@ export class SchedulerBooking extends Model
       modelKey: 'additionalFields',
       jsonKey: 'additional_fields',
       itemClass: SchedulerBookingAdditionalFields,
+    }),
+    additionalGuestsHidden: Attributes.Boolean({
+      modelKey: 'additionalGuestsHidden',
+      jsonKey: 'additional_guests_hidden',
     }),
     availableDaysInFuture: Attributes.Number({
       modelKey: 'availableDaysInFuture',
@@ -409,6 +421,7 @@ export class SchedulerConfig extends Model
     date?: number;
     uses?: number;
   };
+  disableEmails?: boolean;
   locale?: string;
   localeForGuests?: string;
   reminders?: SchedulerRemindersProperties[];
@@ -432,6 +445,10 @@ export class SchedulerConfig extends Model
     expireAfter: Attributes.Object({
       modelKey: 'expireAfter',
       jsonKey: 'expire_after',
+    }),
+    disableEmails: Attributes.Boolean({
+      modelKey: 'disableEmails',
+      jsonKey: 'disable_emails',
     }),
     locale: Attributes.String({
       modelKey: 'locale',
