@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Fix circular dependency issue in `Attribute`
+* Fix `SchedulerBookingOpeningHoursProperties.days` and add missing fields to Scheduler models
 * Bump `node-fetch` dependency from 2.6.1 to 2.6.7
 
 ### 6.2.0 / 2022-02-04
