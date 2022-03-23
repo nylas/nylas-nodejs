@@ -195,7 +195,7 @@ export class SchedulerBookingAdditionalFields extends Model
 
 export type SchedulerBookingOpeningHoursProperties = {
   accountId?: string;
-  days?: string;
+  days?: string[];
   end?: string;
   start?: string;
 };
@@ -203,7 +203,7 @@ export type SchedulerBookingOpeningHoursProperties = {
 export class SchedulerBookingOpeningHours extends Model
   implements SchedulerBookingOpeningHoursProperties {
   accountId?: string;
-  days?: string;
+  days?: string[];
   end?: string;
   start?: string;
   static attributes: Record<string, Attribute> = {
@@ -211,7 +211,7 @@ export class SchedulerBookingOpeningHours extends Model
       modelKey: 'accountId',
       jsonKey: 'account_id',
     }),
-    days: Attributes.String({
+    days: Attributes.StringList({
       modelKey: 'days',
     }),
     end: Attributes.String({
