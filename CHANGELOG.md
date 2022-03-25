@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 6.2.1 / 2022-03-25
 * Fix circular dependency issue in `Attribute`
 * Fix `SchedulerBookingOpeningHoursProperties.days` and add missing fields to Scheduler models
 * Enable Nylas API v2.5 support
