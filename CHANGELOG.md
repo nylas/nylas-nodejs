@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Fix circular dependency issue in `Attribute`
+* Fix `SchedulerBookingOpeningHoursProperties.days` and add missing fields to Scheduler models
 * Enable Nylas API v2.5 support
 * Bump `node-fetch` dependency from 2.6.1 to 2.6.7
 * Bump `ajv` sub-dependency from 6.10.2 to 6.12.6
