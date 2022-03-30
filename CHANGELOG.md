@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add support for getting raw messages directly from the API
+
 ### 6.2.1 / 2022-03-25
 * Fix circular dependency issue in `Attribute`
 * Fix `SchedulerBookingOpeningHoursProperties.days` and add missing fields to Scheduler models
