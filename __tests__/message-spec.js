@@ -155,13 +155,27 @@ describe('Message', () => {
       secondMessage.unread = false;
       secondMessage.to = [new EmailParticipant({ email: 'foo', name: 'bar' })];
 
-      testContext.connection.request = jest.fn(() =>
-        Promise.resolve([
-          testContext.message.toJSON(false),
-          secondMessage.toJSON(false),
-        ])
-      );
-      jest.spyOn(testContext.connection, 'request');
+      const response = request => {
+        return {
+          status: 200,
+          buffer: () => {
+            return Promise.resolve('body');
+          },
+          json: () => {
+            // For the raw/MIME flow
+            if (request.headers.get("Accept") === "message/rfc822") {
+              return Promise.resolve('MIME');
+            }
+            return Promise.resolve([
+              testContext.message.toJSON(false),
+              secondMessage.toJSON(false),
+            ]);
+          },
+          headers: new Map(),
+        };
+      };
+
+      fetch.mockImplementation(req => Promise.resolve(response(req)));
 
       testContext.collection = new MessageRestfulModelCollection(
         testContext.connection
@@ -218,6 +232,19 @@ describe('Message', () => {
           expect(messages[1].body).toBe('body');
           done();
         });
+    });
+
+    test('should support getting raw messages', done => {
+      return testContext.collection.findRaw("abc-123").then(rawMessage => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.path.toString()).toEqual(
+          '/messages/abc-123'
+        );
+        expect(options.method).toEqual('GET');
+        expect(options.headers['Accept']).toEqual("message/rfc822");
+        expect(rawMessage).toBe('MIME');
+        done();
+      });
     });
   });
 });
