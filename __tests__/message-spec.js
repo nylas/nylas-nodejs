@@ -163,7 +163,7 @@ describe('Message', () => {
           },
           json: () => {
             // For the raw/MIME flow
-            if (request.headers.get("Accept") === "message/rfc822") {
+            if (request.headers.get('Accept') === 'message/rfc822') {
               return Promise.resolve('MIME');
             }
             return Promise.resolve([
@@ -235,13 +235,11 @@ describe('Message', () => {
     });
 
     test('should support getting raw messages', done => {
-      return testContext.collection.findRaw("abc-123").then(rawMessage => {
+      return testContext.collection.findRaw('abc-123').then(rawMessage => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.path.toString()).toEqual(
-          '/messages/abc-123'
-        );
+        expect(options.path.toString()).toEqual('/messages/abc-123');
         expect(options.method).toEqual('GET');
-        expect(options.headers['Accept']).toEqual("message/rfc822");
+        expect(options.headers['Accept']).toEqual('message/rfc822');
         expect(rawMessage).toBe('MIME');
         done();
       });

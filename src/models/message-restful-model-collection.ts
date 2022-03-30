@@ -57,8 +57,6 @@ export default class MessageRestfulModelCollection extends RestfulModelCollectio
         },
         path: `${this.path()}/${messageId}`,
       })
-      .catch(err => {
-        Promise.reject(err)
-      });
+      .catch(err => Promise.reject(err));
   }
 }
