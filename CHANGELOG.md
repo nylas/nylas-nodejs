@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add new `ManagementAccount.authenticationType` field
+
 ### 6.2.1 / 2022-03-25
 * Fix circular dependency issue in `Attribute`
 * Fix `SchedulerBookingOpeningHoursProperties.days` and add missing fields to Scheduler models
