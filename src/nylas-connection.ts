@@ -260,6 +260,13 @@ export default class NylasConnection {
                 error.serverError = body.server_error;
               }
               return reject(error);
+            }).catch(() => {
+              const error = new NylasApiError(
+                response.status,
+                "API Error",
+                "Error encountered during request, non-JSON formatted error received."
+              );
+              return reject(error);
             });
           } else {
             if (options.downloadRequest) {
