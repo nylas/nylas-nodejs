@@ -247,27 +247,30 @@ export default class NylasConnection {
           }
 
           if (response.status > 299) {
-            return response.json().then(body => {
-              const error = new NylasApiError(
-                response.status,
-                body.type,
-                body.message
-              );
-              if (body.missing_fields) {
-                error.missingFields = body.missing_fields;
-              }
-              if (body.server_error) {
-                error.serverError = body.server_error;
-              }
-              return reject(error);
-            }).catch(() => {
-              const error = new NylasApiError(
-                response.status,
-                "API Error",
-                "Error encountered during request, non-JSON formatted error received."
-              );
-              return reject(error);
-            });
+            return response
+              .json()
+              .then(body => {
+                const error = new NylasApiError(
+                  response.status,
+                  body.type,
+                  body.message
+                );
+                if (body.missing_fields) {
+                  error.missingFields = body.missing_fields;
+                }
+                if (body.server_error) {
+                  error.serverError = body.server_error;
+                }
+                return reject(error);
+              })
+              .catch(() => {
+                const error = new NylasApiError(
+                  response.status,
+                  'API Error',
+                  'Error encountered during request, non-JSON formatted error received.'
+                );
+                return reject(error);
+              });
           } else {
             if (options.downloadRequest) {
               response
