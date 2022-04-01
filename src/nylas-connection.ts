@@ -264,12 +264,24 @@ export default class NylasConnection {
                 return reject(error);
               })
               .catch(() => {
-                const error = new NylasApiError(
-                  response.status,
-                  'API Error',
-                  'Error encountered during request, non-JSON formatted error received.'
-                );
-                return reject(error);
+                return response
+                  .text()
+                  .then(text => {
+                    const error = new NylasApiError(
+                      response.status,
+                      response.statusText,
+                      text
+                    );
+                    return reject(error);
+                  })
+                  .catch(() => {
+                    const error = new NylasApiError(
+                      response.status,
+                      response.statusText,
+                      'Error encountered during request, unable to extract error message.'
+                    );
+                    return reject(error);
+                  });
               });
           } else {
             if (options.downloadRequest) {
