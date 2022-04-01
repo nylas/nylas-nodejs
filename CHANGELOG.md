@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Add new `ManagementAccount.authenticationType` field
 * Fix error when Nylas API returns non-JSON error
 
 ### 6.2.1 / 2022-03-25

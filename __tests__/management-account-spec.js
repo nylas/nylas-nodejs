@@ -23,6 +23,7 @@ describe('ManagementAccount', () => {
             id: ACCOUNT_ID,
             provider: 'gmail',
             sync_state: 'running',
+            authentication_type: 'password',
             trial: false,
             metadata: {
               test: 'true',
@@ -36,6 +37,9 @@ describe('ManagementAccount', () => {
         expect(accounts[0].billingState).toEqual('paid');
         expect(accounts[0].emailAddress).toEqual('margaret@hamilton.com');
         expect(accounts[0].provider).toEqual('gmail');
+        expect(accounts[0].syncState).toEqual('running');
+        expect(accounts[0].authenticationType).toEqual('password');
+        expect(accounts[0].trial).toBe(false);
         expect(accounts[0].metadata).toEqual({
           test: 'true',
         });
@@ -344,6 +348,7 @@ describe('ManagementAccount', () => {
         id: ACCOUNT_ID,
         provider: 'gmail',
         sync_state: 'running',
+        authentication_type: 'password',
         trial: false,
       };
       const account = new ManagementAccount(

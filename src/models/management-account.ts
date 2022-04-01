@@ -72,6 +72,7 @@ export type ManagementAccountProperties = {
   namespaceId: string;
   provider: string;
   syncState: string;
+  authenticationType: string;
   trial: boolean;
   metadata?: object;
 };
@@ -87,6 +88,7 @@ export default class ManagementAccount extends ManagementModel
   namespaceId = '';
   provider = '';
   syncState = '';
+  authenticationType = '';
   trial = false;
   metadata?: object;
   static collectionName = 'accounts';
@@ -110,6 +112,10 @@ export default class ManagementAccount extends ManagementModel
     syncState: Attributes.String({
       modelKey: 'syncState',
       jsonKey: 'sync_state',
+    }),
+    authenticationType: Attributes.String({
+      modelKey: 'authenticationType',
+      jsonKey: 'authentication_type',
     }),
     trial: Attributes.Boolean({
       modelKey: 'trial',
