@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Add support for getting raw messages directly from the API
 * Add new `ManagementAccount.authenticationType` field
 * Fix error when Nylas API returns non-JSON error
 

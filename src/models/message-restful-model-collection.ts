@@ -42,4 +42,21 @@ export default class MessageRestfulModelCollection extends RestfulModelCollectio
       ...options,
     });
   }
+
+  /**
+   * Return raw message contents
+   * @param messageId The message to fetch content of
+   * @returns The raw message contents
+   */
+  findRaw(messageId: string): Promise<string> {
+    return this.connection
+      .request({
+        method: 'GET',
+        headers: {
+          Accept: 'message/rfc822',
+        },
+        path: `${this.path()}/${messageId}`,
+      })
+      .catch(err => Promise.reject(err));
+  }
 }
