@@ -1,9 +1,9 @@
 # Changelog
 
 ### 6.2.2 / 2022-04-01
-* Add support for getting raw messages directly from the API
-* Add new `ManagementAccount.authenticationType` field
-* Fix error when Nylas API returns non-JSON error
+* Allow getting raw message by message ID directly instead of needing to fetch the message first
+* Add new `authenticationType` field in `ManagementAccount`
+* Fix JSON error thrown when Nylas API returns non-JSON error payload
 
 ### 6.2.1 / 2022-03-25
 * Fix circular dependency issue in `Attribute`
