@@ -185,6 +185,19 @@ class Nylas {
     }
     return url;
   }
+
+  /**
+   * Revoke a single access token
+   * @param accessToken The access token to revoke
+   */
+  static revoke(accessToken: string): Promise<void> {
+    return Nylas.with(accessToken)
+      .request({
+        method: 'POST',
+        path: '/oauth/revoke'
+      })
+      .catch(err => Promise.reject(err));
+  }
 }
 
 export = Nylas;
