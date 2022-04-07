@@ -194,7 +194,7 @@ class Nylas {
     return Nylas.with(accessToken)
       .request({
         method: 'POST',
-        path: '/oauth/revoke'
+        path: '/oauth/revoke',
       })
       .catch(err => Promise.reject(err));
   }
