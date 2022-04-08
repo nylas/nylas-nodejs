@@ -183,6 +183,9 @@ class Nylas {
     if (options.provider != null) {
       url += `&provider=${options.provider}`;
     }
+    if(options.redirectOnError){
+      url += "&redirect_on_error=true"
+    }
     return url;
   }
 

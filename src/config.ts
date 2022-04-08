@@ -16,6 +16,7 @@ export type NylasConfig = {
 
 export type AuthenticateUrlConfig = {
   redirectURI: string;
+  redirectOnError?: boolean;
   loginHint?: string;
   state?: string;
   provider?: string;
