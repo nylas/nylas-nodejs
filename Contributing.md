@@ -10,7 +10,7 @@ If you have a question about how to use the Node SDK, please [create an issue](h
 # How To Contribute
 ## Report a Bug or Request a Feature
 
-If you encounter any bugs while using this software, or want to request a new feature or enhancement, please [create an issue](https://github.com/nylas/nylas-python/issues) to report it, and make sure you add a label to indicate what type of issue it is.
+If you encounter any bugs while using this software, or want to request a new feature or enhancement, please [create an issue](https://github.com/nylas/nylas-nodejs/issues) to report it, and make sure you add a label to indicate what type of issue it is.
 
 ## Contribute Code
 
