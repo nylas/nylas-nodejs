@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Add support for revoking a single access token
+* Fix issue where an empty response body could trigger a JSON deserialization error
 
 ### 6.2.2 / 2022-04-01
 * Allow getting raw message by message ID directly instead of needing to fetch the message first
