@@ -224,7 +224,7 @@ describe('Job Status', () => {
       testContext.connection.jobStatuses.list().then(jobStatuses => {
         expect(jobStatuses.length).toBe(2);
         expect(jobStatuses[0]).toBeInstanceOf(JobStatus);
-        expect(jobStatuses[1]).toBeInstanceOf(OutboxJobStatus)
+        expect(jobStatuses[1]).toBeInstanceOf(OutboxJobStatus);
         done();
       });
     });
