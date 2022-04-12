@@ -11,7 +11,6 @@ import Thread from './models/thread';
 import Draft from './models/draft';
 import File from './models/file';
 import Event from './models/event';
-import JobStatus from './models/job-status';
 import Resource from './models/resource';
 import Folder, { Label } from './models/folder';
 import FormData, { AppendOptions } from 'form-data';
