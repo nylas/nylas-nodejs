@@ -300,11 +300,10 @@ export default class NylasConnection {
                   return reject(e);
                 });
             } else if (
-              (response.headers.get('content-length') &&
-                Number(response.headers.get('content-length')) == 0) ||
-              response.size == 0
+              response.headers.get('content-length') &&
+              Number(response.headers.get('content-length')) == 0
             ) {
-              return resolve();
+              return resolve(undefined);
             } else if (
               response.headers.get('Content-Type') === 'message/rfc822'
             ) {
