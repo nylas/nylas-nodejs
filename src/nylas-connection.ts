@@ -309,7 +309,14 @@ export default class NylasConnection {
             ) {
               return resolve(response.text());
             } else {
-              return resolve(response.json());
+              return response
+                .json()
+                .then(json => {
+                  return resolve(json);
+                })
+                .catch(() => {
+                  return resolve(undefined);
+                });
             }
           }
         })
