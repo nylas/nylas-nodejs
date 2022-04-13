@@ -248,6 +248,7 @@ export default class NylasConnection {
 
           if (response.status > 299) {
             return response
+              .clone()
               .json()
               .then(body => {
                 const error = new NylasApiError(
@@ -310,13 +311,11 @@ export default class NylasConnection {
               return resolve(response.text());
             } else {
               return response
+                .clone()
                 .json()
-                .then(json => {
-                  return resolve(json);
-                })
-                .catch(() => {
-                  return resolve(undefined);
-                });
+                .catch(() => response.text())
+                .then(data => resolve(data))
+                .catch(() => resolve(undefined));
             }
           }
         })
