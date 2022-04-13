@@ -30,6 +30,7 @@ describe('Outbox', () => {
     const response = receivedBody => {
       return {
         status: 200,
+        clone: () => response(receivedBody),
         text: () => {
           return Promise.resolve(receivedBody);
         },
@@ -234,6 +235,7 @@ describe('Outbox', () => {
       const response = () => {
         return {
           status: 200,
+          clone: () => response(),
           text: () => {
             return Promise.resolve({});
           },

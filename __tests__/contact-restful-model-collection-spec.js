@@ -40,6 +40,7 @@ describe('RestfulModelCollection', () => {
 
     const response = {
       status: 200,
+      clone: () => response,
       buffer: () => {
         return Promise.resolve('body');
       },

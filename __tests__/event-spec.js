@@ -31,6 +31,7 @@ describe('Event', () => {
     const response = receivedBody => {
       return {
         status: 200,
+        clone: () => response(receivedBody),
         buffer: () => {
           return Promise.resolve('body');
         },
@@ -797,6 +798,7 @@ describe('Event', () => {
       const response = () => {
         return {
           status: 200,
+          clone: () => response(),
           buffer: () => {
             return Promise.resolve('body');
           },

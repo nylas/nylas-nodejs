@@ -30,6 +30,7 @@ describe('CalendarRestfulModelCollection', () => {
 
     const response = {
       status: 200,
+      clone: () => response,
       buffer: () => {
         return Promise.resolve('body');
       },
@@ -66,6 +67,7 @@ describe('CalendarRestfulModelCollection', () => {
     test('Should fetch results with params', done => {
       const response = {
         status: 200,
+        clone: () => response,
         buffer: () => {
           return Promise.resolve('body');
         },

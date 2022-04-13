@@ -29,6 +29,7 @@ describe('Draft', () => {
     const response = receivedBody => {
       return {
         status: 200,
+        clone: () => response(receivedBody),
         text: () => {
           return Promise.resolve(receivedBody);
         },

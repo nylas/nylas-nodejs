@@ -294,6 +294,7 @@ describe('Neural', () => {
       const response = () => {
         return {
           status: 200,
+          clone: () => response(),
           buffer: () => {
             return Promise.resolve('body');
           },

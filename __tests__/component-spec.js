@@ -29,6 +29,7 @@ describe('Component', () => {
     const response = receivedBody => {
       return {
         status: 200,
+        clone: () => response(receivedBody),
         text: () => {
           return Promise.resolve(receivedBody);
         },
@@ -155,6 +156,7 @@ describe('Component', () => {
         return {
           status: 200,
           text: () => {},
+          clone: () => response(req),
           json: () => {
             if (!req.url.includes('abc-123')) {
               return Promise.resolve([componentJSON]);
