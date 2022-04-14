@@ -219,6 +219,7 @@ describe('Job Status', () => {
 
       const response = {
         status: 200,
+        clone: () => response,
         json: () => {
           return Promise.resolve(jobStatuses);
         },
