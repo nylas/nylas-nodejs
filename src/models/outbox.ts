@@ -59,7 +59,7 @@ export default class Outbox {
       body: body,
     })
       .then(json => {
-        const message = new OutboxJobStatus().fromJSON(json, this.connection);
+        const message = new OutboxJobStatus(this.connection).fromJSON(json);
 
         if (options.callback) {
           options.callback(null, message);
@@ -92,7 +92,7 @@ export default class Outbox {
       path: `/${jobStatusId}`,
       body: body,
     }).then(json => {
-      const message = new OutboxJobStatus().fromJSON(json, this.connection);
+      const message = new OutboxJobStatus(this.connection).fromJSON(json);
       return Promise.resolve(message);
     });
   }
