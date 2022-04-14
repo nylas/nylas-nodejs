@@ -179,9 +179,15 @@ describe('Outbox', () => {
 
     test('should deserialize OutboxJobStatus properly', () => {
       const json = {
+        action: 'new_outbox',
+        created_at: 1646245940,
+        send_at: 1646245940,
+        original_send_at: 1646245940,
         job_status_id: 'job-status-id',
         status: 'pending',
         account_id: 'account-id',
+        message_id: 'message-id',
+        thread_id: 'thread-id',
         original_data: {
           to: [{ name: 'me', email: 'test@email.com' }],
           subject: 'This is an email',
@@ -191,12 +197,19 @@ describe('Outbox', () => {
         },
       };
 
-      const outboxJobStatus = new OutboxJobStatus().fromJSON(
-        json,
+      const outboxJobStatus = new OutboxJobStatus(
         testContext.connection
-      );
+      ).fromJSON(json);
 
       expect(outboxJobStatus.jobStatusId).toEqual('job-status-id');
+      expect(outboxJobStatus.messageId).toEqual('message-id');
+      expect(outboxJobStatus.threadId).toEqual('thread-id');
+      expect(outboxJobStatus.sendAt).toEqual(new Date(1646245940 * 1000));
+      expect(outboxJobStatus.originalSendAt).toEqual(
+        new Date(1646245940 * 1000)
+      );
+      expect(outboxJobStatus.createdAt).toEqual(new Date(1646245940 * 1000));
+      expect(outboxJobStatus.action).toEqual('new_outbox');
       expect(outboxJobStatus.status).toEqual('pending');
       expect(outboxJobStatus.accountId).toEqual('account-id');
       expect(outboxJobStatus.originalData.to.length).toBe(1);

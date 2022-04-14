@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Add support for revoking a single access token
+* Improve Outbox job status support
 * Fix issue where an empty response body could trigger a JSON deserialization error
 
 ### 6.2.2 / 2022-04-01

@@ -1,35 +1,43 @@
 import OutboxMessage, { OutboxMessageProperties } from './outbox-message';
-import Model from './model';
 import Attributes, { Attribute } from './attributes';
 import NylasConnection from '../nylas-connection';
+import JobStatus, { JobStatusProperties } from './job-status';
 
-export type OutboxJobStatusProperties = {
-  jobStatusId: string;
-  accountId: string;
-  status: string;
+export type OutboxJobStatusProperties = JobStatusProperties & {
+  messageId?: string;
+  threadId?: string;
+  sendAt?: Date;
+  originalSendAt?: Date;
   originalData?: OutboxMessageProperties;
 };
 
-export default class OutboxJobStatus extends Model
+export default class OutboxJobStatus extends JobStatus
   implements OutboxJobStatusProperties {
-  jobStatusId = '';
-  status = '';
-  accountId = '';
+  messageId?: string;
+  threadId?: string;
+  sendAt?: Date;
+  originalSendAt?: Date;
   originalData?: OutboxMessage;
-  private _connection?: NylasConnection;
   static attributes: Record<string, Attribute> = {
-    jobStatusId: Attributes.String({
-      modelKey: 'jobStatusId',
-      jsonKey: 'job_status_id',
+    ...JobStatus.attributes,
+    messageId: Attributes.String({
+      modelKey: 'messageId',
+      jsonKey: 'message_id',
       readOnly: true,
     }),
-    status: Attributes.String({
-      modelKey: 'status',
+    threadId: Attributes.String({
+      modelKey: 'threadId',
+      jsonKey: 'thread_id',
       readOnly: true,
     }),
-    accountId: Attributes.String({
-      modelKey: 'accountId',
-      jsonKey: 'account_id',
+    sendAt: Attributes.DateTime({
+      modelKey: 'sendAt',
+      jsonKey: 'send_at',
+      readOnly: true,
+    }),
+    originalSendAt: Attributes.DateTime({
+      modelKey: 'originalSendAt',
+      jsonKey: 'original_send_at',
       readOnly: true,
     }),
     originalData: Attributes.Object({
@@ -40,20 +48,8 @@ export default class OutboxJobStatus extends Model
     }),
   };
 
-  constructor(props?: OutboxJobStatusProperties) {
-    super();
+  constructor(connection: NylasConnection, props?: OutboxJobStatusProperties) {
+    super(connection, props);
     this.initAttributes(props);
-  }
-
-  get connection(): NylasConnection | undefined {
-    return this._connection;
-  }
-
-  fromJSON(json: Record<string, unknown>, connection?: NylasConnection): this {
-    // Allow a connection object to be passed in to instantiate a Calendar sub object
-    if (connection) {
-      this._connection = connection;
-    }
-    return super.fromJSON(json);
   }
 }

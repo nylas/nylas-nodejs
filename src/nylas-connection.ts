@@ -11,7 +11,6 @@ import Thread from './models/thread';
 import Draft from './models/draft';
 import File from './models/file';
 import Event from './models/event';
-import JobStatus from './models/job-status';
 import Resource from './models/resource';
 import Folder, { Label } from './models/folder';
 import FormData, { AppendOptions } from 'form-data';
@@ -22,6 +21,7 @@ import SchedulerRestfulModelCollection from './models/scheduler-restful-model-co
 import MessageRestfulModelCollection from './models/message-restful-model-collection';
 import DeltaCollection from './models/delta-collection';
 import Outbox from './models/outbox';
+import JobStatusRestfulModelCollection from './models/job-status-restful-model-collection';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -73,8 +73,7 @@ export default class NylasConnection {
   calendars: CalendarRestfulModelCollection = new CalendarRestfulModelCollection(
     this
   );
-  jobStatuses: RestfulModelCollection<JobStatus> = new RestfulModelCollection(
-    JobStatus,
+  jobStatuses: JobStatusRestfulModelCollection = new JobStatusRestfulModelCollection(
     this
   );
   events: RestfulModelCollection<Event> = new RestfulModelCollection(

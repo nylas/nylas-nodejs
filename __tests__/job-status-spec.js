@@ -4,6 +4,7 @@ const { Response } = jest.requireActual('node-fetch');
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
 import JobStatus from '../src/models/job-status';
+import OutboxJobStatus from '../src/models/outbox-job-status';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -186,6 +187,52 @@ describe('Job Status', () => {
         expect(jobStatus.isSuccessful()).toBe(true);
         jobStatus.status = 'failure';
         expect(jobStatus.isSuccessful()).toBe(false);
+        done();
+      });
+    });
+  });
+
+  describe('JobStatusRestfulModelCollection', () => {
+    beforeEach(() => {
+      const jobStatuses = [
+        testContext.getApiResponse,
+        {
+          action: 'new_outbox',
+          created_at: 1646245940,
+          send_at: 1646245940,
+          original_send_at: 1646245940,
+          job_status_id: 'job-status-id',
+          status: 'pending',
+          account_id: 'account-id',
+          message_id: 'message-id',
+          thread_id: 'thread-id',
+          object: 'message',
+          original_data: {
+            to: [{ name: 'me', email: 'test@email.com' }],
+            subject: 'This is an email',
+            send_at: 1646245940,
+            original_send_at: 1646245940,
+            retry_limit_datetime: 1646332340,
+          },
+        },
+      ];
+
+      const response = {
+        status: 200,
+        json: () => {
+          return Promise.resolve(jobStatuses);
+        },
+        headers: new Map(),
+      };
+
+      fetch.mockImplementation(() => Promise.resolve(response));
+    });
+
+    test('should call API with correct authentication', done => {
+      testContext.connection.jobStatuses.list().then(jobStatuses => {
+        expect(jobStatuses.length).toBe(2);
+        expect(jobStatuses[0]).toBeInstanceOf(JobStatus);
+        expect(jobStatuses[1]).toBeInstanceOf(OutboxJobStatus);
         done();
       });
     });
