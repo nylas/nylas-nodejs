@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 6.3.0 / 2022-04-14
 * Add support for revoking a single access token
 * Improve Outbox job status support
 * Support Setting Redirect On Error in Authenticate URL Config
