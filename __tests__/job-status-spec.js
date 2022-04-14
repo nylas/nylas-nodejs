@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+const { Response } = jest.requireActual('node-fetch');
 
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
@@ -61,8 +62,13 @@ describe('Job Status', () => {
 
   describe('list job statuses', () => {
     beforeEach(() => {
+      fetch.mockReturnValue(
+        Promise.resolve(new Response(testContext.listApiResponse))
+      );
+
       const response = {
         status: 200,
+        clone: () => response,
         json: () => {
           return Promise.resolve(testContext.listApiResponse);
         },
@@ -115,6 +121,7 @@ describe('Job Status', () => {
     beforeEach(() => {
       const response = {
         status: 200,
+        clone: () => response,
         json: () => {
           return Promise.resolve(testContext.getApiResponse);
         },
@@ -165,6 +172,7 @@ describe('Job Status', () => {
     beforeEach(() => {
       const response = {
         status: 200,
+        clone: () => response,
         json: () => {
           return Promise.resolve(testContext.getApiResponse);
         },
@@ -211,6 +219,7 @@ describe('Job Status', () => {
 
       const response = {
         status: 200,
+        clone: () => response,
         json: () => {
           return Promise.resolve(jobStatuses);
         },

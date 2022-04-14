@@ -43,6 +43,7 @@ describe('SchedulerRestfulModelCollection', () => {
 
       const response = {
         status: 200,
+        clone: () => response,
         buffer: () => {
           return Promise.resolve('body');
         },
@@ -101,6 +102,7 @@ describe('SchedulerRestfulModelCollection', () => {
 
       const response = {
         status: 200,
+        clone: () => response,
         buffer: () => {
           return Promise.resolve('body');
         },
@@ -129,6 +131,7 @@ describe('SchedulerRestfulModelCollection', () => {
 
       const response = {
         status: 200,
+        clone: () => response,
         buffer: () => {
           return Promise.resolve('body');
         },
@@ -176,6 +179,7 @@ describe('SchedulerRestfulModelCollection', () => {
 
       const response = {
         status: 200,
+        clone: () => response,
         buffer: () => {
           return Promise.resolve('body');
         },
@@ -214,6 +218,7 @@ describe('SchedulerRestfulModelCollection', () => {
 
       const response = {
         status: 200,
+        clone: () => response,
         buffer: () => {
           return Promise.resolve('body');
         },
@@ -264,6 +269,7 @@ describe('SchedulerRestfulModelCollection', () => {
 
         const response = {
           status: 200,
+          clone: () => response,
           buffer: () => {
             return Promise.resolve('body');
           },

@@ -31,6 +31,7 @@ describe('Message', () => {
     const response = receivedBody => {
       return {
         status: 200,
+        clone: () => response(receivedBody),
         buffer: () => {
           return Promise.resolve('body');
         },
@@ -158,6 +159,7 @@ describe('Message', () => {
       const response = request => {
         return {
           status: 200,
+          clone: () => response(request),
           buffer: () => {
             return Promise.resolve('body');
           },
