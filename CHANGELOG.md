@@ -3,7 +3,9 @@
 ### Unreleased
 * Add support for revoking a single access token
 * Improve Outbox job status support
+* Support Setting Redirect On Error in Authenticate URL Config
 * Fix issue where an empty response body could trigger a JSON deserialization error
+* Remove usage of unreliable `node-fetch response.size`
 
 ### 6.2.2 / 2022-04-01
 * Allow getting raw message by message ID directly instead of needing to fetch the message first
