@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix issue where passing in an array of one for `MessageRestfulModelCollection.findMultiple` throws an error
+
 ### 6.3.0 / 2022-04-14
 * Add support for revoking a single access token
 * Improve Outbox job status support
