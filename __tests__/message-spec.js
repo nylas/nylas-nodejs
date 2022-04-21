@@ -168,10 +168,14 @@ describe('Message', () => {
             if (request.headers.get('Accept') === 'message/rfc822') {
               return Promise.resolve('MIME');
             }
-            return Promise.resolve([
-              testContext.message.toJSON(false),
-              secondMessage.toJSON(false),
-            ]);
+            if (!request.url.includes(',')) {
+              return Promise.resolve(testContext.message.toJSON(false));
+            } else {
+              return Promise.resolve([
+                testContext.message.toJSON(false),
+                secondMessage.toJSON(false),
+              ]);
+            }
           },
           headers: new Map(),
         };
@@ -212,30 +216,6 @@ describe('Message', () => {
       });
     });
 
-    test('should return multiple messages', done => {
-      return testContext.connection.messages
-        .findMultiple(['4333', '5333'])
-        .then(messages => {
-          const options = testContext.connection.request.mock.calls[0][0];
-          expect(options.path.toString()).toEqual(`/messages/4333,5333`);
-          expect(options.method).toEqual('GET');
-          expect(options.qs).toEqual({
-            offset: 0,
-            limit: 100,
-          });
-          expect(messages.length).toBe(2);
-          expect(messages[0] instanceof Message).toBe(true);
-          expect(messages[1] instanceof Message).toBe(true);
-          expect(messages[0].id).toBe('4333');
-          expect(messages[0].subject).toBe('foo');
-          expect(messages[0].body).toBe('bar');
-          expect(messages[1].id).toBe('5333');
-          expect(messages[1].subject).toBe('subject2');
-          expect(messages[1].body).toBe('body');
-          done();
-        });
-    });
-
     test('should support getting raw messages', done => {
       return testContext.collection.findRaw('abc-123').then(rawMessage => {
         const options = testContext.connection.request.mock.calls[0][0];
@@ -244,6 +224,48 @@ describe('Message', () => {
         expect(options.headers['Accept']).toEqual('message/rfc822');
         expect(rawMessage).toBe('MIME');
         done();
+      });
+    });
+
+    describe('findMultiple', () => {
+      test('should return multiple messages', done => {
+        return testContext.connection.messages
+          .findMultiple(['4333', '5333'])
+          .then(messages => {
+            const options = testContext.connection.request.mock.calls[0][0];
+            expect(options.path.toString()).toEqual(`/messages/4333,5333`);
+            expect(options.method).toEqual('GET');
+            expect(options.qs).toEqual({
+              offset: 0,
+              limit: 100,
+            });
+            expect(messages.length).toBe(2);
+            expect(messages[0] instanceof Message).toBe(true);
+            expect(messages[1] instanceof Message).toBe(true);
+            expect(messages[0].id).toBe('4333');
+            expect(messages[0].subject).toBe('foo');
+            expect(messages[0].body).toBe('bar');
+            expect(messages[1].id).toBe('5333');
+            expect(messages[1].subject).toBe('subject2');
+            expect(messages[1].body).toBe('body');
+            done();
+          });
+      });
+
+      test('array of one should return an array of one message', done => {
+        return testContext.connection.messages
+          .findMultiple(['4333'])
+          .then(messages => {
+            const options = testContext.connection.request.mock.calls[0][0];
+            expect(options.path.toString()).toEqual(`/messages/4333`);
+            expect(options.method).toEqual('GET');
+            expect(messages.length).toBe(1);
+            expect(messages[0] instanceof Message).toBe(true);
+            expect(messages[0].id).toBe('4333');
+            expect(messages[0].subject).toBe('foo');
+            expect(messages[0].body).toBe('bar');
+            done();
+          });
       });
     });
   });
