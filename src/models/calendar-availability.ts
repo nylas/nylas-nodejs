@@ -120,17 +120,22 @@ export class CalendarConsecutiveAvailability extends Model
 
 export type CalendarAvailabilityProperties = {
   timeSlots: TimeSlotProperties[];
+  order?: string[];
 };
 
 export default class CalendarAvailability extends Model
   implements CalendarAvailabilityProperties {
   object = 'availability';
   timeSlots: TimeSlot[] = [];
+  order?: string[];
   static attributes: Record<string, Attribute> = {
     timeSlots: Attributes.Collection({
       modelKey: 'timeSlots',
       jsonKey: 'time_slots',
       itemClass: TimeSlot,
+    }),
+    order: Attributes.StringList({
+      modelKey: 'order',
     }),
   };
 

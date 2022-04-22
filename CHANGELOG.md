@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Add missing order and emails field in calendar availability
 * Fix issue where passing in an array of one for `MessageRestfulModelCollection.findMultiple` throws an error
 
 ### 6.3.0 / 2022-04-14
