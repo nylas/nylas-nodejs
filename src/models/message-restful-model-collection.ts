@@ -37,6 +37,13 @@ export default class MessageRestfulModelCollection extends RestfulModelCollectio
       delete options.view;
     }
 
+    // If only one message ID was passed in, use the normal find function
+    if (messageIds.length == 1) {
+      return this.find(messageIds[0], options).then((message: Message) => {
+        return [message];
+      });
+    }
+
     return this.range({
       path: `${this.path()}/${messageIds.join()}`,
       ...options,
