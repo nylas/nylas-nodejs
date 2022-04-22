@@ -38,6 +38,7 @@ export type TimeSlotProperties = {
   status: string;
   startTime: number;
   endTime: number;
+  emails?: string[];
 };
 
 export class TimeSlot extends Model implements TimeSlotProperties {
@@ -45,6 +46,7 @@ export class TimeSlot extends Model implements TimeSlotProperties {
   status = '';
   startTime = 0;
   endTime = 0;
+  emails?: string[];
   static attributes: Record<string, Attribute> = {
     object: Attributes.String({
       modelKey: 'object',
@@ -59,6 +61,9 @@ export class TimeSlot extends Model implements TimeSlotProperties {
     endTime: Attributes.Number({
       modelKey: 'endTime',
       jsonKey: 'end_time',
+    }),
+    emails: Attributes.StringList({
+      modelKey: 'emails',
     }),
   };
 
