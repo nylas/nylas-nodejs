@@ -12,6 +12,7 @@ export type DraftProperties = MessageProperties & {
   rawMime?: string;
   replyToMessageId?: string;
   version?: number;
+  fileIdsToAttach?: string[];
 };
 
 export default class Draft extends Message implements DraftProperties {
