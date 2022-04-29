@@ -9,6 +9,7 @@ export default class ModelCollection<T extends Model> {
   connection: NylasConnection;
   modelClass: any;
   _path: string;
+  baseUrl?: string;
 
   constructor(modelClass: any, connection: NylasConnection, path: string) {
     this.modelClass = modelClass;
@@ -206,6 +207,7 @@ export default class ModelCollection<T extends Model> {
         method: 'GET',
         path,
         qs: { ...params, offset, limit },
+        baseUrl: this.baseUrl,
       });
     }
 
@@ -225,6 +227,7 @@ export default class ModelCollection<T extends Model> {
         method: 'GET',
         path: `${this.path()}/${id}`,
         qs: params,
+        baseUrl: this.baseUrl,
       })
       .then(json => {
         const model = this.createModel(json);
@@ -243,6 +246,7 @@ export default class ModelCollection<T extends Model> {
         method: 'GET',
         path,
         qs: { ...params, offset, limit },
+        baseUrl: this.baseUrl,
       })
       .then((jsonArray: []) => {
         const models = jsonArray.map(json => {
