@@ -35,11 +35,9 @@ describe('CalendarRestfulModelCollection', () => {
         return Promise.resolve('body');
       },
       json: () => {
-        return Promise.resolve(
-          {
-            body: 'body',
-          }
-        );
+        return Promise.resolve({
+          body: 'body',
+        });
       },
       headers: new Map(),
     };
@@ -72,22 +70,20 @@ describe('CalendarRestfulModelCollection', () => {
           return Promise.resolve('body');
         },
         json: () => {
-          return Promise.resolve(
-            [
-              {
-                object: 'free_busy',
-                email: 'jane@email.com',
-                time_slots: [
-                  {
-                    object: 'time_slot',
-                    status: 'busy',
-                    start_time: 1590454800,
-                    end_time: 1590780800,
-                  },
-                ],
-              },
-            ]
-          );
+          return Promise.resolve([
+            {
+              object: 'free_busy',
+              email: 'jane@email.com',
+              time_slots: [
+                {
+                  object: 'time_slot',
+                  status: 'busy',
+                  start_time: 1590454800,
+                  end_time: 1590780800,
+                },
+              ],
+            },
+          ]);
         },
         headers: new Map(),
       };
