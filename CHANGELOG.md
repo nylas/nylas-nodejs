@@ -1,7 +1,8 @@
 # Changelog
 
-### Unreleased
+### 6.3.2 / 2022-05-04
 * Add missing `fileIdsToAttach` field in `DraftProperties`
+* Fix JSON parse error when using `CalendarRestfulModelCollection.freeBusy`
 * Fix base URL not being set for `SchedulerRestfulModelCollection` functions
 
 ### 6.3.1 / 2022-04-22
