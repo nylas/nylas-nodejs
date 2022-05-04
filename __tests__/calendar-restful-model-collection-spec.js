@@ -36,9 +36,9 @@ describe('CalendarRestfulModelCollection', () => {
       },
       json: () => {
         return Promise.resolve(
-          JSON.stringify({
+          {
             body: 'body',
-          })
+          }
         );
       },
       headers: new Map(),
@@ -73,7 +73,7 @@ describe('CalendarRestfulModelCollection', () => {
         },
         json: () => {
           return Promise.resolve(
-            JSON.stringify([
+            [
               {
                 object: 'free_busy',
                 email: 'jane@email.com',
@@ -86,7 +86,7 @@ describe('CalendarRestfulModelCollection', () => {
                   },
                 ],
               },
-            ])
+            ]
           );
         },
         headers: new Map(),
