@@ -22,6 +22,7 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
 > {
   connection: NylasConnection;
   modelClass: typeof Scheduler;
+  baseUrl: string;
 
   constructor(connection: NylasConnection) {
     super(Scheduler, connection);

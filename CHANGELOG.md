@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Add missing `fileIdsToAttach` field in `DraftProperties`
+* Fix base URL not being set for `SchedulerRestfulModelCollection` functions
 
 ### 6.3.1 / 2022-04-22
 * Add missing order and emails field in calendar availability

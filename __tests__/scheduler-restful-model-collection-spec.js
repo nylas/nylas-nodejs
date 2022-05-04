@@ -28,6 +28,32 @@ describe('SchedulerRestfulModelCollection', () => {
     jest.spyOn(testContext.connection, 'request');
   });
 
+  describe('Configuration', () => {
+    test('Base URL was set properly', done => {
+      const response = {
+        status: 200,
+        clone: () => response,
+        buffer: () => {
+          return Promise.resolve('body');
+        },
+        json: () => {
+          return Promise.resolve({});
+        },
+        headers: new Map(),
+      };
+
+      fetch.mockImplementation(() => Promise.resolve(response));
+
+      testContext.connection.scheduler.find('abc-123').then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.schedule.nylas.com/manage/pages/abc-123'
+        );
+        done();
+      });
+    });
+  });
+
   describe('ProviderAvailability', () => {
     beforeEach(() => {
       const availability = {
