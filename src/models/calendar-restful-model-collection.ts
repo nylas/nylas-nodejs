@@ -47,7 +47,7 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
           callback(null, json);
         }
         const freeBusy = [];
-        for (const fb of JSON.parse(json)) {
+        for (const fb of json) {
           freeBusy.push(new FreeBusy().fromJSON(fb));
         }
         return Promise.resolve(freeBusy);
