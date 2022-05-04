@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add missing `fileIdsToAttach` field in `DraftProperties`
+
 ### 6.3.1 / 2022-04-22
 * Add missing order and emails field in calendar availability
 * Fix issue where passing in an array of one for `MessageRestfulModelCollection.findMultiple` throws an error
