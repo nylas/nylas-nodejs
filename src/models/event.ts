@@ -262,17 +262,7 @@ export default class Event extends RestfulModel {
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
-    if (
-      this.conferencing &&
-      this.conferencing.details &&
-      this.conferencing.autocreate
-    ) {
-      return Promise.reject(
-        new Error(
-          "Cannot set both 'details' and 'autocreate' in conferencing object."
-        )
-      );
-    }
+    this.validate();
     return super.save(params, callback);
   }
 
@@ -345,5 +335,27 @@ export default class Event extends RestfulModel {
 
         return response.ics;
       });
+  }
+
+  private validate(): void {
+    if (
+      this.conferencing &&
+      this.conferencing.details &&
+      this.conferencing.autocreate
+    ) {
+      throw new Error(
+        "Cannot set both 'details' and 'autocreate' in conferencing object."
+      );
+    }
+    if (
+      this.capacity &&
+      this.capacity != -1 &&
+      this.participants &&
+      this.participants.length <= this.capacity
+    ) {
+      throw new Error(
+        'The number of participants in the event exceeds the set capacity.'
+      );
+    }
   }
 }
