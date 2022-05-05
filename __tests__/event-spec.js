@@ -517,13 +517,11 @@ describe('Event', () => {
             },
           },
         });
-        testContext.event.save().catch(e => {
-          expect(e).toEqual(
-            new Error(
-              "Cannot set both 'details' and 'autocreate' in conferencing object."
-            )
-          );
-        });
+        expect(() => testContext.event.save()).toThrow(
+          new Error(
+            "Cannot set both 'details' and 'autocreate' in conferencing object."
+          )
+        );
         done();
       });
     });
