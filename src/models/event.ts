@@ -32,6 +32,7 @@ export type EventProperties = {
   when: WhenProperties;
   iCalUID?: string;
   messageId?: string;
+  eventCollectionId?: string | number;
   title?: string;
   description?: string;
   owner?: string;
@@ -46,8 +47,10 @@ export type EventProperties = {
   };
   masterEventId?: string;
   originalStartTime?: number;
+  capacity?: number;
   conferencing?: EventConferencingProperties;
   notifications?: EventNotificationProperties[];
+  roundRobinOrder?: string[];
   metadata?: object;
   jobStatusId?: string;
 };
@@ -57,6 +60,7 @@ export default class Event extends RestfulModel {
   when = new When();
   iCalUID?: string;
   messageId?: string;
+  eventCollectionId?: string | number;
   title?: string;
   description?: string;
   owner?: string;
@@ -71,8 +75,10 @@ export default class Event extends RestfulModel {
   };
   masterEventId?: string;
   originalStartTime?: number;
+  capacity?: number;
   conferencing?: EventConferencing;
   notifications?: EventNotification[];
+  roundRobinOrder?: string[];
   metadata?: object;
   jobStatusId?: string;
   static collectionName = 'events';
@@ -91,6 +97,10 @@ export default class Event extends RestfulModel {
       modelKey: 'messageId',
       jsonKey: 'message_id',
       readOnly: true,
+    }),
+    eventCollectionId: Attributes.String({
+      modelKey: 'eventCollectionId',
+      jsonKey: 'event_collection_id',
     }),
     title: Attributes.String({
       modelKey: 'title',
@@ -137,6 +147,9 @@ export default class Event extends RestfulModel {
       jsonKey: 'original_start_time',
       readOnly: true,
     }),
+    capacity: Attributes.Number({
+      modelKey: 'capacity',
+    }),
     conferencing: Attributes.Object({
       modelKey: 'conferencing',
       itemClass: EventConferencing,
@@ -144,6 +157,10 @@ export default class Event extends RestfulModel {
     notifications: Attributes.Collection({
       modelKey: 'notifications',
       itemClass: EventNotification,
+    }),
+    roundRobinOrder: Attributes.StringList({
+      modelKey: 'roundRobinOrder',
+      jsonKey: 'round_robin_order',
     }),
     metadata: Attributes.Object({
       modelKey: 'metadata',
