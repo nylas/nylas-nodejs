@@ -501,29 +501,6 @@ describe('Event', () => {
           done();
         });
       });
-
-      test('should throw exception if both conferencing details and autocreate are set', done => {
-        testContext.event.conferencing = new EventConferencing({
-          provider: 'Zoom Meeting',
-          details: {
-            url: 'https://us02web.zoom.us/j/****************',
-            meeting_code: '213',
-            password: 'xyz',
-            phone: ['+11234567890'],
-          },
-          autocreate: {
-            settings: {
-              password: '1234',
-            },
-          },
-        });
-        expect(() => testContext.event.save()).toThrow(
-          new Error(
-            "Cannot set both 'details' and 'autocreate' in conferencing object."
-          )
-        );
-        done();
-      });
     });
 
     describe('notification', () => {
@@ -678,6 +655,9 @@ describe('Event', () => {
             ical_uid: 'id-5678',
             master_event_id: 'master-1234',
             original_start_time: 1409592400,
+            event_collection_id: 100,
+            capacity: 4,
+            round_robin_order: ['test@email.com'],
           };
           return Promise.resolve(eventJSON);
         });
@@ -691,6 +671,9 @@ describe('Event', () => {
           expect(event.when.object).toEqual('time');
           expect(event.iCalUID).toBe('id-5678');
           expect(event.masterEventId).toBe('master-1234');
+          expect(event.eventCollectionId).toBe(100);
+          expect(event.capacity).toBe(4);
+          expect(event.roundRobinOrder[0]).toBe('test@email.com');
           expect(event.originalStartTime.toString()).toBe(
             new Date(1409592400 * 1000).toString()
           );
@@ -885,6 +868,73 @@ describe('Event', () => {
       testContext.event.calendarId = 'calendar_id';
 
       expect(() => testContext.event.generateICS()).toThrow();
+      done();
+    });
+  });
+
+  describe('validation', () => {
+    test('should throw exception if both conferencing details and autocreate are set', done => {
+      testContext.event.conferencing = new EventConferencing({
+        provider: 'Zoom Meeting',
+        details: {
+          url: 'https://us02web.zoom.us/j/****************',
+          meeting_code: '213',
+          password: 'xyz',
+          phone: ['+11234567890'],
+        },
+        autocreate: {
+          settings: {
+            password: '1234',
+          },
+        },
+      });
+      expect(() => testContext.event.save()).toThrow(
+        new Error(
+          "Cannot set both 'details' and 'autocreate' in conferencing object."
+        )
+      );
+      done();
+    });
+
+    test('should throw an error if capacity is less than the amount of participants', done => {
+      testContext.event.capacity = 1;
+      testContext.event.participants = [
+        'person1@email.com',
+        'person2@email.com',
+      ];
+      expect(() => testContext.event.save()).toThrow(
+        new Error(
+          'The number of participants in the event exceeds the set capacity.'
+        )
+      );
+      done();
+    });
+
+    test('should not throw if capacity is -1', done => {
+      testContext.event.capacity = -1;
+      testContext.event.participants = [
+        'person1@email.com',
+        'person2@email.com',
+      ];
+      expect(() => testContext.event.save()).not.toThrow(
+        new Error(
+          'The number of participants in the event exceeds the set capacity.'
+        )
+      );
+      done();
+    });
+
+    test('should not throw if capacity is set but participants are less than capacity', done => {
+      testContext.event.capacity = 3;
+      testContext.event.participants = [
+        'person1@email.com',
+        'person2@email.com',
+      ];
+      expect(() => testContext.event.save()).not.toThrow(
+        new Error(
+          'The number of participants in the event exceeds the set capacity.'
+        )
+      );
       done();
     });
   });

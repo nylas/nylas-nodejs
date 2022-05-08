@@ -80,6 +80,11 @@ describe('CalendarRestfulModelCollection', () => {
                   status: 'busy',
                   start_time: 1590454800,
                   end_time: 1590780800,
+                  capacity: {
+                    event_id: 'abc-123',
+                    current_capacity: 2,
+                    max_capacity: 5,
+                  },
                 },
               ],
             },
@@ -138,6 +143,9 @@ describe('CalendarRestfulModelCollection', () => {
           expect(timeSlots.status).toEqual('busy');
           expect(timeSlots.startTime).toEqual(1590454800);
           expect(timeSlots.endTime).toEqual(1590780800);
+          expect(timeSlots.capacity.eventId).toEqual('abc-123');
+          expect(timeSlots.capacity.currentCapacity).toEqual(2);
+          expect(timeSlots.capacity.maxCapacity).toEqual(5);
           done();
         });
     });
