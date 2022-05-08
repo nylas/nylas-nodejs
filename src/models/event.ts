@@ -351,7 +351,7 @@ export default class Event extends RestfulModel {
       this.capacity &&
       this.capacity != -1 &&
       this.participants &&
-      this.participants.length <= this.capacity
+      this.participants.length > this.capacity
     ) {
       throw new Error(
         'The number of participants in the event exceeds the set capacity.'
