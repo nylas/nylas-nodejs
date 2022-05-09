@@ -340,6 +340,33 @@ describe('Draft', () => {
           done();
         });
       });
+
+      test('setting fileIdsToAttach via constructor should send the values as file_ids to the API', done => {
+        const draft = new Draft(testContext.connection, {
+          to: [{ name: 'test', email: 'test@email.com' }],
+          fileIdsToAttach: ['file_id1', 'file_id2', 'file_id3'],
+        });
+
+        draft.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.url.toString()).toEqual(
+            'https://api.nylas.com/drafts'
+          );
+          expect(options.method).toEqual('POST');
+          expect(JSON.parse(options.body)).toEqual({
+            to: [{ name: 'test', email: 'test@email.com' }],
+            cc: [],
+            bcc: [],
+            from: [],
+            events: [],
+            labels: [],
+            date: null,
+            file_ids: ['file_id1', 'file_id2', 'file_id3'],
+            reply_to: [],
+          });
+          done();
+        });
+      });
     });
   });
 
