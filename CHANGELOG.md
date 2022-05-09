@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Support collective and group events
+* Fix `fileIdsToAttach` field not being set when initializing a `Draft`
 
 ### 6.3.2 / 2022-05-04
 * Add missing `fileIdsToAttach` field in `DraftProperties`

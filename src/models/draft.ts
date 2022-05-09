@@ -34,6 +34,10 @@ export default class Draft extends Message implements DraftProperties {
       modelKey: 'rawMime',
       readOnly: true,
     }),
+    fileIdsToAttach: Attributes.StringList({
+      modelKey: 'fileIdsToAttach',
+      readOnly: true,
+    }),
   };
 
   constructor(connection: NylasConnection, props?: DraftProperties) {
