@@ -389,6 +389,7 @@ export type SchedulerConfigProperties = {
   };
   event?: {
     duration?: number;
+    capacity?: number;
     location?: string;
     title?: string;
   };
@@ -414,6 +415,7 @@ export class SchedulerConfig extends Model
   };
   event?: {
     duration?: number;
+    capacity?: number;
     location?: string;
     title?: string;
   };
