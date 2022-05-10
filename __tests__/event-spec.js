@@ -899,8 +899,12 @@ describe('Event', () => {
     test('should throw an error if capacity is less than the amount of participants', done => {
       testContext.event.capacity = 1;
       testContext.event.participants = [
-        'person1@email.com',
-        'person2@email.com',
+        new EventParticipant({
+          email: 'person1@email.com',
+        }),
+        new EventParticipant({
+          email: 'person2@email.com',
+        }),
       ];
       expect(() => testContext.event.save()).toThrow(
         new Error(
@@ -913,8 +917,12 @@ describe('Event', () => {
     test('should not throw if capacity is -1', done => {
       testContext.event.capacity = -1;
       testContext.event.participants = [
-        'person1@email.com',
-        'person2@email.com',
+        new EventParticipant({
+          email: 'person1@email.com',
+        }),
+        new EventParticipant({
+          email: 'person2@email.com',
+        }),
       ];
       expect(() => testContext.event.save()).not.toThrow(
         new Error(
@@ -924,12 +932,22 @@ describe('Event', () => {
       done();
     });
 
-    test('should not throw if capacity is set but participants are less than capacity', done => {
-      testContext.event.capacity = 3;
+    test('should not throw if capacity is set but participants are less than or equal to capacity', done => {
+      testContext.event.capacity = 2;
       testContext.event.participants = [
-        'person1@email.com',
-        'person2@email.com',
+        new EventParticipant({
+          email: 'person1@email.com',
+        }),
+        new EventParticipant({
+          email: 'person2@email.com',
+        }),
       ];
+      expect(() => testContext.event.save()).not.toThrow(
+        new Error(
+          'The number of participants in the event exceeds the set capacity.'
+        )
+      );
+      testContext.event.capacity = 3;
       expect(() => testContext.event.save()).not.toThrow(
         new Error(
           'The number of participants in the event exceeds the set capacity.'
