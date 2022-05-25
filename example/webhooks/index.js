@@ -82,7 +82,7 @@ var webhook_uri;
 // Setup ngrok settings to ensure everything works locally
 request('http://localhost:4040/api/tunnels', function(error, response, body) {
   if (!error && response.statusCode == 200) {
-    webhook_uri = JSON.parse(body).tunnels[1].public_url + '/webhook';
+    webhook_uri = JSON.parse(body).tunnels[0].public_url + '/webhook';
   } else {
     throw "It looks like ngrok isn't running! Make sure you've started that first with 'ngrok http 1234'";
   }
