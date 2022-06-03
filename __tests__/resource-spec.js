@@ -44,12 +44,8 @@ describe('Resource', () => {
     const response = () => {
       return {
         status: 200,
-        clone: () => response(),
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve(testContext.apiResponse);
+        text: () => {
+          return Promise.resolve(JSON.stringify(testContext.apiResponse));
         },
         headers: new Map(),
       };

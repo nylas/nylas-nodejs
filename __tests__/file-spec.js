@@ -30,20 +30,19 @@ describe('File', () => {
     const response = receivedBody => {
       return {
         status: 200,
-        clone: () => response(receivedBody),
         buffer: () => {
           return Promise.resolve('body');
         },
-        json: () => {
+        text: () => {
           // Just a placeholder so that we can mimic returning data after uploading
           // This data is not used
           if (
             receivedBody === null ||
             receivedBody.constructor.name === 'FormData'
           ) {
-            return Promise.resolve([JSON.stringify(testContext.file.toJSON())]);
+            return Promise.resolve(JSON.stringify([testContext.file.toJSON()]));
           }
-          return Promise.resolve(receivedBody);
+          return Promise.resolve(JSON.stringify(receivedBody));
         },
         headers: headers,
       };

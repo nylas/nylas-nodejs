@@ -32,12 +32,8 @@ describe('SchedulerRestfulModelCollection', () => {
     test('Base URL was set properly', done => {
       const response = {
         status: 200,
-        clone: () => response,
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve({});
+        text: () => {
+          return Promise.resolve(JSON.stringify({}));
         },
         headers: new Map(),
       };

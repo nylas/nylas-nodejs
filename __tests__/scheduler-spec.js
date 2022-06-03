@@ -30,12 +30,8 @@ describe('Scheduler', () => {
     const response = receivedBody => {
       return {
         status: 200,
-        clone: () => response(receivedBody),
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve(receivedBody);
+        text: () => {
+          return Promise.resolve(JSON.stringify(receivedBody));
         },
         headers: new Map(),
       };
@@ -169,12 +165,8 @@ describe('Scheduler', () => {
       const response = () => {
         return {
           status: 200,
-          clone: () => response(),
-          buffer: () => {
-            return Promise.resolve('body');
-          },
-          json: () => {
-            return Promise.resolve(calendarsJSON);
+          text: () => {
+            return Promise.resolve(JSON.stringify(calendarsJSON));
           },
           headers: new Map(),
         };

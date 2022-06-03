@@ -27,12 +27,8 @@ describe('Label', () => {
     const response = receivedBody => {
       return {
         status: 200,
-        clone: () => response(receivedBody),
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve(receivedBody);
+        text: () => {
+          return Promise.resolve(JSON.stringify(receivedBody));
         },
         headers: new Map(),
       };

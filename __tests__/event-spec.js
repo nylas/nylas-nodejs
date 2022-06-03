@@ -31,7 +31,9 @@ describe('Event', () => {
     const response = receivedBody => {
       return {
         status: 200,
-        clone: () => response(receivedBody),
+        text: () => {
+          return Promise.resolve(receivedBody);
+        },
         buffer: () => {
           return Promise.resolve('body');
         },
@@ -779,7 +781,13 @@ describe('Event', () => {
       const response = () => {
         return {
           status: 200,
-          clone: () => response(),
+          text: () => {
+            return Promise.resolve(
+              JSON.stringify({
+                ics: 'ics_string',
+              })
+            );
+          },
           buffer: () => {
             return Promise.resolve('body');
           },
