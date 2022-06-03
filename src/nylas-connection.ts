@@ -246,43 +246,30 @@ export default class NylasConnection {
           }
 
           if (response.status > 299) {
-            return response
-              .clone()
-              .json()
-              .then(body => {
+            return response.text().then(body => {
+              try {
+                const jsonError = JSON.parse(body);
                 const error = new NylasApiError(
                   response.status,
-                  body.type,
-                  body.message
+                  jsonError.type,
+                  jsonError.message
                 );
-                if (body.missing_fields) {
-                  error.missingFields = body.missing_fields;
+                if (jsonError.missing_fields) {
+                  error.missingFields = jsonError.missing_fields;
                 }
-                if (body.server_error) {
-                  error.serverError = body.server_error;
+                if (jsonError.server_error) {
+                  error.serverError = jsonError.server_error;
                 }
                 return reject(error);
-              })
-              .catch(() => {
-                return response
-                  .text()
-                  .then(text => {
-                    const error = new NylasApiError(
-                      response.status,
-                      response.statusText,
-                      text
-                    );
-                    return reject(error);
-                  })
-                  .catch(() => {
-                    const error = new NylasApiError(
-                      response.status,
-                      response.statusText,
-                      'Error encountered during request, unable to extract error message.'
-                    );
-                    return reject(error);
-                  });
-              });
+              } catch (e) {
+                const error = new NylasApiError(
+                  response.status,
+                  response.statusText,
+                  body
+                );
+                return reject(error);
+              }
+            });
           } else {
             if (options.downloadRequest) {
               response
@@ -309,12 +296,13 @@ export default class NylasConnection {
             ) {
               return resolve(response.text());
             } else {
-              return response
-                .clone()
-                .json()
-                .catch(() => response.text())
-                .then(data => resolve(data))
-                .catch(() => resolve(undefined));
+              return response.text().then(text => {
+                try {
+                  return resolve(JSON.parse(text));
+                } catch (e) {
+                  return resolve(text);
+                }
+              });
             }
           }
         })
