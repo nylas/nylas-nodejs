@@ -248,17 +248,17 @@ export default class NylasConnection {
           if (response.status > 299) {
             return response.text().then(body => {
               try {
-                const jsonError = JSON.parse(body);
+                const parsedApiError = JSON.parse(body);
                 const error = new NylasApiError(
                   response.status,
-                  jsonError.type,
-                  jsonError.message
+                  parsedApiError.type,
+                  parsedApiError.message
                 );
-                if (jsonError.missing_fields) {
-                  error.missingFields = jsonError.missing_fields;
+                if (parsedApiError.missing_fields) {
+                  error.missingFields = parsedApiError.missing_fields;
                 }
-                if (jsonError.server_error) {
-                  error.serverError = jsonError.server_error;
+                if (parsedApiError.server_error) {
+                  error.serverError = parsedApiError.server_error;
                 }
                 return reject(error);
               } catch (e) {
