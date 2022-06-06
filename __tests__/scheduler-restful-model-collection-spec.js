@@ -32,12 +32,8 @@ describe('SchedulerRestfulModelCollection', () => {
     test('Base URL was set properly', done => {
       const response = {
         status: 200,
-        clone: () => response,
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve({});
+        text: () => {
+          return Promise.resolve(JSON.stringify({}));
         },
         headers: new Map(),
       };
@@ -69,12 +65,8 @@ describe('SchedulerRestfulModelCollection', () => {
 
       const response = {
         status: 200,
-        clone: () => response,
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve(availability);
+        text: () => {
+          return Promise.resolve(JSON.stringify(availability));
         },
         headers: new Map(),
       };
@@ -128,12 +120,8 @@ describe('SchedulerRestfulModelCollection', () => {
 
       const response = {
         status: 200,
-        clone: () => response,
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve(availability);
+        text: () => {
+          return Promise.resolve(JSON.stringify(availability));
         },
         headers: new Map(),
       };
@@ -157,12 +145,8 @@ describe('SchedulerRestfulModelCollection', () => {
 
       const response = {
         status: 200,
-        clone: () => response,
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve(schedulerJSON);
+        text: () => {
+          return Promise.resolve(JSON.stringify(schedulerJSON));
         },
         headers: new Map(),
       };
@@ -205,12 +189,8 @@ describe('SchedulerRestfulModelCollection', () => {
 
       const response = {
         status: 200,
-        clone: () => response,
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve(schedulerTimeSlots);
+        text: () => {
+          return Promise.resolve(JSON.stringify(schedulerTimeSlots));
         },
         headers: new Map(),
       };
@@ -244,12 +224,8 @@ describe('SchedulerRestfulModelCollection', () => {
 
       const response = {
         status: 200,
-        clone: () => response,
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve(success);
+        text: () => {
+          return Promise.resolve(JSON.stringify(success));
         },
         headers: new Map(),
       };
@@ -295,12 +271,8 @@ describe('SchedulerRestfulModelCollection', () => {
 
         const response = {
           status: 200,
-          clone: () => response,
-          buffer: () => {
-            return Promise.resolve('body');
-          },
-          json: () => {
-            return Promise.resolve(bookingConfirmation);
+          text: () => {
+            return Promise.resolve(JSON.stringify(bookingConfirmation));
           },
           headers: new Map(),
         };

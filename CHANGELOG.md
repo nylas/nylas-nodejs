@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+* Fixed issue where API response data was being lost
+* Fixed incorrect tunnel index number in webhook example
+
 ### 6.4.0 / 2022-05-10
 * Support collective and group events
 * Fix `fileIdsToAttach` field not being set when initializing a `Draft`

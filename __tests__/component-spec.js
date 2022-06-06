@@ -29,12 +29,8 @@ describe('Component', () => {
     const response = receivedBody => {
       return {
         status: 200,
-        clone: () => response(receivedBody),
         text: () => {
-          return Promise.resolve(receivedBody);
-        },
-        json: () => {
-          return Promise.resolve(receivedBody);
+          return Promise.resolve(JSON.stringify(receivedBody));
         },
         headers: new Map(),
       };
@@ -155,13 +151,11 @@ describe('Component', () => {
       const response = req => {
         return {
           status: 200,
-          text: () => {},
-          clone: () => response(req),
-          json: () => {
+          text: () => {
             if (!req.url.includes('abc-123')) {
-              return Promise.resolve([componentJSON]);
+              return Promise.resolve(JSON.stringify([componentJSON]));
             }
-            return Promise.resolve(componentJSON);
+            return Promise.resolve(JSON.stringify(componentJSON));
           },
           headers: new Map(),
         };

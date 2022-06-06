@@ -39,20 +39,16 @@ describe('Calendar', () => {
     const response = receivedBody => {
       return {
         status: 200,
-        clone: () => response(receivedBody),
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
+        text: () => {
           if (receivedBody === null) {
-            return Promise.resolve(calendarJSON);
+            return Promise.resolve(JSON.stringify(calendarJSON));
           }
 
           const j = JSON.parse(receivedBody.toString());
           if (!j.id) {
             j.id = calendarJSON.id;
           }
-          return Promise.resolve(j);
+          return Promise.resolve(JSON.stringify(j));
         },
         headers: new Map(),
       };

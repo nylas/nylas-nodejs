@@ -30,14 +30,12 @@ describe('CalendarRestfulModelCollection', () => {
 
     const response = {
       status: 200,
-      clone: () => response,
-      buffer: () => {
-        return Promise.resolve('body');
-      },
-      json: () => {
-        return Promise.resolve({
-          body: 'body',
-        });
+      text: () => {
+        return Promise.resolve(
+          JSON.stringify({
+            body: 'body',
+          })
+        );
       },
       headers: new Map(),
     };
@@ -65,30 +63,28 @@ describe('CalendarRestfulModelCollection', () => {
     test('Should fetch results with params', done => {
       const response = {
         status: 200,
-        clone: () => response,
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
-          return Promise.resolve([
-            {
-              object: 'free_busy',
-              email: 'jane@email.com',
-              time_slots: [
-                {
-                  object: 'time_slot',
-                  status: 'busy',
-                  start_time: 1590454800,
-                  end_time: 1590780800,
-                  capacity: {
-                    event_id: 'abc-123',
-                    current_capacity: 2,
-                    max_capacity: 5,
+        text: () => {
+          return Promise.resolve(
+            JSON.stringify([
+              {
+                object: 'free_busy',
+                email: 'jane@email.com',
+                time_slots: [
+                  {
+                    object: 'time_slot',
+                    status: 'busy',
+                    start_time: 1590454800,
+                    end_time: 1590780800,
+                    capacity: {
+                      event_id: 'abc-123',
+                      current_capacity: 2,
+                      max_capacity: 5,
+                    },
                   },
-                },
-              ],
-            },
-          ]);
+                ],
+              },
+            ])
+          );
         },
         headers: new Map(),
       };

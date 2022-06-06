@@ -31,16 +31,12 @@ describe('Message', () => {
     const response = receivedBody => {
       return {
         status: 200,
-        clone: () => response(receivedBody),
-        buffer: () => {
-          return Promise.resolve('body');
-        },
-        json: () => {
+        text: () => {
           // For the raw/MIME flow
           if (receivedBody === null) {
             return Promise.resolve('MIME');
           }
-          return Promise.resolve(receivedBody);
+          return Promise.resolve(JSON.stringify(receivedBody));
         },
         headers: new Map(),
       };
@@ -159,22 +155,22 @@ describe('Message', () => {
       const response = request => {
         return {
           status: 200,
-          clone: () => response(request),
-          buffer: () => {
-            return Promise.resolve('body');
-          },
-          json: () => {
+          text: () => {
             // For the raw/MIME flow
             if (request.headers.get('Accept') === 'message/rfc822') {
               return Promise.resolve('MIME');
             }
             if (!request.url.includes(',')) {
-              return Promise.resolve(testContext.message.toJSON(false));
+              return Promise.resolve(
+                JSON.stringify(testContext.message.toJSON(false))
+              );
             } else {
-              return Promise.resolve([
-                testContext.message.toJSON(false),
-                secondMessage.toJSON(false),
-              ]);
+              return Promise.resolve(
+                JSON.stringify([
+                  testContext.message.toJSON(false),
+                  secondMessage.toJSON(false),
+                ])
+              );
             }
           },
           headers: new Map(),

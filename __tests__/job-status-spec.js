@@ -68,9 +68,8 @@ describe('Job Status', () => {
 
       const response = {
         status: 200,
-        clone: () => response,
-        json: () => {
-          return Promise.resolve(testContext.listApiResponse);
+        text: () => {
+          return Promise.resolve(JSON.stringify(testContext.listApiResponse));
         },
         headers: new Map(),
       };
@@ -121,9 +120,8 @@ describe('Job Status', () => {
     beforeEach(() => {
       const response = {
         status: 200,
-        clone: () => response,
-        json: () => {
-          return Promise.resolve(testContext.getApiResponse);
+        text: () => {
+          return Promise.resolve(JSON.stringify(testContext.getApiResponse));
         },
         headers: new Map(),
       };
@@ -172,9 +170,8 @@ describe('Job Status', () => {
     beforeEach(() => {
       const response = {
         status: 200,
-        clone: () => response,
-        json: () => {
-          return Promise.resolve(testContext.getApiResponse);
+        text: () => {
+          return Promise.resolve(JSON.stringify(testContext.getApiResponse));
         },
         headers: new Map(),
       };
@@ -219,9 +216,8 @@ describe('Job Status', () => {
 
       const response = {
         status: 200,
-        clone: () => response,
-        json: () => {
-          return Promise.resolve(jobStatuses);
+        text: () => {
+          return Promise.resolve(JSON.stringify(jobStatuses));
         },
         headers: new Map(),
       };
