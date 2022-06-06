@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 6.4.1 / 2022-06-06
 * Fixed issue where API response data was being lost
 * Fixed incorrect tunnel index number in webhook example
 
