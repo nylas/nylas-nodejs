@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add `Message.save()` functionality for updating existing messages
+
 ### 6.4.1 / 2022-06-06
 * Fixed issue where API response data was being lost
 * Fixed incorrect tunnel index number in webhook example

@@ -116,6 +116,15 @@ describe('Message', () => {
       });
     });
 
+    test('should throw an error if the message has no ID (messages cannot be created)', done => {
+      testContext.message.id = undefined;
+      testContext.message.metadata = {
+        test: 'yes',
+      };
+      expect(() => testContext.message.save()).toThrow();
+      done();
+    });
+
     test('should resolve with the message object', done => {
       return testContext.message.save().then(message => {
         expect(message.id).toBe('4333');
