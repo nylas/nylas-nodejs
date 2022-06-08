@@ -1,4 +1,4 @@
-import RestfulModel from './restful-model';
+import RestfulModel, { SaveCallback } from './restful-model';
 import Attributes, { Attribute } from './attributes';
 import File, { FileProperties } from './file';
 import Event, { EventProperties } from './event';
@@ -186,5 +186,16 @@ export default class Message extends RestfulModel implements MessageProperties {
     json['unread'] = this.unread;
     json['metadata'] = this.metadata;
     return json;
+  }
+
+  save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    // A Message can only be updated
+    if (this.constructor.name === 'Message' && !this.id) {
+      throw new Error(
+        'Cannot create a message. Please create and send a draft instead.'
+      );
+    }
+
+    return super.save(params, callback);
   }
 }
