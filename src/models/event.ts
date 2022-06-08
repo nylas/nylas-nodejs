@@ -77,6 +77,7 @@ export default class Event extends RestfulModel {
   originalStartTime?: number;
   capacity?: number;
   conferencing?: EventConferencing;
+  reminderMinutes?: string;
   notifications?: EventNotification[];
   roundRobinOrder?: string[];
   metadata?: object;
@@ -153,6 +154,10 @@ export default class Event extends RestfulModel {
     conferencing: Attributes.Object({
       modelKey: 'conferencing',
       itemClass: EventConferencing,
+    }),
+    reminderMinutes: Attributes.String({
+      modelKey: 'reminderMinutes',
+      jsonKey: 'reminder_minutes',
     }),
     notifications: Attributes.Collection({
       modelKey: 'notifications',
