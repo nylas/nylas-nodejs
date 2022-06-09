@@ -3,6 +3,7 @@ import Attributes, { Attribute } from './attributes';
 import NylasConnection from '../nylas-connection';
 import Model from './model';
 import { SaveCallback } from './restful-model';
+import { AuthStatusProperties } from './account';
 
 export type ApplicationIPAddressesProperties = {
   ipAddresses: string[];
@@ -71,7 +72,11 @@ export type ManagementAccountProperties = {
   emailAddress: string;
   namespaceId: string;
   provider: string;
+  /**
+   * @deprecated use `authStatus` instead
+   */
   syncState: string;
+  authStatus?: AuthStatusProperties;
   authenticationType: string;
   trial: boolean;
   metadata?: object;
@@ -88,6 +93,7 @@ export default class ManagementAccount extends ManagementModel
   namespaceId = '';
   provider = '';
   syncState = '';
+  authStatus = undefined;
   authenticationType = '';
   trial = false;
   metadata?: object;
@@ -112,6 +118,10 @@ export default class ManagementAccount extends ManagementModel
     syncState: Attributes.String({
       modelKey: 'syncState',
       jsonKey: 'sync_state',
+    }),
+    authStatus: Attributes.Object({
+      modelKey: 'authStatus',
+      jsonKey: 'auth_status',
     }),
     authenticationType: Attributes.String({
       modelKey: 'authenticationType',

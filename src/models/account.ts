@@ -1,13 +1,30 @@
 import RestfulModel from './restful-model';
 import Attributes, { Attribute } from './attributes';
 import NylasConnection from '../nylas-connection';
+import { NativeAuthenticationProvider, Scope } from './connect';
+
+export enum AuthStatusState {
+  Valid = 'valid',
+  Invalid = 'invalid',
+}
+
+export type AuthStatusProperties = {
+  state: AuthStatusState;
+  provider: NativeAuthenticationProvider;
+  scopes: Scope[];
+  error_message?: string;
+};
 
 export type AccountProperties = {
   name: string;
   emailAddress: string;
   provider: string;
   organizationUnit: string;
+  /**
+   * @deprecated will be removed in future versions. use `authStatus` instead
+   */
   syncState: string;
+  authStatus?: AuthStatusProperties;
   linkedAt: Date;
   billingState?: string;
   accessToken?: string;
@@ -19,6 +36,7 @@ export default class Account extends RestfulModel implements AccountProperties {
   provider = '';
   organizationUnit = '';
   syncState = '';
+  authStatus = undefined;
   linkedAt = new Date();
   accessToken = '';
   billingState?: string;
@@ -47,6 +65,11 @@ export default class Account extends RestfulModel implements AccountProperties {
     syncState: Attributes.String({
       modelKey: 'syncState',
       jsonKey: 'sync_state',
+    }),
+
+    authStatus: Attributes.Object({
+      modelKey: 'authStatus',
+      jsonKey: 'auth_status',
     }),
 
     billingState: Attributes.String({
