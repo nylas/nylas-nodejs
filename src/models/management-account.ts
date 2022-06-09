@@ -73,7 +73,7 @@ export type ManagementAccountProperties = {
   namespaceId: string;
   provider: string;
   /**
-   * @deprecated use `authStatus` instead
+   * @deprecated will be removed in future versions. use `authStatus` instead
    */
   syncState: string;
   authStatus?: AuthStatusProperties;
