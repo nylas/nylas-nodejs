@@ -11,7 +11,7 @@ export enum AuthStatusState {
 export type AuthStatusProperties = {
   state: AuthStatusState;
   provider: NativeAuthenticationProvider;
-  scopes: Scope[];
+  scopes: string;
   error_message?: string;
 };
 
