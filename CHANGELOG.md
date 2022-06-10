@@ -3,6 +3,10 @@
 ### Unreleased
 * Add `Message.save()` functionality for updating existing messages
 
+### 6.4.2 / 2022-06-10
+* Add support for new `authState` object for `Account` and `ManagementAccount` collections
+* Deprecate `syncState` field for `Account` and `ManagementAccount` collections, as it is now superseded by `authState`
+
 ### 6.4.1 / 2022-06-06
 * Fixed issue where API response data was being lost
 * Fixed incorrect tunnel index number in webhook example
