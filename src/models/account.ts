@@ -1,7 +1,7 @@
 import RestfulModel from './restful-model';
 import Attributes, { Attribute } from './attributes';
 import NylasConnection from '../nylas-connection';
-import { NativeAuthenticationProvider, Scope } from './connect';
+import { NativeAuthenticationProvider } from './connect';
 
 export enum AuthStatusState {
   Valid = 'valid',
