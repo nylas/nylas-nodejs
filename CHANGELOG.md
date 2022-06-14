@@ -1,5 +1,8 @@
 # Changelog
 
+### 7.0.0 / TBD
+* **BREAKING CHANGE**: Convert `Nylas` class from a static to a non-static class
+
 ### 6.4.2 / 2022-06-14
 * Add `Message.save()` functionality for updating existing messages
 * Add missing `reminderMinutes` field in `Event`

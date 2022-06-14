@@ -16,26 +16,26 @@ import ApplicationDetails, {
 } from './models/application-details';
 
 class Nylas {
-  static clientId = '';
-  static get clientSecret(): string {
+  clientId = '';
+  get clientSecret(): string {
     return config.clientSecret;
   }
-  static set clientSecret(newClientSecret: string) {
+  set clientSecret(newClientSecret: string) {
     config.setClientSecret(newClientSecret);
   }
-  static get apiServer(): string | null {
+  get apiServer(): string | null {
     return config.apiServer;
   }
-  static set apiServer(newApiServer: string | null) {
+  set apiServer(newApiServer: string | null) {
     config.setApiServer(newApiServer);
   }
-  static accounts:
+  accounts:
     | ManagementModelCollection<ManagementAccount>
     | RestfulModelCollection<Account>;
-  static connect: Connect;
-  static webhooks: ManagementModelCollection<Webhook>;
+  connect: Connect;
+  webhooks: ManagementModelCollection<Webhook>;
 
-  static config(config: NylasConfig): Nylas {
+  constructor(config: NylasConfig) {
     if (config.apiServer && config.apiServer.indexOf('://') === -1) {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
@@ -75,18 +75,18 @@ class Nylas {
     return this;
   }
 
-  static clientCredentials(): boolean {
+  clientCredentials(): boolean {
     return this.clientId != null && this.clientSecret != null;
   }
 
-  static with(accessToken: string): NylasConnection {
+  with(accessToken: string): NylasConnection {
     if (!accessToken) {
       throw new Error('This function requires an access token');
     }
     return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
-  static application(
+  application(
     options?: ApplicationDetailsProperties
   ): Promise<ApplicationDetails> {
     if (!this.clientId) {
@@ -115,7 +115,7 @@ class Nylas {
     });
   }
 
-  static exchangeCodeForToken(
+  exchangeCodeForToken(
     code: string,
     callback?: (error: Error | null, accessToken?: string) => void
   ): Promise<AccessToken> {
@@ -161,7 +161,7 @@ class Nylas {
       );
   }
 
-  static urlForAuthentication(options: AuthenticateUrlConfig): string {
+  urlForAuthentication(options: AuthenticateUrlConfig): string {
     if (!this.clientId) {
       throw new Error(
         'urlForAuthentication() cannot be called until you provide a clientId via config()'
@@ -193,8 +193,8 @@ class Nylas {
    * Revoke a single access token
    * @param accessToken The access token to revoke
    */
-  static revoke(accessToken: string): Promise<void> {
-    return Nylas.with(accessToken)
+  revoke(accessToken: string): Promise<void> {
+    return this.with(accessToken)
       .request({
         method: 'POST',
         path: '/oauth/revoke',
