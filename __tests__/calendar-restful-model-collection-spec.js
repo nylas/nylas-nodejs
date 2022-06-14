@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 
 import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
 import { Days, RoundRobin } from '../src/models/calendar-availability';
 
 jest.mock('node-fetch', () => {
@@ -17,15 +16,13 @@ describe('CalendarRestfulModelCollection', () => {
   const testAccessToken = 'test-access-token';
 
   beforeEach(() => {
-    Nylas.config({
+    const nylasClient = new Nylas({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = new NylasConnection(testAccessToken, {
-      clientId: 'myClientId',
-    });
+    testContext.connection = nylasClient.with(testAccessToken);
     jest.spyOn(testContext.connection, 'request');
 
     const response = {

@@ -41,15 +41,17 @@ describe('Connect', () => {
   };
 
   describe('authorize without clientId', () => {
+    const testContext = {};
+
     beforeEach(() => {
-      Nylas.config({});
+      testContext.nylasClient = new Nylas({});
     });
 
     test('Should throw an error when the clientId is not passed in to Nylas.config()', done => {
       expect.assertions(2);
       const settings = { username: exchangeEmail, password: password };
       expect(() =>
-        Nylas.connect.authorize(
+        testContext.nylasClient.connect.authorize(
           authorizeOptions(
             exchangeEmail,
             NativeAuthenticationProvider.Exchange,
@@ -57,14 +59,18 @@ describe('Connect', () => {
           )
         )
       ).toThrow();
-      expect(() => Nylas.connect.token(authorizeJSON.code)).toThrow();
+      expect(() =>
+        testContext.nylasClient.connect.token(authorizeJSON.code)
+      ).toThrow();
       done();
     });
   });
 
   describe('authorize with clientId', () => {
+    const testContext = {};
+
     beforeEach(() => {
-      Nylas.config({
+      testContext.nylasClient = new Nylas({
         clientId: CLIENT_ID,
         clientSecret: CLIENT_SECRET,
       });
@@ -73,10 +79,10 @@ describe('Connect', () => {
     test('Should do a POST request to /connect/authorize', done => {
       expect.assertions(2);
       const settings = { username: exchangeEmail, password: password };
-      Nylas.connect.connection.request = jest.fn(() =>
+      testContext.nylasClient.connect.connection.request = jest.fn(() =>
         Promise.resolve(authorizeJSON)
       );
-      Nylas.connect
+      testContext.nylasClient.connect
         .authorize(
           authorizeOptions(
             exchangeEmail,
@@ -86,7 +92,9 @@ describe('Connect', () => {
         )
         .then(resp => {
           expect(resp).toEqual(authorizeJSON);
-          expect(Nylas.connect.connection.request).toHaveBeenCalledWith({
+          expect(
+            testContext.nylasClient.connect.connection.request
+          ).toHaveBeenCalledWith({
             method: 'POST',
             path: '/connect/authorize',
             body: {
@@ -104,12 +112,14 @@ describe('Connect', () => {
 
     test('Should do a POST request to /connect/token', done => {
       expect.assertions(2);
-      Nylas.connect.connection.request = jest.fn(() =>
+      testContext.nylasClient.connect.connection.request = jest.fn(() =>
         Promise.resolve(tokenJSON)
       );
-      Nylas.connect.token(authorizeJSON.code).then(resp => {
+      testContext.nylasClient.connect.token(authorizeJSON.code).then(resp => {
         expect(resp.toJSON()).toEqual(tokenJSON);
-        expect(Nylas.connect.connection.request).toHaveBeenCalledWith({
+        expect(
+          testContext.nylasClient.connect.connection.request
+        ).toHaveBeenCalledWith({
           method: 'POST',
           path: '/connect/token',
           body: {

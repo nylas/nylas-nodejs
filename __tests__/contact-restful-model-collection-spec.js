@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 
 import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
 import { Group } from '../src/models/contact';
 
 jest.mock('node-fetch', () => {
@@ -17,15 +16,13 @@ describe('RestfulModelCollection', () => {
   const testAccessToken = 'test-access-token';
 
   beforeEach(() => {
-    Nylas.config({
+    const nylasClient = new Nylas({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = new NylasConnection(testAccessToken, {
-      clientId: 'foo',
-    });
+    testContext.connection = nylasClient.with(testAccessToken);
     jest.spyOn(testContext.connection, 'request');
 
     const contactJSON = [
