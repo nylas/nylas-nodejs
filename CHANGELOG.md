@@ -1,7 +1,8 @@
 # Changelog
 
-### Unreleased
+### 6.4.2 / 2022-06-14
 * Add `Message.save()` functionality for updating existing messages
+* Add missing `reminderMinutes` field in `Event`
 
 ### 6.4.1 / 2022-06-06
 * Fixed issue where API response data was being lost
