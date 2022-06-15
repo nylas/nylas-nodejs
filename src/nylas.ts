@@ -75,10 +75,19 @@ class Nylas {
     return this;
   }
 
+  /**
+   * Checks if the Nylas instance has been configured with credentials
+   * @return True if the Nylas instance has been configured with credentials
+   */
   clientCredentials(): boolean {
     return this.clientId != null && this.clientSecret != null;
   }
 
+  /**
+   * Configure a NylasConnection instance to access a user's resources
+   * @param accessToken The access token to access the user's resources
+   * @return The configured NylasConnection instance
+   */
   with(accessToken: string): NylasConnection {
     if (!accessToken) {
       throw new Error('This function requires an access token');
@@ -86,6 +95,11 @@ class Nylas {
     return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
+  /**
+   * Return information about a Nylas application
+   * @param options Application details to overwrite
+   * @return Information about the Nylas application
+   */
   application(
     options?: ApplicationDetailsProperties
   ): Promise<ApplicationDetails> {
@@ -115,6 +129,12 @@ class Nylas {
     });
   }
 
+  /**
+   * Exchange an authorization code for an access token
+   * @param code Application details to overwrite
+   * @param callback Application details to overwrite
+   * @return Information about the Nylas application
+   */
   exchangeCodeForToken(
     code: string,
     callback?: (error: Error | null, accessToken?: string) => void
@@ -161,6 +181,11 @@ class Nylas {
       );
   }
 
+  /**
+   * Build the URL for authenticating users to your application via Hosted Authentication
+   * @param options Configuration for the authentication process
+   * @return The URL for hosted authentication
+   */
   urlForAuthentication(options: AuthenticateUrlConfig): string {
     if (!this.clientId) {
       throw new Error(
