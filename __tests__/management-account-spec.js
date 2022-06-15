@@ -5,8 +5,9 @@ import ManagementAccount from '../src/models/management-account';
 describe('ManagementAccount', () => {
   const CLIENT_ID = 'abc';
   const ACCOUNT_ID = '8rilmlwuo4zmpjedz8bcplclk';
+  let nylasClient;
   beforeEach(() => {
-    Nylas.config({
+    nylasClient = new Nylas({
       clientId: CLIENT_ID,
       clientSecret: 'xyz',
     });
@@ -14,7 +15,7 @@ describe('ManagementAccount', () => {
 
   describe('list', () => {
     test('should do a GET request to get the account list', done => {
-      Nylas.accounts.connection.request = jest.fn(() =>
+      nylasClient.accounts.connection.request = jest.fn(() =>
         Promise.resolve([
           {
             account_id: '8rilmlwuo4zmpjedz8bcplclk',
@@ -31,7 +32,7 @@ describe('ManagementAccount', () => {
           },
         ])
       );
-      Nylas.accounts.list({}, (err, accounts) => {
+      nylasClient.accounts.list({}, (err, accounts) => {
         expect(accounts.length).toEqual(1);
         expect(accounts[0].id).toEqual('8rilmlwuo4zmpjedz8bcplclk');
         expect(accounts[0].billingState).toEqual('paid');
@@ -43,7 +44,7 @@ describe('ManagementAccount', () => {
         expect(accounts[0].metadata).toEqual({
           test: 'true',
         });
-        expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+        expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
           method: 'GET',
           qs: { limit: 100, offset: 0 },
           path: `/a/${CLIENT_ID}/accounts`,
@@ -70,18 +71,20 @@ describe('ManagementAccount', () => {
           ])
         )
         .mockReturnValueOnce(Promise.resolve({ success: 'true' }));
-      Nylas.accounts.connection.request = requestMock;
-      Nylas.accounts
+      nylasClient.accounts.connection.request = requestMock;
+      nylasClient.accounts
         .first()
         .then(account => account.upgrade())
         .then(resp => {
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledTimes(2);
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledTimes(
+            2
+          );
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
             path: `/a/${CLIENT_ID}/accounts`,
           });
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
             path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/upgrade`,
           });
@@ -108,18 +111,20 @@ describe('ManagementAccount', () => {
           ])
         )
         .mockReturnValueOnce(Promise.resolve({ success: 'true' }));
-      Nylas.accounts.connection.request = requestMock;
-      Nylas.accounts
+      nylasClient.accounts.connection.request = requestMock;
+      nylasClient.accounts
         .first()
         .then(account => account.downgrade())
         .then(resp => {
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledTimes(2);
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledTimes(
+            2
+          );
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
             path: `/a/${CLIENT_ID}/accounts`,
           });
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
             path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/downgrade`,
           });
@@ -146,18 +151,20 @@ describe('ManagementAccount', () => {
           ])
         )
         .mockReturnValueOnce(Promise.resolve({ success: 'true' }));
-      Nylas.accounts.connection.request = requestMock;
-      Nylas.accounts
+      nylasClient.accounts.connection.request = requestMock;
+      nylasClient.accounts
         .first()
         .then(account => account.revokeAll())
         .then(resp => {
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledTimes(2);
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledTimes(
+            2
+          );
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
             path: `/a/${CLIENT_ID}/accounts`,
           });
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
             path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/revoke-all`,
             body: { keep_access_token: undefined },
@@ -182,18 +189,20 @@ describe('ManagementAccount', () => {
           ])
         )
         .mockReturnValueOnce(Promise.resolve({ success: 'true' }));
-      Nylas.accounts.connection.request = requestMock;
-      Nylas.accounts
+      nylasClient.accounts.connection.request = requestMock;
+      nylasClient.accounts
         .first()
         .then(account => account.revokeAll('abc123'))
         .then(resp => {
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledTimes(2);
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledTimes(
+            2
+          );
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
             path: `/a/${CLIENT_ID}/accounts`,
           });
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
             path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/revoke-all`,
             body: { keep_access_token: 'abc123' },
@@ -235,12 +244,12 @@ describe('ManagementAccount', () => {
             updated_at: 1544658529,
           })
         );
-      Nylas.accounts.connection.request = requestMock;
-      Nylas.accounts
+      nylasClient.accounts.connection.request = requestMock;
+      nylasClient.accounts
         .first()
         .then(account => account.ipAddresses())
         .then(resp => {
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             path: `/a/${CLIENT_ID}/ip_addresses`,
           });
@@ -274,18 +283,20 @@ describe('ManagementAccount', () => {
             updated_at: 1563496685,
           })
         );
-      Nylas.accounts.connection.request = requestMock;
-      Nylas.accounts
+      nylasClient.accounts.connection.request = requestMock;
+      nylasClient.accounts
         .first()
         .then(account => account.tokenInfo('abc123'))
         .then(resp => {
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledTimes(2);
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledTimes(
+            2
+          );
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
             path: `/a/${CLIENT_ID}/accounts`,
           });
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
             path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/token-info`,
             body: { access_token: 'abc123' },
@@ -314,18 +325,20 @@ describe('ManagementAccount', () => {
           ])
         )
         .mockReturnValueOnce(Promise.reject('Error: No access_token passed.'));
-      Nylas.accounts.connection.request = requestMock;
-      Nylas.accounts
+      nylasClient.accounts.connection.request = requestMock;
+      nylasClient.accounts
         .first()
         .then(account => account.tokenInfo())
         .catch(() => {
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledTimes(2);
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledTimes(
+            2
+          );
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'GET',
             qs: { limit: 1, offset: 0 },
             path: `/a/${CLIENT_ID}/accounts`,
           });
-          expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+          expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
             method: 'POST',
             path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}/token-info`,
             body: { access_token: undefined },
@@ -337,10 +350,12 @@ describe('ManagementAccount', () => {
 
   describe('save', () => {
     test('Should update only metadata when saving', async done => {
-      Nylas.accounts.connection = new NylasConnection('123', {
+      nylasClient.accounts.connection = new NylasConnection('123', {
         clientId: CLIENT_ID,
       });
-      Nylas.accounts.connection.request = jest.fn(() => Promise.resolve({}));
+      nylasClient.accounts.connection.request = jest.fn(() =>
+        Promise.resolve({})
+      );
       const accJson = {
         account_id: '8rilmlwuo4zmpjedz8bcplclk',
         billing_state: 'paid',
@@ -352,7 +367,7 @@ describe('ManagementAccount', () => {
         trial: false,
       };
       const account = new ManagementAccount(
-        Nylas.accounts.connection,
+        nylasClient.accounts.connection,
         CLIENT_ID,
         accJson
       );
@@ -361,7 +376,7 @@ describe('ManagementAccount', () => {
       };
 
       account.save().then(() => {
-        expect(Nylas.accounts.connection.request).toHaveBeenCalledWith({
+        expect(nylasClient.accounts.connection.request).toHaveBeenCalledWith({
           method: 'PUT',
           path: `/a/${CLIENT_ID}/accounts/${ACCOUNT_ID}`,
           qs: {},

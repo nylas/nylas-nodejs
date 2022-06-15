@@ -1,4 +1,3 @@
-import NylasConnection from '../src/nylas-connection';
 import Calendar from '../src/models/calendar';
 import fetch from 'node-fetch';
 import Nylas from '../src/nylas';
@@ -15,13 +14,13 @@ describe('Calendar', () => {
   let testContext;
 
   beforeEach(() => {
-    Nylas.config({
+    const nylasClient = new Nylas({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = new NylasConnection('123', { clientId: 'foo' });
+    testContext.connection = nylasClient.with('123');
     const calendarJSON = {
       account_id: 'eof2wrhqkl7kdwhy9hylpv9o9',
       description: 'All the holidays',
