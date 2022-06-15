@@ -2,7 +2,6 @@ import fetch from 'node-fetch';
 const { Response } = jest.requireActual('node-fetch');
 
 import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
 import JobStatus from '../src/models/job-status';
 import OutboxJobStatus from '../src/models/outbox-job-status';
 
@@ -19,15 +18,13 @@ describe('Job Status', () => {
   const testAccessToken = 'test-access-token';
 
   beforeEach(() => {
-    Nylas.config({
+    const nylasClient = new Nylas({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = new NylasConnection(testAccessToken, {
-      clientId: 'myClientId',
-    });
+    testContext.connection = nylasClient.with(testAccessToken);
     testContext.listApiResponse = [
       {
         id: 'dcjq3eyd5svm7cnz055tb6cry',

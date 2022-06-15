@@ -1,4 +1,3 @@
-import NylasConnection from '../src/nylas-connection';
 import Draft from '../src/models/draft';
 import Message from '../src/models/message';
 import Nylas from '../src/nylas';
@@ -17,13 +16,13 @@ describe('Draft', () => {
   let testContext;
 
   beforeEach(() => {
-    Nylas.config({
+    const nylasClient = new Nylas({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = new NylasConnection('123', { clientId: 'foo' });
+    testContext.connection = nylasClient.with('123');
     jest.spyOn(testContext.connection, 'request');
 
     const response = receivedBody => {

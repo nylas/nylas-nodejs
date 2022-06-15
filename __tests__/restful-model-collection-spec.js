@@ -1,5 +1,4 @@
 import Nylas from '../src/nylas';
-import NylasConnection from '../src/nylas-connection';
 import RestfulModelCollection from '../src/models/restful-model-collection';
 import Draft from '../src/models/draft';
 import Event from '../src/models/event';
@@ -9,14 +8,12 @@ describe('RestfulModelCollection', () => {
   let testContext;
 
   beforeEach(() => {
-    Nylas.config({
+    const nylasClient = new Nylas({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
     });
     testContext = {};
-    testContext.connection = new NylasConnection('test-access-token', {
-      clientId: 'foo',
-    });
+    testContext.connection = nylasClient.with('test-access-token');
     testContext.connection.request = jest.fn(() => Promise.resolve());
     testContext.collection = new RestfulModelCollection(
       Thread,

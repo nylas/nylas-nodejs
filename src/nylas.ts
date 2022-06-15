@@ -16,26 +16,26 @@ import ApplicationDetails, {
 } from './models/application-details';
 
 class Nylas {
-  static clientId = '';
-  static get clientSecret(): string {
+  clientId = '';
+  get clientSecret(): string {
     return config.clientSecret;
   }
-  static set clientSecret(newClientSecret: string) {
+  set clientSecret(newClientSecret: string) {
     config.setClientSecret(newClientSecret);
   }
-  static get apiServer(): string | null {
+  get apiServer(): string | null {
     return config.apiServer;
   }
-  static set apiServer(newApiServer: string | null) {
+  set apiServer(newApiServer: string | null) {
     config.setApiServer(newApiServer);
   }
-  static accounts:
+  accounts:
     | ManagementModelCollection<ManagementAccount>
     | RestfulModelCollection<Account>;
-  static connect: Connect;
-  static webhooks: ManagementModelCollection<Webhook>;
+  connect: Connect;
+  webhooks: ManagementModelCollection<Webhook>;
 
-  static config(config: NylasConfig): Nylas {
+  constructor(config: NylasConfig) {
     if (config.apiServer && config.apiServer.indexOf('://') === -1) {
       throw new Error(
         'Please specify a fully qualified URL for the API Server.'
@@ -75,18 +75,32 @@ class Nylas {
     return this;
   }
 
-  static clientCredentials(): boolean {
+  /**
+   * Checks if the Nylas instance has been configured with credentials
+   * @return True if the Nylas instance has been configured with credentials
+   */
+  clientCredentials(): boolean {
     return this.clientId != null && this.clientSecret != null;
   }
 
-  static with(accessToken: string): NylasConnection {
+  /**
+   * Configure a NylasConnection instance to access a user's resources
+   * @param accessToken The access token to access the user's resources
+   * @return The configured NylasConnection instance
+   */
+  with(accessToken: string): NylasConnection {
     if (!accessToken) {
       throw new Error('This function requires an access token');
     }
     return new NylasConnection(accessToken, { clientId: this.clientId });
   }
 
-  static application(
+  /**
+   * Return information about a Nylas application
+   * @param options Application details to overwrite
+   * @return Information about the Nylas application
+   */
+  application(
     options?: ApplicationDetailsProperties
   ): Promise<ApplicationDetails> {
     if (!this.clientId) {
@@ -115,7 +129,13 @@ class Nylas {
     });
   }
 
-  static exchangeCodeForToken(
+  /**
+   * Exchange an authorization code for an access token
+   * @param code Application details to overwrite
+   * @param callback Application details to overwrite
+   * @return Information about the Nylas application
+   */
+  exchangeCodeForToken(
     code: string,
     callback?: (error: Error | null, accessToken?: string) => void
   ): Promise<AccessToken> {
@@ -161,7 +181,12 @@ class Nylas {
       );
   }
 
-  static urlForAuthentication(options: AuthenticateUrlConfig): string {
+  /**
+   * Build the URL for authenticating users to your application via Hosted Authentication
+   * @param options Configuration for the authentication process
+   * @return The URL for hosted authentication
+   */
+  urlForAuthentication(options: AuthenticateUrlConfig): string {
     if (!this.clientId) {
       throw new Error(
         'urlForAuthentication() cannot be called until you provide a clientId via config()'
@@ -197,8 +222,8 @@ class Nylas {
    * Revoke a single access token
    * @param accessToken The access token to revoke
    */
-  static revoke(accessToken: string): Promise<void> {
-    return Nylas.with(accessToken)
+  revoke(accessToken: string): Promise<void> {
+    return this.with(accessToken)
       .request({
         method: 'POST',
         path: '/oauth/revoke',
