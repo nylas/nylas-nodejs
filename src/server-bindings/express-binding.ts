@@ -1,6 +1,6 @@
 import Nylas from '../nylas';
 import cors from 'cors';
-import express, { Express } from 'express';
+import express, { Express, RequestHandler, Response } from 'express';
 import {
   ServerBindingOptions,
   ServerBinding,
@@ -22,6 +22,24 @@ export default class ExpressBinding extends ServerBinding {
     this.expressApp = expressApp;
   }
 
+  webhookVerificationMiddleware(): RequestHandler {
+    return (req, res, next): void | Response => {
+      const isVerified = this.verifyWebhookSignature(
+        this.nylasClient.clientSecret,
+        req.header(ServerBinding.NYLAS_SIGNATURE_HEADER) as string,
+        req.body
+      );
+
+      if (!isVerified) {
+        return res
+          .status(401)
+          .send('X-Nylas-Signature failed verification 🚷 ');
+      }
+
+      next();
+    };
+  }
+
   mount(): void {
     const webhookRoute = this.buildRoute('/webhook');
     this.expressApp.use(
@@ -33,13 +51,24 @@ export default class ExpressBinding extends ServerBinding {
               origin: this.clientUri,
             }
           : undefined
-      ) as any,
+      ) as any
+    );
+
+    // For the Nylas webhook endpoint, we should get the raw body to use for verification
+    this.expressApp.use(
+      webhookRoute,
+      bodyParser.raw({ inflate: true, type: 'application/json' })
+    );
+
+    this.expressApp.use(
+      this.buildRoute(''),
       express.json(),
       bodyParser.urlencoded({ limit: '5mb', extended: true }) // support encoded bodies
     );
 
     this.expressApp.post<unknown, unknown, Record<string, unknown>>(
       webhookRoute,
+      this.webhookVerificationMiddleware() as any,
       (req, res) => {
         const deltas = (req.body.deltas as Record<string, unknown>[]) || [];
         deltas.forEach(d => {

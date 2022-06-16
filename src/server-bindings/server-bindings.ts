@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { Response } from 'express';
 import { Scope } from '../models/connect';
 import { EventEmitter } from 'events';
@@ -23,6 +24,7 @@ export abstract class ServerBinding extends EventEmitter
   routePrefix?: string;
   clientUri?: string;
   static DEFAULT_ROUTE_PREFIX = '/nylas';
+  static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
   private _untypedOn = this.on;
   private _untypedEmit = this.emit;
 
@@ -50,6 +52,18 @@ export abstract class ServerBinding extends EventEmitter
       ? WebhookDeltaProperties
       : { accessTokenObj: AccessToken; res: Response }
   ): boolean => this._untypedEmit(event, payload);
+
+  verifyWebhookSignature(
+    secret: string,
+    xNylasSignature: string,
+    rawBody: Buffer
+  ): boolean {
+    const digest = crypto
+      .createHmac('sha256', secret)
+      .update(rawBody)
+      .digest('hex');
+    return digest === xNylasSignature;
+  }
 
   protected buildRoute(path: string): string {
     const prefix = this.routePrefix
