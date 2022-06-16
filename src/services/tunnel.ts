@@ -7,22 +7,24 @@ import {
   regionConfig,
 } from '../config';
 import Nylas from '../nylas';
-import { WebhookTriggers } from '../models/webhook';
-import {
-  WebhookDeltaProperties,
-  WebhookNotificationProperties,
-} from '../models/webhook-notification';
+import Webhook, { WebhookTriggers } from '../models/webhook';
+import { WebhookDelta } from '../models/webhook-notification';
 
 /**
  * Create a webhook to the Nylas forwarding service which will pass messages to our websocket
+ * @param nylasClient The configured Nylas application
+ * @param callbackDomain The domain name of the callback
+ * @param tunnelPath The path to the tunnel
+ * @param triggers The list of triggers to subscribe to
+ * @return The webhook details response from the API
  */
 const buildTunnelWebhook = (
   nylasClient: Nylas,
   callbackDomain: string,
-  tunnelId: string,
+  tunnelPath: string,
   triggers: WebhookTriggers[]
-) => {
-  const callbackUrl = `https://${callbackDomain}/${tunnelId}`;
+): Promise<Webhook> => {
+  const callbackUrl = `https://${callbackDomain}/${tunnelPath}`;
   return nylasClient.webhooks
     .build({
       callbackUrl,
@@ -34,6 +36,7 @@ const buildTunnelWebhook = (
 };
 
 /**
+ * Open a webhook tunnel and register it with the Nylas API
  * 1. Creates a UUID
  * 2. Opens a websocket connection to Nylas' webhook forwarding service,
  *    with the UUID as a header
@@ -41,17 +44,20 @@ const buildTunnelWebhook = (
  *
  * When an event is received by the forwarding service, it will push directly to this websocket
  * connection
+ *
+ * @param config Configuration for the webhook tunnel, including callback functions, region, and events to subscribe to
+ * @return The webhook details response from the API
  */
 export const openWebhookTunnel = (config: {
   nylasClient: Nylas;
-  onMessage: (msg: WebhookDeltaProperties) => void;
+  onMessage: (msg: WebhookDelta) => void;
   onConnectFail?: (error: Error) => void;
   onError?: (error: Error) => void;
   onClose?: (wsClient: WebSocketClient) => void;
   onConnect?: (wsClient: WebSocketClient) => void;
   region?: Region;
   triggers?: WebhookTriggers[];
-}) => {
+}): Promise<Webhook> => {
   const triggers = config.triggers || DEFAULT_WEBHOOK_TRIGGERS;
   const region = config.region || DEFAULT_REGION;
   const { websocketDomain, callbackDomain } = regionConfig[region];
@@ -59,7 +65,7 @@ export const openWebhookTunnel = (config: {
   // This UUID will map our websocket to a webhook in the forwarding server
   const tunnelId = uuidv4();
 
-  var client = new WebSocketClient({ closeTimeout: 60000 });
+  const client = new WebSocketClient({ closeTimeout: 60000 });
 
   client.on('connectFailed', function(error) {
     config.onConnectFail && config.onConnectFail(error);
@@ -79,15 +85,17 @@ export const openWebhookTunnel = (config: {
     connection.on('message', function(message) {
       // This shouldn't happen. If any of these are seen, open an issue
       if (message.type === 'binary') {
-        console.log('Unknown binary message received');
+        config.onError &&
+          config.onError(new Error('Unknown binary message received'));
         return;
       }
 
       try {
-        const req = JSON.parse(message.utf8Data) as {
-          body?: WebhookNotificationProperties;
-        };
-        req?.body?.deltas?.forEach?.(delta => config.onMessage(delta));
+        const req = JSON.parse(message.utf8Data);
+        const deltas = JSON.parse(req.body).deltas as Record<string, unknown>[];
+        deltas.forEach(delta =>
+          config.onMessage(new WebhookDelta().fromJSON(delta))
+        );
       } catch (e) {
         config.onError &&
           config.onError(
