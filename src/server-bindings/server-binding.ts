@@ -6,6 +6,7 @@ import { WebhookTriggers } from '../models/webhook';
 import { WebhookDeltaProperties } from '../models/webhook-notification';
 import AccessToken from '../models/access-token';
 import Nylas from '../nylas';
+import { Region } from '../config';
 
 type SupportedFrameworks = Express;
 
@@ -17,6 +18,9 @@ export type ServerBindingOptions = {
   defaultScopes: Scope[];
   routePrefix?: string;
   clientUri?: string;
+  useDevelopmentWebsocketEventListener?:
+    | boolean
+    | { region?: Region; triggers?: WebhookTriggers[] };
 };
 
 export abstract class ServerBinding extends EventEmitter
@@ -26,6 +30,10 @@ export abstract class ServerBinding extends EventEmitter
   defaultScopes: Scope[];
   routePrefix?: string;
   clientUri?: string;
+  useDevelopmentWebsocketEventListener:
+    | boolean
+    | { region?: Region; triggers?: WebhookTriggers[] } = false;
+
   static DEFAULT_ROUTE_PREFIX = '/nylas';
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
   private _untypedOn = this.on;
@@ -42,6 +50,8 @@ export abstract class ServerBinding extends EventEmitter
     this.defaultScopes = options.defaultScopes;
     this.routePrefix = options.routePrefix;
     this.clientUri = options.clientUri;
+    this.useDevelopmentWebsocketEventListener =
+      options.useDevelopmentWebsocketEventListener || false;
   }
 
   abstract mount(): void;
