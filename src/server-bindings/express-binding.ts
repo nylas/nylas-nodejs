@@ -5,7 +5,7 @@ import {
   ServerBindingOptions,
   ServerBinding,
   ServerEvents,
-} from './server-bindings';
+} from './server-binding';
 import bodyParser from 'body-parser';
 import { WebhookDelta } from '../models/webhook-notification';
 import { WebhookTriggers } from '../models/webhook';
