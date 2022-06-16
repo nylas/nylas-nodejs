@@ -8,7 +8,14 @@ import {
 } from '../config';
 import Nylas from '../nylas';
 import { WebhookTriggers } from '../models/webhook';
+import {
+  WebhookDeltaProperties,
+  WebhookNotificationProperties,
+} from '../models/webhook-notification';
 
+/**
+ * Create a webhook to the Nylas forwarding service which will pass messages to our websocket
+ */
 const buildTunnelWebhook = (
   nylasClient: Nylas,
   callbackDomain: string,
@@ -26,9 +33,18 @@ const buildTunnelWebhook = (
     .save();
 };
 
-export const openWebhookTunnel = <T>(config: {
+/**
+ * 1. Creates a UUID
+ * 2. Opens a websocket connection to Nylas' webhook forwarding service,
+ *    with the UUID as a header
+ * 3. Creates a new webhook pointed at the forwarding service with the UUID as the path
+ *
+ * When an event is received by the forwarding service, it will push directly to this websocket
+ * connection
+ */
+export const openWebhookTunnel = (config: {
   nylasClient: Nylas;
-  onMessage: (msg: T) => void;
+  onMessage: (msg: WebhookDeltaProperties) => void;
   onConnectFail?: (error: Error) => void;
   onError?: (error: Error) => void;
   onClose?: (wsClient: WebSocketClient) => void;
@@ -40,6 +56,7 @@ export const openWebhookTunnel = <T>(config: {
   const region = config.region || DEFAULT_REGION;
   const { websocketDomain, callbackDomain } = regionConfig[region];
 
+  // This UUID will map our websocket to a webhook in the forwarding server
   const tunnelId = uuidv4();
 
   var client = new WebSocketClient({ closeTimeout: 60000 });
@@ -60,13 +77,17 @@ export const openWebhookTunnel = <T>(config: {
     });
 
     connection.on('message', function(message) {
+      // This shouldn't happen. If any of these are seen, open an issue
       if (message.type === 'binary') {
         console.log('Unknown binary message received');
         return;
       }
 
       try {
-        config.onMessage(JSON.parse(message.utf8Data));
+        const req = JSON.parse(message.utf8Data) as {
+          body?: WebhookNotificationProperties;
+        };
+        req?.body?.deltas?.forEach?.(delta => config.onMessage(delta));
       } catch (e) {
         config.onError &&
           config.onError(
@@ -85,6 +106,7 @@ export const openWebhookTunnel = <T>(config: {
     'Tunnel-Id': tunnelId,
     Region: region,
   });
+
   return buildTunnelWebhook(
     config.nylasClient,
     callbackDomain,
