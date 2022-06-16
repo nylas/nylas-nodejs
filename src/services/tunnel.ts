@@ -7,11 +7,8 @@ import {
   regionConfig,
 } from '../config';
 import Nylas from '../nylas';
-import { WebhookTriggers } from '../models/webhook';
-import {
-  WebhookDeltaProperties,
-  WebhookNotificationProperties,
-} from '../models/webhook-notification';
+import Webhook, { WebhookTriggers } from '../models/webhook';
+import { WebhookDelta } from '../models/webhook-notification';
 
 /**
  * Create a webhook to the Nylas forwarding service which will pass messages to our websocket
@@ -44,7 +41,7 @@ const buildTunnelWebhook = (
  */
 export const openWebhookTunnel = (config: {
   nylasClient: Nylas;
-  onMessage: (msg: WebhookDeltaProperties) => void;
+  onMessage: (msg: WebhookDelta) => void;
   onConnectFail?: (error: Error) => void;
   onError?: (error: Error) => void;
   onClose?: (wsClient: WebSocketClient) => void;
@@ -84,10 +81,11 @@ export const openWebhookTunnel = (config: {
       }
 
       try {
-        const req = JSON.parse(message.utf8Data) as {
-          body?: WebhookNotificationProperties;
-        };
-        req?.body?.deltas?.forEach?.(delta => config.onMessage(delta));
+        const req = JSON.parse(message.utf8Data);
+        const deltas = JSON.parse(req.body).deltas as Record<string, unknown>[];
+        deltas.forEach(delta =>
+          config.onMessage(new WebhookDelta().fromJSON(delta))
+        );
       } catch (e) {
         config.onError &&
           config.onError(
