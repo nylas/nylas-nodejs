@@ -57,6 +57,8 @@
     "@types/backoff": "^2.5.1",
     "@types/jest": "^25.1.4",
     "@types/node-fetch": "^2.5.8",
+    "@types/uuid": "^8.3.4",
+    "@types/websocket": "^1.0.5",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
     "babel-eslint": "^10.0.1",
@@ -68,7 +70,9 @@
     "prettier": "^1.19.1",
     "pretty-format": "^25.2.6",
     "ts-jest": "^25.2.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "uuid": "^8.3.2",
+    "websocket": "^1.0.34"
   },
   "repository": {
     "type": "git",
