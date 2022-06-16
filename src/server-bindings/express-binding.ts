@@ -8,8 +8,6 @@ import {
 } from './server-binding';
 import bodyParser from 'body-parser';
 import { WebhookDelta } from '../models/webhook-notification';
-import { WebhookTriggers } from '../models/webhook';
-import { openWebhookTunnel } from '../services/tunnel';
 
 export default class ExpressBinding extends ServerBinding {
   constructor(nylasClient: Nylas, app: Express, options: ServerBindingOptions) {
@@ -35,35 +33,11 @@ export default class ExpressBinding extends ServerBinding {
   }
 
   mount(): void {
-    // Can be used either by websocket or webhook
-    const handleDeltaEvent = (d: any) => {
-      d.type &&
-        this.emit(d.type as WebhookTriggers, new WebhookDelta().fromJSON(d));
-    };
-
-    if (this.useDevelopmentWebsocketEventListener) {
-      const webhookConfig: Partial<Parameters<
-        typeof openWebhookTunnel
-      >[0]> = {};
-
-      // Config can be either boolean or object with triggers and region customization
-      if (typeof this.useDevelopmentWebsocketEventListener === 'object') {
-        webhookConfig.triggers = this.useDevelopmentWebsocketEventListener.triggers;
-        webhookConfig.region = this.useDevelopmentWebsocketEventListener.region;
-      }
-
-      openWebhookTunnel({
-        ...webhookConfig,
-        nylasClient: this.nylasClient,
-        onMessage: handleDeltaEvent,
-        onClose: () => console.log('Nylas websocket client connection closed'),
-        onConnectFail: e =>
-          console.log('Failed to connect Nylas websocket client', e.message),
-        onError: e => console.log('Error in Nylas websocket client', e.message),
-        onConnect: () => console.log('Nylas websocket client connected'),
-      });
-    }
     const webhookRoute = this.buildRoute('/webhook');
+
+    // Start the webhook dev server if config was set
+    this.startDevelopmentWebsocket();
+
     this.app.use(
       this.buildRoute(''),
       cors(
@@ -93,7 +67,9 @@ export default class ExpressBinding extends ServerBinding {
       this.webhookVerificationMiddleware() as any,
       (req, res) => {
         const deltas = (req.body.deltas as Record<string, unknown>[]) || [];
-        deltas.forEach(handleDeltaEvent);
+        deltas.forEach(d =>
+          this.handleDeltaEvent(new WebhookDelta().fromJSON(d))
+        );
         res.status(200).send('ok');
       }
     );
