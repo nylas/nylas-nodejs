@@ -1,11 +1,13 @@
 import crypto from 'crypto';
-import { Response } from 'express';
+import { Express, Response } from 'express';
 import { Scope } from '../models/connect';
 import { EventEmitter } from 'events';
 import { WebhookTriggers } from '../models/webhook';
 import { WebhookDeltaProperties } from '../models/webhook-notification';
 import AccessToken from '../models/access-token';
 import Nylas from '../nylas';
+
+type SupportedFrameworks = Express;
 
 export enum ServerEvents {
   TokenExchange = 'token-exchange',
@@ -20,6 +22,7 @@ export type ServerBindingOptions = {
 export abstract class ServerBinding extends EventEmitter
   implements ServerBindingOptions {
   nylasClient: Nylas;
+  app: SupportedFrameworks;
   defaultScopes: Scope[];
   routePrefix?: string;
   clientUri?: string;
@@ -28,13 +31,20 @@ export abstract class ServerBinding extends EventEmitter
   private _untypedOn = this.on;
   private _untypedEmit = this.emit;
 
-  protected constructor(nylasClient: Nylas, options: ServerBindingOptions) {
+  protected constructor(
+    nylasClient: Nylas,
+    app: SupportedFrameworks,
+    options: ServerBindingOptions
+  ) {
     super();
     this.nylasClient = nylasClient;
+    this.app = app;
     this.defaultScopes = options.defaultScopes;
     this.routePrefix = options.routePrefix;
     this.clientUri = options.clientUri;
   }
+
+  abstract mount(): void;
 
   // Taken from the best StackOverflow answer of all time https://stackoverflow.com/a/56228127
   public on = <K extends WebhookTriggers | ServerEvents>(

@@ -11,15 +11,8 @@ import { WebhookDelta } from '../models/webhook-notification';
 import { WebhookTriggers } from '../models/webhook';
 
 export default class ExpressBinding extends ServerBinding {
-  expressApp: Express;
-
-  constructor(
-    nylasClient: Nylas,
-    expressApp: Express,
-    options: ServerBindingOptions
-  ) {
-    super(nylasClient, options);
-    this.expressApp = expressApp;
+  constructor(nylasClient: Nylas, app: Express, options: ServerBindingOptions) {
+    super(nylasClient, app, options);
   }
 
   webhookVerificationMiddleware(): RequestHandler {
@@ -42,7 +35,7 @@ export default class ExpressBinding extends ServerBinding {
 
   mount(): void {
     const webhookRoute = this.buildRoute('/webhook');
-    this.expressApp.use(
+    this.app.use(
       this.buildRoute(''),
       cors(
         this.clientUri
@@ -55,18 +48,18 @@ export default class ExpressBinding extends ServerBinding {
     );
 
     // For the Nylas webhook endpoint, we should get the raw body to use for verification
-    this.expressApp.use(
+    this.app.use(
       webhookRoute,
       bodyParser.raw({ inflate: true, type: 'application/json' })
     );
 
-    this.expressApp.use(
+    this.app.use(
       this.buildRoute(''),
       express.json(),
       bodyParser.urlencoded({ limit: '5mb', extended: true }) // support encoded bodies
     );
 
-    this.expressApp.post<unknown, unknown, Record<string, unknown>>(
+    this.app.post<unknown, unknown, Record<string, unknown>>(
       webhookRoute,
       this.webhookVerificationMiddleware() as any,
       (req, res) => {
@@ -82,7 +75,7 @@ export default class ExpressBinding extends ServerBinding {
       }
     );
 
-    this.expressApp.post(this.buildRoute('/generate-auth-url'), (req, res) => {
+    this.app.post(this.buildRoute('/generate-auth-url'), (req, res) => {
       const authUrl = this.nylasClient.urlForAuthentication({
         loginHint: req.body.email_address,
         redirectURI: (this.clientUri || '') + req.body.success_url,
@@ -91,7 +84,7 @@ export default class ExpressBinding extends ServerBinding {
       res.status(200).send(authUrl);
     });
 
-    this.expressApp.post(
+    this.app.post(
       this.buildRoute('/exchange-mailbox-token'),
       async (req, res) => {
         try {
