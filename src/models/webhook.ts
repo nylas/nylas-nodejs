@@ -9,6 +9,7 @@ export enum WebhookTriggers {
   AccountStopped = 'account.stopped',
   AccountInvalid = 'account.invalid',
   AccountSyncError = 'account.sync_error',
+  MessageBounced = 'message.bounced',
   MessageCreated = 'message.created',
   MessageOpened = 'message.opened',
   MessageUpdated = 'message.updated',
