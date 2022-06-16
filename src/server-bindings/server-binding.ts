@@ -3,10 +3,7 @@ import { Express, Response } from 'express';
 import { Scope } from '../models/connect';
 import { EventEmitter } from 'events';
 import { WebhookTriggers } from '../models/webhook';
-import {
-  WebhookDelta,
-  WebhookDeltaProperties,
-} from '../models/webhook-notification';
+import { WebhookDelta } from '../models/webhook-notification';
 import AccessToken from '../models/access-token';
 import Nylas from '../nylas';
 import {
@@ -96,16 +93,10 @@ export abstract class ServerBinding extends EventEmitter
       return;
     }
 
-    const webhookConfig: Partial<OpenWebhookTunnelOptions> = {};
+    let webhookConfig: Partial<OpenWebhookTunnelOptions> = {};
 
     if (typeof this.useDevelopmentWebsocketEventListener === 'object') {
-      webhookConfig.onMessage = this.useDevelopmentWebsocketEventListener.onMessage;
-      webhookConfig.onClose = this.useDevelopmentWebsocketEventListener.onClose;
-      webhookConfig.onConnectFail = this.useDevelopmentWebsocketEventListener.onConnectFail;
-      webhookConfig.onError = this.useDevelopmentWebsocketEventListener.onError;
-      webhookConfig.onConnect = this.useDevelopmentWebsocketEventListener.onConnect;
-      webhookConfig.triggers = this.useDevelopmentWebsocketEventListener.triggers;
-      webhookConfig.region = this.useDevelopmentWebsocketEventListener.region;
+      webhookConfig = this.useDevelopmentWebsocketEventListener;
     }
 
     /* eslint-disable no-console */
@@ -125,8 +116,6 @@ export abstract class ServerBinding extends EventEmitter
       onConnectFail: webhookConfig.onConnectFail || defaultOnConnectFail,
       onError: webhookConfig.onError || defaultOnError,
       onConnect: webhookConfig.onConnect || defaultOnConnect,
-      triggers: webhookConfig.triggers,
-      region: webhookConfig.region,
     });
   }
 
