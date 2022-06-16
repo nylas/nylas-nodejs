@@ -18,7 +18,7 @@ const buildTunnelWebhook = (
   callbackDomain: string,
   tunnelId: string,
   triggers: WebhookTriggers[]
-) => {
+): Promise<Webhook> => {
   const callbackUrl = `https://${callbackDomain}/${tunnelId}`;
   return nylasClient.webhooks
     .build({
@@ -48,7 +48,7 @@ export const openWebhookTunnel = (config: {
   onConnect?: (wsClient: WebSocketClient) => void;
   region?: Region;
   triggers?: WebhookTriggers[];
-}) => {
+}): Promise<Webhook> => {
   const triggers = config.triggers || DEFAULT_WEBHOOK_TRIGGERS;
   const region = config.region || DEFAULT_REGION;
   const { websocketDomain, callbackDomain } = regionConfig[region];
