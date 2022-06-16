@@ -76,7 +76,8 @@ export const openWebhookTunnel = (config: {
     connection.on('message', function(message) {
       // This shouldn't happen. If any of these are seen, open an issue
       if (message.type === 'binary') {
-        console.log('Unknown binary message received');
+        config.onError &&
+          config.onError(new Error('Unknown binary message received'));
         return;
       }
 
