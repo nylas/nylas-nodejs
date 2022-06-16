@@ -56,7 +56,7 @@ export const openWebhookTunnel = (config: {
   // This UUID will map our websocket to a webhook in the forwarding server
   const tunnelId = uuidv4();
 
-  var client = new WebSocketClient({ closeTimeout: 60000 });
+  const client = new WebSocketClient({ closeTimeout: 60000 });
 
   client.on('connectFailed', function(error) {
     config.onConnectFail && config.onConnectFail(error);
