@@ -21,9 +21,6 @@ export type ServerBindingOptions = {
   defaultScopes: Scope[];
   routePrefix?: string;
   clientUri?: string;
-  useDevelopmentWebsocketEventListener?:
-    | boolean
-    | Partial<OpenWebhookTunnelOptions>;
 };
 
 export abstract class ServerBinding extends EventEmitter
@@ -32,9 +29,6 @@ export abstract class ServerBinding extends EventEmitter
   defaultScopes: Scope[];
   routePrefix?: string;
   clientUri?: string;
-  useDevelopmentWebsocketEventListener?:
-    | boolean
-    | Partial<OpenWebhookTunnelOptions>;
 
   static DEFAULT_ROUTE_PREFIX = '/nylas';
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
@@ -47,8 +41,6 @@ export abstract class ServerBinding extends EventEmitter
     this.defaultScopes = options.defaultScopes;
     this.routePrefix = options.routePrefix;
     this.clientUri = options.clientUri;
-    this.useDevelopmentWebsocketEventListener =
-      options.useDevelopmentWebsocketEventListener;
   }
 
   abstract buildMiddleware(): Middleware;
@@ -82,20 +74,9 @@ export abstract class ServerBinding extends EventEmitter
     return digest === xNylasSignature;
   }
 
-  startDevelopmentWebsocket(): void {
-    if (!this.useDevelopmentWebsocketEventListener) {
-      console.warn(
-        'Please configure useDevelopmentWebsocketEventListener or set to true to use defaults'
-      );
-      return;
-    }
-
-    let webhookConfig: Partial<OpenWebhookTunnelOptions> = {};
-
-    if (typeof this.useDevelopmentWebsocketEventListener === 'object') {
-      webhookConfig = this.useDevelopmentWebsocketEventListener;
-    }
-
+  startDevelopmentWebsocket(
+    webhookTunnelConfig?: Partial<OpenWebhookTunnelOptions>
+  ): void {
     /* eslint-disable no-console */
     const defaultOnClose = (): void =>
       console.log('Nylas websocket client connection closed');
@@ -108,11 +89,13 @@ export abstract class ServerBinding extends EventEmitter
     /* eslint-enable no-console */
 
     openWebhookTunnel(this.nylasClient, {
-      onMessage: webhookConfig.onMessage || this.handleDeltaEvent,
-      onClose: webhookConfig.onClose || defaultOnClose,
-      onConnectFail: webhookConfig.onConnectFail || defaultOnConnectFail,
-      onError: webhookConfig.onError || defaultOnError,
-      onConnect: webhookConfig.onConnect || defaultOnConnect,
+      onMessage: webhookTunnelConfig?.onMessage || this.handleDeltaEvent,
+      onClose: webhookTunnelConfig?.onClose || defaultOnClose,
+      onConnectFail: webhookTunnelConfig?.onConnectFail || defaultOnConnectFail,
+      onError: webhookTunnelConfig?.onError || defaultOnError,
+      onConnect: webhookTunnelConfig?.onConnect || defaultOnConnect,
+      region: webhookTunnelConfig?.region,
+      triggers: webhookTunnelConfig?.triggers,
     });
   }
 
