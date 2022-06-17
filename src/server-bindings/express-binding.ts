@@ -36,9 +36,6 @@ export default class ExpressBinding extends ServerBinding {
     const router = express.Router();
     const webhookRoute = this.buildRoute('/webhook');
 
-    // Start the webhook dev server if config was set
-    this.startDevelopmentWebsocket();
-
     router.use(
       this.buildRoute(''),
       cors(

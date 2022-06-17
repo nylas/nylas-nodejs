@@ -82,8 +82,11 @@ export abstract class ServerBinding extends EventEmitter
     return digest === xNylasSignature;
   }
 
-  protected startDevelopmentWebsocket(): void {
+  startDevelopmentWebsocket(): void {
     if (!this.useDevelopmentWebsocketEventListener) {
+      console.warn(
+        'Please configure useDevelopmentWebsocketEventListener or set to true to use defaults'
+      );
       return;
     }
 
