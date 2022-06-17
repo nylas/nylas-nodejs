@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { Response, Router } from 'express';
 import { Scope } from '../models/connect';
 import { EventEmitter } from 'events';
-import { WebhookTriggers } from '../models/webhook';
+import Webhook, { WebhookTriggers } from '../models/webhook';
 import { WebhookDelta } from '../models/webhook-notification';
 import AccessToken from '../models/access-token';
 import Nylas from '../nylas';
@@ -75,7 +75,7 @@ export abstract class ServerBinding extends EventEmitter
 
   startDevelopmentWebsocket(
     webhookTunnelConfig?: Partial<OpenWebhookTunnelOptions>
-  ): void {
+  ): Promise<Webhook> {
     /* eslint-disable no-console */
     const defaultOnClose = (): void =>
       console.log('Nylas websocket client connection closed');
@@ -87,7 +87,7 @@ export abstract class ServerBinding extends EventEmitter
       console.log('Nylas websocket client connected');
     /* eslint-enable no-console */
 
-    openWebhookTunnel(this.nylasClient, {
+    return openWebhookTunnel(this.nylasClient, {
       onMessage: webhookTunnelConfig?.onMessage || this.handleDeltaEvent,
       onClose: webhookTunnelConfig?.onClose || defaultOnClose,
       onConnectFail: webhookTunnelConfig?.onConnectFail || defaultOnConnectFail,
