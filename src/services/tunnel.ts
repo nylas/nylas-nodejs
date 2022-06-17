@@ -11,6 +11,23 @@ import Webhook, { WebhookTriggers } from '../models/webhook';
 import { WebhookDelta } from '../models/webhook-notification';
 
 /**
+ * Deletes the Nylas webhook
+ * @param nylasClient The Nylas application configured with the webhook
+ * @param nylasWebhook The Nylas webhook details
+ */
+const deleteTunnelWebhook = (
+  nylasClient: Nylas,
+  nylasWebhook: Webhook
+): void => {
+  if (nylasWebhook && nylasWebhook.id) {
+    console.log(
+      'Shutting down the webhook tunnel and deleting id: ' + nylasWebhook.id
+    );
+    nylasClient.webhooks.delete(nylasWebhook);
+  }
+};
+
+/**
  * Create a webhook to the Nylas forwarding service which will pass messages to our websocket
  * @param nylasClient The configured Nylas application
  * @param callbackDomain The domain name of the callback
@@ -32,7 +49,15 @@ const buildTunnelWebhook = (
       test: true,
       triggers,
     })
-    .save();
+    .save()
+    .then((webhook: Webhook) => {
+      // Ensure that, upon all exits, delete the webhook on the Nylas application
+      process.on('exit', () => deleteTunnelWebhook(nylasClient, webhook));
+      process.on('SIGINT', () => process.exit());
+      process.on('SIGTERM', () => process.exit());
+      process.on('SIGBREAK', () => process.exit());
+      return webhook;
+    });
 };
 
 /**
