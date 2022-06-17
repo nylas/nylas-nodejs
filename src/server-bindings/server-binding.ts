@@ -68,10 +68,7 @@ export abstract class ServerBinding extends EventEmitter
    * @param rawBody The raw body from the payload
    * @return true if the webhook signature was verified from Nylas
    */
-  verifyWebhookSignature(
-    xNylasSignature: string,
-    rawBody: Buffer
-  ): boolean {
+  verifyWebhookSignature(xNylasSignature: string, rawBody: Buffer): boolean {
     const digest = crypto
       .createHmac('sha256', this.nylasClient.clientSecret)
       .update(rawBody)
