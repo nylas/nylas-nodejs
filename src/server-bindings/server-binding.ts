@@ -63,12 +63,11 @@ export abstract class ServerBinding extends EventEmitter
   ): boolean => this._untypedEmit(event, payload);
 
   verifyWebhookSignature(
-    secret: string,
     xNylasSignature: string,
     rawBody: Buffer
   ): boolean {
     const digest = crypto
-      .createHmac('sha256', secret)
+      .createHmac('sha256', this.nylasClient.clientSecret)
       .update(rawBody)
       .digest('hex');
     return digest === xNylasSignature;
