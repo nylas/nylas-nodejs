@@ -25,7 +25,7 @@ const deleteTunnelWebhook = (
       'Shutting down the webhook tunnel and deleting id: ' + nylasWebhook.id
     );
     /* eslint-enable no-console */
-    nylasClient.webhooks.delete(nylasWebhook);
+    nylasClient.webhooks.delete(nylasWebhook).then(() => process.exit());
   }
 };
 
@@ -54,10 +54,9 @@ const buildTunnelWebhook = (
     .save()
     .then((webhook: Webhook) => {
       // Ensure that, upon all exits, delete the webhook on the Nylas application
-      process.on('exit', () => deleteTunnelWebhook(nylasClient, webhook));
-      process.on('SIGINT', () => process.exit());
-      process.on('SIGTERM', () => process.exit());
-      process.on('SIGBREAK', () => process.exit());
+      process.on('SIGINT', () => deleteTunnelWebhook(nylasClient, webhook));
+      process.on('SIGTERM', () => deleteTunnelWebhook(nylasClient, webhook));
+      process.on('SIGBREAK', () => deleteTunnelWebhook(nylasClient, webhook));
       return webhook;
     });
 };
