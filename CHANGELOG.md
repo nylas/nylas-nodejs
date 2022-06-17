@@ -1,9 +1,10 @@
 # Changelog
 
-### 7.0.0 / TBD
+### 7.0.0-canary.0 / 2022-06-17
 * **BREAKING CHANGE**: Convert `Nylas` class from a static to a non-static class
 * Add support for backend frameworks with the Nylas SDK providing middleware to handle webhooks events and authentication
 * Add middleware for Express.js
+* Add new websocket tunneling service that can be used for local webhook development and testing
 
 ### 6.4.2 / 2022-06-14
 * Add `Message.save()` functionality for updating existing messages
