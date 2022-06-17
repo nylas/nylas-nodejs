@@ -1,6 +1,6 @@
 import Nylas from '../nylas';
 import cors from 'cors';
-import express, { Express, RequestHandler, Response } from 'express';
+import express, { RequestHandler, Response, Router } from 'express';
 import {
   ServerBindingOptions,
   ServerBinding,
@@ -10,8 +10,8 @@ import bodyParser from 'body-parser';
 import { WebhookDelta } from '../models/webhook-notification';
 
 export default class ExpressBinding extends ServerBinding {
-  constructor(nylasClient: Nylas, app: Express, options: ServerBindingOptions) {
-    super(nylasClient, app, options);
+  constructor(nylasClient: Nylas, options: ServerBindingOptions) {
+    super(nylasClient, options);
   }
 
   webhookVerificationMiddleware(): RequestHandler {
@@ -32,13 +32,14 @@ export default class ExpressBinding extends ServerBinding {
     };
   }
 
-  mount(): void {
+  buildMiddleware(): Router {
+    const router = express.Router();
     const webhookRoute = this.buildRoute('/webhook');
 
     // Start the webhook dev server if config was set
     this.startDevelopmentWebsocket();
 
-    this.app.use(
+    router.use(
       this.buildRoute(''),
       cors(
         this.clientUri
@@ -51,18 +52,18 @@ export default class ExpressBinding extends ServerBinding {
     );
 
     // For the Nylas webhook endpoint, we should get the raw body to use for verification
-    this.app.use(
+    router.use(
       webhookRoute,
       bodyParser.raw({ inflate: true, type: 'application/json' })
     );
 
-    this.app.use(
+    router.use(
       this.buildRoute(''),
       express.json(),
       bodyParser.urlencoded({ limit: '5mb', extended: true }) // support encoded bodies
     );
 
-    this.app.post<unknown, unknown, Record<string, unknown>>(
+    router.post<unknown, unknown, Record<string, unknown>>(
       webhookRoute,
       this.webhookVerificationMiddleware() as any,
       (req, res) => {
@@ -74,7 +75,7 @@ export default class ExpressBinding extends ServerBinding {
       }
     );
 
-    this.app.post(this.buildRoute('/generate-auth-url'), (req, res) => {
+    router.post(this.buildRoute('/generate-auth-url'), (req, res) => {
       const authUrl = this.nylasClient.urlForAuthentication({
         loginHint: req.body.email_address,
         redirectURI: (this.clientUri || '') + req.body.success_url,
@@ -83,7 +84,7 @@ export default class ExpressBinding extends ServerBinding {
       res.status(200).send(authUrl);
     });
 
-    this.app.post(
+    router.post(
       this.buildRoute('/exchange-mailbox-token'),
       async (req, res) => {
         try {
@@ -104,5 +105,7 @@ export default class ExpressBinding extends ServerBinding {
         }
       }
     );
+
+    return router;
   }
 }
