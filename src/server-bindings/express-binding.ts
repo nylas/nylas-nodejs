@@ -14,6 +14,9 @@ export default class ExpressBinding extends ServerBinding {
     super(nylasClient, options);
   }
 
+  /**
+   * Middleware for the webhook endpoint so we can verify that Nylas is sending the events
+   */
   webhookVerificationMiddleware(): RequestHandler {
     return (req, res, next): void | Response => {
       const isVerified = this.verifyWebhookSignature(
@@ -31,6 +34,13 @@ export default class ExpressBinding extends ServerBinding {
     };
   }
 
+  /**
+   * Build middleware for an Express app with routes for:
+   * 1. '/webhook': Receiving webhook events, verifying its authenticity, and emitting webhook objects
+   * 2. '/generate-auth-url': Building the URL for authenticating users to your application via Hosted Authentication
+   * 3. Exchange an authorization code for an access token
+   * @return The routes packaged as Express middleware
+   */
   buildMiddleware(): Router {
     const router = express.Router();
     const webhookRoute = this.buildRoute('/webhook');

@@ -62,6 +62,12 @@ export abstract class ServerBinding extends EventEmitter
       : { accessTokenObj: AccessToken; res: Response }
   ): boolean => this._untypedEmit(event, payload);
 
+  /**
+   * Verify incoming webhook signature came from Nylas
+   * @param xNylasSignature The signature to verify
+   * @param rawBody The raw body from the payload
+   * @return true if the webhook signature was verified from Nylas
+   */
   verifyWebhookSignature(
     xNylasSignature: string,
     rawBody: Buffer
@@ -73,6 +79,11 @@ export abstract class ServerBinding extends EventEmitter
     return digest === xNylasSignature;
   }
 
+  /**
+   * Start a local development websocket to get webhook events
+   * @param webhookTunnelConfig Optional configuration for setting region, triggers, and overriding callbacks
+   * @return The webhook details response from the API
+   */
   startDevelopmentWebsocket(
     webhookTunnelConfig?: Partial<OpenWebhookTunnelOptions>
   ): Promise<Webhook> {
@@ -98,11 +109,19 @@ export abstract class ServerBinding extends EventEmitter
     });
   }
 
-  // Can be used either by websocket or webhook
+  /**
+   * Delta event processor to be used either by websocket or webhook
+   * @param d The delta event
+   */
   protected handleDeltaEvent = (d: WebhookDelta): void => {
     d.type && this.emit(d.type as WebhookTriggers, d);
   };
 
+  /**
+   * Builds the full route with a path
+   * @param path The path to append
+   * @return The full route
+   */
   protected buildRoute(path: string): string {
     const prefix = this.routePrefix
       ? this.routePrefix
