@@ -2,8 +2,8 @@
 
 ### 7.0.0 / TBD
 * **BREAKING CHANGE**: Convert `Nylas` class from a static to a non-static class
-* Add support for binding backend frameworks directly using the Nylas SDK to handle webhooks events and authentication
-* Add support for Express.js as a bindable backend framework
+* Add support for backend frameworks with the Nylas SDK providing middleware to handle webhooks events and authentication
+* Add middleware for Express.js
 
 ### 6.4.2 / 2022-06-14
 * Add `Message.save()` functionality for updating existing messages
