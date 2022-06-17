@@ -1,4 +1,5 @@
 import { WebhookTriggers } from './models/webhook';
+import ExpressBinding from './server-bindings/express-binding';
 
 export let apiServer: string | null = null;
 export function setApiServer(newApiServer: string | null) {
@@ -74,3 +75,7 @@ export const regionConfig = {
 };
 
 export const DEFAULT_WEBHOOK_TRIGGERS = Object.values(WebhookTriggers);
+
+export const ServerBindings = {
+  express: ExpressBinding,
+};
