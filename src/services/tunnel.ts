@@ -62,6 +62,16 @@ const buildTunnelWebhook = (
     });
 };
 
+export interface OpenWebhookTunnelOptions {
+  onMessage: (msg: WebhookDelta) => void;
+  onConnectFail?: (error: Error) => void;
+  onError?: (error: Error) => void;
+  onClose?: (wsClient: WebSocketClient) => void;
+  onConnect?: (wsClient: WebSocketClient) => void;
+  region?: Region;
+  triggers?: WebhookTriggers[];
+}
+
 /**
  * Open a webhook tunnel and register it with the Nylas API
  * 1. Creates a UUID
@@ -72,19 +82,14 @@ const buildTunnelWebhook = (
  * When an event is received by the forwarding service, it will push directly to this websocket
  * connection
  *
+ * @param nylasClient The configured Nylas application
  * @param config Configuration for the webhook tunnel, including callback functions, region, and events to subscribe to
  * @return The webhook details response from the API
  */
-export const openWebhookTunnel = (config: {
-  nylasClient: Nylas;
-  onMessage: (msg: WebhookDelta) => void;
-  onConnectFail?: (error: Error) => void;
-  onError?: (error: Error) => void;
-  onClose?: (wsClient: WebSocketClient) => void;
-  onConnect?: (wsClient: WebSocketClient) => void;
-  region?: Region;
-  triggers?: WebhookTriggers[];
-}): Promise<Webhook> => {
+export const openWebhookTunnel = (
+  nylasClient: Nylas,
+  config: OpenWebhookTunnelOptions
+): Promise<Webhook> => {
   const triggers = config.triggers || DEFAULT_WEBHOOK_TRIGGERS;
   const region = config.region || DEFAULT_REGION;
   const { websocketDomain, callbackDomain } = regionConfig[region];
@@ -136,16 +141,11 @@ export const openWebhookTunnel = (config: {
   });
 
   client.connect(`wss://${websocketDomain}`, undefined, undefined, {
-    'Client-Id': config.nylasClient.clientId,
-    'Client-Secret': config.nylasClient.clientSecret,
+    'Client-Id': nylasClient.clientId,
+    'Client-Secret': nylasClient.clientSecret,
     'Tunnel-Id': tunnelId,
     Region: region,
   });
 
-  return buildTunnelWebhook(
-    config.nylasClient,
-    callbackDomain,
-    tunnelId,
-    triggers
-  );
+  return buildTunnelWebhook(nylasClient, callbackDomain, tunnelId, triggers);
 };
