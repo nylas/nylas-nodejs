@@ -1,6 +1,6 @@
 # Changelog
 
-### 7.0.0-canary.1 / 2022-06-17
+### 7.0.0-canary.1 / 2022-06-18
 * Fix dependency issue when using websocket tunneling service
 
 ### 7.0.0-canary.0 / 2022-06-17
