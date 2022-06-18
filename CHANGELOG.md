@@ -1,5 +1,8 @@
 # Changelog
 
+### 7.0.0-canary.1 / 2022-06-17
+* Fix dependency issue when using websocket tunneling service
+
 ### 7.0.0-canary.0 / 2022-06-17
 * **BREAKING CHANGE**: Convert `Nylas` class from a static to a non-static class
 * Add support for backend frameworks with the Nylas SDK providing middleware to handle webhooks events and authentication
