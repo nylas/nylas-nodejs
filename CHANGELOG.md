@@ -1,5 +1,8 @@
 # Changelog
 
+### 7.0.0-canary.2 / Unreleased
+* Remove `routePrefix` config from server bindings
+
 ### 7.0.0-canary.1 / 2022-06-18
 * Fix dependency issue when using websocket tunneling service
 

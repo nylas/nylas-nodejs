@@ -43,10 +43,9 @@ export default class ExpressBinding extends ServerBinding {
    */
   buildMiddleware(): Router {
     const router = express.Router();
-    const webhookRoute = this.buildRoute('/webhook');
+    const webhookRoute = '/webhook';
 
     router.use(
-      this.buildRoute(''),
       cors(
         this.clientUri
           ? {
@@ -64,7 +63,6 @@ export default class ExpressBinding extends ServerBinding {
     );
 
     router.use(
-      this.buildRoute(''),
       express.json(),
       bodyParser.urlencoded({ limit: '5mb', extended: true }) // support encoded bodies
     );
@@ -81,7 +79,7 @@ export default class ExpressBinding extends ServerBinding {
       }
     );
 
-    router.post(this.buildRoute('/generate-auth-url'), (req, res) => {
+    router.post('/generate-auth-url', (req, res) => {
       const authUrl = this.nylasClient.urlForAuthentication({
         loginHint: req.body.email_address,
         redirectURI: (this.clientUri || '') + req.body.success_url,
@@ -90,27 +88,24 @@ export default class ExpressBinding extends ServerBinding {
       res.status(200).send(authUrl);
     });
 
-    router.post(
-      this.buildRoute('/exchange-mailbox-token'),
-      async (req, res) => {
-        try {
-          const accessTokenObj = await this.nylasClient.exchangeCodeForToken(
-            req.body.token
-          );
-          this.emit(ServerEvents.TokenExchange, {
-            accessTokenObj,
-            res,
-          });
+    router.post('/exchange-mailbox-token', async (req, res) => {
+      try {
+        const accessTokenObj = await this.nylasClient.exchangeCodeForToken(
+          req.body.token
+        );
+        this.emit(ServerEvents.TokenExchange, {
+          accessTokenObj,
+          res,
+        });
 
-          // If the callback event already sent a response then we don't need to do anything
-          if (!res.writableEnded) {
-            res.status(200).send('success');
-          }
-        } catch (e) {
-          res.status(500).send((e as any).message);
+        // If the callback event already sent a response then we don't need to do anything
+        if (!res.writableEnded) {
+          res.status(200).send('success');
         }
+      } catch (e) {
+        res.status(500).send((e as any).message);
       }
-    );
+    });
 
     return router;
   }

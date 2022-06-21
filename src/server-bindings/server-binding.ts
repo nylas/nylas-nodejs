@@ -19,7 +19,6 @@ export enum ServerEvents {
 
 export type ServerBindingOptions = {
   defaultScopes: Scope[];
-  routePrefix?: string;
   clientUri?: string;
 };
 
@@ -27,10 +26,8 @@ export abstract class ServerBinding extends EventEmitter
   implements ServerBindingOptions {
   nylasClient: Nylas;
   defaultScopes: Scope[];
-  routePrefix?: string;
   clientUri?: string;
 
-  static DEFAULT_ROUTE_PREFIX = '/nylas';
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
   private _untypedOn = this.on;
   private _untypedEmit = this.emit;
@@ -39,7 +36,6 @@ export abstract class ServerBinding extends EventEmitter
     super();
     this.nylasClient = nylasClient;
     this.defaultScopes = options.defaultScopes;
-    this.routePrefix = options.routePrefix;
     this.clientUri = options.clientUri;
   }
 
@@ -113,16 +109,4 @@ export abstract class ServerBinding extends EventEmitter
   protected handleDeltaEvent = (d: WebhookDelta): void => {
     d.type && this.emit(d.type as WebhookTriggers, d);
   };
-
-  /**
-   * Builds the full route with a path
-   * @param path The path to append
-   * @return The full route
-   */
-  protected buildRoute(path: string): string {
-    const prefix = this.routePrefix
-      ? this.routePrefix
-      : ServerBinding.DEFAULT_ROUTE_PREFIX;
-    return prefix + path;
-  }
 }
