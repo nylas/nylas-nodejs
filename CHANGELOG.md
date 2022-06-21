@@ -1,8 +1,8 @@
 # Changelog
 
-### 7.0.0-canary.2 / Unreleased
+### 7.0.0-canary.2 / 2022-06-21
 * Remove `routePrefix` config from server bindings
-* Remove `cors` configuration fron server bindings
+* Remove `cors` configuration from server bindings
 
 ### 7.0.0-canary.1 / 2022-06-18
 * Fix dependency issue when using websocket tunneling service
