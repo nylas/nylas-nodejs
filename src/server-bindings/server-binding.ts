@@ -19,7 +19,6 @@ export enum ServerEvents {
 
 export type ServerBindingOptions = {
   defaultScopes: Scope[];
-  routePrefix?: string;
   clientUri?: string;
 };
 
@@ -27,7 +26,6 @@ export abstract class ServerBinding extends EventEmitter
   implements ServerBindingOptions {
   nylasClient: Nylas;
   defaultScopes: Scope[];
-  routePrefix?: string;
   clientUri?: string;
 
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
@@ -38,7 +36,6 @@ export abstract class ServerBinding extends EventEmitter
     super();
     this.nylasClient = nylasClient;
     this.defaultScopes = options.defaultScopes;
-    this.routePrefix = options.routePrefix;
     this.clientUri = options.clientUri;
   }
 
