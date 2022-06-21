@@ -1,5 +1,4 @@
 import Nylas from '../nylas';
-import cors from 'cors';
 import express, { RequestHandler, Response, Router } from 'express';
 import {
   ServerBindingOptions,
@@ -44,17 +43,6 @@ export default class ExpressBinding extends ServerBinding {
   buildMiddleware(): Router {
     const router = express.Router();
     const webhookRoute = '/webhook';
-
-    router.use(
-      cors(
-        this.clientUri
-          ? {
-              optionsSuccessStatus: 200,
-              origin: this.clientUri,
-            }
-          : undefined
-      ) as any
-    );
 
     // For the Nylas webhook endpoint, we should get the raw body to use for verification
     router.use(
