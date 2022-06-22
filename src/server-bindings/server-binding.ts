@@ -20,12 +20,17 @@ export enum ServerEvents {
 export type ServerBindingOptions = {
   defaultScopes: Scope[];
   clientUri?: string;
+  tokenExchangeOpts?: {
+    generateCsrfToken: (req: any) => Promise<string>;
+    validateCsrfToken: (csrfToken: string, req: any) => Promise<boolean>;
+  };
 };
 
 export abstract class ServerBinding extends EventEmitter
   implements ServerBindingOptions {
   nylasClient: Nylas;
   defaultScopes: Scope[];
+  tokenExchangeOpts: ServerBindingOptions['tokenExchangeOpts'];
   clientUri?: string;
 
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
@@ -36,6 +41,7 @@ export abstract class ServerBinding extends EventEmitter
     super();
     this.nylasClient = nylasClient;
     this.defaultScopes = options.defaultScopes;
+    this.tokenExchangeOpts = options.tokenExchangeOpts;
     this.clientUri = options.clientUri;
   }
 

@@ -67,17 +67,32 @@ export default class ExpressBinding extends ServerBinding {
       }
     );
 
-    router.post('/generate-auth-url', (req, res) => {
+    router.post('/generate-auth-url', async (req, res) => {
+      let state = '';
+      if (this.tokenExchangeOpts) {
+        state = await this.tokenExchangeOpts.generateCsrfToken(req);
+      }
       const authUrl = this.nylasClient.urlForAuthentication({
         loginHint: req.body.email_address,
         redirectURI: (this.clientUri || '') + req.body.success_url,
         scopes: this.defaultScopes,
+        state,
       });
       res.status(200).send(authUrl);
     });
 
     router.post('/exchange-mailbox-token', async (req, res) => {
       try {
+        if (this.tokenExchangeOpts) {
+          const csrfToken = req.body.csrfToken;
+          const isValidToken = await this.tokenExchangeOpts.validateCsrfToken(
+            csrfToken,
+            req
+          );
+          if (!isValidToken) {
+            return res.status(401).send('Invalid CSRF State Token');
+          }
+        }
         const accessTokenObj = await this.nylasClient.exchangeCodeForToken(
           req.body.token
         );
