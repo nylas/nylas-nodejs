@@ -1,10 +1,6 @@
 import Nylas from '../nylas';
 import express, { RequestHandler, Response, Router } from 'express';
-import {
-  ServerBindingOptions,
-  ServerBinding,
-  ServerEvents,
-} from './server-binding';
+import { ServerBindingOptions, ServerBinding } from './server-binding';
 import bodyParser from 'body-parser';
 import { WebhookDelta } from '../models/webhook-notification';
 

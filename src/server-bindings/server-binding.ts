@@ -12,10 +12,6 @@ import {
 } from '../services/tunnel';
 
 type Middleware = Router;
-
-export enum ServerEvents {
-  TokenExchange = 'token-exchange',
-}
 type ServerResponse = Response;
 type ExchangeMailboxTokenCallback = (
   accessToken: AccessToken,
@@ -50,20 +46,14 @@ export abstract class ServerBinding extends EventEmitter
   abstract buildMiddleware(): Middleware;
 
   // Taken from the best StackOverflow answer of all time https://stackoverflow.com/a/56228127
-  public on = <K extends WebhookTriggers | ServerEvents>(
+  public on = <K extends WebhookTriggers>(
     event: K,
-    listener: (
-      payload: K extends WebhookTriggers
-        ? WebhookDelta
-        : { accessTokenObj: AccessToken; res: Response }
-    ) => void
+    listener: (payload: WebhookDelta) => void
   ): this => this._untypedOn(event, listener);
 
-  public emit = <K extends WebhookTriggers | ServerEvents>(
+  public emit = <K extends WebhookTriggers>(
     event: K,
-    payload: K extends WebhookTriggers
-      ? WebhookDelta
-      : { accessTokenObj: AccessToken; res: Response }
+    payload: WebhookDelta
   ): boolean => this._untypedEmit(event, payload);
 
   /**
