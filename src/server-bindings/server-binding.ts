@@ -22,6 +22,10 @@ export type ServerBindingOptions = {
   defaultScopes: Scope[];
   exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
   clientUri?: string;
+  tokenExchangeOpts?: {
+    generateCsrfToken: (req: any) => Promise<string>;
+    validateCsrfToken: (csrfToken: string, req: any) => Promise<boolean>;
+  };
 };
 
 export abstract class ServerBinding extends EventEmitter
@@ -30,6 +34,7 @@ export abstract class ServerBinding extends EventEmitter
   defaultScopes: Scope[];
   exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
   clientUri?: string;
+  tokenExchangeOpts: ServerBindingOptions['tokenExchangeOpts'];
 
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
   private _untypedOn = this.on;
@@ -41,6 +46,7 @@ export abstract class ServerBinding extends EventEmitter
     this.defaultScopes = options.defaultScopes;
     this.exchangeMailboxTokenCallback = options.exchangeMailboxTokenCallback;
     this.clientUri = options.clientUri;
+    this.tokenExchangeOpts = options.tokenExchangeOpts;
   }
 
   abstract buildMiddleware(): Middleware;
