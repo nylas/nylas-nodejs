@@ -2,6 +2,7 @@
 
 ### Unreleased
 * `/exchange-mailbox-token` now uses a callback instead of emitting an event
+* Add CSRF Token Generation support for the authentication process in the server bindings
 
 ### 7.0.0-canary.2 / 2022-06-21
 * Remove `routePrefix` config from server bindings
