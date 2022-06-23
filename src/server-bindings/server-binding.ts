@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { Response, Router } from 'express';
+import { Request, Response, Router } from 'express';
 import { Scope } from '../models/connect';
 import { EventEmitter } from 'events';
 import Webhook, { WebhookTriggers } from '../models/webhook';
@@ -12,20 +12,25 @@ import {
 } from '../services/tunnel';
 
 type Middleware = Router;
+type ServerRequest = Request;
 type ServerResponse = Response;
 type ExchangeMailboxTokenCallback = (
   accessToken: AccessToken,
   res: ServerResponse
 ) => void;
+type CsrfTokenExchangeOptions = {
+  generateCsrfToken: (req: ServerRequest) => Promise<string>;
+  validateCsrfToken: (
+    csrfToken: string,
+    req: ServerRequest
+  ) => Promise<boolean>;
+};
 
 export type ServerBindingOptions = {
   defaultScopes: Scope[];
   exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
+  csrfTokenExchangeOpts?: CsrfTokenExchangeOptions;
   clientUri?: string;
-  tokenExchangeOpts?: {
-    generateCsrfToken: (req: any) => Promise<string>;
-    validateCsrfToken: (csrfToken: string, req: any) => Promise<boolean>;
-  };
 };
 
 export abstract class ServerBinding extends EventEmitter
@@ -33,8 +38,8 @@ export abstract class ServerBinding extends EventEmitter
   nylasClient: Nylas;
   defaultScopes: Scope[];
   exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
+  csrfTokenExchangeOpts?: CsrfTokenExchangeOptions;
   clientUri?: string;
-  tokenExchangeOpts: ServerBindingOptions['tokenExchangeOpts'];
 
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
   private _untypedOn = this.on;
@@ -45,8 +50,8 @@ export abstract class ServerBinding extends EventEmitter
     this.nylasClient = nylasClient;
     this.defaultScopes = options.defaultScopes;
     this.exchangeMailboxTokenCallback = options.exchangeMailboxTokenCallback;
+    this.csrfTokenExchangeOpts = options.csrfTokenExchangeOpts;
     this.clientUri = options.clientUri;
-    this.tokenExchangeOpts = options.tokenExchangeOpts;
   }
 
   abstract buildMiddleware(): Middleware;

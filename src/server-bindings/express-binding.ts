@@ -65,8 +65,8 @@ export default class ExpressBinding extends ServerBinding {
 
     router.post('/generate-auth-url', async (req, res) => {
       let state = '';
-      if (this.tokenExchangeOpts) {
-        state = await this.tokenExchangeOpts.generateCsrfToken(req);
+      if (this.csrfTokenExchangeOpts) {
+        state = await this.csrfTokenExchangeOpts.generateCsrfToken(req);
       }
       const authUrl = this.nylasClient.urlForAuthentication({
         loginHint: req.body.email_address,
@@ -79,9 +79,9 @@ export default class ExpressBinding extends ServerBinding {
 
     router.post('/exchange-mailbox-token', async (req, res) => {
       try {
-        if (this.tokenExchangeOpts) {
+        if (this.csrfTokenExchangeOpts) {
           const csrfToken = req.body.csrfToken;
-          const isValidToken = await this.tokenExchangeOpts.validateCsrfToken(
+          const isValidToken = await this.csrfTokenExchangeOpts.validateCsrfToken(
             csrfToken,
             req
           );
