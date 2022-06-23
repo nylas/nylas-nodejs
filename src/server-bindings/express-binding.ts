@@ -81,10 +81,8 @@ export default class ExpressBinding extends ServerBinding {
         const accessTokenObj = await this.nylasClient.exchangeCodeForToken(
           req.body.token
         );
-        this.emit(ServerEvents.TokenExchange, {
-          accessTokenObj,
-          res,
-        });
+
+        await this.exchangeMailboxTokenCallback(accessTokenObj, res);
 
         // If the callback event already sent a response then we don't need to do anything
         if (!res.writableEnded) {

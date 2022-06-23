@@ -16,9 +16,15 @@ type Middleware = Router;
 export enum ServerEvents {
   TokenExchange = 'token-exchange',
 }
+type ServerResponse = Response;
+type ExchangeMailboxTokenCallback = (
+  accessToken: AccessToken,
+  res: ServerResponse
+) => void;
 
 export type ServerBindingOptions = {
   defaultScopes: Scope[];
+  exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
   clientUri?: string;
 };
 
@@ -26,6 +32,7 @@ export abstract class ServerBinding extends EventEmitter
   implements ServerBindingOptions {
   nylasClient: Nylas;
   defaultScopes: Scope[];
+  exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
   clientUri?: string;
 
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
@@ -36,6 +43,7 @@ export abstract class ServerBinding extends EventEmitter
     super();
     this.nylasClient = nylasClient;
     this.defaultScopes = options.defaultScopes;
+    this.exchangeMailboxTokenCallback = options.exchangeMailboxTokenCallback;
     this.clientUri = options.clientUri;
   }
 
