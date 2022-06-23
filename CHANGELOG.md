@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* `/exchange-mailbox-token` now uses a callback instead of emitting an event
+
 ### 7.0.0-canary.2 / 2022-06-21
 * Remove `routePrefix` config from server bindings
 * Remove `cors` configuration from server bindings
