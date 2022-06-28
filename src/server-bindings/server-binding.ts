@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { Response, Router } from 'express';
+import { Request, Response, Router } from 'express';
 import { Scope } from '../models/connect';
 import { EventEmitter } from 'events';
 import Webhook, { WebhookTriggers } from '../models/webhook';
@@ -12,25 +12,33 @@ import {
 } from '../services/tunnel';
 
 type Middleware = Router;
-
-export enum ServerEvents {
-  TokenExchange = 'token-exchange',
-}
+type ServerRequest = Request;
+type ServerResponse = Response;
+type ExchangeMailboxTokenCallback = (
+  accessToken: AccessToken,
+  res: ServerResponse
+) => void;
+type CsrfTokenExchangeOptions = {
+  generateCsrfToken: (req: ServerRequest) => Promise<string>;
+  validateCsrfToken: (
+    csrfToken: string,
+    req: ServerRequest
+  ) => Promise<boolean>;
+};
 
 export type ServerBindingOptions = {
   defaultScopes: Scope[];
+  exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
+  csrfTokenExchangeOpts?: CsrfTokenExchangeOptions;
   clientUri?: string;
-  tokenExchangeOpts?: {
-    generateCsrfToken: (req: any) => Promise<string>;
-    validateCsrfToken: (csrfToken: string, req: any) => Promise<boolean>;
-  };
 };
 
 export abstract class ServerBinding extends EventEmitter
   implements ServerBindingOptions {
   nylasClient: Nylas;
   defaultScopes: Scope[];
-  tokenExchangeOpts: ServerBindingOptions['tokenExchangeOpts'];
+  exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
+  csrfTokenExchangeOpts?: CsrfTokenExchangeOptions;
   clientUri?: string;
 
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
@@ -41,27 +49,22 @@ export abstract class ServerBinding extends EventEmitter
     super();
     this.nylasClient = nylasClient;
     this.defaultScopes = options.defaultScopes;
-    this.tokenExchangeOpts = options.tokenExchangeOpts;
+    this.exchangeMailboxTokenCallback = options.exchangeMailboxTokenCallback;
+    this.csrfTokenExchangeOpts = options.csrfTokenExchangeOpts;
     this.clientUri = options.clientUri;
   }
 
   abstract buildMiddleware(): Middleware;
 
   // Taken from the best StackOverflow answer of all time https://stackoverflow.com/a/56228127
-  public on = <K extends WebhookTriggers | ServerEvents>(
+  public on = <K extends WebhookTriggers>(
     event: K,
-    listener: (
-      payload: K extends WebhookTriggers
-        ? WebhookDelta
-        : { accessTokenObj: AccessToken; res: Response }
-    ) => void
+    listener: (payload: WebhookDelta) => void
   ): this => this._untypedOn(event, listener);
 
-  public emit = <K extends WebhookTriggers | ServerEvents>(
+  public emit = <K extends WebhookTriggers>(
     event: K,
-    payload: K extends WebhookTriggers
-      ? WebhookDelta
-      : { accessTokenObj: AccessToken; res: Response }
+    payload: WebhookDelta
   ): boolean => this._untypedEmit(event, payload);
 
   /**

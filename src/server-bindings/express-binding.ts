@@ -1,10 +1,6 @@
 import Nylas from '../nylas';
 import express, { RequestHandler, Response, Router } from 'express';
-import {
-  ServerBindingOptions,
-  ServerBinding,
-  ServerEvents,
-} from './server-binding';
+import { ServerBindingOptions, ServerBinding } from './server-binding';
 import bodyParser from 'body-parser';
 import { WebhookDelta } from '../models/webhook-notification';
 
@@ -69,8 +65,8 @@ export default class ExpressBinding extends ServerBinding {
 
     router.post('/generate-auth-url', async (req, res) => {
       let state = '';
-      if (this.tokenExchangeOpts) {
-        state = await this.tokenExchangeOpts.generateCsrfToken(req);
+      if (this.csrfTokenExchangeOpts) {
+        state = await this.csrfTokenExchangeOpts.generateCsrfToken(req);
       }
       const authUrl = this.nylasClient.urlForAuthentication({
         loginHint: req.body.email_address,
@@ -83,9 +79,9 @@ export default class ExpressBinding extends ServerBinding {
 
     router.post('/exchange-mailbox-token', async (req, res) => {
       try {
-        if (this.tokenExchangeOpts) {
+        if (this.csrfTokenExchangeOpts) {
           const csrfToken = req.body.csrfToken;
-          const isValidToken = await this.tokenExchangeOpts.validateCsrfToken(
+          const isValidToken = await this.csrfTokenExchangeOpts.validateCsrfToken(
             csrfToken,
             req
           );
@@ -96,10 +92,8 @@ export default class ExpressBinding extends ServerBinding {
         const accessTokenObj = await this.nylasClient.exchangeCodeForToken(
           req.body.token
         );
-        this.emit(ServerEvents.TokenExchange, {
-          accessTokenObj,
-          res,
-        });
+
+        await this.exchangeMailboxTokenCallback(accessTokenObj, res);
 
         // If the callback event already sent a response then we don't need to do anything
         if (!res.writableEnded) {
