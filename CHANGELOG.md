@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 7.0.0-canary.3 / 2022-06-29
 * `/exchange-mailbox-token` now uses a callback instead of emitting an event
 * Add CSRF Token Generation support for the authentication process in the server bindings
 
