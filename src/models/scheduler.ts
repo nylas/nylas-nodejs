@@ -295,7 +295,7 @@ export class SchedulerBooking extends Model
     }),
     confirmationEmailToHost: Attributes.Boolean({
       modelKey: 'confirmationEmailToHost',
-      jsonKey: 'confirmation_email_to_host',
+      jsonKey: 'confirmation_emails_to_host',
     }),
     confirmationMethod: Attributes.String({
       modelKey: 'confirmationMethod',
