@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fixed json value for `confirmationEmailToHost` in `SchedulerBooking`
+
 ### 6.4.2 / 2022-06-14
 * Add `Message.save()` functionality for updating existing messages
 * Add missing `reminderMinutes` field in `Event`
