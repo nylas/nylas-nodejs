@@ -5,6 +5,7 @@ import Scheduler, {
   SchedulerAvailableCalendars,
 } from '../src/models/scheduler';
 import Calendar from '../src/models/calendar';
+import { SchedulerConfig } from '../src/models/scheduler';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -143,6 +144,30 @@ describe('Scheduler', () => {
         });
         done();
       });
+    });
+
+    test('Should throw an error if SchedulerBooking.intervalMinutes is invalid', done => {
+      // Cannot be set to 0
+      testContext.scheduler.config = new SchedulerConfig({
+        booking: {
+          intervalMinutes: 0,
+        },
+      });
+      expect(() => testContext.scheduler.save()).toThrow();
+
+      // Cannot be negative
+      testContext.scheduler.config.booking.intervalMinutes = -1;
+      expect(() => testContext.scheduler.save()).toThrow();
+
+      // Has to be divisible by 5
+      testContext.scheduler.config.booking.intervalMinutes = 3;
+      expect(() => testContext.scheduler.save()).toThrow();
+
+      // If valid, don't throw
+      testContext.scheduler.config.booking.intervalMinutes = 15;
+      expect(() => testContext.scheduler.save()).not.toThrow();
+
+      done();
     });
   });
 
