@@ -246,6 +246,7 @@ export type SchedulerBookingProperties = {
   minBookingNotice?: number;
   minBuffer?: number;
   minCancellationNotice?: number;
+  intervalMinutes?: number;
   nameFieldHidden?: boolean;
   openingHours?: SchedulerBookingOpeningHoursProperties[];
   schedulingMethod?: string;
@@ -264,6 +265,7 @@ export class SchedulerBooking extends Model
   minBookingNotice?: number;
   minBuffer?: number;
   minCancellationNotice?: number;
+  intervalMinutes?: number;
   nameFieldHidden?: boolean;
   openingHours?: SchedulerBookingOpeningHours[];
   schedulingMethod?: string;
@@ -312,6 +314,10 @@ export class SchedulerBooking extends Model
     minCancellationNotice: Attributes.Number({
       modelKey: 'minCancellationNotice',
       jsonKey: 'min_cancellation_notice',
+    }),
+    intervalMinutes: Attributes.Number({
+      modelKey: 'intervalMinutes',
+      jsonKey: 'interval_minutes',
     }),
     nameFieldHidden: Attributes.Boolean({
       modelKey: 'nameFieldHidden',
