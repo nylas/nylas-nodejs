@@ -554,6 +554,7 @@ export default class Scheduler extends RestfulModel
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    this.validate();
     return super.save(params, callback);
   }
 
@@ -601,5 +602,17 @@ export default class Scheduler extends RestfulModel
       },
       baseUrl: this.baseUrl,
     });
+  }
+
+  private validate(): void {
+    const bookingIntervalMinutes = this.config?.booking?.intervalMinutes;
+    if (
+      bookingIntervalMinutes !== undefined &&
+      (bookingIntervalMinutes <= 0 || bookingIntervalMinutes % 5 != 0)
+    ) {
+      throw new Error(
+        'SchedulerBooking.intervalMinutes must be a non-zero positive integer, divisible by 5.'
+      );
+    }
   }
 }
