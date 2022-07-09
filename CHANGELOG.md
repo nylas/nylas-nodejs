@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Add `metadata` field to `JobStatus`
 * Fixed json value for `confirmationEmailToHost` in `SchedulerBooking`
 
 ### 6.4.2 / 2022-06-14
