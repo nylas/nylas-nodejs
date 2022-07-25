@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Add `interval_minutes` field in Scheduler booking config
+* Adjust `Event.originalStartTime` type to include `Date`
 * Fixed json value for `confirmationEmailToHost` in `SchedulerBooking`
 
 ### 6.4.2 / 2022-06-14
