@@ -246,6 +246,7 @@ export type SchedulerBookingProperties = {
   minBookingNotice?: number;
   minBuffer?: number;
   minCancellationNotice?: number;
+  intervalMinutes?: number;
   nameFieldHidden?: boolean;
   openingHours?: SchedulerBookingOpeningHoursProperties[];
   schedulingMethod?: string;
@@ -264,6 +265,7 @@ export class SchedulerBooking extends Model
   minBookingNotice?: number;
   minBuffer?: number;
   minCancellationNotice?: number;
+  intervalMinutes?: number;
   nameFieldHidden?: boolean;
   openingHours?: SchedulerBookingOpeningHours[];
   schedulingMethod?: string;
@@ -312,6 +314,10 @@ export class SchedulerBooking extends Model
     minCancellationNotice: Attributes.Number({
       modelKey: 'minCancellationNotice',
       jsonKey: 'min_cancellation_notice',
+    }),
+    intervalMinutes: Attributes.Number({
+      modelKey: 'intervalMinutes',
+      jsonKey: 'interval_minutes',
     }),
     nameFieldHidden: Attributes.Boolean({
       modelKey: 'nameFieldHidden',
@@ -548,6 +554,7 @@ export default class Scheduler extends RestfulModel
   }
 
   save(params: {} | SaveCallback = {}, callback?: SaveCallback): Promise<this> {
+    this.validate();
     return super.save(params, callback);
   }
 
@@ -595,5 +602,17 @@ export default class Scheduler extends RestfulModel
       },
       baseUrl: this.baseUrl,
     });
+  }
+
+  private validate(): void {
+    const bookingIntervalMinutes = this.config?.booking?.intervalMinutes;
+    if (
+      bookingIntervalMinutes !== undefined &&
+      (bookingIntervalMinutes <= 0 || bookingIntervalMinutes % 5 != 0)
+    ) {
+      throw new Error(
+        'SchedulerBooking.intervalMinutes must be a non-zero positive integer, divisible by 5.'
+      );
+    }
   }
 }
