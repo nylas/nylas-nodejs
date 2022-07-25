@@ -26,6 +26,7 @@
 * Add new websocket tunneling service that can be used for local webhook development and testing
 
 ### Unreleased
+* Add `interval_minutes` field in Scheduler booking config
 * Fixed json value for `confirmationEmailToHost` in `SchedulerBooking`
 
 ### 6.4.2 / 2022-06-14
