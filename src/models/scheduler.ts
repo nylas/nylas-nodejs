@@ -213,7 +213,7 @@ export class SchedulerBookingOpeningHours extends Model
   end?: string;
   start?: string;
   static attributes: Record<string, Attribute> = {
-    dropdownOptions: Attributes.String({
+    accountId: Attributes.String({
       modelKey: 'accountId',
       jsonKey: 'account_id',
     }),
