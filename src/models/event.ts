@@ -46,7 +46,7 @@ export type EventProperties = {
     timezone: string;
   };
   masterEventId?: string;
-  originalStartTime?: number | Date;
+  originalStartTime?: Date;
   capacity?: number;
   conferencing?: EventConferencingProperties;
   notifications?: EventNotificationProperties[];
@@ -74,7 +74,7 @@ export default class Event extends RestfulModel {
     timezone: string;
   };
   masterEventId?: string;
-  originalStartTime?: number | Date;
+  originalStartTime?: Date;
   capacity?: number;
   conferencing?: EventConferencing;
   reminderMinutes?: string;
