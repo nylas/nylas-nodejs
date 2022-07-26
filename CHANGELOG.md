@@ -2,6 +2,8 @@
 
 ### Unreleased
 * Add `interval_minutes` field in Scheduler booking config
+* Fixed `Event.originalStartTime` type to be `Date`
+* Fixed `SchedulerBookingOpeningHours.accountId` deserialization
 * Fixed json value for `confirmationEmailToHost` in `SchedulerBooking`
 
 ### 6.4.2 / 2022-06-14
