@@ -15,7 +15,7 @@ Here are some resources to help you get started:
 
 # Install
 
-To run the Nylas Node SDK, you will first need to have [Node](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/get-npm) installed on your machine.
+To install the Nylas Node SDK, you will first need to have [Node](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/get-npm) installed on your machine.
 
 Then, head to the nearest command line and run the following:
 `npm install nylas`
@@ -32,22 +32,26 @@ npm install
 
 # Usage
 
-Every resource (i.e., messages, events, contacts) is accessed via an instance of `Nylas`. Before making any requests, be sure to call `config` and initialize the `Nylas` instance with your `clientId` and `clientSecret`. Then, call `with` and pass it your `accessToken`. The `accessToken` allows `Nylas` to make requests for a given account's resources.
+The SDK entrypoint and application resources (i.e., application accounts, authentication, webhooks) is accessed via an instance of `Nylas`. You can initialize a `Nylas` instance with your `clientId` and `clientSecret`.
 
 ```javascript
 const Nylas = require('nylas');
 
-Nylas.config({
+const nylasClient = new Nylas({
   clientId: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
 });
+```
 
-const nylas = Nylas.with(ACCESS_TOKEN);
+Every account resource (i.e., messages, events, contacts) is accessed via an instance of `NylasConnection`. To initialize an instance of `NylasConnection`, call `with` on your `Nylas` instance and pass it your `accessToken`.
+
+```javascript
+const nylasConnection = nylasClient.with(ACCESS_TOKEN);
 ```
 
 Then, you can use Nylas to access information about a user's account:
 ```javascript
-nylas.threads.list({}).then(threads => {
+nylasConnection.threads.list().then(threads => {
   console.log(threads.length);
 });
 ```
