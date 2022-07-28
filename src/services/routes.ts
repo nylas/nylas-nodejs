@@ -1,6 +1,7 @@
 import { Scope } from '../models/connect';
 import Nylas from '../nylas';
 import AccessToken from '../models/access-token';
+import crypto from 'crypto';
 
 export enum DefaultRoutes {
   buildAuthUrl = '/generate-auth-url',
@@ -24,6 +25,11 @@ type Routes = {
     nylasClient: Nylas,
     code: string
   ) => Promise<AccessToken>;
+  verifyWebhookSignature: (
+    nylasClient: Nylas,
+    nylasSignature: string,
+    rawBody: Buffer
+  ) => boolean;
 };
 
 export const Routes = (): Routes => {
@@ -48,7 +54,25 @@ export const Routes = (): Routes => {
     return await nylasClient.exchangeCodeForToken(code);
   };
 
-  return { buildAuthUrl, exchangeCodeForToken };
+  /**
+   * Verify incoming webhook signature came from Nylas
+   * @param nylasSignature The signature to verify
+   * @param rawBody The raw body from the payload
+   * @return true if the webhook signature was verified from Nylas
+   */
+  const verifyWebhookSignature = (
+    nylasClient: Nylas,
+    nylasSignature: string,
+    rawBody: Buffer
+  ): boolean => {
+    const digest = crypto
+      .createHmac('sha256', nylasClient.clientSecret)
+      .update(rawBody)
+      .digest('hex');
+    return digest === nylasSignature;
+  };
+
+  return { buildAuthUrl, exchangeCodeForToken, verifyWebhookSignature };
 };
 
 export default Routes;
