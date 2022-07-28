@@ -9,7 +9,11 @@ import Connect from './models/connect';
 import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
-import { AuthenticateUrlConfig, NylasConfig } from './config';
+import {
+  AuthenticateUrlConfig,
+  ExchangeCodeForTokenCallback,
+  NylasConfig,
+} from './config';
 import AccessToken from './models/access-token';
 import ApplicationDetails, {
   ApplicationDetailsProperties,
@@ -131,13 +135,13 @@ class Nylas {
 
   /**
    * Exchange an authorization code for an access token
-   * @param code Application details to overwrite
-   * @param callback Application details to overwrite
-   * @return Information about the Nylas application
+   * @param code One-time authorization code from Nylas
+   * @param callback Callback before returning the access token
+   * @return The {@link AccessToken} object containing the access token and other information
    */
   exchangeCodeForToken(
     code: string,
-    callback?: (error: Error | null, accessToken?: string) => void
+    callback?: ExchangeCodeForTokenCallback
   ): Promise<AccessToken> {
     if (!this.clientId || !this.clientSecret) {
       throw new Error(
@@ -166,10 +170,11 @@ class Nylas {
             if (body && body.message) errorMessage = body.message;
             throw new Error(errorMessage);
           }
+          const accessToken = new AccessToken().fromJSON(body);
           if (callback) {
-            callback(null, body);
+            callback(null, accessToken);
           }
-          return new AccessToken().fromJSON(body);
+          return accessToken;
         },
         error => {
           const newError = new Error(error.message);
