@@ -85,9 +85,7 @@ export abstract class ServerBinding extends EventEmitter
    * @param deltas The list of delta JSON objects
    */
   emitDeltaEvents(deltas: Record<string, unknown>[]): void {
-    deltas.forEach(d =>
-      this.handleDeltaEvent(new WebhookDelta().fromJSON(d))
-    );
+    deltas.forEach(d => this.handleDeltaEvent(new WebhookDelta().fromJSON(d)));
   }
 
   /**

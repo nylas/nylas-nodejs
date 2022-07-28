@@ -2,7 +2,6 @@ import Nylas from '../nylas';
 import express, { RequestHandler, Response, Router } from 'express';
 import { ServerBindingOptions, ServerBinding } from './server-binding';
 import bodyParser from 'body-parser';
-import { WebhookDelta } from '../models/webhook-notification';
 import { DefaultRoutes } from '../services/routes';
 
 export default class ExpressBinding extends ServerBinding {
