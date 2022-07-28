@@ -35,6 +35,11 @@ type Routes = {
 };
 
 export const Routes = (nylasClient: Nylas): Routes => {
+  /**
+   * Build the URL for authenticating users to your application via Hosted Authentication
+   * @param options Configuration for the authentication process
+   * @return The URL for hosted authentication
+   */
   const buildAuthUrl = async (
     options: BuildAuthUrlOptions
   ): Promise<string> => {
@@ -48,6 +53,12 @@ export const Routes = (nylasClient: Nylas): Routes => {
     });
   };
 
+  /**
+   * Exchange an authorization code for an access token
+   * @param code One-time authorization code from Nylas
+   * @param callback Callback before returning the access token
+   * @return The {@link AccessToken} object containing the access token and other information
+   */
   const exchangeCodeForToken = async (
     code: string,
     callback?: ExchangeCodeForTokenCallback
