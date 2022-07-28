@@ -1,5 +1,9 @@
 # Changelog
 
+### 7.0.0-canary.4 / Unreleased
+* Abstract out the middleware logic to a more generalized `Routes`
+* **BREAKING CHANGE**: `exchangeCodeForToken` callback returns the access token as a `AccessToken` type instead of a string
+
 ### 7.0.0-canary.3 / 2022-06-29
 * `/exchange-mailbox-token` now uses a callback instead of emitting an event
 * Add CSRF Token Generation support for the authentication process in the server bindings
