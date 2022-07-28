@@ -8,6 +8,17 @@ export enum DefaultRoutes {
   exchangeCodeForToken = '/exchange-mailbox-token',
 }
 
+// Type aliases for the functions in Routes
+
+export type BuildAuthUrl = (options: BuildAuthUrlOptions) => Promise<string>;
+
+export type ExchangeCodeForToken = (code: string) => Promise<AccessToken>;
+
+export type VerifyWebhookSignature = (
+  nylasSignature: string,
+  rawBody: Buffer
+) => boolean;
+
 export type BuildAuthUrlOptions = {
   scopes: Scope[];
   emailAddress: string;
@@ -17,24 +28,13 @@ export type BuildAuthUrlOptions = {
 };
 
 type Routes = {
-  buildAuthUrl: (
-    nylasClient: Nylas,
-    options: BuildAuthUrlOptions
-  ) => Promise<string>;
-  exchangeCodeForToken: (
-    nylasClient: Nylas,
-    code: string
-  ) => Promise<AccessToken>;
-  verifyWebhookSignature: (
-    nylasClient: Nylas,
-    nylasSignature: string,
-    rawBody: Buffer
-  ) => boolean;
+  buildAuthUrl: BuildAuthUrl;
+  exchangeCodeForToken: ExchangeCodeForToken;
+  verifyWebhookSignature: VerifyWebhookSignature;
 };
 
-export const Routes = (): Routes => {
+export const Routes = (nylasClient: Nylas): Routes => {
   const buildAuthUrl = async (
-    nylasClient: Nylas,
     options: BuildAuthUrlOptions
   ): Promise<string> => {
     const { scopes, emailAddress, successUrl, clientUri, state } = options;
@@ -47,10 +47,7 @@ export const Routes = (): Routes => {
     });
   };
 
-  const exchangeCodeForToken = async (
-    nylasClient: Nylas,
-    code: string
-  ): Promise<AccessToken> => {
+  const exchangeCodeForToken = async (code: string): Promise<AccessToken> => {
     return await nylasClient.exchangeCodeForToken(code);
   };
 
@@ -61,7 +58,6 @@ export const Routes = (): Routes => {
    * @return true if the webhook signature was verified from Nylas
    */
   const verifyWebhookSignature = (
-    nylasClient: Nylas,
     nylasSignature: string,
     rawBody: Buffer
   ): boolean => {

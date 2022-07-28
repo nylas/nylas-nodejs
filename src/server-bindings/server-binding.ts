@@ -9,7 +9,12 @@ import {
   openWebhookTunnel,
   OpenWebhookTunnelOptions,
 } from '../services/tunnel';
-import { Routes } from '../services/routes';
+import {
+  BuildAuthUrl,
+  ExchangeCodeForToken,
+  Routes,
+  VerifyWebhookSignature,
+} from '../services/routes';
 
 type Middleware = Router;
 type ServerRequest = Request;
@@ -42,9 +47,9 @@ export abstract class ServerBinding extends EventEmitter
   clientUri?: string;
 
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
-  protected buildAuthUrl = Routes().buildAuthUrl;
-  protected exchangeCodeForToken = Routes().exchangeCodeForToken;
-  protected verifyWebhookSignature = Routes().verifyWebhookSignature;
+  protected buildAuthUrl: BuildAuthUrl;
+  protected exchangeCodeForToken: ExchangeCodeForToken;
+  protected verifyWebhookSignature: VerifyWebhookSignature;
   private _untypedOn = this.on;
   private _untypedEmit = this.emit;
 
@@ -55,6 +60,11 @@ export abstract class ServerBinding extends EventEmitter
     this.exchangeMailboxTokenCallback = options.exchangeMailboxTokenCallback;
     this.csrfTokenExchangeOpts = options.csrfTokenExchangeOpts;
     this.clientUri = options.clientUri;
+    ({
+      buildAuthUrl: this.buildAuthUrl,
+      exchangeCodeForToken: this.exchangeCodeForToken,
+      verifyWebhookSignature: this.verifyWebhookSignature,
+    } = Routes(nylasClient));
   }
 
   abstract buildMiddleware(): Middleware;

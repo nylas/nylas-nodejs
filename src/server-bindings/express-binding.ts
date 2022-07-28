@@ -16,7 +16,6 @@ export default class ExpressBinding extends ServerBinding {
   webhookVerificationMiddleware(): RequestHandler {
     return (req, res, next): void | Response => {
       const isVerified = this.verifyWebhookSignature(
-        this.nylasClient,
         req.header(ServerBinding.NYLAS_SIGNATURE_HEADER) as string,
         req.body
       );
@@ -70,7 +69,7 @@ export default class ExpressBinding extends ServerBinding {
       if (this.csrfTokenExchangeOpts) {
         state = await this.csrfTokenExchangeOpts.generateCsrfToken(req);
       }
-      const authUrl = await this.buildAuthUrl(this.nylasClient, {
+      const authUrl = await this.buildAuthUrl({
         scopes: this.defaultScopes,
         clientUri: this.clientUri,
         emailAddress: req.body.email_address,
@@ -92,10 +91,7 @@ export default class ExpressBinding extends ServerBinding {
             return res.status(401).send('Invalid CSRF State Token');
           }
         }
-        const accessTokenObj = await this.exchangeCodeForToken(
-          this.nylasClient,
-          req.body.token
-        );
+        const accessTokenObj = await this.exchangeCodeForToken(req.body.token);
 
         await this.exchangeMailboxTokenCallback(accessTokenObj, res);
 
