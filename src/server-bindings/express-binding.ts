@@ -3,7 +3,7 @@ import express, { RequestHandler, Response, Router } from 'express';
 import { ServerBindingOptions, ServerBinding } from './server-binding';
 import bodyParser from 'body-parser';
 import { WebhookDelta } from '../models/webhook-notification';
-import { DefaultRoutes, Routes } from '../services/routes';
+import { DefaultRoutes } from '../services/routes';
 
 export default class ExpressBinding extends ServerBinding {
   constructor(nylasClient: Nylas, options: ServerBindingOptions) {
@@ -40,7 +40,6 @@ export default class ExpressBinding extends ServerBinding {
   buildMiddleware(): Router {
     const router = express.Router();
     const webhookRoute = '/webhook';
-    const { buildAuthUrl, exchangeCodeForToken } = Routes();
 
     // For the Nylas webhook endpoint, we should get the raw body to use for verification
     router.use(
@@ -70,7 +69,7 @@ export default class ExpressBinding extends ServerBinding {
       if (this.csrfTokenExchangeOpts) {
         state = await this.csrfTokenExchangeOpts.generateCsrfToken(req);
       }
-      const authUrl = await buildAuthUrl(this.nylasClient, {
+      const authUrl = await this.buildAuthUrl(this.nylasClient, {
         scopes: this.defaultScopes,
         clientUri: this.clientUri,
         emailAddress: req.body.email_address,
@@ -92,7 +91,7 @@ export default class ExpressBinding extends ServerBinding {
             return res.status(401).send('Invalid CSRF State Token');
           }
         }
-        const accessTokenObj = await exchangeCodeForToken(
+        const accessTokenObj = await this.exchangeCodeForToken(
           this.nylasClient,
           req.body.token
         );

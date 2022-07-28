@@ -10,6 +10,7 @@ import {
   openWebhookTunnel,
   OpenWebhookTunnelOptions,
 } from '../services/tunnel';
+import { Routes } from '../services/routes';
 
 type Middleware = Router;
 type ServerRequest = Request;
@@ -42,6 +43,8 @@ export abstract class ServerBinding extends EventEmitter
   clientUri?: string;
 
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
+  protected buildAuthUrl = Routes().buildAuthUrl;
+  protected exchangeCodeForToken = Routes().exchangeCodeForToken;
   private _untypedOn = this.on;
   private _untypedEmit = this.emit;
 
