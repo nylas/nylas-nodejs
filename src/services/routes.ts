@@ -7,6 +7,7 @@ import { ExchangeCodeForTokenCallback } from '../config';
 export enum DefaultRoutes {
   buildAuthUrl = '/generate-auth-url',
   exchangeCodeForToken = '/exchange-mailbox-token',
+  webhooks = '/webhook',
 }
 
 // Type aliases for the functions in Routes

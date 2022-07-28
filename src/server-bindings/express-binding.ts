@@ -39,11 +39,10 @@ export default class ExpressBinding extends ServerBinding {
    */
   buildMiddleware(): Router {
     const router = express.Router();
-    const webhookRoute = '/webhook';
 
     // For the Nylas webhook endpoint, we should get the raw body to use for verification
     router.use(
-      webhookRoute,
+      DefaultRoutes.webhooks,
       bodyParser.raw({ inflate: true, type: 'application/json' })
     );
 
@@ -53,13 +52,11 @@ export default class ExpressBinding extends ServerBinding {
     );
 
     router.post<unknown, unknown, Record<string, unknown>>(
-      webhookRoute,
+      DefaultRoutes.webhooks,
       this.webhookVerificationMiddleware() as any,
       (req, res) => {
         const deltas = (req.body.deltas as Record<string, unknown>[]) || [];
-        deltas.forEach(d =>
-          this.handleDeltaEvent(new WebhookDelta().fromJSON(d))
-        );
+        this.emitDeltaEvents(deltas);
         res.status(200).send('ok');
       }
     );

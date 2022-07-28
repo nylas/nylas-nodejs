@@ -81,6 +81,16 @@ export abstract class ServerBinding extends EventEmitter
   ): boolean => this._untypedEmit(event, payload);
 
   /**
+   * Emit all incoming delta events
+   * @param deltas The list of delta JSON objects
+   */
+  emitDeltaEvents(deltas: Record<string, unknown>[]): void {
+    deltas.forEach(d =>
+      this.handleDeltaEvent(new WebhookDelta().fromJSON(d))
+    );
+  }
+
+  /**
    * Start a local development websocket to get webhook events
    * @param webhookTunnelConfig Optional configuration for setting region, triggers, and overriding callbacks
    * @return The webhook details response from the API
