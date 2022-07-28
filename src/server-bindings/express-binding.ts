@@ -16,6 +16,7 @@ export default class ExpressBinding extends ServerBinding {
   webhookVerificationMiddleware(): RequestHandler {
     return (req, res, next): void | Response => {
       const isVerified = this.verifyWebhookSignature(
+        this.nylasClient,
         req.header(ServerBinding.NYLAS_SIGNATURE_HEADER) as string,
         req.body
       );

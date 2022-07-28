@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import { Request, Response, Router } from 'express';
 import { Scope } from '../models/connect';
 import { EventEmitter } from 'events';
@@ -45,6 +44,7 @@ export abstract class ServerBinding extends EventEmitter
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
   protected buildAuthUrl = Routes().buildAuthUrl;
   protected exchangeCodeForToken = Routes().exchangeCodeForToken;
+  protected verifyWebhookSignature = Routes().verifyWebhookSignature;
   private _untypedOn = this.on;
   private _untypedEmit = this.emit;
 
@@ -69,20 +69,6 @@ export abstract class ServerBinding extends EventEmitter
     event: K,
     payload: WebhookDelta
   ): boolean => this._untypedEmit(event, payload);
-
-  /**
-   * Verify incoming webhook signature came from Nylas
-   * @param xNylasSignature The signature to verify
-   * @param rawBody The raw body from the payload
-   * @return true if the webhook signature was verified from Nylas
-   */
-  verifyWebhookSignature(xNylasSignature: string, rawBody: Buffer): boolean {
-    const digest = crypto
-      .createHmac('sha256', this.nylasClient.clientSecret)
-      .update(rawBody)
-      .digest('hex');
-    return digest === xNylasSignature;
-  }
 
   /**
    * Start a local development websocket to get webhook events
