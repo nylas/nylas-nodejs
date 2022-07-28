@@ -2,6 +2,7 @@ import { Scope } from '../models/connect';
 import Nylas from '../nylas';
 import AccessToken from '../models/access-token';
 import crypto from 'crypto';
+import { ExchangeCodeForTokenCallback } from '../config';
 
 export enum DefaultRoutes {
   buildAuthUrl = '/generate-auth-url',
@@ -47,8 +48,11 @@ export const Routes = (nylasClient: Nylas): Routes => {
     });
   };
 
-  const exchangeCodeForToken = async (code: string): Promise<AccessToken> => {
-    return await nylasClient.exchangeCodeForToken(code);
+  const exchangeCodeForToken = async (
+    code: string,
+    callback?: ExchangeCodeForTokenCallback
+  ): Promise<AccessToken> => {
+    return await nylasClient.exchangeCodeForToken(code, callback);
   };
 
   /**
