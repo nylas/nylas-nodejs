@@ -9,6 +9,7 @@ export type JobStatusProperties = {
   jobStatusId?: string;
   status?: string;
   originalData?: Message;
+  metadata?: object;
 };
 
 export default class JobStatus extends RestfulModel
@@ -18,6 +19,7 @@ export default class JobStatus extends RestfulModel
   jobStatusId?: string;
   status?: string;
   originalData?: Message;
+  metadata?: object;
   static collectionName = 'job-statuses';
   static attributes: Record<string, Attribute> = {
     ...RestfulModel.attributes,
@@ -42,6 +44,10 @@ export default class JobStatus extends RestfulModel
     originalData: Attributes.Object({
       modelKey: 'originalData',
       jsonKey: 'original_data',
+      readOnly: true,
+    }),
+    metadata: Attributes.Object({
+      modelKey: 'metadata',
       readOnly: true,
     }),
   };
