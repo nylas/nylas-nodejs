@@ -25,7 +25,7 @@
 * Add middleware for Express.js
 * Add new websocket tunneling service that can be used for local webhook development and testing
 
-### Unreleased
+### 6.5.0 / 2022-07-29
 * Add `metadata` field to `JobStatus`
 * Add `interval_minutes` field in Scheduler booking config
 * Fixed `Event.originalStartTime` type to be `Date`
