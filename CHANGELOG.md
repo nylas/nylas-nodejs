@@ -26,6 +26,7 @@
 * Add new websocket tunneling service that can be used for local webhook development and testing
 
 ### Unreleased
+* Add `metadata` field to `JobStatus`
 * Add `interval_minutes` field in Scheduler booking config
 * Fixed `Event.originalStartTime` type to be `Date`
 * Fixed `SchedulerBookingOpeningHours.accountId` deserialization
