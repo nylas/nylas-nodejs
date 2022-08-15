@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import { Request, Response, Router } from 'express';
 import { Scope } from '../models/connect';
 import { EventEmitter } from 'events';
@@ -10,6 +9,12 @@ import {
   openWebhookTunnel,
   OpenWebhookTunnelOptions,
 } from '../services/tunnel';
+import {
+  BuildAuthUrl,
+  ExchangeCodeForToken,
+  Routes,
+  VerifyWebhookSignature,
+} from '../services/routes';
 
 type Middleware = Router;
 type ServerRequest = Request;
@@ -25,12 +30,18 @@ type CsrfTokenExchangeOptions = {
     req: ServerRequest
   ) => Promise<boolean>;
 };
+type OverridePaths = {
+  buildAuthUrl?: string;
+  exchangeCodeForToken?: string;
+  webhooks?: string;
+};
 
 export type ServerBindingOptions = {
   defaultScopes: Scope[];
   exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
   csrfTokenExchangeOpts?: CsrfTokenExchangeOptions;
   clientUri?: string;
+  overridePaths?: OverridePaths;
 };
 
 export abstract class ServerBinding extends EventEmitter
@@ -40,8 +51,12 @@ export abstract class ServerBinding extends EventEmitter
   exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
   csrfTokenExchangeOpts?: CsrfTokenExchangeOptions;
   clientUri?: string;
+  overridePaths?: OverridePaths;
 
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
+  protected buildAuthUrl: BuildAuthUrl;
+  protected exchangeCodeForToken: ExchangeCodeForToken;
+  protected verifyWebhookSignature: VerifyWebhookSignature;
   private _untypedOn = this.on;
   private _untypedEmit = this.emit;
 
@@ -52,6 +67,12 @@ export abstract class ServerBinding extends EventEmitter
     this.exchangeMailboxTokenCallback = options.exchangeMailboxTokenCallback;
     this.csrfTokenExchangeOpts = options.csrfTokenExchangeOpts;
     this.clientUri = options.clientUri;
+    ({
+      buildAuthUrl: this.buildAuthUrl,
+      exchangeCodeForToken: this.exchangeCodeForToken,
+      verifyWebhookSignature: this.verifyWebhookSignature,
+    } = Routes(nylasClient));
+    this.overridePaths = options.overridePaths;
   }
 
   abstract buildMiddleware(): Middleware;
@@ -68,17 +89,11 @@ export abstract class ServerBinding extends EventEmitter
   ): boolean => this._untypedEmit(event, payload);
 
   /**
-   * Verify incoming webhook signature came from Nylas
-   * @param xNylasSignature The signature to verify
-   * @param rawBody The raw body from the payload
-   * @return true if the webhook signature was verified from Nylas
+   * Emit all incoming delta events
+   * @param deltas The list of delta JSON objects
    */
-  verifyWebhookSignature(xNylasSignature: string, rawBody: Buffer): boolean {
-    const digest = crypto
-      .createHmac('sha256', this.nylasClient.clientSecret)
-      .update(rawBody)
-      .digest('hex');
-    return digest === xNylasSignature;
+  emitDeltaEvents(deltas: Record<string, unknown>[]): void {
+    deltas.forEach(d => this.handleDeltaEvent(new WebhookDelta().fromJSON(d)));
   }
 
   /**

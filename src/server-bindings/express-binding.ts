@@ -2,7 +2,7 @@ import Nylas from '../nylas';
 import express, { RequestHandler, Response, Router } from 'express';
 import { ServerBindingOptions, ServerBinding } from './server-binding';
 import bodyParser from 'body-parser';
-import { WebhookDelta } from '../models/webhook-notification';
+import { DefaultPaths } from '../services/routes';
 
 export default class ExpressBinding extends ServerBinding {
   constructor(nylasClient: Nylas, options: ServerBindingOptions) {
@@ -31,18 +31,17 @@ export default class ExpressBinding extends ServerBinding {
 
   /**
    * Build middleware for an Express app with routes for:
-   * 1. '/webhook': Receiving webhook events, verifying its authenticity, and emitting webhook objects
-   * 2. '/generate-auth-url': Building the URL for authenticating users to your application via Hosted Authentication
-   * 3. Exchange an authorization code for an access token
+   * 1. '/nylas/webhook': Receiving webhook events, verifying its authenticity, and emitting webhook objects
+   * 2. '/nylas/generate-auth-url': Building the URL for authenticating users to your application via Hosted Authentication
+   * 3. '/nylas/exchange-mailbox-token': Exchange an authorization code for an access token
    * @return The routes packaged as Express middleware
    */
   buildMiddleware(): Router {
     const router = express.Router();
-    const webhookRoute = '/webhook';
 
     // For the Nylas webhook endpoint, we should get the raw body to use for verification
     router.use(
-      webhookRoute,
+      DefaultPaths.webhooks,
       bodyParser.raw({ inflate: true, type: 'application/json' })
     );
 
@@ -52,57 +51,63 @@ export default class ExpressBinding extends ServerBinding {
     );
 
     router.post<unknown, unknown, Record<string, unknown>>(
-      webhookRoute,
+      this.overridePaths?.webhooks || DefaultPaths.webhooks,
       this.webhookVerificationMiddleware() as any,
       (req, res) => {
         const deltas = (req.body.deltas as Record<string, unknown>[]) || [];
-        deltas.forEach(d =>
-          this.handleDeltaEvent(new WebhookDelta().fromJSON(d))
-        );
+        this.emitDeltaEvents(deltas);
         res.status(200).send('ok');
       }
     );
 
-    router.post('/generate-auth-url', async (req, res) => {
-      let state = '';
-      if (this.csrfTokenExchangeOpts) {
-        state = await this.csrfTokenExchangeOpts.generateCsrfToken(req);
-      }
-      const authUrl = this.nylasClient.urlForAuthentication({
-        loginHint: req.body.email_address,
-        redirectURI: (this.clientUri || '') + req.body.success_url,
-        scopes: this.defaultScopes,
-        state,
-      });
-      res.status(200).send(authUrl);
-    });
-
-    router.post('/exchange-mailbox-token', async (req, res) => {
-      try {
+    router.post(
+      this.overridePaths?.buildAuthUrl || DefaultPaths.buildAuthUrl,
+      async (req, res) => {
+        let state = '';
         if (this.csrfTokenExchangeOpts) {
-          const csrfToken = req.body.csrfToken;
-          const isValidToken = await this.csrfTokenExchangeOpts.validateCsrfToken(
-            csrfToken,
-            req
-          );
-          if (!isValidToken) {
-            return res.status(401).send('Invalid CSRF State Token');
-          }
+          state = await this.csrfTokenExchangeOpts.generateCsrfToken(req);
         }
-        const accessTokenObj = await this.nylasClient.exchangeCodeForToken(
-          req.body.token
-        );
-
-        await this.exchangeMailboxTokenCallback(accessTokenObj, res);
-
-        // If the callback event already sent a response then we don't need to do anything
-        if (!res.writableEnded) {
-          res.status(200).send('success');
-        }
-      } catch (e) {
-        res.status(500).send((e as any).message);
+        const authUrl = await this.buildAuthUrl({
+          scopes: this.defaultScopes,
+          clientUri: this.clientUri,
+          emailAddress: req.body.email_address,
+          successUrl: req.body.success_url,
+          state,
+        });
+        res.status(200).send(authUrl);
       }
-    });
+    );
+
+    router.post(
+      this.overridePaths?.exchangeCodeForToken ||
+        DefaultPaths.exchangeCodeForToken,
+      async (req, res) => {
+        try {
+          if (this.csrfTokenExchangeOpts) {
+            const csrfToken = req.body.csrfToken;
+            const isValidToken = await this.csrfTokenExchangeOpts.validateCsrfToken(
+              csrfToken,
+              req
+            );
+            if (!isValidToken) {
+              return res.status(401).send('Invalid CSRF State Token');
+            }
+          }
+          const accessTokenObj = await this.exchangeCodeForToken(
+            req.body.token
+          );
+
+          await this.exchangeMailboxTokenCallback(accessTokenObj, res);
+
+          // If the callback event already sent a response then we don't need to do anything
+          if (!res.writableEnded) {
+            res.status(200).send('success');
+          }
+        } catch (e) {
+          res.status(500).send((e as any).message);
+        }
+      }
+    );
 
     return router;
   }
