@@ -1,6 +1,6 @@
 # Changelog
 
-### 7.0.0-canary.4 / Unreleased
+### 7.0.0-canary.4 / 2022-08-15
 * Abstract out the middleware logic to a more generalized `Routes`
 * **BREAKING CHANGE**: `exchangeCodeForToken` callback returns the access token as a `AccessToken` type instead of a string
 
