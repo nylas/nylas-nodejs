@@ -30,12 +30,18 @@ type CsrfTokenExchangeOptions = {
     req: ServerRequest
   ) => Promise<boolean>;
 };
+type OverridePaths = {
+  buildAuthUrl?: string;
+  exchangeCodeForToken?: string;
+  webhooks?: string;
+};
 
 export type ServerBindingOptions = {
   defaultScopes: Scope[];
   exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
   csrfTokenExchangeOpts?: CsrfTokenExchangeOptions;
   clientUri?: string;
+  overridePaths?: OverridePaths;
 };
 
 export abstract class ServerBinding extends EventEmitter
@@ -45,6 +51,7 @@ export abstract class ServerBinding extends EventEmitter
   exchangeMailboxTokenCallback: ExchangeMailboxTokenCallback;
   csrfTokenExchangeOpts?: CsrfTokenExchangeOptions;
   clientUri?: string;
+  overridePaths?: OverridePaths;
 
   static NYLAS_SIGNATURE_HEADER = 'x-nylas-signature';
   protected buildAuthUrl: BuildAuthUrl;
@@ -65,6 +72,7 @@ export abstract class ServerBinding extends EventEmitter
       exchangeCodeForToken: this.exchangeCodeForToken,
       verifyWebhookSignature: this.verifyWebhookSignature,
     } = Routes(nylasClient));
+    this.overridePaths = options.overridePaths;
   }
 
   abstract buildMiddleware(): Middleware;

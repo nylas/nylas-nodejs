@@ -51,7 +51,7 @@ export default class ExpressBinding extends ServerBinding {
     );
 
     router.post<unknown, unknown, Record<string, unknown>>(
-      DefaultPaths.webhooks,
+      this.overridePaths?.webhooks || DefaultPaths.webhooks,
       this.webhookVerificationMiddleware() as any,
       (req, res) => {
         const deltas = (req.body.deltas as Record<string, unknown>[]) || [];
@@ -60,45 +60,54 @@ export default class ExpressBinding extends ServerBinding {
       }
     );
 
-    router.post(DefaultPaths.buildAuthUrl, async (req, res) => {
-      let state = '';
-      if (this.csrfTokenExchangeOpts) {
-        state = await this.csrfTokenExchangeOpts.generateCsrfToken(req);
-      }
-      const authUrl = await this.buildAuthUrl({
-        scopes: this.defaultScopes,
-        clientUri: this.clientUri,
-        emailAddress: req.body.email_address,
-        successUrl: req.body.success_url,
-        state,
-      });
-      res.status(200).send(authUrl);
-    });
-
-    router.post(DefaultPaths.exchangeCodeForToken, async (req, res) => {
-      try {
+    router.post(
+      this.overridePaths?.buildAuthUrl || DefaultPaths.buildAuthUrl,
+      async (req, res) => {
+        let state = '';
         if (this.csrfTokenExchangeOpts) {
-          const csrfToken = req.body.csrfToken;
-          const isValidToken = await this.csrfTokenExchangeOpts.validateCsrfToken(
-            csrfToken,
-            req
-          );
-          if (!isValidToken) {
-            return res.status(401).send('Invalid CSRF State Token');
-          }
+          state = await this.csrfTokenExchangeOpts.generateCsrfToken(req);
         }
-        const accessTokenObj = await this.exchangeCodeForToken(req.body.token);
-
-        await this.exchangeMailboxTokenCallback(accessTokenObj, res);
-
-        // If the callback event already sent a response then we don't need to do anything
-        if (!res.writableEnded) {
-          res.status(200).send('success');
-        }
-      } catch (e) {
-        res.status(500).send((e as any).message);
+        const authUrl = await this.buildAuthUrl({
+          scopes: this.defaultScopes,
+          clientUri: this.clientUri,
+          emailAddress: req.body.email_address,
+          successUrl: req.body.success_url,
+          state,
+        });
+        res.status(200).send(authUrl);
       }
-    });
+    );
+
+    router.post(
+      this.overridePaths?.exchangeCodeForToken ||
+        DefaultPaths.exchangeCodeForToken,
+      async (req, res) => {
+        try {
+          if (this.csrfTokenExchangeOpts) {
+            const csrfToken = req.body.csrfToken;
+            const isValidToken = await this.csrfTokenExchangeOpts.validateCsrfToken(
+              csrfToken,
+              req
+            );
+            if (!isValidToken) {
+              return res.status(401).send('Invalid CSRF State Token');
+            }
+          }
+          const accessTokenObj = await this.exchangeCodeForToken(
+            req.body.token
+          );
+
+          await this.exchangeMailboxTokenCallback(accessTokenObj, res);
+
+          // If the callback event already sent a response then we don't need to do anything
+          if (!res.writableEnded) {
+            res.status(200).send('success');
+          }
+        } catch (e) {
+          res.status(500).send((e as any).message);
+        }
+      }
+    );
 
     return router;
   }
