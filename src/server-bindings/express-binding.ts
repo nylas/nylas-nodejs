@@ -2,7 +2,7 @@ import Nylas from '../nylas';
 import express, { RequestHandler, Response, Router } from 'express';
 import { ServerBindingOptions, ServerBinding } from './server-binding';
 import bodyParser from 'body-parser';
-import { DefaultRoutes } from '../services/routes';
+import { DefaultPaths } from '../services/routes';
 
 export default class ExpressBinding extends ServerBinding {
   constructor(nylasClient: Nylas, options: ServerBindingOptions) {
@@ -41,7 +41,7 @@ export default class ExpressBinding extends ServerBinding {
 
     // For the Nylas webhook endpoint, we should get the raw body to use for verification
     router.use(
-      DefaultRoutes.webhooks,
+      DefaultPaths.webhooks,
       bodyParser.raw({ inflate: true, type: 'application/json' })
     );
 
@@ -51,7 +51,7 @@ export default class ExpressBinding extends ServerBinding {
     );
 
     router.post<unknown, unknown, Record<string, unknown>>(
-      DefaultRoutes.webhooks,
+      DefaultPaths.webhooks,
       this.webhookVerificationMiddleware() as any,
       (req, res) => {
         const deltas = (req.body.deltas as Record<string, unknown>[]) || [];
@@ -60,7 +60,7 @@ export default class ExpressBinding extends ServerBinding {
       }
     );
 
-    router.post(DefaultRoutes.buildAuthUrl, async (req, res) => {
+    router.post(DefaultPaths.buildAuthUrl, async (req, res) => {
       let state = '';
       if (this.csrfTokenExchangeOpts) {
         state = await this.csrfTokenExchangeOpts.generateCsrfToken(req);
@@ -75,7 +75,7 @@ export default class ExpressBinding extends ServerBinding {
       res.status(200).send(authUrl);
     });
 
-    router.post(DefaultRoutes.exchangeCodeForToken, async (req, res) => {
+    router.post(DefaultPaths.exchangeCodeForToken, async (req, res) => {
       try {
         if (this.csrfTokenExchangeOpts) {
           const csrfToken = req.body.csrfToken;

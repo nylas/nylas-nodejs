@@ -4,10 +4,10 @@ import AccessToken from '../models/access-token';
 import crypto from 'crypto';
 import { ExchangeCodeForTokenCallback } from '../config';
 
-export enum DefaultRoutes {
   buildAuthUrl = '/generate-auth-url',
   exchangeCodeForToken = '/exchange-mailbox-token',
   webhooks = '/webhook',
+export enum DefaultPaths {
 }
 
 // Type aliases for the functions in Routes
