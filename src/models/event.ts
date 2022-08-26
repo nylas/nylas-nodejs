@@ -278,7 +278,9 @@ export default class Event extends RestfulModel {
     }
     // Participant status cannot be updated
     if (this.id && json.participants) {
-      (json.participants as Record<string, unknown>[]).forEach(participant => delete(participant.status));
+      (json.participants as Record<string, unknown>[]).forEach(
+        participant => delete participant.status
+      );
     }
 
     return json;

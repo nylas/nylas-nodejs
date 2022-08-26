@@ -724,7 +724,7 @@ describe('Event', () => {
             ],
           });
         });
-        testContext.event.id = "abc-123";
+        testContext.event.id = 'abc-123';
         testContext.event.save().then(() => {
           const options = testContext.connection.request.mock.calls[1][0];
           expect(options.body).toEqual({
