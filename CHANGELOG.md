@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix issue with `EventParticipant` not sending status on create
+
 ### 6.5.0 / 2022-07-29
 * Add `metadata` field to `JobStatus`
 * Add `interval_minutes` field in Scheduler booking config
