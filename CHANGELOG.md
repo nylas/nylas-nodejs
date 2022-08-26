@@ -1,7 +1,7 @@
 # Changelog
 
 ### Unreleased
-* Fix issue with `EventParticipant` not sending status on create
+* Fix issue with `EventParticipant` not sending status on new event creation
 
 ### 6.5.0 / 2022-07-29
 * Add `metadata` field to `JobStatus`
