@@ -25,6 +25,9 @@
 * Add middleware for Express.js
 * Add new websocket tunneling service that can be used for local webhook development and testing
 
+### Unreleased
+* Fix issue with `EventParticipant` not sending status on new event creation
+
 ### 6.5.0 / 2022-07-29
 * Add `metadata` field to `JobStatus`
 * Add `interval_minutes` field in Scheduler booking config
