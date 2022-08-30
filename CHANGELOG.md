@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Add additional `Event` fields
 * Fix issue with `EventParticipant` not sending status on new event creation
 
 ### 6.5.0 / 2022-07-29
