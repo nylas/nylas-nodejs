@@ -26,6 +26,7 @@
 * Add new websocket tunneling service that can be used for local webhook development and testing
 
 ### Unreleased
+* Add additional `Event` fields
 * Fix issue with `EventParticipant` not sending status on new event creation
 
 ### 6.5.0 / 2022-07-29
