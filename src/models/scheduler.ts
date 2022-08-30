@@ -241,7 +241,7 @@ export type SchedulerBookingProperties = {
   calendarInviteToGuests?: boolean;
   cancellationPolicy?: string;
   confirmationEmailsToGuests?: boolean;
-  confirmationEmailToHost?: boolean;
+  confirmationEmailsToHost?: boolean;
   confirmationMethod?: string;
   minBookingNotice?: number;
   minBuffer?: number;
@@ -259,7 +259,7 @@ export class SchedulerBooking extends Model
   calendarInviteToGuests?: boolean;
   cancellationPolicy?: string;
   confirmationEmailsToGuests?: boolean;
-  confirmationEmailToHost?: boolean;
+  confirmationEmailsToHost?: boolean;
   confirmationMethod?: string;
   minBookingNotice?: number;
   minBuffer?: number;
@@ -293,9 +293,9 @@ export class SchedulerBooking extends Model
       modelKey: 'confirmationEmailsToGuests',
       jsonKey: 'confirmation_emails_to_guests',
     }),
-    confirmationEmailToHost: Attributes.Boolean({
-      modelKey: 'confirmationEmailToHost',
-      jsonKey: 'confirmation_email_to_host',
+    confirmationEmailsToHost: Attributes.Boolean({
+      modelKey: 'confirmationEmailsToHost',
+      jsonKey: 'confirmation_emails_to_host',
     }),
     confirmationMethod: Attributes.String({
       modelKey: 'confirmationMethod',
