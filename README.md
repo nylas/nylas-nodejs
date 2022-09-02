@@ -1,6 +1,11 @@
+<a href="https://www.nylas.com/">
+    <img src="https://brand.nylas.com/assets/downloads/logo_horizontal_png/Nylas-Logo-Horizontal-Blue_.png" alt="Aimeos logo" title="Aimeos" align="right" height="60" />
+</a>
+
 # Nylas Node.js SDK  
 
 [![Travis build status](https://travis-ci.org/nylas/nylas-nodejs.svg?branch=master)](https://travis-ci.org/nylas/nylas-nodejs)
+[![codecov](https://codecov.io/gh/nylas/nylas-nodejs/branch/main/graph/badge.svg?token=94IMGU4F09)](https://codecov.io/gh/nylas/nylas-nodejs)
 
 This is the GitHub repository for the Nylas Node SDK and this repo is primarily for anyone who wants to make contributions to the SDK or install it from source. If you are looking to use Node to access the Nylas Email, Calendar, or Contacts API you should refer to our official [Node SDK Quickstart Guide](https://developer.nylas.com/docs/developer-tools/sdk/node-sdk/).
 
@@ -13,7 +18,7 @@ Here are some resources to help you get started:
 - [Nylas API Reference](https://developer.nylas.com/docs/api/)
 
 
-# Install
+## ⚙️ Install
 
 To install the Nylas Node SDK, you will first need to have [Node](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/get-npm) installed on your machine.
 
@@ -30,7 +35,7 @@ cd nylas-nodejs
 npm install
 ```
 
-# Usage
+## ⚡️ Usage
 
 The SDK entrypoint and application resources (i.e., application accounts, authentication, webhooks) is accessed via an instance of `Nylas`. You can initialize a `Nylas` instance with your `clientId` and `clientSecret`.
 
@@ -58,11 +63,11 @@ nylasConnection.threads.list().then(threads => {
 
 For more information about how to use the Nylas Node SDK, [take a look at our quickstart guide](https://developer.nylas.com/docs/developer-tools/sdk/node-sdk/).
 
-# Contributing
+## 💙 Contributing
 
 Please refer to [Contributing](Contributing.md) for information about how to make contributions to this project. We welcome questions, bug reports, and pull requests.
 
-# License
+## 📝 License
 
 This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE.txt) for the full terms. 
 
