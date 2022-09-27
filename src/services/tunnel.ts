@@ -22,10 +22,18 @@ const deleteTunnelWebhook = (
   if (nylasWebhook && nylasWebhook.id) {
     /* eslint-disable no-console */
     console.log(
-      'Shutting down the webhook tunnel and deleting id: ' + nylasWebhook.id
+      `Shutting down the webhook tunnel and deleting id: ${nylasWebhook.id}`
     );
     /* eslint-enable no-console */
-    nylasClient.webhooks.delete(nylasWebhook).then(() => process.exit());
+    nylasClient.webhooks
+      .delete(nylasWebhook)
+      .then(() => process.exit())
+      .catch((err: Error) => {
+        console.warn(
+          `Error while trying to deregister the webhook ${nylasWebhook.id}: ${err.message}`
+        );
+        process.exit();
+      });
   }
 };
 
