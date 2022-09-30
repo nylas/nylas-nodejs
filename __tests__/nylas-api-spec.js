@@ -175,7 +175,7 @@ describe('Nylas', () => {
         testContext.nylasClient.exchangeCodeForToken(
           'code-from-server',
           (returnedError, accessToken) => {
-            expect(accessToken).toStrictEqual({ access_token: '12345' });
+            expect(accessToken.accessToken).toStrictEqual('12345');
             done();
           }
         );
