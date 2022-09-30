@@ -1,26 +1,9 @@
 # Changelog
 
-### 7.0.0-canary.5 / TBD
-* **BREAKING CHANGE**: Rename `confirmationEmailToHost` to `confirmationEmailsToHost` in `SchedulerBooking`
-* Gracefully handle error on webhook deletion
-
-### 7.0.0-canary.4 / 2022-08-15
-* Abstract out the middleware logic to a more generalized `Routes`
-* **BREAKING CHANGE**: `exchangeCodeForToken` callback returns the access token as a `AccessToken` type instead of a string
-
-### 7.0.0-canary.3 / 2022-06-29
-* `/exchange-mailbox-token` now uses a callback instead of emitting an event
-* Add CSRF Token Generation support for the authentication process in the server bindings
-
-### 7.0.0-canary.2 / 2022-06-21
-* Remove `routePrefix` config from server bindings
-* Remove `cors` configuration from server bindings
-
-### 7.0.0-canary.1 / 2022-06-18
-* Fix dependency issue when using websocket tunneling service
-
-### 7.0.0-canary.0 / 2022-06-17
+### 7.0.0-beta.0 / 2022-09-30
 * **BREAKING CHANGE**: Convert `Nylas` class from a static to a non-static class
+* **BREAKING CHANGE**: Rename `confirmationEmailToHost` to `confirmationEmailsToHost` in `SchedulerBooking`
+* **BREAKING CHANGE**: `exchangeCodeForToken` callback returns the access token as a `AccessToken` type instead of a string
 * Add support for backend frameworks with the Nylas SDK providing middleware to handle webhooks events and authentication
 * Add middleware for Express.js
 * Add new websocket tunneling service that can be used for local webhook development and testing
