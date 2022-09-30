@@ -34,6 +34,9 @@ describe('Job Status', () => {
         created_at: 1592374298,
         job_status_id: 'eslvh7ieykvf5yf2xx9k9yrn8',
         status: 'successful',
+        metadata: {
+          sdk: true,
+        },
       },
       {
         id: '2ab73sqyim3poa8qjm4rv0o2',
@@ -53,6 +56,9 @@ describe('Job Status', () => {
       created_at: 1592374298,
       job_status_id: 'eslvh7ieykvf5yf2xx9k9yrn8',
       status: 'successful',
+      metadata: {
+        sdk: true,
+      },
     };
     jest.spyOn(testContext.connection, 'request');
   });
@@ -94,7 +100,7 @@ describe('Job Status', () => {
     });
 
     test('should resolve to job status object(s)', done => {
-      expect.assertions(8);
+      expect.assertions(9);
       testContext.connection.request = jest.fn(() =>
         Promise.resolve(testContext.listApiResponse)
       );
@@ -106,6 +112,9 @@ describe('Job Status', () => {
         expect(data[0].action).toBe('create_calendar');
         expect(data[0].jobStatusId).toBe('eslvh7ieykvf5yf2xx9k9yrn8');
         expect(data[0].status).toBe('successful');
+        expect(data[0].metadata).toEqual({
+          sdk: true,
+        });
         expect(data[0] instanceof JobStatus).toBe(true);
         expect(data[0].createdAt instanceof Date).toBe(true);
         done();
@@ -144,7 +153,7 @@ describe('Job Status', () => {
     });
 
     test('should resolve to job status object', done => {
-      expect.assertions(8);
+      expect.assertions(9);
       testContext.connection.request = jest.fn(() =>
         Promise.resolve(testContext.getApiResponse)
       );
@@ -156,6 +165,9 @@ describe('Job Status', () => {
         expect(data.action).toBe('create_calendar');
         expect(data.jobStatusId).toBe('eslvh7ieykvf5yf2xx9k9yrn8');
         expect(data.status).toBe('successful');
+        expect(data.metadata).toEqual({
+          sdk: true,
+        });
         expect(data instanceof JobStatus).toBe(true);
         expect(data.createdAt instanceof Date).toBe(true);
         done();

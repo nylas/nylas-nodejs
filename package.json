@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "test": "jest",
+    "test:coverage": "npm run test -- --coverage",
     "lint": "eslint --ext .js,.ts -f visualstudio .",
     "lint:fix": "npm run lint -- --fix",
     "lint:ci": "npm run lint:fix -- --quiet",

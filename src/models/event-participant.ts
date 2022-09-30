@@ -32,7 +32,6 @@ export default class EventParticipant extends Model
     }),
     status: Attributes.String({
       modelKey: 'status',
-      readOnly: true,
     }),
   };
 

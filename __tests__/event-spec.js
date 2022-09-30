@@ -697,7 +697,7 @@ describe('Event', () => {
         });
       });
 
-      test('should not send the status object within the participant object', done => {
+      test('should only send the status object within the participant object on create', done => {
         testContext.event.participants = [
           new EventParticipant({
             name: 'foo',
@@ -707,8 +707,25 @@ describe('Event', () => {
             phoneNumber: '416-000-0000',
           }),
         ];
-        return testContext.event.save().then(() => {
+        testContext.event.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
+          expect(options.body).toEqual({
+            calendar_id: '',
+            when: {},
+            participants: [
+              {
+                name: 'foo',
+                email: 'bar',
+                comment: 'This is a comment',
+                phone_number: '416-000-0000',
+                status: 'noreply',
+              },
+            ],
+          });
+        });
+        testContext.event.id = 'abc-123';
+        testContext.event.save().then(() => {
+          const options = testContext.connection.request.mock.calls[1][0];
           expect(options.body).toEqual({
             calendar_id: '',
             when: {},

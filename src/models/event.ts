@@ -46,13 +46,17 @@ export type EventProperties = {
     timezone: string;
   };
   masterEventId?: string;
-  originalStartTime?: number;
+  originalStartTime?: Date;
   capacity?: number;
   conferencing?: EventConferencingProperties;
   notifications?: EventNotificationProperties[];
   roundRobinOrder?: string[];
   metadata?: object;
   jobStatusId?: string;
+  organizerEmail?: string;
+  organizerName?: string;
+  visibility?: string;
+  customerEventId?: string;
 };
 
 export default class Event extends RestfulModel {
@@ -74,7 +78,7 @@ export default class Event extends RestfulModel {
     timezone: string;
   };
   masterEventId?: string;
-  originalStartTime?: number;
+  originalStartTime?: Date;
   capacity?: number;
   conferencing?: EventConferencing;
   reminderMinutes?: string;
@@ -82,6 +86,10 @@ export default class Event extends RestfulModel {
   roundRobinOrder?: string[];
   metadata?: object;
   jobStatusId?: string;
+  organizerEmail?: string;
+  organizerName?: string;
+  visibility?: string;
+  customerEventId?: string;
   static collectionName = 'events';
   static attributes: Record<string, Attribute> = {
     ...RestfulModel.attributes,
@@ -174,6 +182,24 @@ export default class Event extends RestfulModel {
       modelKey: 'jobStatusId',
       jsonKey: 'job_status_id',
       readOnly: true,
+    }),
+    organizerEmail: Attributes.String({
+      modelKey: 'organizerEmail',
+      jsonKey: 'organizer_email',
+      readOnly: true,
+    }),
+    organizerName: Attributes.String({
+      modelKey: 'organizerName',
+      jsonKey: 'organizer_name',
+      readOnly: true,
+    }),
+    visibility: Attributes.String({
+      modelKey: 'visibility',
+      readOnly: true,
+    }),
+    customerEventId: Attributes.String({
+      modelKey: 'customerEventId',
+      jsonKey: 'customer_event_id',
     }),
   };
 
@@ -275,6 +301,12 @@ export default class Event extends RestfulModel {
     const json = super.saveRequestBody();
     if (!this.notifications) {
       delete json.notifications;
+    }
+    // Participant status cannot be updated
+    if (this.id && json.participants) {
+      (json.participants as Record<string, unknown>[]).forEach(
+        participant => delete participant.status
+      );
     }
 
     return json;
