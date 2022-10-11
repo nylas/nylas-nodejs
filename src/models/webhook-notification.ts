@@ -183,6 +183,8 @@ export class WebhookObjectAttributes extends Model
   // Job Status specific fields
   action?: string;
   jobStatusId?: string;
+  messageId?: string;
+  extras?: WebhookObjectExtrasProperties;
 
   // Message specific fields
   threadId?: string;
@@ -195,6 +197,10 @@ export class WebhookObjectAttributes extends Model
       modelKey: 'jobStatusId',
       jsonKey: 'job_status_id',
     }),
+    messageId: Attributes.String({
+      modelKey: 'messageId',
+      jsonKey: 'message_id',
+    }),
     threadId: Attributes.String({
       modelKey: 'threadId',
       jsonKey: 'thread_id',
@@ -202,6 +208,10 @@ export class WebhookObjectAttributes extends Model
     receivedDate: Attributes.DateTime({
       modelKey: 'receivedDate',
       jsonKey: 'received_date',
+    }),
+    extras: Attributes.Object({
+      modelKey: 'extras',
+      itemClass: WebhookObjectExtras,
     }),
   };
 
