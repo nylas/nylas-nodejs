@@ -11,7 +11,11 @@ import NylasConnection from '../nylas-connection';
 import EventNotification, {
   EventNotificationProperties,
 } from './event-notification';
-import { EventReminder, EventReminderMethod, EventReminderProperties } from './event-reminder-method';
+import {
+  EventReminder,
+  EventReminderMethod,
+  EventReminderProperties,
+} from './event-reminder-method';
 
 export enum ICSMethod {
   Request = 'request',
@@ -59,8 +63,8 @@ export type EventProperties = {
   visibility?: string;
   customerEventId?: string;
   reminderMinutes?: string;
-  reminderMethod?: EventReminderMethod
-  reminders?: EventReminderProperties
+  reminderMethod?: EventReminderMethod;
+  reminders?: EventReminderProperties;
 };
 
 export default class Event extends RestfulModel {
@@ -85,9 +89,9 @@ export default class Event extends RestfulModel {
   originalStartTime?: Date;
   capacity?: number;
   conferencing?: EventConferencing;
-  readonly reminders?: EventReminder
+  readonly reminders?: EventReminder;
   reminderMinutes?: string;
-  reminderMethod?: EventReminderMethod
+  reminderMethod?: EventReminderMethod;
   notifications?: EventNotification[];
   roundRobinOrder?: string[];
   metadata?: object;
@@ -175,12 +179,12 @@ export default class Event extends RestfulModel {
     }),
     reminderMethod: Attributes.String({
       modelKey: 'reminderMethod',
-      jsonKey: 'reminder_method'
+      jsonKey: 'reminder_method',
     }),
     reminders: Attributes.Object({
       modelKey: 'reminders',
       jsonKey: 'reminders',
-      itemClass: EventReminder
+      itemClass: EventReminder,
     }),
     notifications: Attributes.Collection({
       modelKey: 'notifications',
@@ -411,12 +415,15 @@ export default class Event extends RestfulModel {
     }
 
     if (
-      this.id && ((this.reminders && (this.reminders.reminderMethod || this.reminders.reminderMinutes))||(this.reminderMethod||this.reminderMinutes))
+      this.id &&
+      ((this.reminders &&
+        (this.reminders.reminderMethod || this.reminders.reminderMinutes)) ||
+        this.reminderMethod ||
+        this.reminderMinutes)
     ) {
       throw new Error(
         'reminder_minutes and reminderMethod is only Available for POST /events only'
-      )
+      );
     }
-
   }
 }
