@@ -144,6 +144,33 @@ export class MessageTrackingData extends Model
   }
 }
 
+export type WebhookObjectExtrasProperties = {
+  reason?: string;
+  sendAt?: Date;
+  originalSendAt?: Date;
+};
+
+export class WebhookObjectExtras extends Model
+  implements WebhookObjectExtrasProperties {
+  reason?: string;
+  sendAt?: Date;
+  originalSendAt?: Date;
+
+  static attributes: Record<string, Attribute> = {
+    reason: Attributes.String({
+      modelKey: 'reason',
+    }),
+    sendAt: Attributes.DateTime({
+      modelKey: 'sendAt',
+      jsonKey: 'send_at',
+    }),
+    originalSendAt: Attributes.DateTime({
+      modelKey: 'originalSendAt',
+      jsonKey: 'original_send_at',
+    }),
+  };
+}
+
 export type WebhookObjectAttributesProperties = {
   action?: string;
   jobStatusId?: string;
