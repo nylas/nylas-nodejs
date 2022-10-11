@@ -85,7 +85,7 @@ export default class Event extends RestfulModel {
   originalStartTime?: Date;
   capacity?: number;
   conferencing?: EventConferencing;
-  reminders?: EventReminder
+  readonly reminders?: EventReminder
   reminderMinutes?: string;
   reminderMethod?: EventReminderMethod
   notifications?: EventNotification[];
@@ -418,9 +418,5 @@ export default class Event extends RestfulModel {
       )
     }
 
-    if (!this.id && this.reminders && this.reminders.reminderMethod && this.reminders.reminderMinutes) {
-      this.reminderMethod = this.reminders.reminderMethod
-      this.reminderMinutes = this.reminders.reminderMinutes
-    }
   }
 }
