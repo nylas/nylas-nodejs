@@ -425,6 +425,40 @@ describe('Event', () => {
       });
     });
 
+    test('should add reminder method and minutes if defined', done => {
+      testContext.event.reminderMinutes = '[20]';
+      testContext.event.reminderMethod = 'popup';
+
+      testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        console.log(options.body);
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: '',
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: {},
+          participants: [],
+          notifications: undefined,
+          reminder_method: 'popup',
+          reminder_minutes: '[20]',
+        });
+        done();
+      });
+    });
+
+    test('should throw an error if  reminder method and minutes is defined in PUT request', done => {
+      testContext.event.reminderMinutes = '[20]';
+      testContext.event.reminderMethod = 'popup';
+      testContext.event.id = 'reminder123'
+
+      expect(() => testContext.event.save()).toThrow();
+      done();
+    });
+
     describe('conferencing', () => {
       test('should create an event with conferencing details', done => {
         testContext.event.conferencing = new EventConferencing({
