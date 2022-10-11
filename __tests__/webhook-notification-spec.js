@@ -24,8 +24,15 @@ describe('Webhook Notification', () => {
               action: 'save_draft',
               job_status_id: 'abc1234',
               thread_id: '2u152dt4tnq9j61j8seg26ni6',
+              message_id: '1hhg2m8bagpkeddtrsg6t4xav',
               received_date: 1602623166,
+              extras: {
+                reason: 'testing',
+                send_at: 1602623166,
+                original_send_at: 1602623166,
+              },
             },
+
             id: '93mgpjynqqu5fohl2dvv6ray7',
             metadata: {
               sender_app_id: 64280,
@@ -85,7 +92,17 @@ describe('Webhook Notification', () => {
     expect(webhookDeltaObjectAttributes.threadId).toEqual(
       '2u152dt4tnq9j61j8seg26ni6'
     );
+    expect(webhookDeltaObjectAttributes.messageId).toEqual(
+      '1hhg2m8bagpkeddtrsg6t4xav'
+    );
     expect(webhookDeltaObjectAttributes.receivedDate).toEqual(
+      new Date(1602623166 * 1000)
+    );
+
+    const webhookObjectExtras = webhookDeltaObjectAttributes.extras;
+    expect(webhookObjectExtras.reason).toEqual('testing');
+    expect(webhookObjectExtras.sendAt).toEqual(new Date(1602623166 * 1000));
+    expect(webhookObjectExtras.originalSendAt).toEqual(
       new Date(1602623166 * 1000)
     );
 
