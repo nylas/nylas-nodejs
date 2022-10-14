@@ -285,7 +285,7 @@ export class SchedulerBooking extends Model
     }),
     calendarInviteToGuests: Attributes.Boolean({
       modelKey: 'calendarInviteToGuests',
-      jsonKey: 'calendar_invites_to_guests',
+      jsonKey: 'calendar_invite_to_guests',
     }),
     cancellationPolicy: Attributes.String({
       modelKey: 'cancellationPolicy',
