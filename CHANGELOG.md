@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Add additional fields for job status webhook notifications
+* Add support for calendar colors (for Microsoft calendars)
 
 ### 6.5.1 / 2022-09-16
 * Add additional `Event` fields

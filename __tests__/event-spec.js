@@ -6,6 +6,7 @@ import fetch from 'node-fetch';
 import When from '../src/models/when';
 import EventParticipant from '../src/models/event-participant';
 import { ICSMethod } from '../src/models/event';
+import { EventReminder } from '../src/models/event-reminder-method';
 
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');
@@ -420,6 +421,58 @@ describe('Event', () => {
           participants: [],
           notifications: undefined,
           metadata: { hello: 'world' },
+        });
+        done();
+      });
+    });
+
+    test('should add reminder method and minutes if defined', done => {
+      testContext.event.reminderMinutes = '[20]';
+      testContext.event.reminderMethod = 'popup';
+      testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: '',
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: {},
+          participants: [],
+          notifications: undefined,
+          reminder_method: 'popup',
+          reminder_minutes: '[20]',
+        });
+        done();
+      });
+    });
+
+    test('should not serialize reminder object is defined', done => {
+      testContext.event.reminders = new EventReminder({
+        reminderMinutes: '[20]',
+        reminderMethod: 'popup',
+      });
+      testContext.event.id = 'reminder123';
+
+      testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/events/reminder123'
+        );
+        expect(options.method).toEqual('PUT');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: '',
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: {},
+          participants: [],
+          notifications: undefined,
+          reminder_method: undefined,
+          reminder_minutes: undefined,
         });
         done();
       });
