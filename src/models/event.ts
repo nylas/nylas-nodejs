@@ -417,8 +417,6 @@ export default class Event extends RestfulModel {
 
     if (
       this.id &&
-      ((this.reminders &&
-        (this.reminders.reminderMethod || this.reminders.reminderMinutes)) ||
         this.reminderMethod ||
         this.reminderMinutes)
     ) {
