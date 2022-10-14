@@ -449,6 +449,35 @@ describe('Event', () => {
       });
     });
 
+    test('should not serialize reminder object is defined', done => {
+      testContext.event.reminders = new EventReminder({
+        reminderMinutes: '[20]',
+        reminderMethod: 'popup',
+      });
+      testContext.event.id = 'reminder123';
+
+      testContext.event.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual(
+          'https://api.nylas.com/events/reminder123'
+        );
+        expect(options.method).toEqual('PUT');
+        expect(JSON.parse(options.body)).toEqual({
+          calendar_id: '',
+          busy: undefined,
+          title: undefined,
+          description: undefined,
+          location: undefined,
+          when: {},
+          participants: [],
+          notifications: undefined,
+          reminder_method: undefined,
+          reminder_minutes: undefined,
+        });
+        done();
+      });
+    });
+
     describe('conferencing', () => {
       test('should create an event with conferencing details', done => {
         testContext.event.conferencing = new EventConferencing({
