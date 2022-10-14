@@ -185,6 +185,7 @@ export default class Event extends RestfulModel {
       modelKey: 'reminders',
       jsonKey: 'reminders',
       itemClass: EventReminder,
+      readOnly: true
     }),
     notifications: Attributes.Collection({
       modelKey: 'notifications',
