@@ -33,6 +33,7 @@ describe('Calendar', () => {
       object: 'calendar',
       read_only: false,
       timezone: 'America/Los_Angeles',
+      color: 1,
     };
     jest.spyOn(testContext.connection, 'request');
 
@@ -69,10 +70,11 @@ describe('Calendar', () => {
     expect(calendar.timezone).toEqual('America/Los_Angeles');
     expect(calendar.readOnly).toEqual(false);
     expect(calendar.jobStatusId).toEqual('48pp6ijzrxpw9jors9ylnsxnf');
+    expect(calendar.color).toEqual(1);
   };
 
   test('[SAVE] should do a POST request if the calendar has no id', done => {
-    expect.assertions(13);
+    expect.assertions(14);
     testContext.calendar.id = undefined;
     testContext.calendar.save().then(calendar => {
       const options = testContext.connection.request.mock.calls[0][0];
@@ -91,7 +93,7 @@ describe('Calendar', () => {
   });
 
   test('[SAVE] should do a PUT request if the event has an id', done => {
-    expect.assertions(13);
+    expect.assertions(14);
     testContext.calendar.id = '8e570s302fdazx9zqwiuk9jqn';
     testContext.calendar.description = 'Updated description';
     testContext.calendar.metadata = {
@@ -119,7 +121,7 @@ describe('Calendar', () => {
   });
 
   test('[FIND] should use correct method and route', done => {
-    expect.assertions(12);
+    expect.assertions(13);
     testContext.connection.calendars
       .find('8e570s302fdazx9zqwiuk9jqn')
       .then(calendar => {

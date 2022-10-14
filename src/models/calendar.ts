@@ -13,6 +13,7 @@ export type CalendarProperties = {
   isPrimary?: boolean;
   jobStatusId?: string;
   metadata?: object;
+  color?: number;
 };
 
 export default class Calendar extends RestfulModel
@@ -25,6 +26,7 @@ export default class Calendar extends RestfulModel
   isPrimary?: boolean;
   jobStatusId?: string;
   metadata?: object;
+  color?: number;
   static collectionName = 'calendars';
   static attributes: Record<string, Attribute> = {
     ...RestfulModel.attributes,
@@ -57,6 +59,10 @@ export default class Calendar extends RestfulModel
     }),
     metadata: Attributes.Object({
       modelKey: 'metadata',
+    }),
+    color: Attributes.Number({
+      modelKey: 'color',
+      readOnly: true,
     }),
   };
 
