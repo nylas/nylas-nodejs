@@ -429,10 +429,6 @@ describe('Event', () => {
     test('should add reminder method and minutes if defined', done => {
       testContext.event.reminderMinutes = '[20]';
       testContext.event.reminderMethod = 'popup';
-      testContext.event.reminders = new EventReminder({
-        reminderMinutes: '[20]',
-        reminderMethod: 'popup',
-      });
       testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual('https://api.nylas.com/events');
@@ -448,22 +444,9 @@ describe('Event', () => {
           notifications: undefined,
           reminder_method: 'popup',
           reminder_minutes: '[20]',
-          reminders: {
-            reminder_method: 'popup',
-            reminder_minutes: '[20]',
-          },
         });
         done();
       });
-    });
-
-    test('should throw an error if  reminder method and minutes is defined in PUT request', done => {
-      testContext.event.reminderMinutes = '[20]';
-      testContext.event.reminderMethod = 'popup';
-      testContext.event.id = 'reminder123';
-
-      expect(() => testContext.event.save()).toThrow();
-      done();
     });
 
     describe('conferencing', () => {

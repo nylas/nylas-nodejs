@@ -185,7 +185,7 @@ export default class Event extends RestfulModel {
       modelKey: 'reminders',
       jsonKey: 'reminders',
       itemClass: EventReminder,
-      readOnly: true
+      readOnly: true,
     }),
     notifications: Attributes.Collection({
       modelKey: 'notifications',
@@ -412,16 +412,6 @@ export default class Event extends RestfulModel {
     ) {
       throw new Error(
         'The number of participants in the event exceeds the set capacity.'
-      );
-    }
-
-    if (
-      this.id &&
-        this.reminderMethod ||
-        this.reminderMinutes)
-    ) {
-      throw new Error(
-        'reminder_minutes and reminderMethod is only Available for POST /events only'
       );
     }
   }
