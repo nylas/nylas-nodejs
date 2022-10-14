@@ -144,6 +144,33 @@ export class MessageTrackingData extends Model
   }
 }
 
+export type WebhookObjectExtrasProperties = {
+  reason?: string;
+  sendAt?: Date;
+  originalSendAt?: Date;
+};
+
+export class WebhookObjectExtras extends Model
+  implements WebhookObjectExtrasProperties {
+  reason?: string;
+  sendAt?: Date;
+  originalSendAt?: Date;
+
+  static attributes: Record<string, Attribute> = {
+    reason: Attributes.String({
+      modelKey: 'reason',
+    }),
+    sendAt: Attributes.DateTime({
+      modelKey: 'sendAt',
+      jsonKey: 'send_at',
+    }),
+    originalSendAt: Attributes.DateTime({
+      modelKey: 'originalSendAt',
+      jsonKey: 'original_send_at',
+    }),
+  };
+}
+
 export type WebhookObjectAttributesProperties = {
   action?: string;
   jobStatusId?: string;
@@ -156,6 +183,8 @@ export class WebhookObjectAttributes extends Model
   // Job Status specific fields
   action?: string;
   jobStatusId?: string;
+  messageId?: string;
+  extras?: WebhookObjectExtrasProperties;
 
   // Message specific fields
   threadId?: string;
@@ -168,6 +197,10 @@ export class WebhookObjectAttributes extends Model
       modelKey: 'jobStatusId',
       jsonKey: 'job_status_id',
     }),
+    messageId: Attributes.String({
+      modelKey: 'messageId',
+      jsonKey: 'message_id',
+    }),
     threadId: Attributes.String({
       modelKey: 'threadId',
       jsonKey: 'thread_id',
@@ -175,6 +208,10 @@ export class WebhookObjectAttributes extends Model
     receivedDate: Attributes.DateTime({
       modelKey: 'receivedDate',
       jsonKey: 'received_date',
+    }),
+    extras: Attributes.Object({
+      modelKey: 'extras',
+      itemClass: WebhookObjectExtras,
     }),
   };
 
