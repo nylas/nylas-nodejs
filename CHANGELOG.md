@@ -1,8 +1,11 @@
 # Changelog
 
-### Unreleased
+### 6.6.0 / 2022-10-14
 * Add additional fields for job status webhook notifications
 * Add support for calendar colors (for Microsoft calendars)
+* Add support for event reminders
+* Fix typo in `SchedulerBooking.calendarInviteToGuests` attribute
+* Bump `minimist` sub-dependency from 1.2.5 to 1.2.6
 
 ### 6.5.1 / 2022-09-16
 * Add additional `Event` fields
