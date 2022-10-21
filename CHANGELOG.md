@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 6.6.1 / 2022-10-21
 * Fix calendar color implementation
 
 ### 6.6.0 / 2022-10-14
