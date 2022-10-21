@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+* Fix calendar color implementation
+
 ### 6.6.0 / 2022-10-14
 * Add additional fields for job status webhook notifications
 * Add support for calendar colors (for Microsoft calendars)
