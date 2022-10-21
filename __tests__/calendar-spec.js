@@ -33,7 +33,7 @@ describe('Calendar', () => {
       object: 'calendar',
       read_only: false,
       timezone: 'America/Los_Angeles',
-      color: 1,
+      hex_color: '#0099EE',
     };
     jest.spyOn(testContext.connection, 'request');
 
@@ -70,7 +70,7 @@ describe('Calendar', () => {
     expect(calendar.timezone).toEqual('America/Los_Angeles');
     expect(calendar.readOnly).toEqual(false);
     expect(calendar.jobStatusId).toEqual('48pp6ijzrxpw9jors9ylnsxnf');
-    expect(calendar.color).toEqual(1);
+    expect(calendar.hexColor).toEqual('#0099EE');
   };
 
   test('[SAVE] should do a POST request if the calendar has no id', done => {
