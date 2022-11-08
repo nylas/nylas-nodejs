@@ -41,15 +41,11 @@ export default class RateLimitError extends NylasApiError {
     parsedApiError: Record<string, string>,
     headers: Headers
   ): RateLimitError {
-    const rateLimitString = headers.get(this.RATE_LIMIT_LIMIT_HEADER);
-    const rateLimitResetString = headers.get(this.RATE_LIMIT_RESET_HEADER);
+    const rateLimit =
+      Number(headers.get(this.RATE_LIMIT_LIMIT_HEADER)) || undefined;
+    const rateLimitReset =
+      Number(headers.get(this.RATE_LIMIT_RESET_HEADER)) || undefined;
 
-    const rateLimit = !isNaN(Number(rateLimitString))
-      ? Number(rateLimitString)
-      : undefined;
-    const rateLimitReset = !isNaN(Number(rateLimitResetString))
-      ? Number(rateLimitResetString)
-      : undefined;
     return new RateLimitError(
       parsedApiError.type,
       parsedApiError.message,
