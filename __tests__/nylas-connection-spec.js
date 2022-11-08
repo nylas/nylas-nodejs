@@ -113,6 +113,75 @@ describe('NylasConnection', () => {
             done();
           });
       });
+
+      describe('rate limit errors', () => {
+        test('Should fill and return a RateLimitError from a 429 error', done => {
+          const errorJson = {
+            message: 'Too many requests',
+            type: 'invalid_request_error',
+          };
+
+          fetch.mockReturnValue(
+            Promise.resolve(
+              new Response(JSON.stringify(errorJson), {
+                status: 429,
+                headers: {
+                  'X-RateLimit-Limit': '500',
+                  'X-RateLimit-Reset': '10',
+                },
+              })
+            )
+          );
+
+          return testContext.connection
+            .request({
+              path: '/test',
+              method: 'GET',
+            })
+            .catch(err => {
+              expect(err.message).toEqual('Too many requests');
+              expect(err.statusCode).toEqual(429);
+              expect(err.name).toEqual('Too Many Requests');
+              expect(err.type).toEqual('invalid_request_error');
+              expect(err.rateLimit).toEqual(500);
+              expect(err.rateLimitReset).toEqual(10);
+              done();
+            });
+        });
+
+        test('Should fill and return a RateLimitError from a 429 error even with invalid/missing headers', done => {
+          const errorJson = {
+            message: 'Too many requests',
+            type: 'invalid_request_error',
+          };
+
+          fetch.mockReturnValue(
+            Promise.resolve(
+              new Response(JSON.stringify(errorJson), {
+                status: 429,
+                headers: {
+                  'X-RateLimit-Limit': 'abcd',
+                },
+              })
+            )
+          );
+
+          return testContext.connection
+            .request({
+              path: '/test',
+              method: 'GET',
+            })
+            .catch(err => {
+              expect(err.message).toEqual('Too many requests');
+              expect(err.statusCode).toEqual(429);
+              expect(err.name).toEqual('Too Many Requests');
+              expect(err.type).toEqual('invalid_request_error');
+              expect(err.rateLimit).toBeUndefined();
+              expect(err.rateLimitReset).toBeUndefined();
+              done();
+            });
+        });
+      });
     });
     describe('successful status', () => {
       test('Should return undefined if the content-length header is 0', async () => {
