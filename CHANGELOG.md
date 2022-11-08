@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Added engine entry to `package.json` for minimum Node 14
+
 ### 7.0.0-canary.5 / TBD
 * **BREAKING CHANGE**: Rename `confirmationEmailToHost` to `confirmationEmailsToHost` in `SchedulerBooking`
 * Gracefully handle error on webhook deletion
