@@ -22,6 +22,7 @@ import MessageRestfulModelCollection from './models/message-restful-model-collec
 import DeltaCollection from './models/delta-collection';
 import Outbox from './models/outbox';
 import JobStatusRestfulModelCollection from './models/job-status-restful-model-collection';
+import RateLimitError from './models/rate-limit-error';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -249,11 +250,19 @@ export default class NylasConnection {
             return response.text().then(body => {
               try {
                 const parsedApiError = JSON.parse(body);
-                const error = new NylasApiError(
-                  response.status,
-                  parsedApiError.type,
-                  parsedApiError.message
-                );
+                let error;
+                if (response.status === RateLimitError.RATE_LIMIT_STATUS_CODE) {
+                  error = RateLimitError.parseErrorResponse(
+                    parsedApiError,
+                    response.headers
+                  );
+                } else {
+                  error = new NylasApiError(
+                    response.status,
+                    parsedApiError.type,
+                    parsedApiError.message
+                  );
+                }
                 if (parsedApiError.missing_fields) {
                   error.missingFields = parsedApiError.missing_fields;
                 }
