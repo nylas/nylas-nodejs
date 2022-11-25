@@ -215,7 +215,6 @@ export default class Event extends RestfulModel {
     }),
     visibility: Attributes.String({
       modelKey: 'visibility',
-      readOnly: true,
     }),
     customerEventId: Attributes.String({
       modelKey: 'customerEventId',

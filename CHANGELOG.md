@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Added support for rate limit errors
+* Changed Event `visibility` field to be writeable
 
 ## 6.6.1 / 2022-10-21
 * Fix calendar color implementation
