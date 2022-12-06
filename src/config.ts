@@ -14,6 +14,11 @@ export type NylasConfig = {
   apiServer?: string;
 };
 
+export enum ResponseType {
+  CODE = 'code',
+  TOKEN = 'token',
+}
+
 export type AuthenticateUrlConfig = {
   redirectURI: string;
   redirectOnError?: boolean;
@@ -21,4 +26,5 @@ export type AuthenticateUrlConfig = {
   state?: string;
   provider?: string;
   scopes?: string[];
+  responseType?: ResponseType;
 };
