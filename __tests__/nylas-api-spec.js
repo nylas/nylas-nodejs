@@ -261,6 +261,38 @@ describe('Nylas', () => {
         `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}&scopes=${scopes[0]},${scopes[1]}`
       );
     });
+
+    test('should add response type when provided in the options', () => {
+      const loginHint = 'ben@nylas.com',
+        scopes = ['calendar', 'contacts'],
+        responseType = 'token';
+
+      const options = {
+        loginHint,
+        redirectURI,
+        scopes,
+        responseType,
+      };
+
+      expect(Nylas.urlForAuthentication(options)).toEqual(
+        `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=token&login_hint=${loginHint}&redirect_uri=${redirectURI}&scopes=${scopes[0]},${scopes[1]}`
+      );
+    });
+
+    test('should default to response_type = code when not provided in the options', () => {
+      const loginHint = 'ben@nylas.com',
+        scopes = ['calendar', 'contacts'];
+
+      const options = {
+        loginHint,
+        redirectURI,
+        scopes,
+      };
+
+      expect(Nylas.urlForAuthentication(options)).toEqual(
+        `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}&scopes=${scopes[0]},${scopes[1]}`
+      );
+    });
   });
 
   describe('application', () => {

@@ -9,7 +9,7 @@ import Connect from './models/connect';
 import RestfulModelCollection from './models/restful-model-collection';
 import ManagementModelCollection from './models/management-model-collection';
 import Webhook from './models/webhook';
-import { AuthenticateUrlConfig, NylasConfig } from './config';
+import { AuthenticateUrlConfig, NylasConfig, ResponseType } from './config';
 import AccessToken from './models/access-token';
 import ApplicationDetails, {
   ApplicationDetailsProperties,
@@ -173,7 +173,11 @@ class Nylas {
     if (!options.loginHint) {
       options.loginHint = '';
     }
-    let url = `${this.apiServer}/oauth/authorize?client_id=${this.clientId}&response_type=code&login_hint=${options.loginHint}&redirect_uri=${options.redirectURI}`;
+    let url = `${this.apiServer}/oauth/authorize?client_id=${
+      this.clientId
+    }&response_type=${options.responseType || ResponseType.CODE}&login_hint=${
+      options.loginHint
+    }&redirect_uri=${options.redirectURI}`;
     if (options.state != null) {
       url += `&state=${options.state}`;
     }
