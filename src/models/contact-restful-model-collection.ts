@@ -1,6 +1,19 @@
-import Contact, { Group } from './contact';
+import Contact, { ContactProperties, Group } from './contact';
 import NylasConnection from '../nylas-connection';
 import RestfulModelCollection from './restful-model-collection';
+import { RestfulQuery } from './model-collection';
+
+export interface ContactQuery extends RestfulQuery {
+  email?: string;
+  phoneNumber?: string;
+  streetAddress?: string;
+  postalCode?: string;
+  state?: string;
+  country?: string;
+  source?: string;
+  groupId?: string;
+  recurse?: boolean;
+}
 
 export default class ContactRestfulModelCollection extends RestfulModelCollection<
   Contact
@@ -12,6 +25,13 @@ export default class ContactRestfulModelCollection extends RestfulModelCollectio
     super(Contact, connection);
     this.connection = connection;
     this.modelClass = Contact;
+  }
+
+  list(
+    params: ContactQuery = {},
+    callback?: (error: Error | null, obj?: Contact[]) => void
+  ): Promise<Contact[]> {
+    return super.list(this.formatQuery(params), callback);
   }
 
   groups(
@@ -37,5 +57,19 @@ export default class ContactRestfulModelCollection extends RestfulModelCollectio
         }
         return Promise.reject(err);
       });
+  }
+
+  protected formatQuery(query: ContactQuery): Record<string, unknown> {
+    return {
+      ...super.formatQuery(query),
+      email: query.email,
+      phone_number: query.phoneNumber,
+      postal_code: query.postalCode,
+      state: query.state,
+      country: query.country,
+      source: query.source,
+      group_id: query.groupId,
+      recurse: query.recurse,
+    };
   }
 }

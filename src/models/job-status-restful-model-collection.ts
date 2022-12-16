@@ -2,6 +2,7 @@ import RestfulModelCollection from './restful-model-collection';
 import JobStatus from './job-status';
 import NylasConnection from '../nylas-connection';
 import OutboxJobStatus from './outbox-job-status';
+import { RestfulQuery } from './model-collection';
 
 export default class JobStatusRestfulModelCollection extends RestfulModelCollection<
   JobStatus
@@ -13,6 +14,13 @@ export default class JobStatusRestfulModelCollection extends RestfulModelCollect
     super(JobStatus, connection);
     this.connection = connection;
     this.modelClass = JobStatus;
+  }
+
+  list(
+    params: RestfulQuery,
+    callback?: (error: Error | null, obj?: JobStatus[]) => void
+  ): Promise<JobStatus[]> {
+    return super.list(params, callback);
   }
 
   protected createModel(json: Record<string, unknown>): JobStatus {

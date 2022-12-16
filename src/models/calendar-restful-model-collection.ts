@@ -1,4 +1,4 @@
-import Calendar from './calendar';
+import Calendar, { CalendarProperties } from './calendar';
 import NylasConnection from '../nylas-connection';
 import RestfulModelCollection from './restful-model-collection';
 import FreeBusy, { FreeBusyCalendar, FreeBusyQuery } from './free-busy';
@@ -8,6 +8,12 @@ import CalendarAvailability, {
   OpenHours,
   SingleAvailabilityQuery,
 } from './calendar-availability';
+import { SaveCallback } from './restful-model';
+import { MetadataQuery, RestfulQuery } from './model-collection';
+
+export interface CalendarQuery extends RestfulQuery {
+  metadata?: MetadataQuery;
+}
 
 export default class CalendarRestfulModelCollection extends RestfulModelCollection<
   Calendar
@@ -19,6 +25,13 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     super(Calendar, connection);
     this.connection = connection;
     this.modelClass = Calendar;
+  }
+
+  list(
+    params: CalendarQuery = {},
+    callback?: (error: Error | null, obj?: Calendar[]) => void
+  ): Promise<Calendar[]> {
+    return super.list(this.formatQuery(params), callback);
   }
 
   freeBusy(
@@ -182,5 +195,12 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
       throw new Error("Must set either 'emails' or 'calendars' in the query.");
     }
     return true;
+  }
+
+  protected formatQuery(query: CalendarQuery): Record<string, unknown> {
+    return {
+      ...super.formatQuery(query),
+      metadata: this.formatMetadataQuery(query.metadata),
+    };
   }
 }

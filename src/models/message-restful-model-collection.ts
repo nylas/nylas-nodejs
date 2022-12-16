@@ -1,17 +1,34 @@
 import RestfulModelCollection from './restful-model-collection';
 import Message from './message';
 import NylasConnection from '../nylas-connection';
+import { RestfulQuery } from './model-collection';
+
+export interface BaseMessageQuery extends RestfulQuery {
+  subject?: string;
+  to?: string;
+  from?: string;
+  cc?: string;
+  bcc?: string;
+  filename?: string;
+  in?: 'name' | 'display_name' | 'in';
+  notIn?: 'name' | 'display_name' | 'in';
+  anyEmail?: string[];
+  unread?: boolean;
+  starred?: boolean;
+}
+
+export interface MessageQuery extends BaseMessageQuery {
+  threadId?: string;
+  hasAttachment?: boolean;
+  receivedBefore?: Date | number;
+  receivedAfter?: Date | number;
+}
 
 export default class MessageRestfulModelCollection extends RestfulModelCollection<
   Message
 > {
-  connection: NylasConnection;
-  modelClass: typeof Message;
-
   constructor(connection: NylasConnection) {
     super(Message, connection);
-    this.connection = connection;
-    this.modelClass = Message;
   }
 
   /**
@@ -65,5 +82,48 @@ export default class MessageRestfulModelCollection extends RestfulModelCollectio
         path: `${this.path()}/${messageId}`,
       })
       .catch(err => Promise.reject(err));
+  }
+
+  list(
+    params: MessageQuery = {},
+    callback?: (error: Error | null, obj?: Message[]) => void
+  ): Promise<Message[]> {
+    return super.list(this.formatQuery(params), callback);
+  }
+
+  protected formatQuery(query: MessageQuery): Record<string, unknown> {
+    const receivedBefore = RestfulModelCollection.formatTimestampQuery(
+      query.receivedBefore
+    );
+    const receivedAfter = RestfulModelCollection.formatTimestampQuery(
+      query.receivedAfter
+    );
+
+    return {
+      ...super.formatQuery(query),
+      ...MessageRestfulModelCollection.formatBaseMessageQuery(query),
+      thread_id: query.threadId,
+      has_attachment: query.hasAttachment,
+      received_before: receivedBefore,
+      received_after: receivedAfter,
+    };
+  }
+
+  static formatBaseMessageQuery(
+    query: BaseMessageQuery
+  ): Record<string, unknown> {
+    return {
+      subject: query.subject,
+      to: query.to,
+      from: query.from,
+      cc: query.cc,
+      bcc: query.bcc,
+      filename: query.filename,
+      in: query.in,
+      not_in: query.notIn,
+      any_email: query.anyEmail,
+      unread: query.unread,
+      starred: query.starred,
+    };
   }
 }

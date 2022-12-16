@@ -1,10 +1,12 @@
 import RestfulModelCollection from './restful-model-collection';
 import NylasConnection from '../nylas-connection';
-import Scheduler from './scheduler';
+import Scheduler, { SchedulerProperties } from './scheduler';
 import SchedulerTimeSlot from './scheduler-time-slot';
 import SchedulerBookingRequest, {
   SchedulerBookingConfirmation,
 } from './scheduler-booking-request';
+import { SaveCallback } from './restful-model';
+import { RestfulQuery } from './model-collection';
 
 export type ProviderAvailability = {
   busy: [
@@ -29,6 +31,13 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
     this.baseUrl = 'https://api.schedule.nylas.com';
     this.connection = connection;
     this.modelClass = Scheduler;
+  }
+
+  list(
+    params: RestfulQuery,
+    callback?: (error: Error | null, obj?: Scheduler[]) => void
+  ): Promise<Scheduler[]> {
+    return super.list(params, callback);
   }
 
   getGoogleAvailability(): Promise<ProviderAvailability> {

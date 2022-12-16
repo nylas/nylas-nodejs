@@ -2,6 +2,21 @@ import NylasConnection from '../nylas-connection';
 import Model from './model';
 
 export type GetCallback = (error: Error | null, result?: Model) => void;
+export interface RestfulQuery {
+  limit?: number;
+  offset?: number;
+}
+export enum MetadataSearchModifier {
+  NONE = 'none',
+  ANY = 'any',
+  ALL = 'all',
+}
+export interface MetadataQuery {
+  metadataKeys?: string[];
+  metadataValues?: string[];
+  metadataPairs?: Record<string, string>;
+  metadataSearch?: MetadataSearchModifier;
+}
 
 const REQUEST_CHUNK_SIZE = 100;
 
@@ -66,20 +81,18 @@ export default class ModelCollection<T extends Model> {
   }
 
   list(
-    params: Record<string, unknown> = {},
+    params: RestfulQuery,
     callback?: (error: Error | null, obj?: T[]) => void
   ): Promise<T[]> {
-    if (params.view == 'count') {
-      const err = new Error('list() cannot be called with the count view');
-      if (callback) {
-        callback(err);
-      }
-      return Promise.reject(err);
-    }
-
-    const limit = (params.limit as number) || Infinity;
-    const offset = params.offset as number;
-    return this.range({ params, offset, limit, callback });
+    const { limit, offset, ...query } = this.formatQuery(params);
+    const limitQuery = (limit as number) || Infinity;
+    const offsetQuery = offset as number;
+    return this.range({
+      params: query,
+      offset: offsetQuery,
+      limit: limitQuery,
+      callback,
+    });
   }
 
   find(
@@ -254,5 +267,37 @@ export default class ModelCollection<T extends Model> {
         });
         return Promise.resolve(models);
       });
+  }
+
+  protected formatQuery(query: RestfulQuery): Record<string, unknown> {
+    const { limit, offset } = query;
+    return {
+      limit,
+      offset,
+    };
+  }
+
+  protected formatMetadataQuery(
+    query: MetadataQuery = {}
+  ): Record<string, unknown> | undefined {
+    if (!query || query === {}) {
+      return undefined;
+    }
+    const metadataPairs = [];
+    for (const pair in query.metadataPairs) {
+      metadataPairs.push(`${pair}:${query.metadataPairs[pair]}`);
+    }
+    return {
+      metadata_key: query.metadataKeys,
+      metadata_value: query.metadataValues,
+      metadata_pair: query.metadataPairs,
+      metadata_search: query.metadataSearch,
+    };
+  }
+
+  protected static formatTimestampQuery(
+    date?: Date | number
+  ): number | undefined {
+    return date instanceof Date ? date.getTime() / 1000.0 : date;
   }
 }

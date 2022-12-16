@@ -15,6 +15,18 @@ export type DraftProperties = MessageProperties & {
   fileIdsToAttach?: string[];
 };
 
+interface MessageTracking {
+  links?: boolean;
+  opens?: boolean;
+  threadReplies?: boolean;
+  payload?: string;
+}
+
+export interface SendOptions {
+  tracking?: MessageTracking;
+  callback?: SendCallback;
+}
+
 export default class Draft extends Message implements DraftProperties {
   rawMime?: string;
   replyToMessageId?: string;
@@ -98,23 +110,9 @@ export default class Draft extends Message implements DraftProperties {
     return super.toString();
   }
 
-  send(
-    trackingArg?: Record<string, any> | SendCallback | null,
-    callbackArg?: SendCallback | Record<string, any> | null
-  ): Promise<Message> {
+  send(options: SendOptions = {}): Promise<Message> {
     // callback used to be the first argument, and tracking was the second
-    let callback: SendCallback | undefined;
-    if (typeof callbackArg === 'function') {
-      callback = callbackArg as SendCallback;
-    } else if (typeof trackingArg === 'function') {
-      callback = trackingArg as SendCallback;
-    }
-    let tracking: Record<string, any> | undefined;
-    if (trackingArg && typeof trackingArg === 'object') {
-      tracking = trackingArg;
-    } else if (callbackArg && typeof callbackArg === 'object') {
-      tracking = callbackArg;
-    }
+    const { tracking, callback } = options;
 
     let body: any = this.rawMime,
       headers: Record<string, string> = { 'Content-Type': 'message/rfc822' },

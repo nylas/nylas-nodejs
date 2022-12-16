@@ -2,17 +2,10 @@
 import { URL } from 'url';
 import fetch, { Request } from 'node-fetch';
 import * as config from './config';
-import RestfulModelCollection from './models/restful-model-collection';
 import CalendarRestfulModelCollection from './models/calendar-restful-model-collection';
 import ContactRestfulModelCollection from './models/contact-restful-model-collection';
 import RestfulModelInstance from './models/restful-model-instance';
 import Account from './models/account';
-import Thread from './models/thread';
-import Draft from './models/draft';
-import File from './models/file';
-import Event from './models/event';
-import Resource from './models/resource';
-import Folder, { Label } from './models/folder';
 import FormData, { AppendOptions } from 'form-data';
 import Neural from './models/neural';
 import NylasApiError from './models/nylas-api-error';
@@ -22,6 +15,13 @@ import MessageRestfulModelCollection from './models/message-restful-model-collec
 import DeltaCollection from './models/delta-collection';
 import Outbox from './models/outbox';
 import JobStatusRestfulModelCollection from './models/job-status-restful-model-collection';
+import ThreadRestfulModelCollection from './models/thread-restful-model-collection';
+import DraftRestfulModelCollection from './models/draft-restful-model-collection';
+import FileRestfulModelCollection from './models/file-restful-model-collection';
+import { EventRestfulModelCollection } from './models/event-restful-model-collection';
+import ResourceRestfulModelCollection from './models/resource-restful-model-collection';
+import LabelRestfulModelCollection from './models/label-restful-model-collection';
+import FolderRestfulModelCollection from './models/folder-restful-model-collection';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -55,8 +55,7 @@ export default class NylasConnection {
   accessToken: string | null | undefined;
   clientId: string | null | undefined;
 
-  threads: RestfulModelCollection<Thread> = new RestfulModelCollection(
-    Thread,
+  threads: ThreadRestfulModelCollection = new ThreadRestfulModelCollection(
     this
   );
   contacts: ContactRestfulModelCollection = new ContactRestfulModelCollection(
@@ -65,34 +64,22 @@ export default class NylasConnection {
   messages: MessageRestfulModelCollection = new MessageRestfulModelCollection(
     this
   );
-  drafts: RestfulModelCollection<Draft> = new RestfulModelCollection(
-    Draft,
-    this
-  );
-  files: RestfulModelCollection<File> = new RestfulModelCollection(File, this);
+  drafts: DraftRestfulModelCollection = new DraftRestfulModelCollection(this);
+  files: FileRestfulModelCollection = new FileRestfulModelCollection(this);
   calendars: CalendarRestfulModelCollection = new CalendarRestfulModelCollection(
     this
   );
   jobStatuses: JobStatusRestfulModelCollection = new JobStatusRestfulModelCollection(
     this
   );
-  events: RestfulModelCollection<Event> = new RestfulModelCollection(
-    Event,
-    this
-  );
-  resources: RestfulModelCollection<Resource> = new RestfulModelCollection(
-    Resource,
+  events: EventRestfulModelCollection = new EventRestfulModelCollection(this);
+  resources: ResourceRestfulModelCollection = new ResourceRestfulModelCollection(
     this
   );
   deltas = new DeltaCollection(this);
-  labels: RestfulModelCollection<Label> = new RestfulModelCollection(
-    Label,
-    this
-  );
-  folders: RestfulModelCollection<Folder> = new RestfulModelCollection(
-    Folder,
-    this
-  );
+  labels: LabelRestfulModelCollection = new LabelRestfulModelCollection(this);
+  folders: FolderRestfulModelCollection = new FolderRestfulModelCollection(this);
+  //TODO::Look into improving account?
   account: RestfulModelInstance<Account> = new RestfulModelInstance(
     Account,
     this
