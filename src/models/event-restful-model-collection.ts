@@ -27,6 +27,13 @@ export class EventRestfulModelCollection extends RestfulModelCollection<Event> {
     super(Event, connection);
   }
 
+  create(
+    props: EventProperties,
+    callback?: (error: Error | null, result?: Event) => void
+  ): Promise<Event> {
+    return new Event(this.connection, props).save(callback);
+  }
+
   list(
     params: EventQuery,
     callback?: (error: Error | null, obj?: Event[]) => void

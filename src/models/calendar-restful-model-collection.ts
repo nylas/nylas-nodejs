@@ -8,7 +8,6 @@ import CalendarAvailability, {
   OpenHours,
   SingleAvailabilityQuery,
 } from './calendar-availability';
-import { SaveCallback } from './restful-model';
 import { MetadataQuery, RestfulQuery } from './model-collection';
 
 export interface CalendarQuery extends RestfulQuery {
@@ -25,6 +24,13 @@ export default class CalendarRestfulModelCollection extends RestfulModelCollecti
     super(Calendar, connection);
     this.connection = connection;
     this.modelClass = Calendar;
+  }
+
+  create(
+    props: CalendarProperties,
+    callback?: (error: Error | null, result?: Calendar) => void
+  ): Promise<Calendar> {
+    return new Calendar(this.connection, props).save(callback);
   }
 
   list(

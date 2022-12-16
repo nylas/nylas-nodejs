@@ -78,7 +78,9 @@ export default class NylasConnection {
   );
   deltas = new DeltaCollection(this);
   labels: LabelRestfulModelCollection = new LabelRestfulModelCollection(this);
-  folders: FolderRestfulModelCollection = new FolderRestfulModelCollection(this);
+  folders: FolderRestfulModelCollection = new FolderRestfulModelCollection(
+    this
+  );
   //TODO::Look into improving account?
   account: RestfulModelInstance<Account> = new RestfulModelInstance(
     Account,

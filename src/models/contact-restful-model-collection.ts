@@ -27,6 +27,13 @@ export default class ContactRestfulModelCollection extends RestfulModelCollectio
     this.modelClass = Contact;
   }
 
+  create(
+    props: ContactProperties,
+    callback?: (error: Error | null, obj?: Contact) => void
+  ): Promise<Contact> {
+    return new Contact(this.connection, props).save(callback);
+  }
+
   list(
     params: ContactQuery = {},
     callback?: (error: Error | null, obj?: Contact[]) => void

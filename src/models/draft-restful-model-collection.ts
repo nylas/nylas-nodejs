@@ -1,7 +1,6 @@
 import RestfulModelCollection from './restful-model-collection';
 import Draft, { DraftProperties, SendOptions } from './draft';
 import NylasConnection from '../nylas-connection';
-import { SaveCallback } from './model';
 import Message from './message';
 import MessageRestfulModelCollection, {
   MessageQuery,
@@ -12,6 +11,13 @@ export default class DraftRestfulModelCollection extends RestfulModelCollection<
 > {
   constructor(connection: NylasConnection) {
     super(Draft, connection);
+  }
+
+  create(
+    props: DraftProperties,
+    callback?: (error: Error | null, result?: Draft) => void
+  ): Promise<Draft> {
+    return new Draft(this.connection, props).save(callback);
   }
 
   send(props: DraftProperties, callback?: SendOptions): Promise<Message> {

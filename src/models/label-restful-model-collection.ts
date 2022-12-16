@@ -10,6 +10,13 @@ export default class LabelRestfulModelCollection extends RestfulModelCollection<
     super(Label, connection);
   }
 
+  create(
+    props: FolderProperties,
+    callback?: (error: Error | null, result?: Label) => void
+  ): Promise<Label> {
+    return new Label(this.connection, props).save(callback);
+  }
+
   list(
     params: RestfulQuery,
     callback?: (error: Error | null, obj?: Label[]) => void

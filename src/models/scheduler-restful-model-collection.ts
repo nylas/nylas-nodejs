@@ -5,7 +5,6 @@ import SchedulerTimeSlot from './scheduler-time-slot';
 import SchedulerBookingRequest, {
   SchedulerBookingConfirmation,
 } from './scheduler-booking-request';
-import { SaveCallback } from './restful-model';
 import { RestfulQuery } from './model-collection';
 
 export type ProviderAvailability = {
@@ -31,6 +30,13 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
     this.baseUrl = 'https://api.schedule.nylas.com';
     this.connection = connection;
     this.modelClass = Scheduler;
+  }
+
+  create(
+    props: SchedulerProperties,
+    callback?: (error: Error | null, result?: Scheduler) => void
+  ): Promise<Scheduler> {
+    return new Scheduler(this.connection, props).save(callback);
   }
 
   list(

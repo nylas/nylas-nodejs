@@ -16,6 +16,13 @@ export default class FileRestfulModelCollection extends RestfulModelCollection<
     super(File, connection);
   }
 
+  create(
+    props: FileProperties,
+    callback?: (error: Error | null, result?: File) => void
+  ): Promise<File> {
+    return new File(this.connection, props).upload(callback);
+  }
+
   list(
     params: FileQuery,
     callback?: (error: Error | null, obj?: any[]) => void
