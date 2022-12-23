@@ -159,9 +159,6 @@ export default class Neural extends RestfulModel {
       method: 'PUT',
       path: `/neural/${path}`,
       body: body,
-      headers: {
-        'Content-Type': 'application/json',
-      },
     });
   }
 }

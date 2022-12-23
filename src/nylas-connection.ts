@@ -148,6 +148,9 @@ export default class NylasConnection {
 
     const headers: Record<string, string> = {
       Accept: 'application/json',
+      'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
+      'Nylas-API-Version': SUPPORTED_API_VERSION,
+      'Nylas-SDK-API-Version': SUPPORTED_API_VERSION,
       ...options.headers,
     };
     const user =
@@ -164,11 +167,6 @@ export default class NylasConnection {
       }
     }
 
-    if (!headers['User-Agent']) {
-      headers['User-Agent'] = `Nylas Node SDK v${SDK_VERSION}`;
-    }
-    headers['Nylas-API-Version'] = SUPPORTED_API_VERSION;
-    headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
     if (this.clientId != null) {
       headers['X-Nylas-Client-Id'] = this.clientId;
     }

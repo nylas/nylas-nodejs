@@ -130,17 +130,10 @@ export default class Outbox {
     path: string;
     body?: Record<string, unknown>;
   }): Promise<any> {
-    let header;
-    if (options.body) {
-      header = {
-        'Content-Type': 'application/json',
-      };
-    }
     return this.connection.request({
       method: options.method,
       path: `${this.path}${options.path}`,
       body: options.body,
-      headers: header,
       authMethod: AuthMethod.BEARER,
     });
   }
