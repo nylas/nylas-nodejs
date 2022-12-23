@@ -3,6 +3,7 @@
 ### 7.0.0-canary.5 / TBD
 * **BREAKING CHANGE**: Rename `confirmationEmailToHost` to `confirmationEmailsToHost` in `SchedulerBooking`
 * Gracefully handle error on webhook deletion
+* Add defaults for Content-Type and Aceept headers for outgoing API requests
 
 ### 7.0.0-canary.4 / 2022-08-15
 * Abstract out the middleware logic to a more generalized `Routes`
