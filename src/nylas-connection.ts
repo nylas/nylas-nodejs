@@ -147,7 +147,13 @@ export default class NylasConnection {
     }
     options.url = url;
 
-    const headers: Record<string, string> = { ...options.headers };
+    const headers: Record<string, string> = {
+      Accept: 'application/json',
+      'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
+      'Nylas-API-Version': SUPPORTED_API_VERSION,
+      'Nylas-SDK-API-Version': SUPPORTED_API_VERSION,
+      ...options.headers,
+    };
     const user =
       options.path.substr(0, 3) === '/a/' || options.path.includes('/component')
         ? config.clientSecret
@@ -162,11 +168,6 @@ export default class NylasConnection {
       }
     }
 
-    if (!headers['User-Agent']) {
-      headers['User-Agent'] = `Nylas Node SDK v${SDK_VERSION}`;
-    }
-    headers['Nylas-API-Version'] = SUPPORTED_API_VERSION;
-    headers['Nylas-SDK-API-Version'] = SUPPORTED_API_VERSION;
     if (this.clientId != null) {
       headers['X-Nylas-Client-Id'] = this.clientId;
     }
@@ -182,8 +183,10 @@ export default class NylasConnection {
         }
       }
       options.body = fd;
+      headers['Content-Type'] = 'multipart/form-data';
     } else if (options.body && options.json !== false) {
       options.body = JSON.stringify(options.body);
+      headers['Content-Type'] = 'application/json';
     }
 
     return options;

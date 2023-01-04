@@ -68,9 +68,6 @@ export default class NeuralCategorizer extends Message
         method: 'POST',
         path: '/neural/categorize/feedback',
         body: { message_id: this.id, category: category },
-        headers: {
-          'Content-Type': 'application/json',
-        },
       })
       .then(async json => {
         const categorizeResponse = await this.connection.neural.categorize([

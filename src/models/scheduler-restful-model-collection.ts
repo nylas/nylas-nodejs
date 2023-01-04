@@ -35,9 +35,6 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
     return this.connection.request({
       method: 'GET',
       path: '/schedule/availability/google',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       baseUrl: this.baseUrl,
     });
   }
@@ -46,9 +43,6 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
     return this.connection.request({
       method: 'GET',
       path: '/schedule/availability/o365',
-      headers: {
-        'Content-Type': 'application/json',
-      },
       baseUrl: this.baseUrl,
     });
   }
@@ -58,9 +52,6 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       .request({
         method: 'GET',
         path: `/schedule/${slug}/info`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
         baseUrl: this.baseUrl,
       })
       .then(json => {
@@ -73,9 +64,6 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       .request({
         method: 'GET',
         path: `/schedule/${slug}/timeslots`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
         baseUrl: this.baseUrl,
       })
       .then(json => {
@@ -96,9 +84,6 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       .request({
         method: 'POST',
         path: `/schedule/${slug}/timeslots`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: bookingRequest.toJSON(),
         baseUrl: this.baseUrl,
       })
@@ -118,9 +103,6 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       .request({
         method: 'POST',
         path: `/schedule/${slug}/${editHash}/cancel`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: {
           reason: reason,
         },
@@ -139,9 +121,6 @@ export default class SchedulerRestfulModelCollection extends RestfulModelCollect
       .request({
         method: 'POST',
         path: `/schedule/${slug}/${editHash}/confirm`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: {},
         baseUrl: this.baseUrl,
       })

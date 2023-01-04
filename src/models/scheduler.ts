@@ -567,9 +567,6 @@ export default class Scheduler extends RestfulModel
       .request({
         method: 'GET',
         path: `/manage/pages/${this.id}/calendars`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
         baseUrl: this.baseUrl,
       })
       .then((json: Record<string, unknown>[]) => {
@@ -593,9 +590,6 @@ export default class Scheduler extends RestfulModel
     return this.connection.request({
       method: 'PUT',
       path: `/manage/pages/${this.id}/upload-image`,
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: {
         contentType: contentType,
         objectName: objectName,
