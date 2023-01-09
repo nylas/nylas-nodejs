@@ -137,4 +137,68 @@ describe('Webhook Notification', () => {
     expect(recents.linkIndex).toBe(0);
     done();
   });
+
+  test('Should deserialize an event notification from JSON properly', done => {
+    const webhookNotificationJSON = {
+      deltas: [
+        {
+          date: 1602623196,
+          object: 'event',
+          type: 'event.created',
+          object_data: {
+            namespace_id: 'aaz875kwuvxik6ku7pwkqp3ah',
+            account_id: 'aaz875kwuvxik6ku7pwkqp3ah',
+            object: 'event',
+            attributes: {
+              calendar_id: 'calendar-123',
+              created_before_account_connection: true,
+            },
+            id: '93mgpjynqqu5fohl2dvv6ray7',
+            metadata: {
+              test: 1234,
+            },
+          },
+        },
+      ],
+    };
+    const webhookNotification = new WebhookNotification().fromJSON(
+      webhookNotificationJSON
+    );
+    expect(webhookNotification.deltas.length).toBe(1);
+
+    const webhookDelta = webhookNotification.deltas[0];
+    expect(webhookDelta instanceof WebhookDelta).toBe(true);
+    expect(webhookDelta.date).toEqual(new Date(1602623196 * 1000));
+    expect(webhookDelta.object).toEqual('event');
+    expect(webhookDelta.type).toEqual(WebhookTriggers.EventCreated);
+
+    const webhookDeltaObjectData = webhookDelta.objectData;
+    expect(webhookDeltaObjectData instanceof WebhookObjectData).toBe(true);
+    expect(webhookDeltaObjectData.id).toEqual('93mgpjynqqu5fohl2dvv6ray7');
+    expect(webhookDeltaObjectData.accountId).toEqual(
+      'aaz875kwuvxik6ku7pwkqp3ah'
+    );
+    expect(webhookDeltaObjectData.namespaceId).toEqual(
+      'aaz875kwuvxik6ku7pwkqp3ah'
+    );
+    expect(webhookDeltaObjectData.object).toEqual('event');
+
+    const webhookDeltaObjectAttributes =
+      webhookDeltaObjectData.objectAttributes;
+    expect(
+      webhookDeltaObjectAttributes instanceof WebhookObjectAttributes
+    ).toBe(true);
+    expect(webhookDeltaObjectAttributes.calendarId).toEqual('calendar-123');
+    expect(webhookDeltaObjectAttributes.createdBeforeAccountConnection).toBe(
+      true
+    );
+
+    const metadata = webhookDeltaObjectData.metadata;
+    expect(metadata instanceof MessageTrackingData).toBe(false);
+    expect(metadata).toEqual({
+      test: 1234,
+    });
+
+    done();
+  });
 });
