@@ -238,7 +238,7 @@ export type WebhookObjectDataProperties = {
   accountId: string;
   namespaceId: string;
   object: string;
-  metadata?: MessageTrackingDataProperties | Record<string, object>;
+  metadata?: MessageTrackingDataProperties | Record<string, unknown>;
   objectAttributes?: WebhookObjectAttributesProperties;
 };
 
@@ -250,7 +250,7 @@ export class WebhookObjectData extends Model
   object = '';
 
   // Message specific field
-  metadata?: MessageTrackingData | Record<string, object>;
+  metadata?: MessageTrackingData | Record<string, unknown>;
 
   // Message and Job Status specific field
   objectAttributes?: WebhookObjectAttributes;
