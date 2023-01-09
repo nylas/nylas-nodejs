@@ -51,6 +51,11 @@ export type FormDataType = {
   options?: Record<string, unknown> | AppendOptions;
 };
 
+export interface FileDownloadDetails {
+  body: Buffer;
+  [key: string]: unknown;
+}
+
 export default class NylasConnection {
   accessToken: string | null | undefined;
   clientId: string | null | undefined;
@@ -265,11 +270,12 @@ export default class NylasConnection {
                 .buffer()
                 .then(buffer => {
                   // Return an object with the headers and the body as a buffer
-                  const fileDetails: Record<string, any> = {};
+                  const fileDetails: FileDownloadDetails = {
+                    body: buffer,
+                  };
                   response.headers.forEach((v, k) => {
                     fileDetails[k] = v;
                   });
-                  fileDetails['body'] = buffer;
                   return resolve(fileDetails);
                 })
                 .catch(e => {

@@ -1,6 +1,6 @@
 import Attributes, { Attribute } from './attributes';
 import RestfulModel from './restful-model';
-import NylasConnection from '../nylas-connection';
+import NylasConnection, { FileDownloadDetails } from '../nylas-connection';
 
 export type FileProperties = {
   contentType?: string;
@@ -117,7 +117,7 @@ export default class File extends RestfulModel implements FileProperties {
       error: Error | null,
       file?: { body: any; [key: string]: any }
     ) => void
-  ): Promise<any> {
+  ): Promise<FileDownloadDetails> {
     if (!this.id) {
       throw new Error('Please provide a File id');
     }
@@ -127,7 +127,7 @@ export default class File extends RestfulModel implements FileProperties {
         path: `/files/${this.id}/download`,
         downloadRequest: true,
       })
-      .then(file => {
+      .then((file: FileDownloadDetails) => {
         if (callback) {
           callback(null, file);
         }
