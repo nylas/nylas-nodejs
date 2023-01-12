@@ -189,6 +189,10 @@ export class WebhookObjectAttributes extends Model
   // Message specific fields
   threadId?: string;
   receivedDate?: Date;
+
+  // Event specific fields
+  calendarId?: string;
+  createdBeforeAccountConnection?: boolean;
   static attributes: Record<string, Attribute> = {
     action: Attributes.String({
       modelKey: 'action',
@@ -205,9 +209,17 @@ export class WebhookObjectAttributes extends Model
       modelKey: 'threadId',
       jsonKey: 'thread_id',
     }),
+    calendarId: Attributes.String({
+      modelKey: 'calendarId',
+      jsonKey: 'calendar_id',
+    }),
     receivedDate: Attributes.DateTime({
       modelKey: 'receivedDate',
       jsonKey: 'received_date',
+    }),
+    createdBeforeAccountConnection: Attributes.Boolean({
+      modelKey: 'createdBeforeAccountConnection',
+      jsonKey: 'created_before_account_connection',
     }),
     extras: Attributes.Object({
       modelKey: 'extras',
@@ -226,7 +238,7 @@ export type WebhookObjectDataProperties = {
   accountId: string;
   namespaceId: string;
   object: string;
-  metadata?: MessageTrackingDataProperties;
+  metadata?: MessageTrackingDataProperties | Record<string, unknown>;
   objectAttributes?: WebhookObjectAttributesProperties;
 };
 
@@ -238,7 +250,7 @@ export class WebhookObjectData extends Model
   object = '';
 
   // Message specific field
-  metadata?: MessageTrackingData;
+  metadata?: MessageTrackingData | Record<string, unknown>;
 
   // Message and Job Status specific field
   objectAttributes?: WebhookObjectAttributes;
@@ -259,7 +271,6 @@ export class WebhookObjectData extends Model
     }),
     metadata: Attributes.Object({
       modelKey: 'metadata',
-      itemClass: MessageTrackingData,
     }),
     objectAttributes: Attributes.Object({
       modelKey: 'objectAttributes',
@@ -271,6 +282,27 @@ export class WebhookObjectData extends Model
   constructor(props?: WebhookObjectDataProperties) {
     super();
     this.initAttributes(props);
+    if (
+      this.metadata &&
+      (this.object === 'message' || this.object === 'thread')
+    ) {
+      this.metadata = new MessageTrackingData(
+        this.metadata as MessageTrackingDataProperties
+      );
+    }
+  }
+
+  fromJSON(json: Record<string, unknown>): this {
+    const notification = super.fromJSON(json);
+    if (
+      notification.metadata &&
+      (notification.object === 'message' || notification.object === 'thread')
+    ) {
+      notification.metadata = new MessageTrackingData().fromJSON(
+        json['metadata'] as Record<string, unknown>
+      );
+    }
+    return notification;
   }
 }
 
