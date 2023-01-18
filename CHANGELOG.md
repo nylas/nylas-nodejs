@@ -10,7 +10,7 @@
 * Bump `json5` sub-dependency from 2.1.0 to 2.2.3
 * Bump `minimatch` sub-dependency from 3.0.4 to 3.1.2
 
-## 6.6.1 / 2022-10-21
+### 6.6.1 / 2022-10-21
 * Fix calendar color implementation
 
 ### 6.6.0 / 2022-10-14
