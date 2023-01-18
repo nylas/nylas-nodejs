@@ -1,11 +1,16 @@
 # Changelog
 
-### Unreleased
-* Added support for rate limit errors
-* Changed Event `visibility` field to be writeable
+### 6.7.0 / 2023-01-18
+* Add support for rate limit errors
+* Add responseType to AuthenticateUrlConfig
 * Add new attributes for Event webhook notifications
+* Change Event `visibility` field to be writeable
+* Bump `decode-uri-component` sub-dependency from 0.2.0 to 0.2.2
+* Bump `qs` sub-dependency from 6.5.2 to 6.5.3
+* Bump `json5` sub-dependency from 2.1.0 to 2.2.3
+* Bump `minimatch` sub-dependency from 3.0.4 to 3.1.2
 
-## 6.6.1 / 2022-10-21
+### 6.6.1 / 2022-10-21
 * Fix calendar color implementation
 
 ### 6.6.0 / 2022-10-14
