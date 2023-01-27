@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add `hideParticipants` field to `Event`
+
 ### 6.7.0 / 2023-01-18
 * Add support for rate limit errors
 * Add responseType to AuthenticateUrlConfig

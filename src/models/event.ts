@@ -60,6 +60,7 @@ export type EventProperties = {
   jobStatusId?: string;
   organizerEmail?: string;
   organizerName?: string;
+  hideParticipants?: boolean;
   visibility?: string;
   customerEventId?: string;
   reminderMinutes?: string;
@@ -98,6 +99,7 @@ export default class Event extends RestfulModel {
   jobStatusId?: string;
   organizerEmail?: string;
   organizerName?: string;
+  hideParticipants?: boolean;
   visibility?: string;
   customerEventId?: string;
   static collectionName = 'events';
@@ -212,6 +214,10 @@ export default class Event extends RestfulModel {
       modelKey: 'organizerName',
       jsonKey: 'organizer_name',
       readOnly: true,
+    }),
+    hideParticipants: Attributes.Boolean({
+      modelKey: 'hideParticipants',
+      jsonKey: 'hide_participants',
     }),
     visibility: Attributes.String({
       modelKey: 'visibility',
