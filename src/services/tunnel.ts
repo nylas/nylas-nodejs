@@ -53,12 +53,11 @@ export interface OpenWebhookTunnelOptions {
  * When an event is received by the forwarding service, it will push directly to this websocket
  * connection
  *
- * @param nylasClient The configured Nylas application
- * @param config Configuration for the webhook tunnel, including callback functions, region, and events to subscribe to
+ * @param config Configuration for the webhook tunnel, including callback functions,
+ * region, and events to subscribe to
  * @return The webhook details response from the API
  */
 export const openWebhookTunnel = (
-  nylasClient: Nylas,
   config: OpenWebhookTunnelOptions
 ): Promise<Webhook> => {
   const triggers = config.triggers || DEFAULT_WEBHOOK_TRIGGERS;
