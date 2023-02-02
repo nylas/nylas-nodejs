@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Local webhook testing support
 * Add `hideParticipants` field to `Event`
 
 ### 6.7.0 / 2023-01-18
