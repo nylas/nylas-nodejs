@@ -12,20 +12,18 @@ import { WebhookDelta } from '../models/webhook-notification';
 
 /**
  * Create a webhook to the Nylas forwarding service which will pass messages to our websocket
- * @param nylasClient The configured Nylas application
  * @param callbackDomain The domain name of the callback
  * @param tunnelPath The path to the tunnel
  * @param triggers The list of triggers to subscribe to
  * @return The webhook details response from the API
  */
 const buildTunnelWebhook = (
-  nylasClient: Nylas,
   callbackDomain: string,
   tunnelPath: string,
   triggers: WebhookTriggers[]
 ): Promise<Webhook> => {
   const callbackUrl = `https://${callbackDomain}/${tunnelPath}`;
-  return nylasClient.webhooks
+  return Nylas.webhooks
     .build({
       callbackUrl,
       state: 'active',
@@ -114,11 +112,11 @@ export const openWebhookTunnel = (
   });
 
   client.connect(`wss://${websocketDomain}`, undefined, undefined, {
-    'Client-Id': nylasClient.clientId,
-    'Client-Secret': nylasClient.clientSecret,
+    'Client-Id': Nylas.clientId,
+    'Client-Secret': Nylas.clientSecret,
     'Tunnel-Id': tunnelId,
     Region: region,
   });
 
-  return buildTunnelWebhook(nylasClient, callbackDomain, tunnelId, triggers);
+  return buildTunnelWebhook(callbackDomain, tunnelId, triggers);
 };
