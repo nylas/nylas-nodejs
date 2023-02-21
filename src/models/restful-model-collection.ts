@@ -8,7 +8,7 @@ export type GetCallback = (error: Error | null, result?: RestfulModel) => void;
 
 export default class RestfulModelCollection<
   T extends RestfulModel
-> extends ModelCollection<any> {
+> extends ModelCollection<T> {
   modelClass: typeof RestfulModel;
 
   constructor(modelClass: typeof RestfulModel, connection: NylasConnection) {
