@@ -227,8 +227,9 @@ export default class NylasConnection {
 
   request(options: RequestOptions): Promise<any> {
     const req = this.newRequest(options);
+    const timeout = config.timeout;
     return new Promise<any>((resolve, reject) => {
-      return fetch(req)
+      return fetch(req, { timeout })
         .then(response => {
           if (typeof response === 'undefined') {
             return reject(new Error('No response'));
