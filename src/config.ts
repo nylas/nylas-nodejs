@@ -10,10 +10,16 @@ export function setClientSecret(newClientSecret: string) {
   clientSecret = newClientSecret;
 }
 
+export let timeout = 0;
+export function setTimeout(newTimeout: number) {
+  timeout = newTimeout;
+}
+
 export type NylasConfig = {
   clientId: string;
   clientSecret: string;
   apiServer?: string;
+  timeout?: number;
 };
 
 export enum ResponseType {
