@@ -32,6 +32,7 @@ class Nylas {
   static get timeout(): number {
     return config.timeout;
   }
+  // Timeout for outgoing API calls, in milliseconds
   static set timeout(timeout: number) {
     config.setTimeout(timeout);
   }

@@ -16,9 +16,13 @@ export function setTimeout(newTimeout: number) {
 }
 
 export type NylasConfig = {
+  /** Nylas application client ID */
   clientId: string;
+  /** Nylas application client secret */
   clientSecret: string;
+  /** API Server base URL */
   apiServer?: string;
+  /** Timeout for outgoing API calls, in milliseconds */
   timeout?: number;
 };
 
