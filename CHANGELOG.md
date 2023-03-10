@@ -5,6 +5,7 @@
 * **BREAKING CHANGE**: Rename `confirmationEmailToHost` to `confirmationEmailsToHost` in `SchedulerBooking`
 * Add defaults for Content-Type and Accept headers for outgoing API requests
 * Officially support minimum Node 16
+* **REMOVED**: Local Webhook development support is removed due to incompatibility 
 
 ### 6.8.0 / 2023-02-03
 * Local webhook testing support
