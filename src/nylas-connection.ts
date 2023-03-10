@@ -1,6 +1,9 @@
 // TODO since node 10 URL is global
 import { URL } from 'url';
+// TODO since node 15 AbortController is global
+import AbortController from 'abort-controller';
 import fetch, { Request } from 'node-fetch';
+import { AbortSignal } from 'node-fetch/externals';
 import * as config from './config';
 import RestfulModelCollection from './models/restful-model-collection';
 import CalendarRestfulModelCollection from './models/calendar-restful-model-collection';
@@ -227,9 +230,18 @@ export default class NylasConnection {
 
   request(options: RequestOptions): Promise<any> {
     const req = this.newRequest(options);
-    const timeout = config.timeout;
+    let controller: AbortController;
+    let timeout: NodeJS.Timeout;
+
+    if (config.timeout && config.timeout !== 0) {
+      controller = new AbortController();
+      timeout = setTimeout(() => {
+        controller.abort();
+      }, 150);
+    }
+
     return new Promise<any>((resolve, reject) => {
-      return fetch(req, { timeout })
+      return fetch(req, { signal: controller?.signal as AbortSignal })
         .then(response => {
           if (typeof response === 'undefined') {
             return reject(new Error('No response'));
@@ -319,6 +331,9 @@ export default class NylasConnection {
         .catch((err: Error) => {
           console.error(`Error encountered during request:\n${err.stack}`);
           return reject(err);
+        })
+        .finally(() => {
+          clearTimeout(timeout);
         });
     });
   }
