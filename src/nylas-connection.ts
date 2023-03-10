@@ -329,6 +329,10 @@ export default class NylasConnection {
           }
         })
         .catch((err: Error) => {
+          if (err && err.name && err.name === 'AbortError') {
+            console.warn('Request timed out');
+            return reject(err);
+          }
           console.error(`Error encountered during request:\n${err.stack}`);
           return reject(err);
         })
