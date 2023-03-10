@@ -332,7 +332,7 @@ export default class NylasConnection {
           console.error(`Error encountered during request:\n${err.stack}`);
           return reject(err);
         })
-        .finally(() => {
+        .then(() => {
           clearTimeout(timeout);
         });
     });
