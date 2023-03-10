@@ -129,7 +129,9 @@ describe('NylasConnection', () => {
           path: '/test',
           method: 'GET',
         });
-        expect(fetch.mock.calls[fetch.mock.calls.length - 1][1].signal).toBeUndefined();
+        expect(
+          fetch.mock.calls[fetch.mock.calls.length - 1][1].signal
+        ).toBeUndefined();
 
         fetch.mockReturnValue(
           Promise.resolve(
@@ -146,7 +148,9 @@ describe('NylasConnection', () => {
           path: '/test',
           method: 'GET',
         });
-        expect(fetch.mock.calls[fetch.mock.calls.length - 1][1].signal).not.toBeUndefined();
+        expect(
+          fetch.mock.calls[fetch.mock.calls.length - 1][1].signal
+        ).not.toBeUndefined();
 
         done();
       });
