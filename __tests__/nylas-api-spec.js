@@ -6,8 +6,6 @@ jest.mock('node-fetch', () => {
   return fetch;
 });
 
-// TODO since node 10 URL is global
-import { URL } from 'url';
 import fetch, { Response } from 'node-fetch';
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';

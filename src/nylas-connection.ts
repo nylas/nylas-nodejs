@@ -1,5 +1,3 @@
-// TODO since node 10 URL is global
-import { URL } from 'url';
 import fetch, { Request } from 'node-fetch';
 import * as config from './config';
 import RestfulModelCollection from './models/restful-model-collection';

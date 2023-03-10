@@ -1,5 +1,3 @@
-// TODO since node 10 URL is global
-import { URL } from 'url';
 import fetch from 'node-fetch';
 import * as config from './config';
 import NylasConnection, { RequestOptions } from './nylas-connection';
