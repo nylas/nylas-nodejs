@@ -114,53 +114,41 @@ describe('NylasConnection', () => {
           });
       });
 
-      describe('timeout', () => {
-        test('set timeout sets signal in fetch', done => {
-          fetch.mockReturnValue(
-            Promise.resolve(
-              new Response('This is just text', {
-                headers: {
-                  'content-length': 17,
-                  'Content-Type': 'message/rfc822',
-                },
-              })
-            )
-          );
-          config.timeout = 5000;
-          return testContext.connection
-            .request({
-              path: '/test',
-              method: 'GET',
+      test('signal is set if timeout is set, unset otherwise', async done => {
+        fetch.mockReturnValue(
+          Promise.resolve(
+            new Response('This is just text', {
+              headers: {
+                'content-length': 17,
+                'Content-Type': 'message/rfc822',
+              },
             })
-            .then(() => {
-              const options = fetch.mock.calls[0][1];
-              expect(options.signal).not.toBeUndefined();
-              done();
-            });
+          )
+        );
+        await testContext.connection.request({
+          path: '/test',
+          method: 'GET',
         });
+        expect(fetch.mock.calls[0][1].signal).toBeUndefined();
 
-        test('no timeout does not signal in fetch', done => {
-          fetch.mockReturnValue(
-            Promise.resolve(
-              new Response('This is just text', {
-                headers: {
-                  'content-length': 17,
-                  'Content-Type': 'message/rfc822',
-                },
-              })
-            )
-          );
-          return testContext.connection
-            .request({
-              path: '/test',
-              method: 'GET',
+        fetch.mockReturnValue(
+          Promise.resolve(
+            new Response('This is just text', {
+              headers: {
+                'content-length': 17,
+                'Content-Type': 'message/rfc822',
+              },
             })
-            .then(() => {
-              const options = fetch.mock.calls[0][1];
-              expect(options.signal).toBeUndefined();
-              done();
-            });
+          )
+        );
+        config.timeout = 5000;
+        await testContext.connection.request({
+          path: '/test',
+          method: 'GET',
         });
+        expect(fetch.mock.calls[1][1].signal).not.toBeUndefined();
+
+        done();
       });
 
       describe('rate limit errors', () => {
