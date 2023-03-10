@@ -6,8 +6,6 @@ jest.mock('node-fetch', () => {
   return fetch;
 });
 
-// TODO since node 10 URL is global
-import { URL } from 'url';
 import fetch, { Response } from 'node-fetch';
 import Nylas from '../src/nylas';
 import NylasConnection from '../src/nylas-connection';
@@ -121,8 +119,9 @@ describe('Nylas', () => {
       await testContext.nylasClient.exchangeCodeForToken('code-from-server');
       const search =
         'client_id=newId&client_secret=newSecret&grant_type=authorization_code&code=code-from-server';
-      const url = new URL(`https://api.nylas.com/oauth/token?${search}`);
-      expect(fetch).lastCalledWith(url);
+      expect(
+        fetch.mock.calls[fetch.mock.calls.length - 1][0].toString()
+      ).toEqual(`https://api.nylas.com/oauth/token?${search}`);
     });
 
     test('should resolve with the returned AccessToken type', async () => {
@@ -286,7 +285,7 @@ describe('Nylas', () => {
         responseType,
       };
 
-      expect(Nylas.urlForAuthentication(options)).toEqual(
+      expect(testContext.nylasClient.urlForAuthentication(options)).toEqual(
         `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=token&login_hint=${loginHint}&redirect_uri=${redirectURI}&scopes=${scopes[0]},${scopes[1]}`
       );
     });
@@ -301,7 +300,7 @@ describe('Nylas', () => {
         scopes,
       };
 
-      expect(Nylas.urlForAuthentication(options)).toEqual(
+      expect(testContext.nylasClient.urlForAuthentication(options)).toEqual(
         `https://api.nylas.com/oauth/authorize?client_id=newId&response_type=code&login_hint=${loginHint}&redirect_uri=${redirectURI}&scopes=${scopes[0]},${scopes[1]}`
       );
     });

@@ -8,13 +8,14 @@ on:
   pull_request:
     branches:
       - main
+      - v7-staging
 
 jobs:
   checks:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 8.x, 14.x ]
+        node-version: [ 16.x, 18.x ]
     name: Nodejs ${{ matrix.node-version }}
     steps:
       - uses: actions/checkout@v2
