@@ -114,6 +114,55 @@ describe('NylasConnection', () => {
           });
       });
 
+      describe('timeout', () => {
+        test('set timeout sets signal in fetch', done => {
+          fetch.mockReturnValue(
+            Promise.resolve(
+              new Response('This is just text', {
+                headers: {
+                  'content-length': 17,
+                  'Content-Type': 'message/rfc822',
+                },
+              })
+            )
+          );
+          config.timeout = 5000;
+          return testContext.connection
+            .request({
+              path: '/test',
+              method: 'GET',
+            })
+            .then(() => {
+              const options = fetch.mock.calls[0][1];
+              expect(options.signal).not.toBeUndefined();
+              done();
+            });
+        });
+
+        test('no timeout does not signal in fetch', done => {
+          fetch.mockReturnValue(
+            Promise.resolve(
+              new Response('This is just text', {
+                headers: {
+                  'content-length': 17,
+                  'Content-Type': 'message/rfc822',
+                },
+              })
+            )
+          );
+          return testContext.connection
+            .request({
+              path: '/test',
+              method: 'GET',
+            })
+            .then(() => {
+              const options = fetch.mock.calls[0][1];
+              expect(options.signal).toBeUndefined();
+              done();
+            });
+        });
+      });
+
       describe('rate limit errors', () => {
         test('Should fill and return a RateLimitError from a 429 error', done => {
           const errorJson = {
