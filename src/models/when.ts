@@ -4,7 +4,10 @@ import Attributes, { Attribute } from './attributes';
 export type WhenProperties = {
   startTime?: number;
   endTime?: number;
+  startTimezone?: string;
+  endTimezone?: string;
   time?: number;
+  timezone?: string;
   startDate?: string;
   endDate?: string;
   date?: string;
@@ -14,7 +17,10 @@ export type WhenProperties = {
 export default class When extends Model implements WhenProperties {
   startTime?: number;
   endTime?: number;
+  startTimezone?: string;
+  endTimezone?: string;
   time?: number;
+  timezone?: string;
   startDate?: string;
   endDate?: string;
   date?: string;
@@ -28,8 +34,19 @@ export default class When extends Model implements WhenProperties {
       modelKey: 'endTime',
       jsonKey: 'end_time',
     }),
+    startTimezone: Attributes.String({
+      modelKey: 'startTimezone',
+      jsonKey: 'start_timezone',
+    }),
+    endTimezone: Attributes.String({
+      modelKey: 'endTimezone',
+      jsonKey: 'end_timezone',
+    }),
     time: Attributes.Number({
       modelKey: 'time',
+    }),
+    timezone: Attributes.String({
+      modelKey: 'timezone',
     }),
     startDate: Attributes.String({
       modelKey: 'startDate',
