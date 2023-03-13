@@ -29,6 +29,7 @@ export default class NylasApiError extends Error {
     403: 'Forbidden',
     404: 'Not Found',
     405: 'Method Not Allowed',
+    409: 'Conflict',
     410: 'Gone',
     418: "I'm a Teapot",
     422: 'Sending Error',
