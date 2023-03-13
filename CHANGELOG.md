@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Allow configurable timeout for API calls
+
 ### 6.8.0 / 2023-02-03
 * Local webhook testing support
 * Add `hideParticipants` field to `Event`

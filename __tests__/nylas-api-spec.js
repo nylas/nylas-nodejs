@@ -35,17 +35,19 @@ describe('Nylas', () => {
   });
 
   describe('config', () => {
-    test('should allow you to populate the clientId, clientSecret, apiServer and authServer options', () => {
+    test('should allow you to populate the clientId, clientSecret, etc.', () => {
       const newConfig = {
         clientId: 'newId',
         clientSecret: 'newSecret',
         apiServer: 'https://api-staging.nylas.com/',
+        timeout: 5000,
       };
 
       Nylas.config(newConfig);
       expect(Nylas.clientId).toBe(newConfig.clientId);
       expect(Nylas.clientSecret).toBe(newConfig.clientSecret);
       expect(Nylas.apiServer).toBe(newConfig.apiServer);
+      expect(Nylas.timeout).toBe(newConfig.timeout);
     });
 
     test('should not override existing values unless new values are provided', () => {
@@ -58,6 +60,7 @@ describe('Nylas', () => {
       expect(Nylas.clientId).toBe(newConfig.clientId);
       expect(Nylas.clientSecret).toBe(newConfig.clientSecret);
       expect(Nylas.apiServer).toBe('https://api.nylas.com');
+      expect(Nylas.timeout).toBe(0);
     });
 
     test('should throw an exception if the server options do not contain ://', () => {
@@ -68,6 +71,23 @@ describe('Nylas', () => {
       };
 
       expect(() => Nylas.config(newConfig)).toThrow();
+    });
+
+    test('using setters should update the values', () => {
+      const newConfig = {
+        clientId: 'id',
+        clientSecret: 'secret',
+      };
+      Nylas.config(newConfig);
+      Nylas.clientId = 'newId';
+      Nylas.clientSecret = 'newSecret';
+      Nylas.apiServer = 'https://new.api.nylas.com';
+      Nylas.timeout = 5000;
+
+      expect(Nylas.clientId).toBe('newId');
+      expect(Nylas.clientSecret).toBe('newSecret');
+      expect(Nylas.apiServer).toBe('https://new.api.nylas.com');
+      expect(Nylas.timeout).toBe(5000);
     });
   });
 

@@ -10,10 +10,20 @@ export function setClientSecret(newClientSecret: string) {
   clientSecret = newClientSecret;
 }
 
+export let timeout = 0;
+export function setTimeout(newTimeout: number) {
+  timeout = newTimeout;
+}
+
 export type NylasConfig = {
+  /** Nylas application client ID */
   clientId: string;
+  /** Nylas application client secret */
   clientSecret: string;
+  /** API Server base URL */
   apiServer?: string;
+  /** Timeout for outgoing API calls, in milliseconds */
+  timeout?: number;
 };
 
 export enum ResponseType {

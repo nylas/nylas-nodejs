@@ -29,6 +29,13 @@ class Nylas {
   static set apiServer(newApiServer: string | null) {
     config.setApiServer(newApiServer);
   }
+  static get timeout(): number {
+    return config.timeout;
+  }
+  // Timeout for outgoing API calls, in milliseconds
+  static set timeout(timeout: number) {
+    config.setTimeout(timeout);
+  }
   static accounts:
     | ManagementModelCollection<ManagementAccount>
     | RestfulModelCollection<Account>;
@@ -53,6 +60,7 @@ class Nylas {
     } else {
       this.apiServer = 'https://api.nylas.com';
     }
+    this.timeout = config.timeout || 0;
 
     const conn = new NylasConnection(this.clientSecret, {
       clientId: this.clientId,
