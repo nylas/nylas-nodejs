@@ -5,7 +5,7 @@ export type WhenProperties = {
   startTime?: number;
   endTime?: number;
   startTimezone?: string;
-  endTimezone?: string
+  endTimezone?: string;
   time?: number;
   timezone?: string;
   startDate?: string;
@@ -18,7 +18,7 @@ export default class When extends Model implements WhenProperties {
   startTime?: number;
   endTime?: number;
   startTimezone?: string;
-  endTimezone?: string
+  endTimezone?: string;
   time?: number;
   timezone?: string;
   startDate?: string;
