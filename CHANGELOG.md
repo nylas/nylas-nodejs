@@ -1,7 +1,12 @@
 # Changelog
 
-### Unreleased
+### 6.9.0 / 2023-03-14
+* Add missing generic type in `RestfulModelCollection` for better type safety
+* Add 409 to error mapping
+* Add `startTimezone`, `endTimezone` and `timezone` fields to `When`
 * Allow configurable timeout for API calls
+* Bump `minimist` sub-dependency from 1.2.0 to 1.2.6
+* Bump `mkdirp` sub-dependency from 0.5.1 to 0.5.6
 
 ### 6.8.0 / 2023-02-03
 * Local webhook testing support
