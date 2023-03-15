@@ -1,5 +1,3 @@
-import { WebhookTriggers } from './models/webhook';
-
 export let apiServer: string | null = null;
 export function setApiServer(newApiServer: string | null) {
   apiServer = newApiServer;
@@ -33,26 +31,20 @@ export type AuthenticateUrlConfig = {
 
 export enum Region {
   Us = 'us',
-  Ireland = 'ireland',
+  Eu = 'eu',
 }
 
 export const DEFAULT_REGION = Region.Us;
 
-export const regionConfig = {
-  [Region.Us]: {
-    nylasAPIUrl: 'https://api.nylas.com',
-    dashboardApiUrl: 'https://dashboard-api.nylas.com',
-    callbackDomain: 'cb.nylas.com',
-    websocketDomain: 'tunnel.nylas.com',
-    telemetryApiUrl: 'https://cli.nylas.com',
-  },
-  [Region.Ireland]: {
-    nylasAPIUrl: 'https://ireland.api.nylas.com',
-    dashboardApiUrl: 'https://ireland.dashboard.nylas.com',
-    callbackDomain: 'cb.nylas.com',
-    websocketDomain: 'tunnel.nylas.com',
-    telemetryApiUrl: 'https://cli.nylas.com',
-  },
+type RegionConfig = {
+  nylasAPIUrl: string;
 };
 
-export const DEFAULT_WEBHOOK_TRIGGERS = Object.values(WebhookTriggers);
+export const regionConfig: Record<Region, RegionConfig> = {
+  [Region.Us]: {
+    nylasAPIUrl: 'https://api.us.nylas.com',
+  },
+  [Region.Eu]: {
+    nylasAPIUrl: 'https://api.eu.nylas.com',
+  },
+};
