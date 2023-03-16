@@ -1,5 +1,3 @@
-// TODO since node 10 URL is global
-import { URL } from 'url';
 import fetch, { Request } from 'node-fetch';
 import * as config from './config';
 import RestfulModelCollection from './models/restful-model-collection';
@@ -45,6 +43,10 @@ export type RequestOptions = {
   baseUrl?: string;
   url?: URL;
   authMethod?: AuthMethod;
+};
+export type AuthorizationOptions = {
+  accessToken: string;
+  grantID?: string;
 };
 
 export type FormDataType = {
@@ -150,7 +152,7 @@ export default class NylasConnection {
     const headers: Record<string, string> = {
       Accept: 'application/json',
       'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
-      'Nylas-API-Version': SUPPORTED_API_VERSION,
+      // 'Nylas-API-Version': SUPPORTED_API_VERSION,
       'Nylas-SDK-API-Version': SUPPORTED_API_VERSION,
       ...options.headers,
     };
@@ -236,18 +238,19 @@ export default class NylasConnection {
           if (typeof response === 'undefined') {
             return reject(new Error('No response'));
           }
+          // COMMENTED BECAUSE WE NO LONGER NEED A HEADER CHECK HERE
           // node headers are lowercaser so this refers to `Nylas-Api-Version`
-          const apiVersion = response.headers.get('nylas-api-version') as
-            | string
-            | undefined;
+          // const apiVersion = response.headers.get('nylas-api-version') as
+          //   | string
+          //   | undefined;
 
-          const warning = this.getWarningForVersion(
-            SUPPORTED_API_VERSION,
-            apiVersion
-          );
-          if (warning) {
-            console.warn(warning);
-          }
+          // const warning = this.getWarningForVersion(
+          //   SUPPORTED_API_VERSION,
+          //   apiVersion
+          // );
+          // if (warning) {
+          //   console.warn(warning);
+          // }
 
           if (response.status > 299) {
             return response.text().then(body => {

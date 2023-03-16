@@ -1,8 +1,6 @@
-// TODO since node 10 URL is global
-import { URL } from 'url';
 import fetch from 'node-fetch';
 import * as config from './config';
-import NylasConnection, { RequestOptions } from './nylas-connection';
+import NylasConnection, { RequestOptions, AuthorizationOptions } from './nylas-connection';
 import ManagementAccount from './models/management-account';
 import Account from './models/account';
 import Connect from './models/connect';
@@ -17,6 +15,7 @@ import ApplicationDetails, {
 
 class Nylas {
   clientId = '';
+  apiKey = '';
   get clientSecret(): string {
     return config.clientSecret;
   }
@@ -47,6 +46,9 @@ class Nylas {
     }
     if (config.clientSecret) {
       this.clientSecret = config.clientSecret;
+    }
+    if (config.apiKey) {
+      this.apiKey = config.apiKey;
     }
     if (config.apiServer) {
       this.apiServer = config.apiServer;
@@ -88,11 +90,12 @@ class Nylas {
    * @param accessToken The access token to access the user's resources
    * @return The configured NylasConnection instance
    */
-  with(accessToken: string): NylasConnection {
-    if (!accessToken) {
-      throw new Error('This function requires an access token');
+  with(grantId: string): NylasConnection {
+    if (!grantId) {
+      throw new Error('This function requires a GrantID');
     }
-    return new NylasConnection(accessToken, { clientId: this.clientId });
+    this.apiServer = `${this.apiServer}/grants/${grantId}`
+    return new NylasConnection(this.apiKey, { clientId: this.clientId }); 
   }
 
   /**
@@ -220,10 +223,10 @@ class Nylas {
 
   /**
    * Revoke a single access token
-   * @param accessToken The access token to revoke
+   * @param AuthorizationOptions The access token & grant to revoke
    */
-  revoke(accessToken: string): Promise<void> {
-    return this.with(accessToken)
+  revoke(authOptions: AuthorizationOptions): Promise<void> {
+    return this.with(authOptions)
       .request({
         method: 'POST',
         path: '/oauth/revoke',

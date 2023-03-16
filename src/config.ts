@@ -13,6 +13,7 @@ export function setClientSecret(newClientSecret: string) {
 export type NylasConfig = {
   clientId: string;
   clientSecret: string;
+  apiKey: string;
   apiServer?: string;
 };
 
