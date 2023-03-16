@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import * as config from './config';
-import NylasConnection, { RequestOptions, AuthorizationOptions } from './nylas-connection';
+import NylasConnection, { RequestOptions } from './nylas-connection';
 import ManagementAccount from './models/management-account';
 import Account from './models/account';
 import Connect from './models/connect';

@@ -44,10 +44,6 @@ export type RequestOptions = {
   url?: URL;
   authMethod?: AuthMethod;
 };
-export type AuthorizationOptions = {
-  accessToken: string;
-  grantID?: string;
-};
 
 export type FormDataType = {
   value: unknown;
