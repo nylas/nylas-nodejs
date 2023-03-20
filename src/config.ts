@@ -1,17 +1,8 @@
-export let apiServer: string | null = null;
-export function setApiServer(newApiServer: string | null) {
-  apiServer = newApiServer;
-}
-
-export let clientSecret = '';
-export function setClientSecret(newClientSecret: string) {
-  clientSecret = newClientSecret;
-}
-
 export type NylasConfig = {
-  clientId: string;
-  clientSecret: string;
-  apiServer?: string;
+  apiKey: string;
+  clientId?: string;
+  clientSecret?: string;
+  serverUrl?: string; // TODO: rename to nylasAPIUrl
 };
 
 export enum ResponseType {
@@ -40,7 +31,7 @@ type RegionConfig = {
   nylasAPIUrl: string;
 };
 
-export const regionConfig: Record<Region, RegionConfig> = {
+export const REGION_CONFIG: Record<Region, RegionConfig> = {
   [Region.Us]: {
     nylasAPIUrl: 'https://api.us.nylas.com',
   },
