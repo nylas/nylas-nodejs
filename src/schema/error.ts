@@ -31,3 +31,5 @@ export default class NylasApiError extends Error {
     this.providerError = apiError.error.provider_error;
   }
 }
+
+// TODO: sdk error schema?
