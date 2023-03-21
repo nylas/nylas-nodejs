@@ -1,11 +1,4 @@
-interface NylasError {
-  request_id: string;
-  error: {
-    type: string;
-    message: string;
-    provider_error: any;
-  };
-}
+import { APIErrorResponse } from './response';
 
 /**
  * Extended Error class for errors returned from the Nylas API
@@ -24,11 +17,11 @@ export default class NylasApiError extends Error {
   requestId: string;
   providerError: any;
 
-  constructor(apiError: NylasError) {
+  constructor(apiError: APIErrorResponse) {
     super(apiError.error.message);
     this.type = apiError.error.type;
-    this.requestId = apiError.request_id;
-    this.providerError = apiError.error.provider_error;
+    this.requestId = apiError.requestId;
+    this.providerError = apiError.error.providerError;
   }
 }
 

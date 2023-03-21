@@ -1,5 +1,10 @@
 import { Overrides } from '../config';
-import { Calendar, ListCalenderParams } from '../schema/calendars';
+import {
+  Calendar,
+  CalendarSchema,
+  DestroyCalendarQueryParams,
+  ListCalenderParams,
+} from '../schema/calendars';
 import { ListResponse, Response } from '../schema/response';
 import { BaseResource } from './baseResource';
 
@@ -12,17 +17,28 @@ interface ListCalendersParams {
   queryParams: ListCalenderParams;
 }
 
+interface DestroyCalendarParams {
+  grantId: string;
+  eventId: string;
+  queryParams: DestroyCalendarQueryParams;
+}
+
 export class Calendars extends BaseResource {
   public async find({
     calendarId,
     grantId,
     overrides,
   }: FindCalendarParams & Overrides): Promise<Response<Calendar>> {
-    const res = await this.apiClient.request<Response<Calendar>>({
-      method: 'GET',
-      path: `/v3/grants/${grantId}/calendars/${calendarId}`,
-      overrides,
-    });
+    const res = await this.apiClient.request<Response<Calendar>>(
+      {
+        method: 'GET',
+        path: `/v3/grants/${grantId}/calendars/${calendarId}`,
+        overrides,
+      },
+      {
+        responseSchemaToValidate: CalendarSchema,
+      }
+    );
 
     return res;
   }
@@ -32,12 +48,17 @@ export class Calendars extends BaseResource {
     queryParams,
     overrides,
   }: ListCalendersParams & Overrides): Promise<ListResponse<Calendar>> {
-    const res = await this.apiClient.request<ListResponse<Calendar>>({
-      method: 'GET',
-      path: `/v3/grants/${grantId}/calendars`,
-      queryParams,
-      overrides,
-    });
+    const res = await this.apiClient.request<ListResponse<Calendar>>(
+      {
+        method: 'GET',
+        path: `/v3/grants/${grantId}/calendars`,
+        queryParams,
+        overrides,
+      },
+      {
+        responseSchemaToValidate: CalendarSchema,
+      }
+    );
 
     return res;
   }
@@ -50,7 +71,22 @@ export class Calendars extends BaseResource {
     throw new Error('Not implemented');
   }
 
-  public async destroy(): Promise<undefined> {
-    throw new Error('Not implemented');
+  public async destroy({
+    grantId,
+    eventId,
+    queryParams,
+    overrides,
+  }: DestroyCalendarParams & Overrides): Promise<null> {
+    const res = await this.apiClient.request<null>(
+      {
+        method: 'DELETE',
+        path: `/v3/grants/${grantId}/events/${eventId}`,
+        queryParams,
+        overrides,
+      },
+      {}
+    );
+
+    return res;
   }
 }

@@ -1,20 +1,22 @@
 import fetch, { Request } from 'node-fetch';
+import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
 import NylasApiError from './schema/error';
 import {
-  ListResponse,
   ListResponseSchema,
-  Response,
   ResponseSchema,
+  ErrorResponseSchema,
+  AllowedResponse,
+  AllowedResponseInnerType,
 } from './schema/response';
-import { camelCase } from 'change-case';
+import { objKeysToCamelCase } from './utils';
 // import { AppendOptions } from 'form-data';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
 
 // TODO: refactor for new apiclient
-export type RequestOptionsParams = {
+export interface RequestOptionsParams {
   path: string;
   method: string;
   headers?: Record<string, string>;
@@ -23,7 +25,11 @@ export type RequestOptionsParams = {
   overrides?: OverridableNylasConfig;
   // json?: boolean;
   // formData?: Record<string, FormDataType>;
-};
+}
+
+interface OptionsPassthru<D extends ZodType> {
+  responseSchemaToValidate?: D;
+}
 
 interface RequestOptions {
   path: string;
@@ -141,17 +147,17 @@ export default class APIClient {
     });
   }
 
-  request<T>(
-    options: RequestOptionsParams
-  ): Promise<Response<T> | ListResponse<T>> {
+  request<T extends AllowedResponse<unknown>>(
+    options: RequestOptionsParams,
+    passthru: OptionsPassthru<ZodType<AllowedResponseInnerType<T>>>
+  ): Promise<T> {
     const req = this.newRequest(options);
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<T>(async (resolve, reject) => {
       return fetch(req)
         .then(response => {
           if (typeof response === 'undefined') {
             return reject(new Error('No response'));
           }
-
           if (response.status > 299) {
             return response.text().then(body => {
               try {
@@ -162,34 +168,52 @@ export default class APIClient {
               }
             });
           } else {
-            if (
-              response.headers.get('content-length') &&
-              Number(response.headers.get('content-length')) == 0
-            ) {
-              return resolve(undefined);
+            if (response.status === 204) {
+              return resolve(null as T);
             } else {
               return response.text().then(text => {
                 try {
-                  const responseJSON = JSON.parse(text);
-                  for (let key in responseJSON) {
-                    key = camelCase(key);
-                  }
-                  let isResponseValid;
-                  if (Array.isArray(responseJSON.data)) {
-                    isResponseValid = ListResponseSchema.safeParse(responseJSON)
-                      .success;
-                  } else {
-                    isResponseValid = ResponseSchema.safeParse(responseJSON)
-                      .success;
-                  }
-                  if (!isResponseValid) {
-                    return reject(
-                      new Error('Invalid response from the server.')
+                  if (!passthru.responseSchemaToValidate) {
+                    throw new Error(
+                      'Need validation schema to validate response'
                     );
                   }
-                  return resolve(responseJSON);
+
+                  const responseJSON = JSON.parse(text);
+
+                  // TODO: exclusion list for keys that should not be camelCased
+                  const camelCaseRes = objKeysToCamelCase(responseJSON);
+
+                  const testListResponse = ListResponseSchema.safeParse(
+                    camelCaseRes
+                  );
+                  const testResponse = ResponseSchema.safeParse(camelCaseRes);
+                  const testError = ErrorResponseSchema.safeParse(camelCaseRes);
+
+                  let response;
+                  if (testListResponse.success) {
+                    response = testListResponse.data;
+                  } else if (testResponse.success) {
+                    response = testResponse.data;
+                  } else if (testError.success) {
+                    throw new NylasApiError(testError.data);
+                  } else {
+                    throw new Error('Invalid response from the server.');
+                  }
+
+                  const validateSchema = passthru.responseSchemaToValidate.safeParse(
+                    response
+                  );
+
+                  if (!validateSchema.success) {
+                    throw new Error(
+                      `Invalid data model from the server. ${validateSchema.error}`
+                    );
+                  }
+
+                  resolve(response as T);
                 } catch (e) {
-                  return resolve(text);
+                  return reject(e);
                 }
               });
             }
