@@ -2,8 +2,10 @@ import { Overrides } from '../config';
 import {
   Calendar,
   CalendarSchema,
+  CreateCalenderRequestBody,
   DestroyCalendarQueryParams,
   ListCalenderParams,
+  UpdateCalenderRequestBody,
 } from '../schema/calendars';
 import { ListResponse, Response } from '../schema/response';
 import { BaseResource } from './baseResource';
@@ -15,6 +17,17 @@ interface FindCalendarParams {
 interface ListCalendersParams {
   grantId: string;
   queryParams: ListCalenderParams;
+}
+
+interface CreateCalendarParams {
+  grantId: string;
+  requestBody: CreateCalenderRequestBody;
+}
+
+interface UpdateCalendarParams {
+  calendarId: string;
+  grantId: string;
+  requestBody: UpdateCalenderRequestBody;
 }
 
 interface DestroyCalendarParams {
@@ -63,12 +76,44 @@ export class Calendars extends BaseResource {
     return res;
   }
 
-  public async create(): Promise<Response<Calendar>> {
-    throw new Error('Not implemented');
+  public async create({
+    grantId,
+    requestBody,
+    overrides,
+  }: CreateCalendarParams & Overrides): Promise<Response<Calendar>> {
+    const res = await this.apiClient.request<Response<Calendar>>(
+      {
+        method: 'POST',
+        path: `/v3/grants/${grantId}/calendars`,
+        body: requestBody,
+        overrides,
+      },
+      {
+        responseSchemaToValidate: CalendarSchema,
+      }
+    );
+    return res;
   }
 
-  public async update(): Promise<Response<Calendar>> {
-    throw new Error('Not implemented');
+  public async update({
+    calendarId,
+    grantId,
+    requestBody,
+    overrides,
+  }: UpdateCalendarParams & Overrides): Promise<Response<Calendar>> {
+    const res = await this.apiClient.request<Response<Calendar>>(
+      {
+        method: 'PUT',
+        path: `/v3/grants/${grantId}/calendars/${calendarId}`,
+        body: requestBody,
+        overrides,
+      },
+      {
+        responseSchemaToValidate: CalendarSchema,
+      }
+    );
+
+    return res;
   }
 
   public async destroy({
