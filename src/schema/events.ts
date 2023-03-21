@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { APIObjects } from './utils';
 
 const TimeSchema = z.object({
   time: z.number(),
@@ -98,18 +99,18 @@ const RemindersSchema = z.object({
 });
 
 export const ListEventParamSchema = z.object({
-  show_cancelled: z.boolean().optional(),
+  showCancelled: z.boolean().optional(),
   limit: z.number().optional(),
-  page_token: z.string().optional(),
-  event_id: z.string().optional(),
-  calendar_id: z.string(),
+  pageToken: z.string().optional(),
+  eventId: z.string().optional(),
+  calendarId: z.string(),
   title: z.string().optional(),
   description: z.string().optional(),
   location: z.string().optional(),
   end: z.string().optional(),
   start: z.string().optional(),
-  metadata_pair: z.string().optional(),
-  expand_recurring: z.boolean().optional(),
+  metadataPair: z.string().optional(),
+  expandRecurring: z.boolean().optional(),
   busy: z.boolean().optional(),
   particpants: z.string().optional(),
 });
@@ -117,8 +118,8 @@ export const ListEventParamSchema = z.object({
 export type ListEventParams = z.infer<typeof ListEventParamSchema>;
 
 const CreateEventQueryParamsSchema = z.object({
-  notify_participants: z.boolean(),
-  calendar_id: z.string(),
+  notifyParticipants: z.boolean(),
+  calendarId: z.string(),
 });
 
 export type CreateEventQueryParams = z.infer<
@@ -135,21 +136,21 @@ export const CreateEventRequestBodySchema = z.object({
   when: z.union([TimeSchema, TimespanSchema, DateSchema, DatespanSchema]),
   location: z.string().max(255),
   conferencing: z.union([DetailsSchema, AutocreateSchema]),
-  reminder_minutes: z.string(),
-  reminder_method: z.string(),
+  reminderMinutes: z.string(),
+  reminderMethod: z.string(),
   metadata: z.record(z.string()),
   participants: z.array(ParticipantSchema),
   recurrence: RecurrenceSchema,
-  calendar_id: z.string(),
-  read_only: z.boolean(),
-  round_robin_order: z.array(z.string()),
+  calendarId: z.string(),
+  readOnly: z.boolean(),
+  roundRobinOrder: z.array(z.string()),
 });
 
 export type CreateEventRequestBody = z.infer<
   typeof CreateEventRequestBodySchema
 >;
 
-export const EventResponseSchema = z.object({
+export const EventSchema = z.object({
   busy: z.boolean(),
   description: z
     .string()
@@ -170,14 +171,7 @@ export const EventResponseSchema = z.object({
   calendar_id: z.string(),
   ical_uid: z.string(),
   id: z.string(),
-  object: z.union([
-    z.literal('event'),
-    z.literal('calendar'),
-    z.literal('contact'),
-    z.literal('file'),
-    z.literal('message'),
-    z.literal('label'),
-  ]),
+  object: APIObjects,
   owner: z.string(),
   read_only: z.boolean(),
   reminders: RemindersSchema,
@@ -192,4 +186,4 @@ export const EventResponseSchema = z.object({
   html_link: z.string(),
 });
 
-export type Event = z.infer<typeof EventResponseSchema>;
+export type Event = z.infer<typeof EventSchema>;
