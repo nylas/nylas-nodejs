@@ -10,7 +10,7 @@ export type OverridableNylasConfig = Partial<
 >;
 
 export interface Overrides {
-  overrides: OverridableNylasConfig;
+  overrides?: OverridableNylasConfig;
 }
 
 export enum ResponseType {

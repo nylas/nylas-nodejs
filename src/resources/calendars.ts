@@ -3,7 +3,6 @@ import {
   Calendar,
   CalendarSchema,
   CreateCalenderRequestBody,
-  DestroyCalendarQueryParams,
   ListCalenderParams,
   UpdateCalenderRequestBody,
 } from '../schema/calendars';
@@ -16,7 +15,7 @@ interface FindCalendarParams {
 }
 interface ListCalendersParams {
   grantId: string;
-  queryParams: ListCalenderParams;
+  queryParams?: ListCalenderParams;
 }
 
 interface CreateCalendarParams {
@@ -33,7 +32,6 @@ interface UpdateCalendarParams {
 interface DestroyCalendarParams {
   grantId: string;
   eventId: string;
-  queryParams: DestroyCalendarQueryParams;
 }
 
 export class Calendars extends BaseResource {
@@ -119,14 +117,12 @@ export class Calendars extends BaseResource {
   public async destroy({
     grantId,
     eventId,
-    queryParams,
     overrides,
   }: DestroyCalendarParams & Overrides): Promise<null> {
     const res = await this.apiClient.request<null>(
       {
         method: 'DELETE',
         path: `/v3/grants/${grantId}/events/${eventId}`,
-        queryParams,
         overrides,
       },
       {}

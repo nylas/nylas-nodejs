@@ -31,15 +31,6 @@ export type UpdateCalenderRequestBody = z.infer<
   typeof UpdateCalenderRequestBodySchema
 >;
 
-export const DestroyCalendarParamsSchema = z.object({
-  calendarId: z.string(),
-  notifyParticipants: z.boolean().optional(),
-});
-
-export type DestroyCalendarQueryParams = z.infer<
-  typeof DestroyCalendarParamsSchema
->;
-
 export const CalendarSchema = z.object({
   name: z.string(),
   description: z.string(),
