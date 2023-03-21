@@ -1,5 +1,5 @@
 import fetch, { Request } from 'node-fetch';
-import { NylasConfig } from './config';
+import { NylasConfig, OverridableNylasConfig } from './config';
 import NylasApiError from './schema/error';
 // import { AppendOptions } from 'form-data';
 
@@ -11,9 +11,9 @@ export type RequestOptionsParams = {
   path: string;
   method: string;
   headers?: Record<string, string>;
-  qs?: Record<string, unknown>;
+  queryParams?: Record<string, unknown>;
   body?: any;
-  overrides?: Partial<NylasConfig>;
+  overrides?: OverridableNylasConfig;
   // json?: boolean;
   // formData?: Record<string, FormDataType>;
 };
@@ -45,7 +45,11 @@ export default class APIClient {
     // this.clientId = clientId;
   }
 
-  private setRequestUrl({ overrides, path, qs }: RequestOptionsParams): URL {
+  private setRequestUrl({
+    overrides,
+    path,
+    queryParams: qs,
+  }: RequestOptionsParams): URL {
     const url = new URL(`${overrides?.serverUrl || this.serverUrl}${path}`);
 
     // TODO: refactor this not manually turn params into query string
@@ -91,7 +95,6 @@ export default class APIClient {
     };
   }
 
-  // TODO: separate param and return types
   requestOptions(optionParams: RequestOptionsParams): RequestOptions {
     const requestOptions = {} as RequestOptions;
 

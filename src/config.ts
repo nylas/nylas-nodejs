@@ -5,6 +5,14 @@ export type NylasConfig = {
   serverUrl?: string; // TODO: rename to nylasAPIUrl
 };
 
+export type OverridableNylasConfig = Partial<
+  Omit<NylasConfig, 'clientId' | 'clientSecret'>
+>;
+
+export interface Overrides {
+  overrides: OverridableNylasConfig;
+}
+
 export enum ResponseType {
   CODE = 'code',
   TOKEN = 'token',
