@@ -190,28 +190,46 @@ export default class APIClient {
                   const testResponse = ResponseSchema.safeParse(camelCaseRes);
                   const testError = ErrorResponseSchema.safeParse(camelCaseRes);
 
-                  let response;
+                  let response:
+                    | AllowedResponseInnerType<T>
+                    | AllowedResponseInnerType<T>[];
                   if (testListResponse.success) {
-                    response = testListResponse.data;
+                    response = testListResponse.data
+                      .data as AllowedResponseInnerType<T>[];
                   } else if (testResponse.success) {
-                    response = testResponse.data;
+                    response = testResponse.data
+                      .data as AllowedResponseInnerType<T>;
                   } else if (testError.success) {
                     throw new NylasApiError(testError.data);
                   } else {
                     throw new Error('Invalid response from the server.');
                   }
 
-                  const validateSchema = passthru.responseSchemaToValidate.safeParse(
-                    response
-                  );
+                  let validateSchema;
 
-                  if (!validateSchema.success) {
-                    throw new Error(
-                      `Invalid data model from the server. ${validateSchema.error}`
+                  if (Array.isArray(response)) {
+                    for (const item of response) {
+                      const validateItem = passthru.responseSchemaToValidate.safeParse(
+                        item
+                      );
+                      if (!validateItem.success) {
+                        throw new Error(
+                          `Invalid data model from the server. ${validateItem.error}`
+                        );
+                      }
+                      resolve(camelCaseRes as T);
+                    }
+                  } else {
+                    validateSchema = passthru.responseSchemaToValidate.safeParse(
+                      response
                     );
+                    if (!validateSchema.success) {
+                      throw new Error(
+                        `Invalid data model from the server. ${validateSchema.error}`
+                      );
+                    }
+                    resolve(camelCaseRes as T);
                   }
-
-                  resolve(response as T);
                 } catch (e) {
                   return reject(e);
                 }

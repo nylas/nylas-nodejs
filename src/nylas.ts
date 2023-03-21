@@ -2,7 +2,7 @@ import APIClient from './apiClient';
 import { REGION_CONFIG, DEFAULT_REGION, NylasConfig } from './config';
 import { Calendars } from './resources/calendars';
 
-export default class Nylas {
+class Nylas {
   serverUrl = REGION_CONFIG[DEFAULT_REGION].nylasAPIUrl;
   apiClient: APIClient;
 
@@ -27,3 +27,5 @@ export default class Nylas {
     return this;
   }
 }
+
+export = Nylas;
