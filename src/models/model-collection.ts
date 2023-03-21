@@ -5,6 +5,12 @@ export type GetCallback = (error: Error | null, result?: Model) => void;
 
 const REQUEST_CHUNK_SIZE = 100;
 
+export type CollectionModel = {
+  requestID: string;
+  nextCursor?: string;
+  data: Array<Model>;
+};
+
 export default class ModelCollection<T extends Model> {
   connection: NylasConnection;
   modelClass: any;
@@ -36,19 +42,21 @@ export default class ModelCollection<T extends Model> {
       throw err;
     }
 
-    let offset = 0;
+    let cursor = '';
 
     const iteratee = (): Promise<void> => {
-      return this.getItems(params, offset, REQUEST_CHUNK_SIZE).then(items => {
-        for (const item of items) {
-          eachCallback(item);
+      return this.getItems(params, cursor, REQUEST_CHUNK_SIZE).then(
+        collection => {
+          for (const item of collection.data) {
+            eachCallback(item as T);
+          }
+          cursor = collection.nextCursor ? collection.nextCursor : '';
+          const finished = collection.data.length < REQUEST_CHUNK_SIZE;
+          if (!finished) {
+            return iteratee();
+          }
         }
-        offset += items.length;
-        const finished = items.length < REQUEST_CHUNK_SIZE;
-        if (!finished) {
-          return iteratee();
-        }
-      });
+      );
     };
 
     iteratee().then(
@@ -78,8 +86,8 @@ export default class ModelCollection<T extends Model> {
     }
 
     const limit = (params.limit as number) || Infinity;
-    const offset = params.offset as number;
-    return this.range({ params, offset, limit, callback });
+    const cursor = params.cursor as string;
+    return this.range({ params, cursor, limit, callback });
   }
 
   find(
@@ -141,13 +149,13 @@ export default class ModelCollection<T extends Model> {
 
   protected range({
     params = {},
-    offset = 0,
+    cursor = '',
     limit = 100,
     callback,
     path,
   }: {
     params?: Record<string, unknown>;
-    offset?: number;
+    cursor?: string;
     limit?: number;
     callback?: (error: Error | null, results?: T[]) => void;
     path?: string;
@@ -155,21 +163,18 @@ export default class ModelCollection<T extends Model> {
     let accumulated: T[] = [];
 
     const iteratee = (): Promise<void> => {
-      const chunkOffset = offset + accumulated.length;
       const chunkLimit = Math.min(
         REQUEST_CHUNK_SIZE,
         limit - accumulated.length
       );
-      return this.getItems(params, chunkOffset, chunkLimit, path).then(
-        items => {
-          accumulated = accumulated.concat(items);
-          const finished =
-            items.length < REQUEST_CHUNK_SIZE || accumulated.length >= limit;
-          if (!finished) {
-            return iteratee();
-          }
+      return this.getItems(params, cursor, chunkLimit, path).then(items => {
+        accumulated = accumulated.concat(items.data as Array<T>);
+        const finished =
+          items.data.length < REQUEST_CHUNK_SIZE || accumulated.length >= limit;
+        if (!finished) {
+          return iteratee();
         }
-      );
+      });
     };
 
     // do not return rejected promise when callback is provided
@@ -192,10 +197,10 @@ export default class ModelCollection<T extends Model> {
 
   protected getItems(
     params: Record<string, unknown>,
-    offset: number,
+    cursor: string,
     limit: number,
     path?: string
-  ): Promise<T[]> {
+  ): Promise<CollectionModel> {
     // Items can be either models or ids
 
     if (!path) {
@@ -206,16 +211,34 @@ export default class ModelCollection<T extends Model> {
       return this.connection.request({
         method: 'GET',
         path,
-        qs: { ...params, offset, limit },
+        qs: { ...params, cursor, limit },
         baseUrl: this.baseUrl,
       });
     }
 
-    return this.getModelCollection(params, offset, limit, path);
+    return this.getModelCollection(params, cursor, limit, path);
   }
 
   protected createModel(json: Record<string, unknown>): T {
     return new this.modelClass().fromJSON(json) as T;
+  }
+  protected createCollectionModel(
+    json: Record<string, unknown>
+  ): CollectionModel {
+    const requestID: string =
+      typeof json.request_id === 'string' ? json.request_id : '';
+    const nextCursor: string =
+      typeof json.next_cursor === 'string' ? json.next_cursor : '';
+    const dataRaw = json.data as [];
+    const data = dataRaw.map(json => {
+      return this.createModel(json);
+    });
+    const collectionModel: CollectionModel = {
+      requestID,
+      nextCursor,
+      data,
+    };
+    return collectionModel;
   }
 
   private getModel(
@@ -237,21 +260,19 @@ export default class ModelCollection<T extends Model> {
 
   private getModelCollection(
     params: Record<string, unknown>,
-    offset: number,
+    cursor: string,
     limit: number,
     path: string
-  ): Promise<T[]> {
+  ): Promise<CollectionModel> {
     return this.connection
       .request({
         method: 'GET',
         path,
-        qs: { ...params, offset, limit },
+        qs: { ...params, cursor, limit },
         baseUrl: this.baseUrl,
       })
-      .then((jsonArray: []) => {
-        const models = jsonArray.map(json => {
-          return this.createModel(json);
-        });
+      .then(json => {
+        const models = this.createCollectionModel(json);
         return Promise.resolve(models);
       });
   }

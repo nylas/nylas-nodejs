@@ -54,12 +54,12 @@ export default class RestfulModelCollection<
       return Promise.reject(err);
     }
 
-    return this.getItems(params, 0, 1)
+    return this.getItems(params, '', 1)
       .then(items => {
         if (callback) {
-          callback(null, items[0]);
+          callback(null, items.data[0] as T);
         }
-        return Promise.resolve(items[0]);
+        return Promise.resolve(items.data[0] as T);
       })
       .catch(err => {
         if (callback) {
@@ -94,10 +94,10 @@ export default class RestfulModelCollection<
 
     params.q = query;
     const limit = (params.limit as number) || 40;
-    const offset = params.offset as number;
+    const cursor = params.cursor as string;
     const path = `${this.path()}/search`;
 
-    return this.range({ params, offset, limit, path });
+    return this.range({ params, cursor, limit, path });
   }
 
   delete(
