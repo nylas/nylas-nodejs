@@ -16,7 +16,7 @@ jest.mock('node-fetch', () => {
 
 describe('Message', () => {
   let testContext;
-
+  const testGrantId = '123'
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
@@ -24,7 +24,7 @@ describe('Message', () => {
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = nylasClient.with('123');
+    testContext.connection = nylasClient.with(testGrantId);
     jest.spyOn(testContext.connection, 'request');
 
     const response = receivedBody => {
@@ -63,7 +63,7 @@ describe('Message', () => {
       return testContext.message.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/messages/4333'
+          `https://api.nylas.com/grants/${testGrantId}/messages/4333`
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
@@ -82,7 +82,7 @@ describe('Message', () => {
       return testContext.message.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/messages/4333'
+          `https://api.nylas.com/grants/${testGrantId}/messages/4333`
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
@@ -101,7 +101,7 @@ describe('Message', () => {
       return testContext.message.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/messages/4333'
+          `https://api.nylas.com/grants/${testGrantId}/messages/4333`
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
@@ -141,7 +141,7 @@ describe('Message', () => {
       return testContext.message.getRaw().then(rawMessage => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/messages/4333'
+          `https://api.nylas.com/grants/${testGrantId}/messages/4333`
         );
         expect(options.method).toEqual('GET');
         expect(options.headers['message/rfc822']).toEqual();

@@ -14,7 +14,7 @@ jest.mock('node-fetch', () => {
 
 describe('Draft', () => {
   let testContext;
-
+  const testGrantId = '123'
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
@@ -22,7 +22,7 @@ describe('Draft', () => {
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = nylasClient.with('123');
+    testContext.connection = nylasClient.with(testGrantId);
     jest.spyOn(testContext.connection, 'request');
 
     const response = receivedBody => {
@@ -45,7 +45,7 @@ describe('Draft', () => {
       testContext.draft.id = undefined;
       return testContext.draft.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/drafts');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/drafts`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           to: [],
@@ -77,7 +77,7 @@ describe('Draft', () => {
       return testContext.draft.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/drafts/id-1234'
+          `https://api.nylas.com/grants/${testGrantId}/drafts/id-1234`
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
@@ -171,7 +171,7 @@ describe('Draft', () => {
         return testContext.draft.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/drafts'
+            `https://api.nylas.com/grants/${testGrantId}/drafts`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -209,7 +209,7 @@ describe('Draft', () => {
         return testContext.draft.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/drafts'
+            `https://api.nylas.com/grants/${testGrantId}/drafts`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -252,7 +252,7 @@ describe('Draft', () => {
         return testContext.draft.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/drafts'
+            `https://api.nylas.com/grants/${testGrantId}/drafts`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -302,7 +302,7 @@ describe('Draft', () => {
         return testContext.draft.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/drafts'
+            `https://api.nylas.com/grants/${testGrantId}/drafts`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -345,7 +345,7 @@ describe('Draft', () => {
         draft.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/drafts'
+            `https://api.nylas.com/grants/${testGrantId}/drafts`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -371,7 +371,7 @@ describe('Draft', () => {
       testContext.draft.version = 2;
       return testContext.draft.send().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/send');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/send`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           draft_id: 'id-1234',
@@ -387,7 +387,7 @@ describe('Draft', () => {
       testContext.draft.version = 2;
       return testContext.draft.send({ opens: true }).then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/send');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/send`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           draft_id: 'id-1234',
@@ -404,7 +404,7 @@ describe('Draft', () => {
       testContext.draft.subject = 'Test Subject';
       return testContext.draft.send().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/send');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/send`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           to: [],
@@ -434,7 +434,7 @@ describe('Draft', () => {
 
     const evaluateTracking = () => {
       const options = testContext.connection.request.mock.calls[0][0];
-      expect(options.url.toString()).toEqual('https://api.nylas.com/send');
+      expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/send`);
       expect(options.method).toEqual('POST');
       expect(JSON.parse(options.body)).toEqual({
         to: [],
@@ -509,7 +509,7 @@ Would you like to grab coffee @ 2pm this Thursday?`;
       });
       draft.send().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/send');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/send`);
         expect(options.method).toEqual('POST');
         expect(options.body).toEqual(msg);
         expect(options.headers['Content-Type']).toEqual('message/rfc822');

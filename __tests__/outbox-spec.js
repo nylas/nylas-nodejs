@@ -15,7 +15,7 @@ jest.mock('node-fetch', () => {
 
 describe('Outbox', () => {
   let testContext;
-
+  const testGrantId = '123'
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
@@ -23,7 +23,7 @@ describe('Outbox', () => {
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = nylasClient.with('123');
+    testContext.connection = nylasClient.with(testGrantId);
     jest.spyOn(testContext.connection, 'request');
 
     const response = receivedBody => {
@@ -63,7 +63,7 @@ describe('Outbox', () => {
       .then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/v2/outbox'
+          `https://api.nylas.com/grants/${testGrantId}/v2/outbox`
         );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
@@ -110,7 +110,7 @@ describe('Outbox', () => {
       .then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/v2/outbox/job-status-id'
+          `https://api.nylas.com/grants/${testGrantId}/v2/outbox/job-status-id`
         );
         expect(options.method).toEqual('PATCH');
         expect(JSON.parse(options.body)).toEqual({
@@ -144,7 +144,7 @@ describe('Outbox', () => {
     return testContext.connection.outbox.delete('job-status-id').then(() => {
       const options = testContext.connection.request.mock.calls[0][0];
       expect(options.url.toString()).toEqual(
-        'https://api.nylas.com/v2/outbox/job-status-id'
+        `https://api.nylas.com/grants/${testGrantId}/v2/outbox/job-status-id`
       );
       expect(options.method).toEqual('DELETE');
       done();
@@ -272,7 +272,7 @@ describe('Outbox', () => {
         .then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/v2/outbox/onboard/verified_status'
+            `https://api.nylas.com/grants/${testGrantId}/v2/outbox/onboard/verified_status`
           );
           expect(options.method).toEqual('GET');
           done();
@@ -285,7 +285,7 @@ describe('Outbox', () => {
         .then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/v2/outbox/onboard/subuser'
+            `https://api.nylas.com/grants/${testGrantId}/v2/outbox/onboard/subuser`
           );
           expect(options.method).toEqual('DELETE');
           expect(JSON.parse(options.body)).toEqual({

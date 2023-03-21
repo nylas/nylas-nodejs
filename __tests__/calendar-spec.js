@@ -12,7 +12,7 @@ jest.mock('node-fetch', () => {
 
 describe('Calendar', () => {
   let testContext;
-
+  const testGrantId = '123'
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
@@ -20,7 +20,7 @@ describe('Calendar', () => {
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = nylasClient.with('123');
+    testContext.connection = nylasClient.with(testGrantId);
     const calendarJSON = {
       account_id: 'eof2wrhqkl7kdwhy9hylpv9o9',
       description: 'All the holidays',
@@ -77,7 +77,7 @@ describe('Calendar', () => {
     testContext.calendar.id = undefined;
     testContext.calendar.save().then(calendar => {
       const options = testContext.connection.request.mock.calls[0][0];
-      expect(options.url.toString()).toEqual('https://api.nylas.com/calendars');
+      expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/calendars`);
       expect(options.method).toEqual('POST');
       expect(JSON.parse(options.body)).toEqual({
         name: 'Holidays',
@@ -101,7 +101,7 @@ describe('Calendar', () => {
     testContext.calendar.save().then(calendar => {
       const options = testContext.connection.request.mock.calls[0][0];
       expect(options.url.toString()).toEqual(
-        'https://api.nylas.com/calendars/8e570s302fdazx9zqwiuk9jqn'
+        `https://api.nylas.com/grants/${testGrantId}/calendars/8e570s302fdazx9zqwiuk9jqn`
       );
       expect(options.method).toEqual('PUT');
       expect(JSON.parse(options.body)).toEqual({
@@ -126,7 +126,7 @@ describe('Calendar', () => {
       .then(calendar => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/calendars/8e570s302fdazx9zqwiuk9jqn'
+          `https://api.nylas.com/grants/${testGrantId}/calendars/8e570s302fdazx9zqwiuk9jqn`
         );
         expect(options.method).toEqual('GET');
         expect(options.body).toBeUndefined();
@@ -140,7 +140,7 @@ describe('Calendar', () => {
     testContext.calendar.getJobStatus().then(() => {
       const options = testContext.connection.request.mock.calls[0][0];
       expect(options.url.toString()).toEqual(
-        'https://api.nylas.com/job-statuses/48pp6ijzrxpw9jors9ylnsxnf'
+        `https://api.nylas.com/grants/${testGrantId}/job-statuses/48pp6ijzrxpw9jors9ylnsxnf`
       );
       expect(options.method).toEqual('GET');
       expect(options.body).toBeUndefined();

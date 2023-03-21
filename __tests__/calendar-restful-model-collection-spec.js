@@ -13,16 +13,18 @@ jest.mock('node-fetch', () => {
 
 describe('CalendarRestfulModelCollection', () => {
   let testContext;
-  const testAccessToken = 'test-access-token';
+  const testGrantId = 'test-grant-id';
+  const testApiKey = 'test-api-key';
 
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
+      apiKey:testApiKey
     });
     testContext = {};
-    testContext.connection = nylasClient.with(testAccessToken);
+    testContext.connection = nylasClient.with(testGrantId);
     jest.spyOn(testContext.connection, 'request');
 
     const response = {
@@ -46,11 +48,11 @@ describe('CalendarRestfulModelCollection', () => {
     return testContext.connection.calendars.delete(calendarId).then(() => {
       const options = testContext.connection.request.mock.calls[0][0];
       expect(options.url.toString()).toEqual(
-        `https://api.nylas.com/calendars/${calendarId}`
+        `https://api.nylas.com/grants/${testGrantId}/calendars/${calendarId}`
       );
       expect(options.method).toEqual('DELETE');
       expect(options.headers['authorization']).toEqual(
-        `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString('base64')}`
+        `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString('base64')}`
       );
       done();
     });
@@ -104,7 +106,7 @@ describe('CalendarRestfulModelCollection', () => {
         .then(freeBusy => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/calendars/free-busy'
+            `https://api.nylas.com/grants/${testGrantId}/calendars/free-busy`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -122,7 +124,7 @@ describe('CalendarRestfulModelCollection', () => {
             ],
           });
           expect(options.headers['authorization']).toEqual(
-            `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString(
+            `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
               'base64'
             )}`
           );
@@ -183,7 +185,7 @@ describe('CalendarRestfulModelCollection', () => {
       return testContext.connection.calendars.availability(params).then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/calendars/availability'
+          `https://api.nylas.com/grants/${testGrantId}/calendars/availability`
         );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
@@ -212,7 +214,7 @@ describe('CalendarRestfulModelCollection', () => {
           ],
         });
         expect(options.headers['authorization']).toEqual(
-          `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString(
+          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
             'base64'
           )}`
         );
@@ -277,7 +279,7 @@ describe('CalendarRestfulModelCollection', () => {
         .then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/calendars/availability/consecutive'
+            `https://api.nylas.com/grants/${testGrantId}/calendars/availability/consecutive`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -321,7 +323,7 @@ describe('CalendarRestfulModelCollection', () => {
             ],
           });
           expect(options.headers['authorization']).toEqual(
-            `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString(
+            `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
               'base64'
             )}`
           );

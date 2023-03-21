@@ -12,7 +12,7 @@ jest.mock('node-fetch', () => {
 
 describe('Component', () => {
   let testContext;
-
+  const testGrantId = '123'
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
@@ -20,7 +20,7 @@ describe('Component', () => {
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = nylasClient.with('123');
+    testContext.connection = nylasClient.with(testGrantId);
     jest.spyOn(testContext.connection, 'request');
 
     const response = receivedBody => {
@@ -43,7 +43,7 @@ describe('Component', () => {
       return testContext.component.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/component/myClientId'
+          `https://api.nylas.com/grants/${testGrantId}/component/myClientId`
         );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
@@ -72,7 +72,7 @@ describe('Component', () => {
       return testContext.component.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/component/myClientId/abc-123'
+          `https://api.nylas.com/grants/${testGrantId}/component/myClientId/abc-123`
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
@@ -103,7 +103,7 @@ describe('Component', () => {
       return testContext.component.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/component/myClientId/abc-123'
+          `https://api.nylas.com/grants/${testGrantId}/component/myClientId/abc-123`
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
@@ -165,7 +165,7 @@ describe('Component', () => {
       return testContext.connection.component.list().then(componentList => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/component/myClientId?offset=0&limit=100'
+          `https://api.nylas.com/grants/${testGrantId}/component/myClientId?offset=0&limit=100`
         );
         expect(options.method).toEqual('GET');
         expect(componentList.length).toBe(1);
@@ -198,7 +198,7 @@ describe('Component', () => {
         .then(component => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/component/myClientId/abc-123'
+            `https://api.nylas.com/grants/${testGrantId}/component/myClientId/abc-123`
           );
           expect(options.method).toEqual('GET');
           expect(component.id).toEqual('abc-123');
@@ -228,7 +228,7 @@ describe('Component', () => {
       return testContext.connection.component.delete('abc-123').then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/component/myClientId/abc-123'
+          `https://api.nylas.com/grants/${testGrantId}/component/myClientId/abc-123`
         );
         expect(options.method).toEqual('DELETE');
         done();

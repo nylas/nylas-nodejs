@@ -13,16 +13,18 @@ jest.mock('node-fetch', () => {
 
 describe('Resource', () => {
   let testContext;
-  const testAccessToken = 'test-access-token';
+  const testGrantId = 'test-grant-id';
+  const testApiKey = 'test-api-key';
 
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
+      apiKey: testApiKey
     });
     testContext = {};
-    testContext.connection = nylasClient.with(testAccessToken);
+    testContext.connection = nylasClient.with(testGrantId);
     testContext.apiResponse = [
       {
         object: 'room_resource',
@@ -59,11 +61,11 @@ describe('Resource', () => {
       return testContext.connection.resources.list().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/resources' + defaultParams
+          `https://api.nylas.com/grants/${testGrantId}/resources${defaultParams}`
         );
         expect(options.method).toEqual('GET');
         expect(options.headers['authorization']).toEqual(
-          `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString(
+          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
             'base64'
           )}`
         );

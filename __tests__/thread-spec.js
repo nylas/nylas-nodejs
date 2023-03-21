@@ -15,7 +15,7 @@ jest.mock('node-fetch', () => {
 
 describe('Thread', () => {
   let testContext;
-
+  const testGrantId = '123'
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
@@ -23,7 +23,7 @@ describe('Thread', () => {
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = nylasClient.with('123');
+    testContext.connection = nylasClient.with(testGrantId);
     jest.spyOn(testContext.connection, 'request');
 
     const response = receivedBody => {
@@ -52,7 +52,7 @@ describe('Thread', () => {
       testContext.thread.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/threads/4333'
+          `https://api.nylas.com/grants/${testGrantId}/threads/4333`
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
@@ -71,7 +71,7 @@ describe('Thread', () => {
       testContext.thread.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/threads/4333'
+          `https://api.nylas.com/grants/${testGrantId}/threads/4333`
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({

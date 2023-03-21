@@ -12,7 +12,7 @@ jest.mock('node-fetch', () => {
 
 describe('Neural', () => {
   let testContext;
-
+  const testGrantId = '123'
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
@@ -20,7 +20,7 @@ describe('Neural', () => {
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = nylasClient.with('123');
+    testContext.connection = nylasClient.with(testGrantId);
     jest.spyOn(testContext.connection, 'request');
   });
 
@@ -328,7 +328,7 @@ describe('Neural', () => {
       const options = testContext.connection.request.mock.calls[1][0];
 
       expect(options.url.toString()).toEqual(
-        'https://api.nylas.com/neural/categorize/feedback'
+        `https://api.nylas.com/grants/${testGrantId}/neural/categorize/feedback`
       );
       expect(options.method).toEqual('POST');
       expect(JSON.parse(options.body)).toEqual({

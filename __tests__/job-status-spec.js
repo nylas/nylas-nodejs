@@ -15,16 +15,18 @@ jest.mock('node-fetch', () => {
 
 describe('Job Status', () => {
   let testContext;
-  const testAccessToken = 'test-access-token';
+  const testGrantId = 'test-grant-id';
+  const testApiKey = 'test-api-key';
 
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
+      apiKey: testApiKey
     });
     testContext = {};
-    testContext.connection = nylasClient.with(testAccessToken);
+    testContext.connection = nylasClient.with(testGrantId);
     testContext.listApiResponse = [
       {
         id: 'dcjq3eyd5svm7cnz055tb6cry',
@@ -87,11 +89,11 @@ describe('Job Status', () => {
       return testContext.connection.jobStatuses.list().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/job-statuses' + defaultParams
+          `https://api.nylas.com/grants/${testGrantId}/job-statuses${defaultParams}` 
         );
         expect(options.method).toEqual('GET');
         expect(options.headers['authorization']).toEqual(
-          `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString(
+          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
             'base64'
           )}`
         );
@@ -140,11 +142,11 @@ describe('Job Status', () => {
       testContext.connection.jobStatuses.find('a1b2c3').then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/job-statuses/a1b2c3'
+          `https://api.nylas.com/grants/${testGrantId}/job-statuses/a1b2c3`
         );
         expect(options.method).toEqual('GET');
         expect(options.headers['authorization']).toEqual(
-          `Basic ${Buffer.from(`${testAccessToken}:`, 'utf8').toString(
+          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
             'base64'
           )}`
         );

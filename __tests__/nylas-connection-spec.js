@@ -12,7 +12,7 @@ describe('NylasConnection', () => {
 
   beforeEach(() => {
     testContext = {};
-    testContext.connection = new NylasConnection('test-access-token', {
+    testContext.connection = new NylasConnection('test-grant-id', {
       clientId: 'foo',
     });
     config.setApiServer('http://nylas.com');

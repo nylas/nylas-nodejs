@@ -17,7 +17,7 @@ jest.mock('node-fetch', () => {
 
 describe('Event', () => {
   let testContext;
-
+  const testGrantId = '123'
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
@@ -25,7 +25,7 @@ describe('Event', () => {
       apiServer: 'https://api.nylas.com',
     });
     testContext = {};
-    testContext.connection = nylasClient.with('123');
+    testContext.connection = nylasClient.with(testGrantId);
     jest.spyOn(testContext.connection, 'request');
 
     const response = receivedBody => {
@@ -54,7 +54,7 @@ describe('Event', () => {
       testContext.event.id = undefined;
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -75,7 +75,7 @@ describe('Event', () => {
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/events/id-1234'
+          `https://api.nylas.com/grants/${testGrantId}/events/id-1234`
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
@@ -97,7 +97,7 @@ describe('Event', () => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.qs['notify_participants']).toEqual(true);
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/events?notify_participants=true'
+          `https://api.nylas.com/grants/${testGrantId}/events?notify_participants=true`
         );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
@@ -122,7 +122,7 @@ describe('Event', () => {
       testContext.event.recurrence = recurrence;
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -146,7 +146,7 @@ describe('Event', () => {
       testContext.event.when.object = 'timespan';
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -173,7 +173,7 @@ describe('Event', () => {
       testContext.event.end = 1409598000;
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -201,7 +201,7 @@ describe('Event', () => {
       testContext.event.end = '1912-06-23';
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -228,7 +228,7 @@ describe('Event', () => {
       testContext.event.end = '1852-11-27';
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -254,7 +254,7 @@ describe('Event', () => {
       testContext.event.when = { time: 1408875644 };
       return testContext.event.save().then(event => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -285,7 +285,7 @@ describe('Event', () => {
       });
       return testContext.event.save().then(event => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -315,7 +315,7 @@ describe('Event', () => {
       testContext.event.when.date = '1912-06-23';
       return testContext.event.save().then(event => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -346,7 +346,7 @@ describe('Event', () => {
       });
       return testContext.event.save().then(event => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -381,7 +381,7 @@ describe('Event', () => {
       });
       return testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -408,7 +408,7 @@ describe('Event', () => {
       testContext.event.metadata = { hello: 'world' };
       testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -430,7 +430,7 @@ describe('Event', () => {
       testContext.event.reminderMethod = 'popup';
       testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual('https://api.nylas.com/events');
+        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/events`);
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           calendar_id: '',
@@ -458,7 +458,7 @@ describe('Event', () => {
       testContext.event.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/events/reminder123'
+          `https://api.nylas.com/grants/${testGrantId}/events/reminder123`
         );
         expect(options.method).toEqual('PUT');
         expect(JSON.parse(options.body)).toEqual({
@@ -491,7 +491,7 @@ describe('Event', () => {
         testContext.event.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/events'
+            `https://api.nylas.com/grants/${testGrantId}/events`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -531,7 +531,7 @@ describe('Event', () => {
         testContext.event.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/events'
+            `https://api.nylas.com/grants/${testGrantId}/events`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -610,7 +610,7 @@ describe('Event', () => {
         notificationEvent.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/events'
+            `https://api.nylas.com/grants/${testGrantId}/events`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -655,7 +655,7 @@ describe('Event', () => {
         testContext.event.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/events'
+            `https://api.nylas.com/grants/${testGrantId}/events`
           );
           expect(options.method).toEqual('POST');
           expect(JSON.parse(options.body)).toEqual({
@@ -681,7 +681,7 @@ describe('Event', () => {
         testContext.event.save().then(() => {
           const options = testContext.connection.request.mock.calls[0][0];
           expect(options.url.toString()).toEqual(
-            'https://api.nylas.com/events'
+            `https://api.nylas.com/grants/${testGrantId}/events`
           );
           expect(options.method).toEqual('POST');
           expect('notifications' in JSON.parse(options.body)).toBe(false);
@@ -832,7 +832,7 @@ describe('Event', () => {
       return testContext.event.rsvp('yes', 'I will come.').then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/send-rsvp'
+          `https://api.nylas.com/grants/${testGrantId}/send-rsvp`
         );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
@@ -878,7 +878,7 @@ describe('Event', () => {
       return testContext.event.generateICS().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/events/to-ics'
+          `https://api.nylas.com/grants/${testGrantId}/events/to-ics`
         );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
@@ -910,7 +910,7 @@ describe('Event', () => {
       return testContext.event.generateICS(icsOptions).then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          'https://api.nylas.com/events/to-ics'
+          `https://api.nylas.com/grants/${testGrantId}/events/to-ics`
         );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
