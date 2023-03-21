@@ -94,8 +94,8 @@ class Nylas {
     if (!grantId) {
       throw new Error('This function requires a GrantID');
     }
-    this.apiServer = `${this.apiServer}/grants/${grantId}`
-    return new NylasConnection(this.apiKey, { clientId: this.clientId }); 
+    this.apiServer = `${this.apiServer}/grants/${grantId}`;
+    return new NylasConnection(this.apiKey, { clientId: this.clientId });
   }
 
   /**
