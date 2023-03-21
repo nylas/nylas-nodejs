@@ -21,7 +21,7 @@ describe('CalendarRestfulModelCollection', () => {
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
-      apiKey:testApiKey
+      apiKey: testApiKey,
     });
     testContext = {};
     testContext.connection = nylasClient.with(testGrantId);
@@ -124,9 +124,7 @@ describe('CalendarRestfulModelCollection', () => {
             ],
           });
           expect(options.headers['authorization']).toEqual(
-            `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
-              'base64'
-            )}`
+            `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString('base64')}`
           );
           expect(freeBusy.length).toEqual(1);
           freeBusy = freeBusy[0];
@@ -214,9 +212,7 @@ describe('CalendarRestfulModelCollection', () => {
           ],
         });
         expect(options.headers['authorization']).toEqual(
-          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
-            'base64'
-          )}`
+          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString('base64')}`
         );
         done();
       });
@@ -323,9 +319,7 @@ describe('CalendarRestfulModelCollection', () => {
             ],
           });
           expect(options.headers['authorization']).toEqual(
-            `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
-              'base64'
-            )}`
+            `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString('base64')}`
           );
           done();
         });

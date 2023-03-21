@@ -14,13 +14,13 @@ jest.mock('node-fetch', () => {
 describe('RestfulModelCollection', () => {
   let testContext;
   const testGrantId = 'test-grant-id';
-  const testApiKey = 'test-api-key'
+  const testApiKey = 'test-api-key';
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
-      apiKey: testApiKey
+      apiKey: testApiKey,
     });
     testContext = {};
     testContext.connection = nylasClient.with(testGrantId);
@@ -58,9 +58,7 @@ describe('RestfulModelCollection', () => {
         );
         expect(options.method).toEqual('GET');
         expect(options.headers['authorization']).toEqual(
-          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
-            'base64'
-          )}`
+          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString('base64')}`
         );
         done();
       });

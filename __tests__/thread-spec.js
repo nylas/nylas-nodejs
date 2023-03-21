@@ -15,7 +15,7 @@ jest.mock('node-fetch', () => {
 
 describe('Thread', () => {
   let testContext;
-  const testGrantId = '123'
+  const testGrantId = '123';
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',

@@ -12,7 +12,7 @@ jest.mock('node-fetch', () => {
 
 describe('Calendar', () => {
   let testContext;
-  const testGrantId = '123'
+  const testGrantId = '123';
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
@@ -77,7 +77,9 @@ describe('Calendar', () => {
     testContext.calendar.id = undefined;
     testContext.calendar.save().then(calendar => {
       const options = testContext.connection.request.mock.calls[0][0];
-      expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/calendars`);
+      expect(options.url.toString()).toEqual(
+        `https://api.nylas.com/grants/${testGrantId}/calendars`
+      );
       expect(options.method).toEqual('POST');
       expect(JSON.parse(options.body)).toEqual({
         name: 'Holidays',

@@ -12,7 +12,7 @@ jest.mock('node-fetch', () => {
 
 describe('Label', () => {
   let testContext;
-  const testGrantId = '123'
+  const testGrantId = '123';
   beforeEach(() => {
     const nylasClient = new Nylas({
       clientId: 'myClientId',
@@ -43,7 +43,9 @@ describe('Label', () => {
     test('should do a POST request if id is undefined', done => {
       return testContext.label.save().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
-        expect(options.url.toString()).toEqual(`https://api.nylas.com/grants/${testGrantId}/labels`);
+        expect(options.url.toString()).toEqual(
+          `https://api.nylas.com/grants/${testGrantId}/labels`
+        );
         expect(options.method).toEqual('POST');
         expect(JSON.parse(options.body)).toEqual({
           display_name: 'Label name',

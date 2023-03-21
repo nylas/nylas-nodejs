@@ -23,7 +23,7 @@ describe('Job Status', () => {
       clientId: 'myClientId',
       clientSecret: 'myClientSecret',
       apiServer: 'https://api.nylas.com',
-      apiKey: testApiKey
+      apiKey: testApiKey,
     });
     testContext = {};
     testContext.connection = nylasClient.with(testGrantId);
@@ -89,13 +89,11 @@ describe('Job Status', () => {
       return testContext.connection.jobStatuses.list().then(() => {
         const options = testContext.connection.request.mock.calls[0][0];
         expect(options.url.toString()).toEqual(
-          `https://api.nylas.com/grants/${testGrantId}/job-statuses${defaultParams}` 
+          `https://api.nylas.com/grants/${testGrantId}/job-statuses${defaultParams}`
         );
         expect(options.method).toEqual('GET');
         expect(options.headers['authorization']).toEqual(
-          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
-            'base64'
-          )}`
+          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString('base64')}`
         );
         done();
       });
@@ -146,9 +144,7 @@ describe('Job Status', () => {
         );
         expect(options.method).toEqual('GET');
         expect(options.headers['authorization']).toEqual(
-          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString(
-            'base64'
-          )}`
+          `Basic ${Buffer.from(`${testApiKey}:`, 'utf8').toString('base64')}`
         );
         done();
       });
