@@ -222,11 +222,11 @@ class Nylas {
   }
 
   /**
-   * Revoke a single access token
-   * @param AuthorizationOptions The access token & grant to revoke
+   * Revoke a single grant (access token)
+   * @param grantId The grant to revoke
    */
-  revoke(authOptions: AuthorizationOptions): Promise<void> {
-    return this.with(authOptions)
+  revoke(grantId: string): Promise<void> {
+    return this.with(grantId)
       .request({
         method: 'POST',
         path: '/oauth/revoke',
