@@ -1,6 +1,13 @@
 import fetch, { Request } from 'node-fetch';
 import { NylasConfig, OverridableNylasConfig } from './config';
 import NylasApiError from './schema/error';
+import {
+  ListResponse,
+  ListResponseSchema,
+  Response,
+  ResponseSchema,
+} from './schema/response';
+import { camelCase } from 'change-case';
 // import { AppendOptions } from 'form-data';
 
 const PACKAGE_JSON = require('../package.json');
@@ -134,7 +141,9 @@ export default class APIClient {
     });
   }
 
-  request<T>(options: RequestOptionsParams): Promise<T> {
+  request<T>(
+    options: RequestOptionsParams
+  ): Promise<Response<T> | ListResponse<T>> {
     const req = this.newRequest(options);
     return new Promise<any>((resolve, reject) => {
       return fetch(req)
@@ -161,10 +170,24 @@ export default class APIClient {
             } else {
               return response.text().then(text => {
                 try {
-                  // TODO: response validation here
-                  // TODO: pass request_id
-                  // TODO: convert everything to camelCase
-                  return resolve(JSON.parse(text));
+                  const responseJSON = JSON.parse(text);
+                  for (let key in responseJSON) {
+                    key = camelCase(key);
+                  }
+                  let isResponseValid;
+                  if (Array.isArray(responseJSON.data)) {
+                    isResponseValid = ListResponseSchema.safeParse(responseJSON)
+                      .success;
+                  } else {
+                    isResponseValid = ResponseSchema.safeParse(responseJSON)
+                      .success;
+                  }
+                  if (!isResponseValid) {
+                    return reject(
+                      new Error('Invalid response from the server.')
+                    );
+                  }
+                  return resolve(responseJSON);
                 } catch (e) {
                   return resolve(text);
                 }
