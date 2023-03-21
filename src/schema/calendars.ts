@@ -33,10 +33,10 @@ export type UpdateCalenderRequestBody = z.infer<
 
 export const CalendarSchema = z.object({
   name: z.string(),
-  description: z.string(),
-  location: z.string(),
+  description: z.string().nullable(),
+  location: z.string().nullable(),
   timezone: z.string(),
-  metadata: z.object({}),
+  metadata: z.record(z.string(), z.string()).optional(),
   id: z.string(),
   grantId: z.string(),
   object: APIObjects,

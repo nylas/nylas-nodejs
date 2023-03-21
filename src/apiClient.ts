@@ -206,6 +206,8 @@ export default class APIClient {
                   }
 
                   let validateSchema;
+                  // eslint-disable-next-line no-console
+                  console.log(response);
 
                   if (Array.isArray(response)) {
                     for (const item of response) {

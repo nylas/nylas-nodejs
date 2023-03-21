@@ -6,7 +6,11 @@ export function objKeysToCamelCase(
 ): Record<string, unknown> {
   const newObj = {} as Record<string, unknown>;
   for (const key in obj) {
-    if (typeof obj[key] === 'object') {
+    if (Array.isArray(obj[key])) {
+      newObj[camelCase(key)] = (obj[key] as any[]).map(item =>
+        objKeysToCamelCase(item)
+      );
+    } else if (typeof obj[key] === 'object' && obj[key] !== null) {
       newObj[camelCase(key)] = objKeysToCamelCase(
         obj[key] as Record<string, unknown>
       );
