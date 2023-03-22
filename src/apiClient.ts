@@ -172,6 +172,7 @@ export default class APIClient {
             } else {
               return response.text().then(text => {
                 try {
+                  // TODO: static typecheck this
                   if (!passthru.responseSchema) {
                     throw new Error(
                       'Need validation schema to validate response'

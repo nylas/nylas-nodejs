@@ -35,25 +35,6 @@ interface DestroyCalendarParams {
 }
 
 export class Calendars extends BaseResource {
-  public async find({
-    calendarId,
-    identifier,
-    overrides,
-  }: FindCalendarParams & Overrides): Promise<Response<Calendar>> {
-    const res = await this.apiClient.request<Response<Calendar>>(
-      {
-        method: 'GET',
-        path: `/v3/grants/${identifier}/calendars/${calendarId}`,
-        overrides,
-      },
-      {
-        responseSchema: CalendarSchema,
-      }
-    );
-
-    return res;
-  }
-
   public async list({
     identifier,
     queryParams,
@@ -64,6 +45,25 @@ export class Calendars extends BaseResource {
         method: 'GET',
         path: `/v3/grants/${identifier}/calendars`,
         queryParams,
+        overrides,
+      },
+      {
+        responseSchema: CalendarSchema,
+      }
+    );
+
+    return res;
+  }
+
+  public async find({
+    calendarId,
+    identifier,
+    overrides,
+  }: FindCalendarParams & Overrides): Promise<Response<Calendar>> {
+    const res = await this.apiClient.request<Response<Calendar>>(
+      {
+        method: 'GET',
+        path: `/v3/grants/${identifier}/calendars/${calendarId}`,
         overrides,
       },
       {
