@@ -5,8 +5,11 @@ import { Grants } from './grants';
 export default class Auth extends BaseResource {
   public grants: Grants;
 
+  apiClient: APIClient;
+
   constructor(apiClient: APIClient) {
     super(apiClient);
+    this.apiClient = apiClient;
     this.grants = new Grants(apiClient);
   }
 
