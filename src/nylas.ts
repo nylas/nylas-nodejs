@@ -1,9 +1,8 @@
 import APIClient from './apiClient';
-import { REGION_CONFIG, DEFAULT_REGION, NylasConfig } from './config';
+import { NylasConfig, DEFAULT_SERVER_URL } from './config';
 import { Calendars } from './resources/calendars';
 
 class Nylas {
-  serverUrl = REGION_CONFIG[DEFAULT_REGION].nylasAPIUrl;
   apiClient: APIClient;
 
   // TODO: remove from config?
@@ -13,16 +12,14 @@ class Nylas {
   public calendars: Calendars;
 
   constructor(config: NylasConfig) {
-    if (config.serverUrl) {
-      this.serverUrl = config.serverUrl;
-    }
-
     this.apiClient = new APIClient({
       apiKey: config.apiKey,
-      serverUrl: this.serverUrl,
+      serverUrl: config.serverUrl || DEFAULT_SERVER_URL,
     });
 
     this.calendars = new Calendars(this.apiClient);
+    // this.events = new Events(this.apiClient);
+    // etc.
 
     return this;
   }

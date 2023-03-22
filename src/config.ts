@@ -47,3 +47,5 @@ export const REGION_CONFIG: Record<Region, RegionConfig> = {
     nylasAPIUrl: 'https://api.eu.nylas.com',
   },
 };
+
+export const DEFAULT_SERVER_URL = REGION_CONFIG[DEFAULT_REGION].nylasAPIUrl;
