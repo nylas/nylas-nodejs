@@ -1,8 +1,11 @@
 import { Overrides } from '../config';
 import {
+  Availability,
+  AvailabilitySchema,
   Calendar,
   CalendarSchema,
   CreateCalenderRequestBody,
+  GetAvailabilityRequestBody,
   ListCalendersQueryParams,
   UpdateCalenderRequestBody,
 } from '../schema/calendars';
@@ -34,7 +37,32 @@ interface DestroyCalendarParams {
   calendarId: string;
 }
 
+interface GetAvailabilityParams {
+  identifier: string;
+  requestBody: GetAvailabilityRequestBody;
+}
+
 export class Calendars extends BaseResource {
+  public async getAvailability({
+    identifier,
+    requestBody,
+    overrides,
+  }: GetAvailabilityParams & Overrides): Promise<Response<Availability>> {
+    const res = await this.apiClient.request<Response<Availability>>(
+      {
+        method: 'POST',
+        path: `/v3/grants/${identifier}/calendars/availability`,
+        body: requestBody,
+        overrides,
+      },
+      {
+        responseSchema: AvailabilitySchema,
+      }
+    );
+
+    return res;
+  }
+
   public async list({
     identifier,
     queryParams,
