@@ -106,7 +106,6 @@ type Details = z.infer<typeof DetailsSchema>;
 type Autocreate = z.infer<typeof AutocreateSchema>;
 type Participant = z.infer<typeof ParticipantSchema>;
 type Recurrence = z.infer<typeof RecurrenceSchema>;
-type Reminder = z.infer<typeof RemindersSchema>;
 
 export interface ListEventQueryParams {
   showCancelled?: boolean;
@@ -145,6 +144,9 @@ export interface CreateEventRequestBody {
   calendarId: string;
   readOnly: boolean;
   roundRobinOrder: string[];
+  visibility: 'public' | 'private';
+  capacity: number;
+  hideParticipants: boolean;
 }
 
 export interface FindEventQueryParams {
@@ -152,6 +154,7 @@ export interface FindEventQueryParams {
 }
 
 export type UpdateEventQueryParams = CreateEventQueryParams;
+export type UpdateEventRequestBody = CreateEventRequestBody;
 
 export type DestroyEventQueryParams = CreateEventQueryParams;
 

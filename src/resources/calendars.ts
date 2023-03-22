@@ -31,7 +31,7 @@ interface UpdateCalendarParams {
 
 interface DestroyCalendarParams {
   identifier: string;
-  eventId: string;
+  calendarId: string;
 }
 
 export class Calendars extends BaseResource {
@@ -116,13 +116,13 @@ export class Calendars extends BaseResource {
 
   public async destroy({
     identifier,
-    eventId,
+    calendarId,
     overrides,
   }: DestroyCalendarParams & Overrides): Promise<null> {
     const res = await this.apiClient.request<null>(
       {
         method: 'DELETE',
-        path: `/v3/grants/${identifier}/events/${eventId}`,
+        path: `/v3/grants/${identifier}/calendars/${calendarId}`,
         overrides,
       },
       {}

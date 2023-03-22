@@ -2,8 +2,11 @@ import { z } from 'zod';
 import { APIObjects } from './utils';
 
 export interface ListCalendersQueryParams {
+  /** The maximum number of calendars to return. */
   limit?: number;
+  /** The page token. */
   pageToken?: string;
+  /** Metadata */
   metadataPair?: Record<string, string>;
 }
 
