@@ -11,39 +11,39 @@ import { BaseResource } from './baseResource';
 
 interface FindCalendarParams {
   calendarId: string;
-  grantId: string;
+  identifier: string;
 }
 interface ListCalendersParams {
-  grantId: string;
+  identifier: string;
   queryParams?: ListCalenderParams;
 }
 
 interface CreateCalendarParams {
-  grantId: string;
+  identifier: string;
   requestBody: CreateCalenderRequestBody;
 }
 
 interface UpdateCalendarParams {
   calendarId: string;
-  grantId: string;
+  identifier: string;
   requestBody: UpdateCalenderRequestBody;
 }
 
 interface DestroyCalendarParams {
-  grantId: string;
+  identifier: string;
   eventId: string;
 }
 
 export class Calendars extends BaseResource {
   public async find({
     calendarId,
-    grantId,
+    identifier,
     overrides,
   }: FindCalendarParams & Overrides): Promise<Response<Calendar>> {
     const res = await this.apiClient.request<Response<Calendar>>(
       {
         method: 'GET',
-        path: `/v3/grants/${grantId}/calendars/${calendarId}`,
+        path: `/v3/grants/${identifier}/calendars/${calendarId}`,
         overrides,
       },
       {
@@ -55,14 +55,14 @@ export class Calendars extends BaseResource {
   }
 
   public async list({
-    grantId,
+    identifier,
     queryParams,
     overrides,
   }: ListCalendersParams & Overrides): Promise<ListResponse<Calendar>> {
     const res = await this.apiClient.request<ListResponse<Calendar>>(
       {
         method: 'GET',
-        path: `/v3/grants/${grantId}/calendars`,
+        path: `/v3/grants/${identifier}/calendars`,
         queryParams,
         overrides,
       },
@@ -75,14 +75,14 @@ export class Calendars extends BaseResource {
   }
 
   public async create({
-    grantId,
+    identifier,
     requestBody,
     overrides,
   }: CreateCalendarParams & Overrides): Promise<Response<Calendar>> {
     const res = await this.apiClient.request<Response<Calendar>>(
       {
         method: 'POST',
-        path: `/v3/grants/${grantId}/calendars`,
+        path: `/v3/grants/${identifier}/calendars`,
         body: requestBody,
         overrides,
       },
@@ -95,14 +95,14 @@ export class Calendars extends BaseResource {
 
   public async update({
     calendarId,
-    grantId,
+    identifier,
     requestBody,
     overrides,
   }: UpdateCalendarParams & Overrides): Promise<Response<Calendar>> {
     const res = await this.apiClient.request<Response<Calendar>>(
       {
         method: 'PUT',
-        path: `/v3/grants/${grantId}/calendars/${calendarId}`,
+        path: `/v3/grants/${identifier}/calendars/${calendarId}`,
         body: requestBody,
         overrides,
       },
@@ -115,14 +115,14 @@ export class Calendars extends BaseResource {
   }
 
   public async destroy({
-    grantId,
+    identifier,
     eventId,
     overrides,
   }: DestroyCalendarParams & Overrides): Promise<null> {
     const res = await this.apiClient.request<null>(
       {
         method: 'DELETE',
-        path: `/v3/grants/${grantId}/events/${eventId}`,
+        path: `/v3/grants/${identifier}/events/${eventId}`,
         overrides,
       },
       {}
