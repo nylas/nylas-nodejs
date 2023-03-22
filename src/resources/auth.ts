@@ -1,6 +1,15 @@
+import APIClient from '../apiClient';
 import { BaseResource } from './baseResource';
+import { Grants } from './grants';
 
 export default class Auth extends BaseResource {
+  public grants: Grants;
+
+  constructor(apiClient: APIClient) {
+    super(apiClient);
+    this.grants = new Grants(apiClient);
+  }
+
   /**
    * Exchange an authorization code for an access token
    * @param code Application details to overwrite
