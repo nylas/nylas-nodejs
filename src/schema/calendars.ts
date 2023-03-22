@@ -1,35 +1,24 @@
 import { z } from 'zod';
 import { APIObjects } from './utils';
 
-export const CreateCalenderRequestBodySchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  location: z.string(),
-  timezone: z.string(),
-  metadata: z.record(z.string(), z.string()),
-});
+export interface ListCalendersQueryParams {
+  limit?: number;
+  pageToken?: string;
+  metadataPair?: string;
+}
 
-export type CreateCalenderRequestBody = z.infer<
-  typeof CreateCalenderRequestBodySchema
->;
+export interface CreateCalenderRequestBody {
+  name: string;
+  description: string;
+  location: string;
+  timezone: string;
+  metadata: Record<string, string>;
+}
 
-export const ListCalenderParamsSchema = z.object({
-  limit: z.number().optional(),
-  pageToken: z.string().optional(),
-  metadataPair: z.string().optional(),
-});
-
-export type ListCalenderParams = z.infer<typeof ListCalenderParamsSchema>;
-
-export const UpdateCalenderRequestBodySchema = z.object({
-  ...CreateCalenderRequestBodySchema.shape,
-  hexColor: z.string().optional(),
-  hexForegroundColor: z.string().optional(),
-});
-
-export type UpdateCalenderRequestBody = z.infer<
-  typeof UpdateCalenderRequestBodySchema
->;
+export interface UpdateCalenderRequestBody extends CreateCalenderRequestBody {
+  hexColor?: string;
+  hexForegroundColor?: string;
+}
 
 export const CalendarSchema = z.object({
   name: z.string(),
