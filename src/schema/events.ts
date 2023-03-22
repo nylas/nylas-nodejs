@@ -98,71 +98,69 @@ const RemindersSchema = z.object({
   ]),
 });
 
-export const ListEventParamSchema = z.object({
-  showCancelled: z.boolean().optional(),
-  limit: z.number().optional(),
-  pageToken: z.string().optional(),
-  eventId: z.string().optional(),
-  calendarId: z.string(),
-  title: z.string().optional(),
-  description: z.string().optional(),
-  location: z.string().optional(),
-  end: z.string().optional(),
-  start: z.string().optional(),
-  metadataPair: z.string().optional(),
-  expandRecurring: z.boolean().optional(),
-  busy: z.boolean().optional(),
-  particpants: z.string().optional(),
-});
+type Time = z.infer<typeof TimeSchema>;
+type Timespan = z.infer<typeof TimespanSchema>;
+type Date = z.infer<typeof DateSchema>;
+type Datespan = z.infer<typeof DatespanSchema>;
+type Details = z.infer<typeof DetailsSchema>;
+type Autocreate = z.infer<typeof AutocreateSchema>;
+type Participant = z.infer<typeof ParticipantSchema>;
+type Recurrence = z.infer<typeof RecurrenceSchema>;
+type Reminder = z.infer<typeof RemindersSchema>;
 
-export type ListEventParams = z.infer<typeof ListEventParamSchema>;
+export interface ListEventQueryParams {
+  showCancelled?: boolean;
+  limit?: number;
+  pageToken?: string;
+  eventId?: string;
+  calendarId: string;
+  title?: string;
+  description?: string;
+  location?: string;
+  end?: string;
+  start?: string;
+  metadataPair?: Record<string, string>;
+  expandRecurring?: boolean;
+  busy?: boolean;
+  particpants?: string;
+}
 
-const CreateEventQueryParamsSchema = z.object({
-  notifyParticipants: z.boolean(),
-  calendarId: z.string(),
-});
+export interface CreateEventQueryParams {
+  calendarId: string;
+  notifyParticipants?: boolean;
+}
 
-export type CreateEventQueryParams = z.infer<
-  typeof CreateEventQueryParamsSchema
->;
+export interface CreateEventRequestBody {
+  title: string;
+  busy: boolean;
+  description: string;
+  when: Time | Timespan | Date | Datespan;
+  location: string;
+  conferencing: Details | Autocreate;
+  reminderMinutes: string;
+  reminderMethod: string;
+  metadata: Record<string, string>;
+  participants: Participant[];
+  recurrence: Recurrence;
+  calendarId: string;
+  readOnly: boolean;
+  roundRobinOrder: string[];
+}
 
-export const CreateEventRequestBodySchema = z.object({
-  title: z
-    .string()
-    .min(1)
-    .max(1024),
-  busy: z.boolean(),
-  description: z.string(),
-  when: z.union([TimeSchema, TimespanSchema, DateSchema, DatespanSchema]),
-  location: z.string().max(255),
-  conferencing: z.union([DetailsSchema, AutocreateSchema]),
-  reminderMinutes: z.string(),
-  reminderMethod: z.string(),
-  metadata: z.record(z.string()),
-  participants: z.array(ParticipantSchema),
-  recurrence: RecurrenceSchema,
-  calendarId: z.string(),
-  readOnly: z.boolean(),
-  roundRobinOrder: z.array(z.string()),
-});
+export interface FindEventQueryParams {
+  calendarId: string;
+}
 
-export type CreateEventRequestBody = z.infer<
-  typeof CreateEventRequestBodySchema
->;
+export type UpdateEventQueryParams = CreateEventQueryParams;
+
+export type DestroyEventQueryParams = CreateEventQueryParams;
 
 export const EventSchema = z.object({
   busy: z.boolean(),
-  description: z
-    .string()
-    .min(0)
-    .max(8192)
-    .optional(),
+  description: z.string().optional(),
   location: z.string().optional(),
   participants: z.array(ParticipantSchema).nonempty(),
-  title: z
-    .string()
-    .min(1)
-    .max(1024),
+  title: z.string(),
   when: z.union([TimeSchema, TimespanSchema, DateSchema, DatespanSchema]),
   conferencing: z.union([DetailsSchema, AutocreateSchema]),
   recurrence: RecurrenceSchema,
