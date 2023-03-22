@@ -4,7 +4,7 @@ import { APIObjects } from './utils';
 export interface ListCalendersQueryParams {
   limit?: number;
   pageToken?: string;
-  metadataPair?: string;
+  metadataPair?: Record<string, string>;
 }
 
 export interface CreateCalenderRequestBody {
