@@ -20,7 +20,7 @@ export interface RequestOptionsParams {
   path: string;
   method: string;
   headers?: Record<string, string>;
-  queryParams?: Record<string, unknown>;
+  queryParams?: Record<string, any>;
   body?: any;
   overrides?: OverridableNylasConfig;
   // json?: boolean;
@@ -28,7 +28,7 @@ export interface RequestOptionsParams {
 }
 
 interface OptionsPassthru<D extends ZodType> {
-  responseSchemaToValidate?: D;
+  responseSchema?: D;
 }
 
 interface RequestOptions {
@@ -173,7 +173,7 @@ export default class APIClient {
             } else {
               return response.text().then(text => {
                 try {
-                  if (!passthru.responseSchemaToValidate) {
+                  if (!passthru.responseSchema) {
                     throw new Error(
                       'Need validation schema to validate response'
                     );
@@ -209,7 +209,7 @@ export default class APIClient {
 
                   if (Array.isArray(response)) {
                     for (const item of response) {
-                      const validateItem = passthru.responseSchemaToValidate.safeParse(
+                      const validateItem = passthru.responseSchema.safeParse(
                         item
                       );
                       if (!validateItem.success) {
@@ -220,7 +220,7 @@ export default class APIClient {
                       resolve(camelCaseRes as T);
                     }
                   } else {
-                    validateSchema = passthru.responseSchemaToValidate.safeParse(
+                    validateSchema = passthru.responseSchema.safeParse(
                       response
                     );
                     if (!validateSchema.success) {
