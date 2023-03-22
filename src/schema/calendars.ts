@@ -16,7 +16,7 @@ export type CreateCalenderRequestBody = z.infer<
 export const ListCalenderParamsSchema = z.object({
   limit: z.number().optional(),
   pageToken: z.string().optional(),
-  metadataPair: z.string().optional(),
+  metadataPair: z.record(z.string(), z.string()).optional(),
 });
 
 export type ListCalenderParams = z.infer<typeof ListCalenderParamsSchema>;

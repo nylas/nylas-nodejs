@@ -9,7 +9,7 @@ import {
   AllowedResponse,
   AllowedResponseInnerType,
 } from './schema/response';
-import { objKeysToCamelCase } from './utils';
+import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
 // import { AppendOptions } from 'form-data';
 
 const PACKAGE_JSON = require('../package.json');
@@ -61,21 +61,22 @@ export default class APIClient {
   private setRequestUrl({
     overrides,
     path,
-    queryParams: qs,
+    queryParams,
   }: RequestOptionsParams): URL {
     const url = new URL(`${overrides?.serverUrl || this.serverUrl}${path}`);
 
-    // TODO: refactor this not manually turn params into query string
-    // please put in separate function :)
-    if (qs) {
-      for (const [key, value] of Object.entries(qs)) {
-        // For convenience, If `expanded` param is provided, convert to view:
-        // 'expanded' api option
-        if (key === 'expanded') {
-          if (value === true) {
-            url.searchParams.set('view', 'expanded');
-          }
-        } else if (key == 'metadata_pair') {
+    return this.setQueryStrings(url, queryParams);
+  }
+
+  private setQueryStrings(
+    url: URL,
+    queryParams?: Record<string, unknown>
+  ): URL {
+    if (queryParams) {
+      const snakeCaseParams = objKeysToSnakeCase(queryParams);
+      // TODO: refactor this not manually turn params into query string
+      for (const [key, value] of Object.entries(snakeCaseParams)) {
+        if (key == 'metadata_pair') {
           // The API understands a metadata_pair filter in the form of:
           // <key>:<value>
           for (const item in value as Record<string, string>) {
@@ -84,15 +85,12 @@ export default class APIClient {
               `${item}:${(value as Record<string, string>)[item]}`
             );
           }
-        } else if (Array.isArray(value)) {
-          for (const item of value) {
-            url.searchParams.append(key, item);
-          }
         } else {
           url.searchParams.set(key, value as string);
         }
       }
     }
+
     return url;
   }
 
@@ -129,6 +127,7 @@ export default class APIClient {
     // } else
 
     // TODO: function to set request body
+    // TODO: convert to snake case
     if (optionParams.body) {
       requestOptions.body = JSON.stringify(optionParams.body);
       requestOptions.headers['Content-Type'] = 'application/json';
