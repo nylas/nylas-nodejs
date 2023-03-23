@@ -2,7 +2,7 @@ import APIClient from '../apiClient';
 import { BaseResource } from './baseResource';
 import { Grants } from './grants';
 
-export default class Auth extends BaseResource {
+export class Auth extends BaseResource {
   public grants: Grants;
 
   apiClient: APIClient;
