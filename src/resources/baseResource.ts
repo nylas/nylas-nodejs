@@ -2,7 +2,32 @@
 import { ZodType } from 'zod';
 import APIClient from '../apiClient';
 import { OverridableNylasConfig } from '../config';
-import { List, ListResponse } from '../schema/response';
+import { List, ListResponse, Response } from '../schema/response';
+
+interface ListRequestParams<T> {
+  path: string;
+  responseSchema: ZodType<T>;
+  overrides?: OverridableNylasConfig;
+  queryParams?: Record<string, any>;
+}
+
+interface FindRequestParams<T> {
+  path: string;
+  responseSchema: ZodType<T>;
+  overrides?: OverridableNylasConfig;
+}
+
+interface PayloadRequestParams<T> {
+  path: string;
+  responseSchema: ZodType<T>;
+  requestBody: Record<string, any>;
+  overrides?: OverridableNylasConfig;
+}
+
+interface DestroyRequestParams {
+  path: string;
+  overrides?: OverridableNylasConfig;
+}
 
 export abstract class BaseResource {
   protected apiClient: APIClient;
@@ -16,12 +41,7 @@ export abstract class BaseResource {
     path,
     overrides,
     responseSchema,
-  }: {
-    queryParams?: Record<string, any>;
-    path: string;
-    overrides?: OverridableNylasConfig;
-    responseSchema: ZodType<T>;
-  }): Promise<List<T>> {
+  }: ListRequestParams<T>): Promise<List<T>> {
     const res = await this.apiClient.request<ListResponse<T>>(
       {
         method: 'GET',
@@ -51,5 +71,71 @@ export abstract class BaseResource {
       ...res,
       next,
     };
+  }
+
+  protected _find<T>({
+    path,
+    responseSchema,
+    overrides,
+  }: FindRequestParams<T>): Promise<Response<T>> {
+    return this.apiClient.request<Response<T>>(
+      {
+        method: 'GET',
+        path,
+        overrides,
+      },
+      {
+        responseSchema,
+      }
+    );
+  }
+
+  protected _create<T>({
+    path,
+    responseSchema,
+    requestBody,
+    overrides,
+  }: PayloadRequestParams<T>): Promise<Response<T>> {
+    return this.apiClient.request<Response<T>>(
+      {
+        method: 'POST',
+        path,
+        body: requestBody,
+        overrides,
+      },
+      {
+        responseSchema,
+      }
+    );
+  }
+
+  protected _update<T>({
+    path,
+    responseSchema,
+    requestBody,
+    overrides,
+  }: PayloadRequestParams<T>): Promise<Response<T>> {
+    return this.apiClient.request<Response<T>>(
+      {
+        method: 'PUT',
+        path,
+        body: requestBody,
+        overrides,
+      },
+      {
+        responseSchema,
+      }
+    );
+  }
+
+  protected _destroy({ path, overrides }: DestroyRequestParams): Promise<null> {
+    return this.apiClient.request<null>(
+      {
+        method: 'DELETE',
+        path,
+        overrides,
+      },
+      {}
+    );
   }
 }
