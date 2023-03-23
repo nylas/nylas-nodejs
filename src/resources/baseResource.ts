@@ -26,6 +26,7 @@ interface PayloadRequestParams<T> {
 
 interface DestroyRequestParams {
   path: string;
+  queryParams?: Record<string, any>;
   overrides?: OverridableNylasConfig;
 }
 
@@ -128,11 +129,16 @@ export abstract class BaseResource {
     );
   }
 
-  protected _destroy({ path, overrides }: DestroyRequestParams): Promise<null> {
+  protected _destroy({
+    path,
+    queryParams,
+    overrides,
+  }: DestroyRequestParams): Promise<null> {
     return this.apiClient.request<null>(
       {
         method: 'DELETE',
         path,
+        queryParams,
         overrides,
       },
       {}

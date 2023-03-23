@@ -9,7 +9,7 @@ import {
   UpdateEventQueryParams,
   UpdateEventRequestBody,
 } from '../schema/events';
-import { Response } from '../schema/response';
+import { List, Response } from '../schema/response';
 import { BaseResource } from './baseResource';
 
 interface FindEventParams {
@@ -40,43 +40,29 @@ interface DestroyEventParams {
   queryParams: DestroyEventQueryParams;
 }
 export class Events extends BaseResource {
-  // public async list({
-  //   identifier,
-  //   queryParams,
-  //   overrides,
-  // }: ListEventParams & Overrides): Promise<ListResponse<Event>> {
-  //   const res = await this.apiClient.request<ListResponse<Event>>(
-  //     {
-  //       method: 'GET',
-  //       path: `/v3/grants/${identifier}/events`,
-  //       queryParams,
-  //       overrides,
-  //     },
-  //     {
-  //       responseSchema: EventSchema,
-  //     }
-  //   );
+  public list({
+    identifier,
+    queryParams,
+    overrides,
+  }: ListEventParams & Overrides): Promise<List<Event>> {
+    return super._list({
+      queryParams,
+      path: `/v3/grants/${identifier}/events`,
+      overrides,
+      responseSchema: EventSchema,
+    });
+  }
 
-  //   return res;
-  // }
-
-  public async find({
+  public find({
     identifier,
     eventId,
     overrides,
   }: FindEventParams & Overrides): Promise<Response<Event>> {
-    const res = await this.apiClient.request<Response<Event>>(
-      {
-        method: 'GET',
-        path: `/v3/grants/${identifier}/events/${eventId}`,
-        overrides,
-      },
-      {
-        responseSchema: EventSchema,
-      }
-    );
-
-    return res;
+    return super._find({
+      path: `/v3/grants/${identifier}/events/${eventId}`,
+      responseSchema: EventSchema,
+      overrides,
+    });
   }
 
   public async create({
@@ -84,18 +70,12 @@ export class Events extends BaseResource {
     requestBody,
     overrides,
   }: CreateEventParams & Overrides): Promise<Response<Event>> {
-    const res = await this.apiClient.request<Response<Event>>(
-      {
-        method: 'POST',
-        path: `/v3/grants/${identifier}/events`,
-        body: requestBody,
-        overrides,
-      },
-      {
-        responseSchema: EventSchema,
-      }
-    );
-    return res;
+    return super._create({
+      path: `/v3/grants/${identifier}/events`,
+      responseSchema: EventSchema,
+      requestBody,
+      overrides,
+    });
   }
 
   public async update({
@@ -104,19 +84,12 @@ export class Events extends BaseResource {
     requestBody,
     overrides,
   }: UpdateEventParams & Overrides): Promise<Response<Event>> {
-    const res = await this.apiClient.request<Response<Event>>(
-      {
-        method: 'PUT',
-        path: `/v3/grants/${identifier}/events/${eventId}`,
-        body: requestBody,
-        overrides,
-      },
-      {
-        responseSchema: EventSchema,
-      }
-    );
-
-    return res;
+    return super._update({
+      path: `/v3/grants/${identifier}/events/${eventId}`,
+      responseSchema: EventSchema,
+      requestBody,
+      overrides,
+    });
   }
 
   public async destroy({
@@ -125,16 +98,10 @@ export class Events extends BaseResource {
     queryParams,
     overrides,
   }: DestroyEventParams & Overrides): Promise<null> {
-    const res = await this.apiClient.request<null>(
-      {
-        method: 'DELETE',
-        path: `/v3/grants/${identifier}/events/${eventId}`,
-        queryParams,
-        overrides,
-      },
-      {}
-    );
-
-    return res;
+    return super._destroy({
+      path: `/v3/grants/${identifier}/events/${eventId}`,
+      queryParams,
+      overrides,
+    });
   }
 }
