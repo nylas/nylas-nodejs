@@ -11,7 +11,7 @@ export class Grants extends BaseResource {
   public async list({
     queryParams,
     overrides,
-  }: ListGrantsParams & Overrides): Promise<List<Grant>> {
+  }: ListGrantsParams & Overrides = {}): Promise<List<Grant>> {
     return super._list<Grant>({
       queryParams,
       path: `/v3/grants`,
