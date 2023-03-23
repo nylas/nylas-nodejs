@@ -1,5 +1,18 @@
 import { z } from 'zod';
 
+export interface ListGrantsQueryParams {
+  limit?: number;
+  offset?: number;
+  sortBy?: 'createdAt' | 'updatedAt';
+  orderBy?: 'asc' | 'desc';
+  since?: number;
+  before?: number;
+  email?: string;
+  grantStatus?: string;
+  ip?: string;
+  provider?: string;
+}
+
 export const GrantSchema = z.object({
   id: z.string(),
   provider: z.string(),
