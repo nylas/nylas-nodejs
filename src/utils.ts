@@ -9,9 +9,13 @@ function convertCase(
   const newObj = {} as Record<string, unknown>;
   for (const key in obj) {
     if (Array.isArray(obj[key])) {
-      newObj[casingFunction(key)] = (obj[key] as any[]).map(item =>
-        convertCase(item, casingFunction)
-      );
+      newObj[casingFunction(key)] = (obj[key] as any[]).map(item => {
+        if (typeof item === 'object') {
+          return convertCase(item, casingFunction);
+        } else {
+          return item;
+        }
+      });
     } else if (typeof obj[key] === 'object' && obj[key] !== null) {
       newObj[casingFunction(key)] = convertCase(
         obj[key] as Record<string, unknown>,
