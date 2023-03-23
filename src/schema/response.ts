@@ -35,6 +35,15 @@ export interface ListResponse<T> {
   error?: APIErrorResponse;
 }
 
+export interface ListQueryParams {
+  limit?: number;
+  pageToken?: string;
+}
+
+export interface List<T> extends ListResponse<T> {
+  next?: () => Promise<List<T>>;
+}
+
 export type AllowedResponse<T> = Response<T> | ListResponse<T> | null;
 export type AllowedResponseInnerType<T> = T extends AllowedResponse<infer R>
   ? R

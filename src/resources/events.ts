@@ -9,7 +9,7 @@ import {
   UpdateEventQueryParams,
   UpdateEventRequestBody,
 } from '../schema/events';
-import { ListResponse, Response } from '../schema/response';
+import { Response } from '../schema/response';
 import { BaseResource } from './baseResource';
 
 interface FindEventParams {
@@ -40,25 +40,25 @@ interface DestroyEventParams {
   queryParams: DestroyEventQueryParams;
 }
 export class Events extends BaseResource {
-  public async list({
-    identifier,
-    queryParams,
-    overrides,
-  }: ListEventParams & Overrides): Promise<ListResponse<Event>> {
-    const res = await this.apiClient.request<ListResponse<Event>>(
-      {
-        method: 'GET',
-        path: `/v3/grants/${identifier}/events`,
-        queryParams,
-        overrides,
-      },
-      {
-        responseSchema: EventSchema,
-      }
-    );
+  // public async list({
+  //   identifier,
+  //   queryParams,
+  //   overrides,
+  // }: ListEventParams & Overrides): Promise<ListResponse<Event>> {
+  //   const res = await this.apiClient.request<ListResponse<Event>>(
+  //     {
+  //       method: 'GET',
+  //       path: `/v3/grants/${identifier}/events`,
+  //       queryParams,
+  //       overrides,
+  //     },
+  //     {
+  //       responseSchema: EventSchema,
+  //     }
+  //   );
 
-    return res;
-  }
+  //   return res;
+  // }
 
   public async find({
     identifier,

@@ -9,7 +9,7 @@ import {
   ListCalendersQueryParams,
   UpdateCalenderRequestBody,
 } from '../schema/calendars';
-import { ListResponse, Response } from '../schema/response';
+import { List, Response } from '../schema/response';
 import { BaseResource } from './baseResource';
 
 interface FindCalendarParams {
@@ -67,20 +67,13 @@ export class Calendars extends BaseResource {
     identifier,
     queryParams,
     overrides,
-  }: ListCalendersParams & Overrides): Promise<ListResponse<Calendar>> {
-    const res = await this.apiClient.request<ListResponse<Calendar>>(
-      {
-        method: 'GET',
-        path: `/v3/grants/${identifier}/calendars`,
-        queryParams,
-        overrides,
-      },
-      {
-        responseSchema: CalendarSchema,
-      }
-    );
-
-    return res;
+  }: ListCalendersParams & Overrides): Promise<List<Calendar>> {
+    return super._list<Calendar>({
+      queryParams,
+      overrides,
+      path: `/v3/grants/${identifier}/calendars`,
+      responseSchema: CalendarSchema,
+    });
   }
 
   public async find({
