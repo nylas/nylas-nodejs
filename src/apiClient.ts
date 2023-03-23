@@ -217,8 +217,8 @@ export default class APIClient {
                           `Invalid data model from the server. ${validateItem.error}`
                         );
                       }
-                      resolve(camelCaseRes as T);
                     }
+                    resolve(camelCaseRes as T);
                   } else {
                     validateSchema = passthru.responseSchema.safeParse(
                       response
