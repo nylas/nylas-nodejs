@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { ZodType } from 'zod';
 import APIClient from '../apiClient';
 import { OverridableNylasConfig } from '../config';
@@ -91,15 +90,13 @@ export abstract class BaseResource {
     );
   }
 
-  protected _create<T>({
-    path,
-    responseSchema,
-    requestBody,
-    overrides,
-  }: PayloadRequestParams<T>): Promise<Response<T>> {
+  private payloadRequest<T>(
+    method: 'POST' | 'PUT' | 'PATCH',
+    { path, responseSchema, requestBody, overrides }: PayloadRequestParams<T>
+  ): Promise<Response<T>> {
     return this.apiClient.request<Response<T>>(
       {
-        method: 'POST',
+        method,
         path,
         body: requestBody,
         overrides,
@@ -110,23 +107,18 @@ export abstract class BaseResource {
     );
   }
 
-  protected _update<T>({
-    path,
-    responseSchema,
-    requestBody,
-    overrides,
-  }: PayloadRequestParams<T>): Promise<Response<T>> {
-    return this.apiClient.request<Response<T>>(
-      {
-        method: 'PUT',
-        path,
-        body: requestBody,
-        overrides,
-      },
-      {
-        responseSchema,
-      }
-    );
+  protected _create<T>(params: PayloadRequestParams<T>): Promise<Response<T>> {
+    return this.payloadRequest('POST', params);
+  }
+
+  protected _update<T>(params: PayloadRequestParams<T>): Promise<Response<T>> {
+    return this.payloadRequest('PUT', params);
+  }
+
+  protected _updatePatch<T>(
+    params: PayloadRequestParams<T>
+  ): Promise<Response<T>> {
+    return this.payloadRequest('PATCH', params);
   }
 
   protected _destroy({
