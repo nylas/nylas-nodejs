@@ -140,7 +140,7 @@ export default class APIClient {
     const newOptions = this.requestOptions(options);
 
     return new Request(newOptions.url, {
-      method: newOptions.method,
+      method: options.method,
       headers: newOptions.headers,
       body: newOptions.body,
     });
