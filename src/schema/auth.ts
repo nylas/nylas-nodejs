@@ -1,7 +1,12 @@
 import { z } from 'zod';
 
 const Providers = z
-  .union([z.literal('google'), z.literal('microsoft')])
+  .union([
+    z.literal('google'),
+    z.literal('microsoft'),
+    z.literal('google,microsoft'),
+    z.literal('microsoft,google'),
+  ])
   .optional();
 const AccessType = z.union([z.literal('online'), z.literal('offline')]);
 const ResponseType = z.union([z.literal('code'), z.literal('adminconsent')]);
