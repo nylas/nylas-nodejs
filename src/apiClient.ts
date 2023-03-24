@@ -1,13 +1,15 @@
 import fetch, { Request } from 'node-fetch';
 import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
-import NylasApiError from './schema/error';
+import { NylasApiError, NylasAuthError} from './schema/error';
 import {
   ListResponseSchema,
   ResponseSchema,
   ErrorResponseSchema,
   AllowedResponse,
   AllowedResponseInnerType,
+  ExchangeResponseSchema,
+  EmptyResponseSchema
 } from './schema/response';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
 // import { AppendOptions } from 'form-data';
@@ -48,14 +50,14 @@ interface RequestOptions {
 export default class APIClient {
   apiKey: string;
   serverUrl: string;
-  // clientId?: string;
-  // clientSecret?: string;
+  clientId?: string;
+  clientSecret?: string;
 
-  constructor({ apiKey, serverUrl }: NylasConfig) {
+  constructor({ apiKey, serverUrl, clientId, clientSecret }: NylasConfig) {
     this.apiKey = apiKey;
     this.serverUrl = serverUrl as string; // TODO: get rid of type assertion
-    // this.clientSecret = clientSecret;
-    // this.clientId = clientId;
+    this.clientSecret = clientSecret;
+    this.clientId = clientId;
   }
 
   private setRequestUrl({
@@ -111,7 +113,7 @@ export default class APIClient {
 
     requestOptions.url = this.setRequestUrl(optionParams);
     requestOptions.headers = this.setRequestHeaders(optionParams);
-
+    requestOptions.method = optionParams.method
     // logic for setting request body if is formdata
     // if (options.formData) {
     //   const fd = new FormData();
@@ -138,7 +140,6 @@ export default class APIClient {
 
   newRequest(options: RequestOptionsParams): Request {
     const newOptions = this.requestOptions(options);
-
     return new Request(newOptions.url, {
       method: newOptions.method,
       headers: newOptions.headers,
@@ -159,6 +160,14 @@ export default class APIClient {
           }
           if (response.status > 299) {
             return response.text().then(body => {
+              if (options.path.includes('connect/token') || options.path.includes('connect/revoke')){
+                try {
+                  const error = new NylasAuthError(JSON.parse(body));
+                  return reject(error);
+                } catch (e) {
+                  return reject(e);
+                }
+              }
               try {
                 const error = new NylasApiError(JSON.parse(body));
                 return reject(error);
@@ -180,24 +189,30 @@ export default class APIClient {
                   }
 
                   const responseJSON = JSON.parse(text);
-
                   // TODO: exclusion list for keys that should not be camelCased
                   const camelCaseRes = objKeysToCamelCase(responseJSON);
-
                   const testListResponse = ListResponseSchema.safeParse(
                     camelCaseRes
                   );
                   const testResponse = ResponseSchema.safeParse(camelCaseRes);
+                  const testEmptyResponse = EmptyResponseSchema.safeParse(camelCaseRes);
+                  const testAuthResponse = ExchangeResponseSchema.safeParse(camelCaseRes);
                   const testError = ErrorResponseSchema.safeParse(camelCaseRes);
-
                   let response:
                     | AllowedResponseInnerType<T>
                     | AllowedResponseInnerType<T>[];
                   if (testListResponse.success) {
                     response = testListResponse.data
                       .data as AllowedResponseInnerType<T>[];
+                  
                   } else if (testResponse.success) {
                     response = testResponse.data
+                      .data as AllowedResponseInnerType<T>;
+                  } else if (testAuthResponse.success) {
+                    response = testAuthResponse
+                      .data as AllowedResponseInnerType<T>;
+                  } else if (testEmptyResponse.success) {
+                    response = testEmptyResponse
                       .data as AllowedResponseInnerType<T>;
                   } else if (testError.success) {
                     throw new NylasApiError(testError.data);
