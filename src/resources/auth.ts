@@ -25,7 +25,7 @@ export class Auth extends BaseResource {
 
   /**
    * Exchange an authorization code for an access token
-   * @param code Application details to overwrite
+   * @param CodeExchangeRequest
    * @return Information about the Nylas application
    */
   public async exchangeCodeForToken(payload: CodeExchangeRequest): Promise<ExchangeResponse>{
@@ -55,7 +55,7 @@ export class Auth extends BaseResource {
 
   /**
    * Exchange a refresh token for an access token (and if rotation enabled refresh token as well)
-   * @param code Application details to overwrite
+   * @param TokenExchangeRequest 
    * @return Information about the Nylas application
    */
   public async exchangeToken(payload: TokenExchangeRequest): Promise<ExchangeResponse>{
