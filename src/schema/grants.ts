@@ -37,6 +37,7 @@ export const GrantSchema = z.object({
   state: z.string().optional(),
   updatedAt: z.number().optional(),
   providerUserId: z.string().optional(),
+  settings: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type Grant = z.infer<typeof GrantSchema>;
