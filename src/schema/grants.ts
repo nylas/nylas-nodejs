@@ -13,6 +13,18 @@ export interface ListGrantsQueryParams {
   provider?: string;
 }
 
+export interface CreateGrantRequestBody {
+  provider: 'google' | 'microsoft' | 'imap';
+  settings: Record<string, unknown>;
+  state?: string;
+  scope?: string[];
+}
+
+export interface UpdateGrantRequestBody {
+  settings?: Record<string, unknown>;
+  scope?: string[];
+}
+
 export const GrantSchema = z.object({
   id: z.string(),
   provider: z.string(),
