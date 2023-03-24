@@ -42,10 +42,9 @@ export const ExchangeResponseSchema = z.object({
   refreshToken: z.string().optional(),
   idToken: z.string().optional(),
   tokenType: z.string().optional(),
-  scope: z.string()
+  scope: z.string(),
 });
-export const EmptyResponseSchema = z.object({
-});
+export const EmptyResponseSchema = z.object({});
 
 export interface ListResponse<T> {
   requestId: string;
@@ -63,7 +62,12 @@ export interface List<T> extends ListResponse<T> {
   next?: () => Promise<List<T>>;
 }
 
-export type AllowedResponse<T> = Response<T> | ListResponse<T>| ExchangeResponse | EmptyResponse | null;
+export type AllowedResponse<T> =
+  | Response<T>
+  | ListResponse<T>
+  | ExchangeResponse
+  | EmptyResponse
+  | null;
 export type AllowedResponseInnerType<T> = T extends AllowedResponse<infer R>
   ? R
   : never;

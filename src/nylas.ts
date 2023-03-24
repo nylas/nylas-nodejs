@@ -21,7 +21,7 @@ class Nylas {
       clientSecret: config.clientSecret,
     });
 
-    this.auth = new Auth(apiClient)
+    this.auth = new Auth(apiClient);
     this.calendars = new Calendars(apiClient);
     this.events = new Events(apiClient);
     // etc.
@@ -29,7 +29,5 @@ class Nylas {
     return this;
   }
 }
-
-
 
 export = Nylas;

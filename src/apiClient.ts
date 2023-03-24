@@ -1,7 +1,7 @@
 import fetch, { Request } from 'node-fetch';
 import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
-import { NylasApiError, NylasAuthError} from './schema/error';
+import { NylasApiError, NylasAuthError } from './schema/error';
 import {
   ListResponseSchema,
   ResponseSchema,
@@ -9,7 +9,7 @@ import {
   AllowedResponse,
   AllowedResponseInnerType,
   ExchangeResponseSchema,
-  EmptyResponseSchema
+  EmptyResponseSchema,
 } from './schema/response';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
 // import { AppendOptions } from 'form-data';
@@ -113,7 +113,7 @@ export default class APIClient {
 
     requestOptions.url = this.setRequestUrl(optionParams);
     requestOptions.headers = this.setRequestHeaders(optionParams);
-    requestOptions.method = optionParams.method
+    requestOptions.method = optionParams.method;
     // logic for setting request body if is formdata
     // if (options.formData) {
     //   const fd = new FormData();
@@ -160,7 +160,10 @@ export default class APIClient {
           }
           if (response.status > 299) {
             return response.text().then(body => {
-              if (options.path.includes('connect/token') || options.path.includes('connect/revoke')){
+              if (
+                options.path.includes('connect/token') ||
+                options.path.includes('connect/revoke')
+              ) {
                 try {
                   const error = new NylasAuthError(JSON.parse(body));
                   return reject(error);
@@ -195,8 +198,12 @@ export default class APIClient {
                     camelCaseRes
                   );
                   const testResponse = ResponseSchema.safeParse(camelCaseRes);
-                  const testEmptyResponse = EmptyResponseSchema.safeParse(camelCaseRes);
-                  const testAuthResponse = ExchangeResponseSchema.safeParse(camelCaseRes);
+                  const testEmptyResponse = EmptyResponseSchema.safeParse(
+                    camelCaseRes
+                  );
+                  const testAuthResponse = ExchangeResponseSchema.safeParse(
+                    camelCaseRes
+                  );
                   const testError = ErrorResponseSchema.safeParse(camelCaseRes);
                   let response:
                     | AllowedResponseInnerType<T>
@@ -204,16 +211,17 @@ export default class APIClient {
                   if (testListResponse.success) {
                     response = testListResponse.data
                       .data as AllowedResponseInnerType<T>[];
-                  
                   } else if (testResponse.success) {
                     response = testResponse.data
                       .data as AllowedResponseInnerType<T>;
                   } else if (testAuthResponse.success) {
-                    response = testAuthResponse
-                      .data as AllowedResponseInnerType<T>;
+                    response = testAuthResponse.data as AllowedResponseInnerType<
+                      T
+                    >;
                   } else if (testEmptyResponse.success) {
-                    response = testEmptyResponse
-                      .data as AllowedResponseInnerType<T>;
+                    response = testEmptyResponse.data as AllowedResponseInnerType<
+                      T
+                    >;
                   } else if (testError.success) {
                     throw new NylasApiError(testError.data);
                   } else {

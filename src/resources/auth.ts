@@ -1,15 +1,20 @@
 import APIClient from '../apiClient';
 import { BaseResource } from './baseResource';
 import { Grants } from './grants';
-import { 
+import {
   AuthConfig,
-  AuthConfigSchema, 
-  CodeExchangeRequest, 
+  AuthConfigSchema,
+  CodeExchangeRequest,
   CodeExchangeRequestSchema,
   TokenExchangeRequest,
-  TokenExchangeRequestSchema
-} from '../schema/auth'
-import { ExchangeResponse, ExchangeResponseSchema, EmptyResponse, EmptyResponseSchema } from '../schema/response'
+  TokenExchangeRequestSchema,
+} from '../schema/auth';
+import {
+  ExchangeResponse,
+  ExchangeResponseSchema,
+  EmptyResponse,
+  EmptyResponseSchema,
+} from '../schema/response';
 
 export class Auth extends BaseResource {
   public grants: Grants;
@@ -19,7 +24,7 @@ export class Auth extends BaseResource {
   constructor(apiClient: APIClient) {
     super(apiClient);
     this.apiClient = apiClient;
-   
+
     this.grants = new Grants(apiClient);
   }
 
@@ -28,50 +33,53 @@ export class Auth extends BaseResource {
    * @param CodeExchangeRequest
    * @return Information about the Nylas application
    */
-  public async exchangeCodeForToken(payload: CodeExchangeRequest): Promise<ExchangeResponse>{
-    this.checkAuthCredentials()
+  public async exchangeCodeForToken(
+    payload: CodeExchangeRequest
+  ): Promise<ExchangeResponse> {
+    this.checkAuthCredentials();
 
-    CodeExchangeRequestSchema.parse(payload)
+    CodeExchangeRequestSchema.parse(payload);
     const res = await this.apiClient.request<ExchangeResponse>(
       {
         method: 'POST',
         path: `/v3/connect/token`,
-        body:{
+        body: {
           code: payload.code,
           redirect_uri: payload.redirectUri,
-          client_id:this.apiClient.clientId,
-          client_secret:this.apiClient.clientSecret,
-          grant_type:"authorization_code"
+          client_id: this.apiClient.clientId,
+          client_secret: this.apiClient.clientSecret,
+          grant_type: 'authorization_code',
         },
-
       },
       {
         responseSchema: ExchangeResponseSchema,
       }
     );
 
-    return res
+    return res;
   }
 
   /**
    * Exchange a refresh token for an access token (and if rotation enabled refresh token as well)
-   * @param TokenExchangeRequest 
+   * @param TokenExchangeRequest
    * @return Information about the Nylas application
    */
-  public async exchangeToken(payload: TokenExchangeRequest): Promise<ExchangeResponse>{
-    this.checkAuthCredentials()
+  public async exchangeToken(
+    payload: TokenExchangeRequest
+  ): Promise<ExchangeResponse> {
+    this.checkAuthCredentials();
 
-    TokenExchangeRequestSchema.parse(payload)
+    TokenExchangeRequestSchema.parse(payload);
     const res = await this.apiClient.request<ExchangeResponse>(
       {
         method: 'POST',
         path: `/v3/connect/token`,
-        body:{
+        body: {
           refresh_token: payload.refreshToken,
           redirect_uri: payload.redirectUri,
-          client_id:this.apiClient.clientId,
-          client_secret:this.apiClient.clientSecret,
-          grant_type:"refresh_token"
+          client_id: this.apiClient.clientId,
+          client_secret: this.apiClient.clientSecret,
+          grant_type: 'refresh_token',
         },
       },
       {
@@ -79,18 +87,18 @@ export class Auth extends BaseResource {
       }
     );
 
-    return res
+    return res;
   }
 
   /**
    * Build the URL for authenticating users to your application via Hosted Authentication
    * @param AuthConfig Configuration for the authentication process
    * @return The URL for hosted authentication
-  */
+   */
   public urlForAuthentication(config: AuthConfig): string {
-    this.checkAuthCredentials()
-    config = AuthConfigSchema.parse(config)
-    
+    this.checkAuthCredentials();
+    config = AuthConfigSchema.parse(config);
+
     let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${this.apiClient.clientId}&redirect_uri=${config.redirectUri}&access_type=${config.accessType}&response_type=${config.responseType}`;
     if (config.provider) {
       url += `&provider=${config.provider}`;
@@ -102,7 +110,7 @@ export class Auth extends BaseResource {
       }
     }
     if (config.scope) {
-      url += `&scope=${config.scope.join(" ")}`;
+      url += `&scope=${config.scope.join(' ')}`;
     }
     if (config.prompt) {
       url += `&prompt=${config.prompt}`;
@@ -117,14 +125,19 @@ export class Auth extends BaseResource {
     if (config.responseType == `adminconsent` && config.credentialId) {
       url += `&credential_id=${config.credentialId}`;
     }
-    if (config.responseType == `adminconsent` && (config.provider != `microsoft` || !config.credentialId)){
-      throw new Error(`Response type "adminconsent" used only for Microsoft admin consent service account flow with "credential_id".`);
+    if (
+      config.responseType == `adminconsent` &&
+      (config.provider != `microsoft` || !config.credentialId)
+    ) {
+      throw new Error(
+        `Response type "adminconsent" used only for Microsoft admin consent service account flow with "credential_id".`
+      );
     }
     return url;
   }
 
-  private checkAuthCredentials(){
-    if (!this.apiClient.clientId || !this.apiClient.clientSecret){
+  private checkAuthCredentials() {
+    if (!this.apiClient.clientId || !this.apiClient.clientSecret) {
       throw new Error('ClientID & ClientSecret are required for using auth');
     }
   }
@@ -138,16 +151,14 @@ export class Auth extends BaseResource {
       {
         method: 'POST',
         path: `/v3/connect/revoke`,
-        queryParams:{
-          token: accessToken
-        }
-
+        queryParams: {
+          token: accessToken,
+        },
       },
       {
         responseSchema: EmptyResponseSchema,
       }
     );
-    return true
+    return true;
   }
-  
 }
