@@ -113,13 +113,6 @@ export class BaseResource {
         })
     );
 
-    // const fetchFirstResult = () => {
-    //   return this.fetchList(listParams).then(res => {
-    //     return res;
-    //   });
-    // };
-    // const firstResult = fetchFirstResult();
-
     const response = Object.assign(first, {
       [Symbol.asyncIterator]: (this.listIterator.bind(
         this,

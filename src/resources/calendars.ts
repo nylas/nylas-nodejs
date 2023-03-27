@@ -3,7 +3,6 @@ import {
   Availability,
   AvailabilityResponseSchema,
   Calendar,
-  CalendarList,
   CalendarListResponseSchema,
   CalendarResponseSchema,
   CreateCalenderRequestBody,
@@ -11,6 +10,7 @@ import {
   ListCalendersQueryParams,
   UpdateCalenderRequestBody,
 } from '../schema/calendars';
+import { ItemResponse, ListResponse } from '../schema/response';
 import { BaseResource, AsyncListResponse } from './baseResource';
 
 interface FindCalendarParams {
@@ -66,8 +66,8 @@ export class Calendars extends BaseResource {
   public list(
     { overrides, identifier }: CalendarListParams,
     queryParams?: ListCalendersQueryParams
-  ): AsyncListResponse<CalendarList> {
-    return super._list<CalendarList>({
+  ): AsyncListResponse<ListResponse<Calendar>> {
+    return super._list<ListResponse<Calendar>>({
       queryParams,
       overrides,
       path: `/v3/grants/${identifier}/calendars`,
@@ -79,8 +79,8 @@ export class Calendars extends BaseResource {
     calendarId,
     identifier,
     overrides,
-  }: FindCalendarParams & Overrides): Promise<Calendar> {
-    return this.apiClient.request<Calendar>(
+  }: FindCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
+    return this.apiClient.request<ItemResponse<Calendar>>(
       {
         method: 'GET',
         path: `/v3/grants/${identifier}/calendars/${calendarId}`,
@@ -96,8 +96,8 @@ export class Calendars extends BaseResource {
     identifier,
     requestBody,
     overrides,
-  }: CreateCalendarParams & Overrides): Promise<Calendar> {
-    return this.apiClient.request<Calendar>(
+  }: CreateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
+    return this.apiClient.request<ItemResponse<Calendar>>(
       {
         method: 'POST',
         path: `/v3/grants/${identifier}/calendars`,
@@ -115,8 +115,8 @@ export class Calendars extends BaseResource {
     identifier,
     requestBody,
     overrides,
-  }: UpdateCalendarParams & Overrides): Promise<Calendar> {
-    return this.apiClient.request<Calendar>(
+  }: UpdateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
+    return this.apiClient.request<ItemResponse<Calendar>>(
       {
         method: 'PUT',
         path: `/v3/grants/${identifier}/calendars/${calendarId}`,

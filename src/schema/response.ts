@@ -13,13 +13,11 @@ export type NylasErrorResponse = z.infer<typeof ErrorResponseSchema>;
 
 export const ItemResponseSchema = z.object({
   requestId: z.string(),
-  data: z.record(z.string(), z.any()),
   error: ErrorResponseSchema.optional(),
 });
 
 export const ListResponseSchema = z.object({
   requestId: z.string(),
-  data: z.array(z.record(z.string(), z.any())),
   nextCursor: z.string().optional(),
   error: ErrorResponseSchema.optional(),
 });

@@ -1,10 +1,6 @@
 import { z } from 'zod';
 import { ListQueryParams } from './request';
-import {
-  ItemResponse,
-  ItemResponseSchema,
-  ListResponseSchema,
-} from './response';
+import { ItemResponseSchema, ListResponseSchema } from './response';
 import { APIObjects } from './utils';
 
 export interface ListCalendersQueryParams extends ListQueryParams {
@@ -41,10 +37,10 @@ const CalendarSchema = z.object({
   hexForegroundColor: z.string(),
 });
 
+export type Calendar = z.infer<typeof CalendarSchema>;
 export const CalendarResponseSchema = ItemResponseSchema.extend({
   data: CalendarSchema,
 });
-export type Calendar = ItemResponse<z.infer<typeof CalendarSchema>>;
 
 export const CalendarListResponseSchema = ListResponseSchema.extend({
   data: z.array(CalendarSchema),
