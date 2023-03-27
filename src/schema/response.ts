@@ -9,7 +9,9 @@ export const ErrorResponseSchema = z.object({
   }),
 });
 
-export const ResponseSchema = z.object({
+export type NylasErrorResponse = z.infer<typeof ErrorResponseSchema>;
+
+export const ItemResponseSchema = z.object({
   requestId: z.string(),
   data: z.record(z.string(), z.any()),
   error: ErrorResponseSchema.optional(),
@@ -22,33 +24,19 @@ export const ListResponseSchema = z.object({
   error: ErrorResponseSchema.optional(),
 });
 
-export interface Response<T> {
+export interface ItemResponse<T> {
   requestId: string;
   data: T;
-  error?: APIErrorResponse;
+  error?: NylasErrorResponse;
 }
 
 export interface ListResponse<T> {
   requestId: string;
   data: T[];
   nextCursor?: string;
-  error?: APIErrorResponse;
+  error?: NylasErrorResponse;
 }
 
-export interface ListQueryParams {
-  limit?: number;
-  pageToken?: string;
-}
-
-export interface List<T> extends ListResponse<T> {
-  next?: () => Promise<List<T>>;
-}
-
-export type AllowedResponse<T> = Response<T> | ListResponse<T> | null;
-export type AllowedResponseInnerType<T> = T extends AllowedResponse<infer R>
+export type ListResponseInnerType<T> = T extends ListResponse<infer R>
   ? R
   : never;
-
-export type APIResponse = z.infer<typeof ResponseSchema>;
-export type APIListResponse = z.infer<typeof ListResponseSchema>;
-export type APIErrorResponse = z.infer<typeof ErrorResponseSchema>;
