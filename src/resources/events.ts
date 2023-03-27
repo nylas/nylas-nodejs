@@ -4,12 +4,14 @@ import {
   CreateEventRequestBody,
   DestroyEventQueryParams,
   Event,
+  EventListResponseSchema,
   EventResponseSchema,
   ListEventQueryParams,
   UpdateEventQueryParams,
   UpdateEventRequestBody,
 } from '../schema/events';
-import { BaseResource } from './baseResource';
+import { ItemResponse, ListResponse } from '../schema/response';
+import { AsyncListResponse, BaseResource } from './baseResource';
 
 interface FindEventParams {
   eventId: string;
@@ -17,8 +19,9 @@ interface FindEventParams {
 }
 interface ListEventParams {
   identifier: string;
-  queryParams?: ListEventQueryParams;
 }
+
+type ListEventsParams = ListEventParams & Overrides;
 
 interface CreateEventParams {
   identifier: string;
@@ -39,32 +42,26 @@ interface DestroyEventParams {
   queryParams: DestroyEventQueryParams;
 }
 export class Events extends BaseResource {
-  // public  list({
-  //   identifier,
-  //   queryParams,
-  //   overrides,
-  // }: ListEventParams & Overrides): Promise<ListResponse<Event>> {
-  //   const res =  this.apiClient.request<ListResponse<Event>>(
-  //     {
-  //       method: 'GET',
-  //       path: `/v3/grants/${identifier}/events`,
-  //       queryParams,
-  //       overrides,
-  //     },
-  //     {
-  //       responseSchema: EventSchema,
-  //     }
-  //   );
+  public list(
+    { identifier, overrides }: ListEventsParams,
+    queryParams: ListEventQueryParams
+  ): AsyncListResponse<ListResponse<Event>> {
+    const res = super._list<ListResponse<Event>>({
+      path: `/v3/grants/${identifier}/events`,
+      queryParams,
+      overrides,
+      responseSchema: EventListResponseSchema,
+    });
 
-  //   return res;
-  // }
+    return res;
+  }
 
   public find({
     identifier,
     eventId,
     overrides,
-  }: FindEventParams & Overrides): Promise<Event> {
-    const res = this.apiClient.request<Event>(
+  }: FindEventParams & Overrides): Promise<ItemResponse<Event>> {
+    const res = this.apiClient.request<ItemResponse<Event>>(
       {
         method: 'GET',
         path: `/v3/grants/${identifier}/events/${eventId}`,
@@ -82,8 +79,8 @@ export class Events extends BaseResource {
     identifier,
     requestBody,
     overrides,
-  }: CreateEventParams & Overrides): Promise<Event> {
-    const res = this.apiClient.request<Event>(
+  }: CreateEventParams & Overrides): Promise<ItemResponse<Event>> {
+    const res = this.apiClient.request<ItemResponse<Event>>(
       {
         method: 'POST',
         path: `/v3/grants/${identifier}/events`,
@@ -102,8 +99,8 @@ export class Events extends BaseResource {
     eventId,
     requestBody,
     overrides,
-  }: UpdateEventParams & Overrides): Promise<Event> {
-    const res = this.apiClient.request<Event>(
+  }: UpdateEventParams & Overrides): Promise<ItemResponse<Event>> {
+    const res = this.apiClient.request<ItemResponse<Event>>(
       {
         method: 'PUT',
         path: `/v3/grants/${identifier}/events/${eventId}`,
