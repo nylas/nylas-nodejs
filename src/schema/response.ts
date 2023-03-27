@@ -9,11 +9,11 @@ export const ErrorResponseSchema = z.object({
   }),
 });
 export const AuthErrorResponseSchema = z.object({
-  request_id: z.string(),
+  requestId: z.string(),
   error: z.string(),
-  error_code: z.number(),
-  error_description: z.string(),
-  error_uri: z.string(),
+  errorCode: z.number(),
+  errorDescription: z.string(),
+  errorUri: z.string(),
 });
 
 export const ResponseSchema = z.object({

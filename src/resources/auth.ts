@@ -135,6 +135,48 @@ export class Auth extends BaseResource {
     }
     return url;
   }
+  /**
+   * Build the URL for authenticating users to your application via Hosted Authentication
+   * @param AuthConfig Configuration for the authentication process
+   * @return The URL for hosted authentication
+   */
+  public urlForAdminConsent(config: AuthConfig): string {
+    this.checkAuthCredentials();
+    config = AuthConfigSchema.parse(config);
+
+    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${this.apiClient.clientId}&redirect_uri=${config.redirectUri}&access_type=${config.accessType}&response_type=adminconsent&provider=microsoft`;
+    if (config.loginHint) {
+      url += `&login_hint=${config.loginHint}`;
+      if (config.includeGrantScopes) {
+        url += `&include_grant_scopes=${config.includeGrantScopes}`;
+      }
+    }
+    if (config.scope) {
+      url += `&scope=${config.scope.join(' ')}`;
+    }
+    if (config.prompt) {
+      url += `&prompt=${config.prompt}`;
+    }
+    if (config.metadata) {
+      url += `&metadata=${config.metadata}`;
+    }
+    if (config.state) {
+      url += `&state=${config.state}`;
+    }
+
+    if (config.responseType == `adminconsent` && config.credentialId) {
+      url += `&credential_id=${config.credentialId}`;
+    }
+    if (
+      config.responseType == `adminconsent` &&
+      (config.provider != `microsoft` || !config.credentialId)
+    ) {
+      throw new Error(
+        `Response type "adminconsent" used only for Microsoft admin consent service account flow with "credential_id".`
+      );
+    }
+    return url;
+  }
 
   private checkAuthCredentials() {
     if (!this.apiClient.clientId || !this.apiClient.clientSecret) {

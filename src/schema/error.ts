@@ -31,10 +31,10 @@ export class NylasAuthError extends Error {
   providerError: any;
 
   constructor(apiError: AuthErrorResponse) {
-    super(apiError.error_description);
+    super(apiError.errorDescription);
     this.type = apiError.error;
-    this.requestId = apiError.request_id;
-    this.providerError = apiError.error_description;
+    this.requestId = apiError.requestId;
+    this.providerError = apiError.errorDescription;
   }
 }
 
