@@ -1,11 +1,13 @@
 import { z } from 'zod';
+import { ListQueryParams } from './request';
+import {
+  ItemResponse,
+  ItemResponseSchema,
+  ListResponseSchema,
+} from './response';
 import { APIObjects } from './utils';
 
-export interface ListCalendersQueryParams {
-  /** The maximum number of calendars to return. */
-  limit?: number;
-  /** The page token. */
-  pageToken?: string;
+export interface ListCalendersQueryParams extends ListQueryParams {
   /** Metadata */
   metadataPair?: Record<string, string>;
 }
@@ -23,7 +25,7 @@ export interface UpdateCalenderRequestBody extends CreateCalenderRequestBody {
   hexForegroundColor?: string;
 }
 
-export const CalendarSchema = z.object({
+const CalendarSchema = z.object({
   name: z.string(),
   description: z.string().nullable(),
   location: z.string().nullable(),
@@ -39,7 +41,15 @@ export const CalendarSchema = z.object({
   hexForegroundColor: z.string(),
 });
 
-export type Calendar = z.infer<typeof CalendarSchema>;
+export const CalendarResponseSchema = ItemResponseSchema.extend({
+  data: CalendarSchema,
+});
+export type Calendar = ItemResponse<z.infer<typeof CalendarSchema>>;
+
+export const CalendarListResponseSchema = ListResponseSchema.extend({
+  data: z.array(CalendarSchema),
+});
+export type CalendarList = z.infer<typeof CalendarListResponseSchema>;
 
 export interface GetAvailabilityRequestBody {
   /** Unix timestamp for the start time to check availability for. */
@@ -81,4 +91,8 @@ export const AvailabilitySchema = z.object({
   ),
 });
 
-export type Availability = z.infer<typeof AvailabilitySchema>;
+export const AvailabilityResponseSchema = ItemResponseSchema.extend({
+  data: AvailabilitySchema,
+});
+
+export type Availability = z.infer<typeof AvailabilityResponseSchema>;

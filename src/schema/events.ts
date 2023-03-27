@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ItemResponseSchema } from './response';
 import { APIObjects } from './utils';
 
 const TimeSchema = z.object({
@@ -158,7 +159,7 @@ export type UpdateEventRequestBody = CreateEventRequestBody;
 
 export type DestroyEventQueryParams = CreateEventQueryParams;
 
-export const EventSchema = z.object({
+const EventSchema = z.object({
   busy: z.boolean(),
   description: z.string().optional(),
   location: z.string().optional(),
@@ -187,4 +188,8 @@ export const EventSchema = z.object({
   html_link: z.string(),
 });
 
-export type Event = z.infer<typeof EventSchema>;
+export const EventResponseSchema = ItemResponseSchema.extend({
+  data: EventSchema,
+});
+
+export type Event = z.infer<typeof EventResponseSchema>;
