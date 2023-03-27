@@ -3,7 +3,7 @@ import { BaseResource } from './baseResource';
 import { Grants } from './grants';
 import {
   AuthConfig,
-  AuthConfigSchema,
+  AdminConsentAuth,
   CodeExchangeRequest,
   CodeExchangeRequestSchema,
   TokenExchangeRequest,
@@ -97,9 +97,12 @@ export class Auth extends BaseResource {
    */
   public urlForAuthentication(config: AuthConfig): string {
     this.checkAuthCredentials();
-    config = AuthConfigSchema.parse(config);
 
-    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${this.apiClient.clientId}&redirect_uri=${config.redirectUri}&access_type=${config.accessType}&response_type=${config.responseType}`;
+    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${
+      this.apiClient.clientId
+    }&redirect_uri=${config.redirectUri}&access_type=${
+      config.accessType ? config.accessType : 'offline'
+    }&response_type=code`;
     if (config.provider) {
       url += `&provider=${config.provider}`;
     }
@@ -121,30 +124,21 @@ export class Auth extends BaseResource {
     if (config.state) {
       url += `&state=${config.state}`;
     }
-
-    if (config.responseType == `adminconsent` && config.credentialId) {
-      url += `&credential_id=${config.credentialId}`;
-    }
-    if (
-      config.responseType == `adminconsent` &&
-      (config.provider != `microsoft` || !config.credentialId)
-    ) {
-      throw new Error(
-        `Response type "adminconsent" used only for Microsoft admin consent service account flow with "credential_id".`
-      );
-    }
     return url;
   }
   /**
-   * Build the URL for authenticating users to your application via Hosted Authentication
+   * Build the URL for admin consent authentication for Microsoft
    * @param AuthConfig Configuration for the authentication process
    * @return The URL for hosted authentication
    */
-  public urlForAdminConsent(config: AuthConfig): string {
+  public urlForAdminConsent(config: AdminConsentAuth): string {
     this.checkAuthCredentials();
-    config = AuthConfigSchema.parse(config);
 
-    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${this.apiClient.clientId}&redirect_uri=${config.redirectUri}&access_type=${config.accessType}&response_type=adminconsent&provider=microsoft`;
+    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${
+      this.apiClient.clientId
+    }&redirect_uri=${config.redirectUri}&access_type=${
+      config.accessType ? config.accessType : 'offline'
+    }&response_type=adminconsent&provider=microsoft`;
     if (config.loginHint) {
       url += `&login_hint=${config.loginHint}`;
       if (config.includeGrantScopes) {
@@ -162,18 +156,6 @@ export class Auth extends BaseResource {
     }
     if (config.state) {
       url += `&state=${config.state}`;
-    }
-
-    if (config.responseType == `adminconsent` && config.credentialId) {
-      url += `&credential_id=${config.credentialId}`;
-    }
-    if (
-      config.responseType == `adminconsent` &&
-      (config.provider != `microsoft` || !config.credentialId)
-    ) {
-      throw new Error(
-        `Response type "adminconsent" used only for Microsoft admin consent service account flow with "credential_id".`
-      );
     }
     return url;
   }
