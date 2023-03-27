@@ -75,28 +75,30 @@ export class BaseResource {
 
   private async *listIterator<T extends List<T>>(
     listParams: ListParams<T>
-  ): AsyncGenerator<T> {
-    let pageToken = '';
+  ): AsyncGenerator<T, undefined> {
+    const first = await this.fetchList(listParams);
 
-    while (true) {
+    yield first;
+
+    let pageToken = first.nextCursor;
+
+    while (pageToken) {
       const res = await this.fetchList({
         ...listParams,
         queryParams: pageToken
           ? {
               ...listParams.queryParams,
-              pageToken: pageToken,
+              pageToken,
             }
           : listParams.queryParams,
       });
 
       yield res;
 
-      if (res.nextCursor) {
-        pageToken = res.nextCursor;
-      } else {
-        break;
-      }
+      pageToken = res.nextCursor;
     }
+
+    return undefined;
   }
 
   protected _list<T extends List<T>>(
@@ -108,27 +110,24 @@ export class BaseResource {
         ({
           ...res.value,
           next: iterator.next.bind(iterator),
-        } as T & {
-          next: () => Promise<IteratorResult<T>>;
-        })
+        } as ListYieldReturn<T>)
     );
 
     const response = Object.assign(first, {
-      [Symbol.asyncIterator]: (this.listIterator.bind(
+      [Symbol.asyncIterator]: this.listIterator.bind(
         this,
         listParams
-      ) as unknown) as () => AsyncGenerator<T>,
+      ) as () => AsyncGenerator<T, undefined>,
     });
 
     return response;
   }
 }
 
-export interface AsyncListResponse<T>
-  extends Promise<
-    T & {
-      next: () => Promise<IteratorResult<T>>;
-    }
-  > {
-  [Symbol.asyncIterator](): AsyncGenerator<T>;
+type ListYieldReturn<T> = T & {
+  next: () => Promise<IteratorResult<T, undefined>>;
+};
+
+export interface AsyncListResponse<T> extends Promise<ListYieldReturn<T>> {
+  [Symbol.asyncIterator](): AsyncGenerator<T, undefined>;
 }
