@@ -1,4 +1,4 @@
-import { APIErrorResponse, AuthErrorResponse } from './response';
+import { NylasErrorResponse, AuthErrorResponse } from './response';
 
 /**
  * Extended Error class for errors returned from the Nylas API
@@ -17,7 +17,7 @@ export class NylasApiError extends Error {
   requestId: string;
   providerError: any;
 
-  constructor(apiError: APIErrorResponse) {
+  constructor(apiError: NylasErrorResponse) {
     super(apiError.error.message);
     this.type = apiError.error.type;
     this.requestId = apiError.requestId;

@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { ListQueryParams } from './request';
+import { ItemResponseSchema, ListResponseSchema } from './response';
 import { APIObjects } from './utils';
 
 const TimeSchema = z.object({
@@ -107,10 +109,8 @@ type Autocreate = z.infer<typeof AutocreateSchema>;
 type Participant = z.infer<typeof ParticipantSchema>;
 type Recurrence = z.infer<typeof RecurrenceSchema>;
 
-export interface ListEventQueryParams {
+export interface ListEventQueryParams extends ListQueryParams {
   showCancelled?: boolean;
-  limit?: number;
-  pageToken?: string;
   eventId?: string;
   calendarId: string;
   title?: string;
@@ -158,7 +158,7 @@ export type UpdateEventRequestBody = CreateEventRequestBody;
 
 export type DestroyEventQueryParams = CreateEventQueryParams;
 
-export const EventSchema = z.object({
+const EventSchema = z.object({
   busy: z.boolean(),
   description: z.string().optional(),
   location: z.string().optional(),
@@ -185,6 +185,13 @@ export const EventSchema = z.object({
   updated_at: z.number(),
   created_at: z.number(),
   html_link: z.string(),
+});
+
+export const EventResponseSchema = ItemResponseSchema.extend({
+  data: EventSchema,
+});
+export const EventListResponseSchema = ListResponseSchema.extend({
+  data: z.array(EventSchema),
 });
 
 export type Event = z.infer<typeof EventSchema>;

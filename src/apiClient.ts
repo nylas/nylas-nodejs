@@ -1,16 +1,8 @@
-import fetch, { Request } from 'node-fetch';
+import fetch, { Request, Response } from 'node-fetch';
 import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
 import { NylasApiError, NylasAuthError } from './schema/error';
-import {
-  ListResponseSchema,
-  ResponseSchema,
-  ErrorResponseSchema,
-  AllowedResponse,
-  AllowedResponseInnerType,
-  ExchangeResponseSchema,
-  EmptyResponseSchema,
-} from './schema/response';
+import { ErrorResponseSchema } from './schema/response';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
 // import { AppendOptions } from 'form-data';
 
@@ -30,7 +22,7 @@ export interface RequestOptionsParams {
 }
 
 interface OptionsPassthru<D extends ZodType> {
-  responseSchema?: D;
+  responseSchema: D;
 }
 
 interface RequestOptions {
@@ -147,123 +139,73 @@ export default class APIClient {
     });
   }
 
-  request<T extends AllowedResponse<unknown>>(
-    options: RequestOptionsParams,
-    passthru: OptionsPassthru<ZodType<AllowedResponseInnerType<T>>>
+  // response has to be 204
+  async requestWithEmptyReturn(status: number): Promise<undefined> {
+    if (status === 204) {
+      return undefined;
+    }
+
+    throw new Error(`unexpected response, status: ${status}`);
+  }
+
+  async requestWithResponse<T>(
+    response: Response,
+    passthru: OptionsPassthru<ZodType<T>>
   ): Promise<T> {
+    const text = await response.text();
+
+    const responseJSON = JSON.parse(text);
+
+    // TODO: exclusion list for keys that should not be camelCased
+    const camelCaseRes = objKeysToCamelCase(responseJSON);
+
+    const testError = ErrorResponseSchema.safeParse(camelCaseRes);
+    if (testError.success) {
+      throw new NylasApiError(testError.data);
+    }
+
+    const testResponse = passthru.responseSchema.safeParse(camelCaseRes);
+    if (testResponse.success) {
+      return testResponse.data;
+    }
+
+    throw new Error('Could not validate response from the server.');
+  }
+
+  async request(options: RequestOptionsParams): Promise<undefined>;
+  async request<T>(
+    options: RequestOptionsParams,
+    passthru: OptionsPassthru<ZodType<T>>
+  ): Promise<T>;
+  async request<T>(
+    options: RequestOptionsParams,
+    passthru?: OptionsPassthru<ZodType<T>>
+  ): Promise<T | undefined> {
     const req = this.newRequest(options);
-    return new Promise<T>(async (resolve, reject) => {
-      return fetch(req)
-        .then(response => {
-          if (typeof response === 'undefined') {
-            return reject(new Error('No response'));
-          }
-          if (response.status > 299) {
-            return response.text().then(body => {
-              if (
-                options.path.includes('connect/token') ||
-                options.path.includes('connect/revoke')
-              ) {
-                try {
-                  const error = new NylasAuthError(JSON.parse(body));
-                  return reject(error);
-                } catch (e) {
-                  return reject(e);
-                }
-              }
-              try {
-                const error = new NylasApiError(JSON.parse(body));
-                return reject(error);
-              } catch (e) {
-                return reject(e);
-              }
-            });
-          } else {
-            if (response.status === 204) {
-              return resolve(null as T);
-            } else {
-              return response.text().then(text => {
-                try {
-                  // TODO: static typecheck this
-                  if (!passthru.responseSchema) {
-                    throw new Error(
-                      'Need validation schema to validate response'
-                    );
-                  }
 
-                  const responseJSON = JSON.parse(text);
-                  // TODO: exclusion list for keys that should not be camelCased
-                  const camelCaseRes = objKeysToCamelCase(responseJSON);
-                  const testListResponse = ListResponseSchema.safeParse(
-                    camelCaseRes
-                  );
-                  const testResponse = ResponseSchema.safeParse(camelCaseRes);
-                  const testEmptyResponse = EmptyResponseSchema.safeParse(
-                    camelCaseRes
-                  );
-                  const testAuthResponse = ExchangeResponseSchema.safeParse(
-                    camelCaseRes
-                  );
-                  const testError = ErrorResponseSchema.safeParse(camelCaseRes);
-                  let response:
-                    | AllowedResponseInnerType<T>
-                    | AllowedResponseInnerType<T>[];
-                  if (testListResponse.success) {
-                    response = testListResponse.data
-                      .data as AllowedResponseInnerType<T>[];
-                  } else if (testResponse.success) {
-                    response = testResponse.data
-                      .data as AllowedResponseInnerType<T>;
-                  } else if (testAuthResponse.success) {
-                    response = testAuthResponse.data as AllowedResponseInnerType<
-                      T
-                    >;
-                  } else if (testEmptyResponse.success) {
-                    response = testEmptyResponse.data as AllowedResponseInnerType<
-                      T
-                    >;
-                  } else if (testError.success) {
-                    throw new NylasApiError(testError.data);
-                  } else {
-                    throw new Error('Invalid response from the server.');
-                  }
+    const response = await fetch(req);
 
-                  let validateSchema;
+    if (typeof response === 'undefined') {
+      throw new Error('Failed to fetch response');
+    }
 
-                  if (Array.isArray(response)) {
-                    for (const item of response) {
-                      const validateItem = passthru.responseSchema.safeParse(
-                        item
-                      );
-                      if (!validateItem.success) {
-                        throw new Error(
-                          `Invalid data model from the server. ${validateItem.error}`
-                        );
-                      }
-                      resolve(camelCaseRes as T);
-                    }
-                  } else {
-                    validateSchema = passthru.responseSchema.safeParse(
-                      response
-                    );
-                    if (!validateSchema.success) {
-                      throw new Error(
-                        `Invalid data model from the server. ${validateSchema.error}`
-                      );
-                    }
-                    resolve(camelCaseRes as T);
-                  }
-                } catch (e) {
-                  return reject(e);
-                }
-              });
-            }
-          }
-        })
-        .catch((err: Error) => {
-          console.error(`Error encountered during request:\n${err.stack}`);
-          return reject(err);
-        });
-    });
+    if (response.status > 299) {
+      const text = await response.text();
+      const error = JSON.parse(text);
+      if (
+        options.path.includes('connect/token') ||
+        options.path.includes('connect/revoke')
+      ) {
+        throw new NylasAuthError(error);
+      }
+
+      throw new NylasApiError(error);
+    }
+
+    if (!passthru) {
+      return this.requestWithEmptyReturn(response.status);
+    }
+
+    return this.requestWithResponse(response, passthru);
   }
 }
