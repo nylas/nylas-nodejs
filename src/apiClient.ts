@@ -2,7 +2,10 @@ import fetch, { Request, Response } from 'node-fetch';
 import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
 import { NylasApiError, NylasAuthError } from './schema/error';
-import { ErrorResponseSchema } from './schema/response';
+import {
+  AuthErrorResponseSchema,
+  ErrorResponseSchema,
+} from './schema/response';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
 // import { AppendOptions } from 'form-data';
 
@@ -159,11 +162,6 @@ export default class APIClient {
     // TODO: exclusion list for keys that should not be camelCased
     const camelCaseRes = objKeysToCamelCase(responseJSON);
 
-    const testError = ErrorResponseSchema.safeParse(camelCaseRes);
-    if (testError.success) {
-      throw new NylasApiError(testError.data);
-    }
-
     const testResponse = passthru.responseSchema.safeParse(camelCaseRes);
     if (testResponse.success) {
       return testResponse.data;
@@ -189,17 +187,30 @@ export default class APIClient {
       throw new Error('Failed to fetch response');
     }
 
+    // handle error response
     if (response.status > 299) {
       const text = await response.text();
       const error = JSON.parse(text);
-      if (
+
+      const authErrorResponse =
         options.path.includes('connect/token') ||
-        options.path.includes('connect/revoke')
-      ) {
-        throw new NylasAuthError(error);
+        options.path.includes('connect/revoke');
+
+      if (authErrorResponse) {
+        const testResponse = AuthErrorResponseSchema.safeParse(error);
+        if (testResponse.success) {
+          throw new NylasAuthError(testResponse.data);
+        }
+      } else {
+        const testErrorResponse = ErrorResponseSchema.safeParse(error);
+        if (testErrorResponse.success) {
+          throw new NylasApiError(testErrorResponse.data);
+        }
       }
 
-      throw new NylasApiError(error);
+      throw new Error(
+        `received an error but could not validate error response from server: ${error}`
+      );
     }
 
     if (!passthru) {

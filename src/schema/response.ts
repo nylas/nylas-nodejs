@@ -1,13 +1,16 @@
 import { z } from 'zod';
 
+const ErrorObjectSchema = z.object({
+  type: z.string(),
+  message: z.string(),
+  providerError: z.any(),
+});
+
 export const ErrorResponseSchema = z.object({
   requestId: z.string(),
-  error: z.object({
-    type: z.string(),
-    message: z.string(),
-    providerError: z.any(),
-  }),
+  error: ErrorObjectSchema,
 });
+
 export const AuthErrorResponseSchema = z.object({
   requestId: z.string(),
   error: z.string(),
@@ -20,13 +23,13 @@ export type NylasErrorResponse = z.infer<typeof ErrorResponseSchema>;
 
 export const ItemResponseSchema = z.object({
   requestId: z.string(),
-  error: ErrorResponseSchema.optional(),
+  error: ErrorObjectSchema.optional(),
 });
 
 export const ListResponseSchema = z.object({
   requestId: z.string(),
   nextCursor: z.string().optional(),
-  error: ErrorResponseSchema.optional(),
+  error: ErrorObjectSchema.optional(),
 });
 
 export interface ItemResponse<T> {
