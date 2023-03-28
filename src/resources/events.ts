@@ -4,13 +4,14 @@ import {
   CreateEventRequestBody,
   DestroyEventQueryParams,
   Event,
-  EventSchema,
+  EventListResponseSchema,
+  EventResponseSchema,
   ListEventQueryParams,
   UpdateEventQueryParams,
   UpdateEventRequestBody,
 } from '../schema/events';
-import { List, Response } from '../schema/response';
-import { BaseResource } from './baseResource';
+import { ItemResponse, ListResponse } from '../schema/response';
+import { AsyncListResponse, BaseResource } from './baseResource';
 
 interface FindEventParams {
   eventId: string;
@@ -18,8 +19,9 @@ interface FindEventParams {
 }
 interface ListEventParams {
   identifier: string;
-  queryParams?: ListEventQueryParams;
 }
+
+type ListEventsParams = ListEventParams & Overrides;
 
 interface CreateEventParams {
   identifier: string;
@@ -40,16 +42,15 @@ interface DestroyEventParams {
   queryParams: DestroyEventQueryParams;
 }
 export class Events extends BaseResource {
-  public list({
-    identifier,
-    queryParams,
-    overrides,
-  }: ListEventParams & Overrides): Promise<List<Event>> {
+  public list(
+    { identifier, overrides }: ListEventsParams,
+    queryParams: ListEventQueryParams
+  ): AsyncListResponse<ListResponse<Event>> {
     return super._list({
       queryParams,
       path: `/v3/grants/${identifier}/events`,
       overrides,
-      responseSchema: EventSchema,
+      responseSchema: EventListResponseSchema,
     });
   }
 
@@ -57,47 +58,47 @@ export class Events extends BaseResource {
     identifier,
     eventId,
     overrides,
-  }: FindEventParams & Overrides): Promise<Response<Event>> {
+  }: FindEventParams & Overrides): Promise<ItemResponse<Event>> {
     return super._find({
       path: `/v3/grants/${identifier}/events/${eventId}`,
-      responseSchema: EventSchema,
+      responseSchema: EventResponseSchema,
       overrides,
     });
   }
 
-  public async create({
+  public create({
     identifier,
     requestBody,
     overrides,
-  }: CreateEventParams & Overrides): Promise<Response<Event>> {
+  }: CreateEventParams & Overrides): Promise<ItemResponse<Event>> {
     return super._create({
       path: `/v3/grants/${identifier}/events`,
-      responseSchema: EventSchema,
+      responseSchema: EventResponseSchema,
       requestBody,
       overrides,
     });
   }
 
-  public async update({
+  public update({
     identifier,
     eventId,
     requestBody,
     overrides,
-  }: UpdateEventParams & Overrides): Promise<Response<Event>> {
+  }: UpdateEventParams & Overrides): Promise<ItemResponse<Event>> {
     return super._update({
       path: `/v3/grants/${identifier}/events/${eventId}`,
-      responseSchema: EventSchema,
+      responseSchema: EventResponseSchema,
       requestBody,
       overrides,
     });
   }
 
-  public async destroy({
+  public destroy({
     identifier,
     eventId,
     queryParams,
     overrides,
-  }: DestroyEventParams & Overrides): Promise<null> {
+  }: DestroyEventParams & Overrides): Promise<undefined> {
     return super._destroy({
       path: `/v3/grants/${identifier}/events/${eventId}`,
       queryParams,

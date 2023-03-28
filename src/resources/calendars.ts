@@ -1,16 +1,17 @@
 import { Overrides } from '../config';
 import {
   Availability,
-  AvailabilitySchema,
+  AvailabilityResponseSchema,
   Calendar,
-  CalendarSchema,
+  CalendarListResponseSchema,
+  CalendarResponseSchema,
   CreateCalenderRequestBody,
   GetAvailabilityRequestBody,
   ListCalendersQueryParams,
   UpdateCalenderRequestBody,
 } from '../schema/calendars';
-import { List, Response } from '../schema/response';
-import { BaseResource } from './baseResource';
+import { ItemResponse, ListResponse } from '../schema/response';
+import { BaseResource, AsyncListResponse } from './baseResource';
 
 interface FindCalendarParams {
   calendarId: string;
@@ -18,7 +19,6 @@ interface FindCalendarParams {
 }
 interface ListCalendersParams {
   identifier: string;
-  queryParams?: ListCalendersQueryParams;
 }
 
 interface CreateCalendarParams {
@@ -42,13 +42,15 @@ interface GetAvailabilityParams {
   requestBody: GetAvailabilityRequestBody;
 }
 
+type CalendarListParams = ListCalendersParams & Overrides;
+
 export class Calendars extends BaseResource {
-  public async getAvailability({
+  public getAvailability({
     identifier,
     requestBody,
     overrides,
-  }: GetAvailabilityParams & Overrides): Promise<Response<Availability>> {
-    const res = await this.apiClient.request<Response<Availability>>(
+  }: GetAvailabilityParams & Overrides): Promise<Availability> {
+    return this.apiClient.request<Availability>(
       {
         method: 'POST',
         path: `/v3/grants/${identifier}/calendars/availability`,
@@ -56,23 +58,20 @@ export class Calendars extends BaseResource {
         overrides,
       },
       {
-        responseSchema: AvailabilitySchema,
+        responseSchema: AvailabilityResponseSchema,
       }
     );
-
-    return res;
   }
 
-  public async list({
-    identifier,
-    queryParams,
-    overrides,
-  }: ListCalendersParams & Overrides): Promise<List<Calendar>> {
-    return super._list<Calendar>({
+  public list(
+    { overrides, identifier }: CalendarListParams,
+    queryParams?: ListCalendersQueryParams
+  ): AsyncListResponse<ListResponse<Calendar>> {
+    return super._list<ListResponse<Calendar>>({
       queryParams,
       overrides,
       path: `/v3/grants/${identifier}/calendars`,
-      responseSchema: CalendarSchema,
+      responseSchema: CalendarListResponseSchema,
     });
   }
 
@@ -80,10 +79,10 @@ export class Calendars extends BaseResource {
     calendarId,
     identifier,
     overrides,
-  }: FindCalendarParams & Overrides): Promise<Response<Calendar>> {
+  }: FindCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
     return super._find({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
-      responseSchema: CalendarSchema,
+      responseSchema: CalendarResponseSchema,
       overrides,
     });
   }
@@ -92,10 +91,10 @@ export class Calendars extends BaseResource {
     identifier,
     requestBody,
     overrides,
-  }: CreateCalendarParams & Overrides): Promise<Response<Calendar>> {
+  }: CreateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
     return super._create({
       path: `/v3/grants/${identifier}/calendars`,
-      responseSchema: CalendarSchema,
+      responseSchema: CalendarResponseSchema,
       requestBody,
       overrides,
     });
@@ -106,10 +105,10 @@ export class Calendars extends BaseResource {
     identifier,
     requestBody,
     overrides,
-  }: UpdateCalendarParams & Overrides): Promise<Response<Calendar>> {
+  }: UpdateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
     return super._update({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
-      responseSchema: CalendarSchema,
+      responseSchema: CalendarResponseSchema,
       requestBody,
       overrides,
     });
@@ -119,7 +118,7 @@ export class Calendars extends BaseResource {
     identifier,
     calendarId,
     overrides,
-  }: DestroyCalendarParams & Overrides): Promise<null> {
+  }: DestroyCalendarParams & Overrides): Promise<undefined> {
     return super._destroy({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
       overrides,
