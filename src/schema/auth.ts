@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 type AccessType = 'online' | 'offline';
 type Provider = 'google' | 'microsoft';
 
@@ -22,14 +20,12 @@ export type AuthConfig = SharedAuthParams & {
   provider: Provider;
 };
 
-export const CodeExchangeRequestSchema = z.object({
-  redirectUri: z.string().url(),
-  code: z.string(),
-});
-export const TokenExchangeRequestSchema = z.object({
-  redirectUri: z.string().url(),
-  refreshToken: z.string(),
-});
+export interface CodeExchangeRequest {
+  redirectUri: string;
+  code: string;
+}
 
-export type CodeExchangeRequest = z.infer<typeof CodeExchangeRequestSchema>;
-export type TokenExchangeRequest = z.infer<typeof TokenExchangeRequestSchema>;
+export interface TokenExchangeRequest {
+  redirectUri: string;
+  refreshToken: string;
+}

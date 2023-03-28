@@ -5,9 +5,7 @@ import {
   AuthConfig,
   AdminConsentAuth,
   CodeExchangeRequest,
-  CodeExchangeRequestSchema,
   TokenExchangeRequest,
-  TokenExchangeRequestSchema,
 } from '../schema/auth';
 import {
   ExchangeResponse,
@@ -38,7 +36,6 @@ export class Auth extends BaseResource {
   ): Promise<ExchangeResponse> {
     this.checkAuthCredentials();
 
-    CodeExchangeRequestSchema.parse(payload);
     const res = await this.apiClient.request<ExchangeResponse>(
       {
         method: 'POST',
@@ -69,7 +66,6 @@ export class Auth extends BaseResource {
   ): Promise<ExchangeResponse> {
     this.checkAuthCredentials();
 
-    TokenExchangeRequestSchema.parse(payload);
     const res = await this.apiClient.request<ExchangeResponse>(
       {
         method: 'POST',
@@ -160,7 +156,7 @@ export class Auth extends BaseResource {
     return url;
   }
 
-  private checkAuthCredentials() {
+  private checkAuthCredentials(): void {
     if (!this.apiClient.clientId || !this.apiClient.clientSecret) {
       throw new Error('ClientID & ClientSecret are required for using auth');
     }
