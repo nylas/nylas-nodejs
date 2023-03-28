@@ -5,6 +5,7 @@ const ErrorObjectSchema = z.object({
   message: z.string(),
   providerError: z.any(),
 });
+export type NylasErrorObject = z.infer<typeof ErrorObjectSchema>;
 
 export const ErrorResponseSchema = z.object({
   requestId: z.string(),
@@ -35,7 +36,7 @@ export const ListResponseSchema = z.object({
 export interface ItemResponse<T> {
   requestId: string;
   data: T;
-  error?: NylasErrorResponse;
+  error?: NylasErrorObject;
 }
 
 export const ExchangeResponseSchema = z.object({
@@ -53,7 +54,7 @@ export interface ListResponse<T> {
   requestId: string;
   data: T[];
   nextCursor?: string;
-  error?: NylasErrorResponse;
+  error?: NylasErrorObject;
 }
 
 export type ExchangeResponse = z.infer<typeof ExchangeResponseSchema>;
