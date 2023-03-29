@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import Model from './model';
 import Attributes, { Attribute } from './attributes';
 
@@ -358,5 +359,24 @@ export default class WebhookNotification extends Model
   constructor(props?: WebhookNotificationProperties) {
     super();
     this.initAttributes(props);
+  }
+
+  /**
+   * Verify incoming webhook signature came from Nylas
+   * @param clientSecret The client secret of the app receiving the webhook
+   * @param xNylasSignature The signature to verify
+   * @param rawBody The raw body from the payload
+   * @return true if the webhook signature was verified from Nylas
+   */
+  static verifyWebhookSignature(
+    clientSecret: string,
+    xNylasSignature: string,
+    rawBody: Buffer
+  ): boolean {
+    const digest = crypto
+      .createHmac('sha256', clientSecret)
+      .update(rawBody)
+      .digest('hex');
+    return digest === xNylasSignature;
   }
 }
