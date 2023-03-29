@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ItemResponseSchema, ListResponseSchema } from './response';
 
 export interface ListGrantsQueryParams {
   limit?: number;
@@ -40,4 +41,10 @@ export const GrantSchema = z.object({
   settings: z.record(z.string(), z.unknown()).optional(),
 });
 
+export const GrantResponseSchema = ItemResponseSchema.extend({
+  data: GrantSchema,
+});
+export const GrantListResponseSchema = ListResponseSchema.extend({
+  data: z.array(GrantSchema),
+});
 export type Grant = z.infer<typeof GrantSchema>;
