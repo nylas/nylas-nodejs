@@ -2,40 +2,37 @@ import { ZodType } from 'zod';
 import APIClient from '../apiClient';
 import { OverridableNylasConfig } from '../config';
 import { ListQueryParams } from '../schema/request';
-import { ListResponse, ListResponseInnerType } from '../schema/response';
+import {
+  ItemResponse,
+  ListResponse,
+  ListResponseInnerType,
+} from '../schema/response';
 
-interface ListRequestParams<T> {
-  path: string;
-  responseSchema: ZodType<T>;
-  overrides?: OverridableNylasConfig;
-  queryParams?: Record<string, any>;
-}
-
-interface FindRequestParams<T> {
-  path: string;
-  responseSchema: ZodType<T>;
-  overrides?: OverridableNylasConfig;
-}
-
-interface PayloadRequestParams<T> {
-  path: string;
-  responseSchema: ZodType<T>;
-  requestBody: Record<string, any>;
-  overrides?: OverridableNylasConfig;
-}
-
-interface DestroyRequestParams {
-  path: string;
-  queryParams?: Record<string, any>;
-  overrides?: OverridableNylasConfig;
-}
-
-export interface ListParams<T> {
+interface ListParams<T> {
   queryParams?: ListQueryParams;
   path: string;
   overrides?: OverridableNylasConfig;
   responseSchema: ZodType<T>;
   useGenerator?: boolean; // Add this line
+}
+
+interface FindParams<T> {
+  path: string;
+  responseSchema: ZodType<ItemResponse<T>>;
+  overrides?: OverridableNylasConfig;
+}
+
+interface PayloadParams<T> {
+  path: string;
+  responseSchema: ZodType<ItemResponse<T>>;
+  requestBody: Record<string, any>;
+  overrides?: OverridableNylasConfig;
+}
+
+interface DestroyParams {
+  path: string;
+  queryParams?: Record<string, any>;
+  overrides?: OverridableNylasConfig;
 }
 
 type List<T> = ListResponse<ListResponseInnerType<T>>;
@@ -139,22 +136,20 @@ export class BaseResource {
         } as ListYieldReturn<T>)
     );
 
-    const response = Object.assign(first, {
+    return Object.assign(first, {
       [Symbol.asyncIterator]: this.listIterator.bind(
         this,
         listParams
       ) as () => AsyncGenerator<T, undefined>,
     });
-
-    return response;
   }
 
   protected _find<T>({
     path,
     responseSchema,
     overrides,
-  }: FindRequestParams<T>): Promise<Response<T>> {
-    return this.apiClient.request<Response<T>>(
+  }: FindParams<T>): Promise<ItemResponse<T>> {
+    return this.apiClient.request<ItemResponse<T>>(
       {
         method: 'GET',
         path,
@@ -168,9 +163,9 @@ export class BaseResource {
 
   private payloadRequest<T>(
     method: 'POST' | 'PUT' | 'PATCH',
-    { path, responseSchema, requestBody, overrides }: PayloadRequestParams<T>
-  ): Promise<Response<T>> {
-    return this.apiClient.request<Response<T>>(
+    { path, responseSchema, requestBody, overrides }: PayloadParams<T>
+  ): Promise<ItemResponse<T>> {
+    return this.apiClient.request<ItemResponse<T>>(
       {
         method,
         path,
@@ -183,17 +178,17 @@ export class BaseResource {
     );
   }
 
-  protected _create<T>(params: PayloadRequestParams<T>): Promise<Response<T>> {
+  protected _create<T>(params: PayloadParams<T>): Promise<ItemResponse<T>> {
     return this.payloadRequest('POST', params);
   }
 
-  protected _update<T>(params: PayloadRequestParams<T>): Promise<Response<T>> {
+  protected _update<T>(params: PayloadParams<T>): Promise<ItemResponse<T>> {
     return this.payloadRequest('PUT', params);
   }
 
   protected _updatePatch<T>(
-    params: PayloadRequestParams<T>
-  ): Promise<Response<T>> {
+    params: PayloadParams<T>
+  ): Promise<ItemResponse<T>> {
     return this.payloadRequest('PATCH', params);
   }
 
@@ -201,7 +196,7 @@ export class BaseResource {
     path,
     queryParams,
     overrides,
-  }: DestroyRequestParams): Promise<undefined> {
+  }: DestroyParams): Promise<undefined> {
     return this.apiClient.request({
       method: 'DELETE',
       path,
