@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add support for verifying webhook signatures
+
 ### 6.9.0 / 2023-03-14
 * Add missing generic type in `RestfulModelCollection` for better type safety
 * Add 409 to error mapping

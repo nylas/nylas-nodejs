@@ -1,5 +1,7 @@
+import crypto from 'crypto';
 import Model from './model';
 import Attributes, { Attribute } from './attributes';
+import * as config from '../config';
 
 export type LinkClickProperties = {
   id: number;
@@ -358,5 +360,29 @@ export default class WebhookNotification extends Model
   constructor(props?: WebhookNotificationProperties) {
     super();
     this.initAttributes(props);
+  }
+
+  /**
+   * Verify incoming webhook signature came from Nylas
+   * @param xNylasSignature The signature to verify
+   * @param rawBody The raw body from the payload
+   * @param clientSecret Overriding client secret of the app receiving the webhook
+   * @return true if the webhook signature was verified from Nylas
+   */
+  static verifyWebhookSignature(
+    xNylasSignature: string,
+    rawBody: Buffer,
+    clientSecret?: string
+  ): boolean {
+    const clientSecretToUse = clientSecret || config.clientSecret;
+    if (!clientSecretToUse) {
+      throw new Error('Client secret is required to verify webhook signature');
+    }
+
+    const digest = crypto
+      .createHmac('sha256', clientSecretToUse)
+      .update(rawBody)
+      .digest('hex');
+    return digest === xNylasSignature;
   }
 }
