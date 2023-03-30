@@ -203,25 +203,24 @@ describe('Webhook Notification', () => {
   });
 
   describe('verifySignature', () => {
-    test("Webhook verification should pass if the body matches the Nylas signature", () => {
+    test('Webhook verification should pass if the body matches the Nylas signature', () => {
       const isVerified = WebhookNotification.verifyWebhookSignature(
-        "myClientSecret",
-        "ddc02f921a4835e310f249dc09770c3fea2cb6fe949adc1887d7adc04a581e1c",
+        'myClientSecret',
+        'ddc02f921a4835e310f249dc09770c3fea2cb6fe949adc1887d7adc04a581e1c',
         Buffer.from('test123', 'utf8')
       );
 
       expect(isVerified).toBe(true);
     });
 
-    test("Webhook verification should fail if the body does not match the Nylas signature", () => {
+    test('Webhook verification should fail if the body does not match the Nylas signature', () => {
       const isVerified = WebhookNotification.verifyWebhookSignature(
-        "myClientSecret",
-        "ddc02f921a4835e310f249dc09770c3fea2cb6fe949adc1887d7adc04a581e1c",
+        'myClientSecret',
+        'ddc02f921a4835e310f249dc09770c3fea2cb6fe949adc1887d7adc04a581e1c',
         Buffer.from('test12345', 'utf8')
       );
 
       expect(isVerified).toBe(false);
     });
-  })
   });
 });
