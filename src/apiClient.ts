@@ -1,8 +1,11 @@
-import fetch, { Request } from 'node-fetch';
+import fetch, { Request, Response } from 'node-fetch';
 import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
-import NylasApiError from './schema/error';
-import { ErrorResponseSchema } from './schema/response';
+import { NylasApiError, NylasAuthError } from './schema/error';
+import {
+  AuthErrorResponseSchema,
+  ErrorResponseSchema,
+} from './schema/response';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
 // import { AppendOptions } from 'form-data';
 
@@ -42,14 +45,14 @@ interface RequestOptions {
 export default class APIClient {
   apiKey: string;
   serverUrl: string;
-  // clientId?: string;
-  // clientSecret?: string;
+  clientId?: string;
+  clientSecret?: string;
 
-  constructor({ apiKey, serverUrl }: NylasConfig) {
+  constructor({ apiKey, serverUrl, clientId, clientSecret }: NylasConfig) {
     this.apiKey = apiKey;
     this.serverUrl = serverUrl as string; // TODO: get rid of type assertion
-    // this.clientSecret = clientSecret;
-    // this.clientId = clientId;
+    this.clientSecret = clientSecret;
+    this.clientId = clientId;
   }
 
   private setRequestUrl({
@@ -105,7 +108,7 @@ export default class APIClient {
 
     requestOptions.url = this.setRequestUrl(optionParams);
     requestOptions.headers = this.setRequestHeaders(optionParams);
-
+    requestOptions.method = optionParams.method;
     // logic for setting request body if is formdata
     // if (options.formData) {
     //   const fd = new FormData();
@@ -132,7 +135,6 @@ export default class APIClient {
 
   newRequest(options: RequestOptionsParams): Request {
     const newOptions = this.requestOptions(options);
-
     return new Request(newOptions.url, {
       method: newOptions.method,
       headers: newOptions.headers,
@@ -141,53 +143,24 @@ export default class APIClient {
   }
 
   // response has to be 204
-  async requestWithEmptyReturn(req: Request): Promise<undefined> {
-    const response = await fetch(req);
-    if (typeof response === 'undefined') {
-      throw new Error('Failed to fetch response');
-    }
-
-    if (response.status > 299) {
-      response.text().then(text => {
-        const error = JSON.parse(text);
-        throw new NylasApiError(error);
-      });
-    }
-
-    if (response.status === 204) {
+  async requestWithEmptyReturn(status: number): Promise<undefined> {
+    if (status === 204) {
       return undefined;
     }
 
-    throw new Error(`unexpected response, status: ${response.status}`);
+    throw new Error(`unexpected response, status: ${status}`);
   }
 
   async requestWithResponse<T>(
-    req: Request,
+    response: Response,
     passthru: OptionsPassthru<ZodType<T>>
   ): Promise<T> {
-    const response = await fetch(req);
-
-    if (typeof response === 'undefined') {
-      throw new Error('Failed to fetch response');
-    }
-
-    if (response.status > 299) {
-      const text = await response.text();
-      const error = JSON.parse(text);
-      throw new NylasApiError(error);
-    }
-
     const text = await response.text();
 
     const responseJSON = JSON.parse(text);
 
     // TODO: exclusion list for keys that should not be camelCased
     const camelCaseRes = objKeysToCamelCase(responseJSON);
-
-    const testError = ErrorResponseSchema.safeParse(camelCaseRes);
-    if (testError.success) {
-      throw new NylasApiError(testError.data);
-    }
 
     const testResponse = passthru.responseSchema.safeParse(camelCaseRes);
     if (testResponse.success) {
@@ -197,21 +170,53 @@ export default class APIClient {
     throw new Error('Could not validate response from the server.');
   }
 
-  request(options: RequestOptionsParams): Promise<undefined>;
-  request<T>(
+  async request(options: RequestOptionsParams): Promise<undefined>;
+  async request<T>(
     options: RequestOptionsParams,
     passthru: OptionsPassthru<ZodType<T>>
   ): Promise<T>;
-  request<T>(
+  async request<T>(
     options: RequestOptionsParams,
     passthru?: OptionsPassthru<ZodType<T>>
   ): Promise<T | undefined> {
     const req = this.newRequest(options);
 
-    if (!passthru) {
-      return this.requestWithEmptyReturn(req);
+    const response = await fetch(req);
+
+    if (typeof response === 'undefined') {
+      throw new Error('Failed to fetch response');
     }
 
-    return this.requestWithResponse(req, passthru);
+    // handle error response
+    if (response.status > 299) {
+      const text = await response.text();
+      const error = JSON.parse(text);
+
+      const authErrorResponse =
+        options.path.includes('connect/token') ||
+        options.path.includes('connect/revoke');
+
+      if (authErrorResponse) {
+        const testResponse = AuthErrorResponseSchema.safeParse(error);
+        if (testResponse.success) {
+          throw new NylasAuthError(testResponse.data);
+        }
+      } else {
+        const testErrorResponse = ErrorResponseSchema.safeParse(error);
+        if (testErrorResponse.success) {
+          throw new NylasApiError(testErrorResponse.data);
+        }
+      }
+
+      throw new Error(
+        `received an error but could not validate error response from server: ${error}`
+      );
+    }
+
+    if (!passthru) {
+      return this.requestWithEmptyReturn(response.status);
+    }
+
+    return this.requestWithResponse(response, passthru);
   }
 }
