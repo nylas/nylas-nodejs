@@ -1,4 +1,4 @@
-import { NylasErrorResponse } from './response';
+import { NylasErrorResponse, AuthErrorResponse } from './response';
 
 /**
  * Extended Error class for errors returned from the Nylas API
@@ -12,7 +12,7 @@ import { NylasErrorResponse } from './response';
  * missingFields (optional) - The fields that were missing in the call returned from the Nylas API payload
  * serverError (optional) - The error returned by the provider returned from the Nylas API payload
  */
-export default class NylasApiError extends Error {
+export class NylasApiError extends Error {
   type: string;
   requestId: string;
   providerError: any;
@@ -22,6 +22,19 @@ export default class NylasApiError extends Error {
     this.type = apiError.error.type;
     this.requestId = apiError.requestId;
     this.providerError = apiError.error.providerError;
+  }
+}
+
+export class NylasAuthError extends Error {
+  type: string;
+  requestId: string;
+  providerError: any;
+
+  constructor(apiError: AuthErrorResponse) {
+    super(apiError.errorDescription);
+    this.type = apiError.error;
+    this.requestId = apiError.requestId;
+    this.providerError = apiError.errorDescription;
   }
 }
 

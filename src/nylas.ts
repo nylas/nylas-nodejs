@@ -17,8 +17,11 @@ class Nylas {
     const apiClient = new APIClient({
       apiKey: config.apiKey,
       serverUrl: config.serverUrl || DEFAULT_SERVER_URL,
+      clientId: config.clientId,
+      clientSecret: config.clientSecret,
     });
 
+    this.auth = new Auth(apiClient);
     this.calendars = new Calendars(apiClient);
     this.events = new Events(apiClient);
     this.auth = new Auth(apiClient);
