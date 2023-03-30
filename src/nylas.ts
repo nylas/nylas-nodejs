@@ -24,6 +24,7 @@ class Nylas {
     this.auth = new Auth(apiClient);
     this.calendars = new Calendars(apiClient);
     this.events = new Events(apiClient);
+    this.auth = new Auth(apiClient);
     // etc.
 
     return this;
