@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 6.10.0 / 2023-04-04
 * Add support for verifying webhook signatures
 
 ### 6.9.0 / 2023-03-14
