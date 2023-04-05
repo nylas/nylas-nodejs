@@ -9,10 +9,10 @@ const TimeSchema = z.object({
 });
 
 const TimespanSchema = z.object({
-  start_time: z.number(),
-  end_time: z.number(),
-  start_timezone: z.string(),
-  end_timezone: z.string(),
+  startTime: z.number(),
+  endTime: z.number(),
+  startTimezone: z.string(),
+  endTimezone: z.string(),
 });
 
 const DateSchema = z.object({
@@ -20,8 +20,8 @@ const DateSchema = z.object({
 });
 
 const DatespanSchema = z.object({
-  start_date: z.string(),
-  end_Date: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
 });
 
 const WebExSchema = z.object({
@@ -31,13 +31,13 @@ const WebExSchema = z.object({
 });
 
 const ZoomMeetingSchema = z.object({
-  meeting_code: z.string(),
+  meetingCode: z.string(),
   password: z.string(),
   url: z.string(),
 });
 
 const GoToMeetingSchema = z.object({
-  meeting_code: z.string(),
+  meetingCode: z.string(),
   phone: z.array(z.string()),
   url: z.string(),
 });
@@ -69,7 +69,7 @@ const AutocreateSchema = z.object({
     z.literal('Zoom Meeting'),
     z.literal('Microsoft Teams'),
   ]),
-  autocreate: z.any(),
+  autocreate: z.any(), // TODO: FIX
 });
 
 const ParticipantSchema = z.object({
@@ -82,17 +82,17 @@ const ParticipantSchema = z.object({
     z.literal('maybe'),
   ]),
   comment: z.string().optional(),
-  phone_number: z.string().optional(),
+  phoneNumber: z.string().optional(),
 });
 
 const RecurrenceSchema = z.object({
-  rrule: z.array(z.string()),
+  rrule: z.array(z.any()), // TODO: FIX
   timezone: z.string(),
 });
 
 const RemindersSchema = z.object({
-  reminder_minutes: z.string().regex(/^\[-?\d+\]+$/),
-  reminder_method: z.union([
+  reminderMinutes: z.string().regex(/^\[-?\d+\]+$/),
+  reminderMethod: z.union([
     z.literal('email'),
     z.literal('popup'),
     z.literal('sound'),
@@ -159,32 +159,43 @@ export type UpdateEventRequestBody = CreateEventRequestBody;
 export type DestroyEventQueryParams = CreateEventQueryParams;
 
 const EventSchema = z.object({
+  accountId: z.string().optional(),
+  grantId: z.string().optional(),
   busy: z.boolean(),
-  description: z.string().optional(),
-  location: z.string().optional(),
-  participants: z.array(ParticipantSchema).nonempty(),
-  title: z.string(),
-  when: z.union([TimeSchema, TimespanSchema, DateSchema, DatespanSchema]),
-  conferencing: z.union([DetailsSchema, AutocreateSchema]),
-  recurrence: RecurrenceSchema,
-  metadata: z.record(z.string()),
-  account: z.string(),
-  calendar_id: z.string(),
-  ical_uid: z.string(),
+  calendarId: z.string(),
+  capacity: z.number().optional(),
+  conferencing: z.union([DetailsSchema, AutocreateSchema]).optional(),
+  createdAt: z.number().optional(),
+  description: z.string().nullable(),
+  hideParticipants: z.boolean().optional(),
+  icalUid: z.string().optional(),
   id: z.string(),
+  location: z.string().optional(),
+  messageId: z.string().nullable(),
+  metadata: z.record(z.string()).optional(),
   object: APIObjects,
-  owner: z.string(),
-  read_only: z.boolean(),
-  reminders: RemindersSchema,
-  status: z.union([
-    z.literal('confirmed'),
-    z.literal('tentative'),
-    z.literal('cancelled'),
-  ]),
+  owner: z.string().optional(),
+  organizer: z.any().optional(), // TODO: FIX
+  participants: z.array(ParticipantSchema),
+  providerArgs: z.any().optional(), // TODO: FIX
+  readOnly: z.boolean(),
+  recurrence: RecurrenceSchema.optional(),
+  reminderMinutes: z.any().optional(), // TODO: FIX
+  reminderMethod: z.string().optional(),
+  reminders: RemindersSchema.nullable(),
+  status: z
+    .union([
+      z.literal('confirmed'),
+      z.literal('tentative'),
+      z.literal('cancelled'),
+    ])
+    .optional(),
+  title: z.string().optional(),
+  updatedAt: z.number().optional(),
   visibility: z.union([z.literal('public'), z.literal('private')]).optional(),
-  updated_at: z.number(),
-  created_at: z.number(),
-  html_link: z.string(),
+  when: z.union([TimeSchema, TimespanSchema, DateSchema, DatespanSchema]),
+  creator: z.any().optional(), // TODO: FIX
+  htmlLink: z.string().optional(),
 });
 
 export const EventResponseSchema = ItemResponseSchema.extend({
