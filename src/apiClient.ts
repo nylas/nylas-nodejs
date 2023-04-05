@@ -167,7 +167,9 @@ export default class APIClient {
       return testResponse.data;
     }
 
-    throw new Error('Could not validate response from the server.');
+    throw new Error(
+      `Could not validate response from the server. ${testResponse.error}`
+    );
   }
 
   async request(options: RequestOptionsParams): Promise<undefined>;
@@ -192,24 +194,26 @@ export default class APIClient {
       const text = await response.text();
       const error = JSON.parse(text);
 
+      const camelCaseError = objKeysToCamelCase(error);
+
       const authErrorResponse =
         options.path.includes('connect/token') ||
         options.path.includes('connect/revoke');
 
       if (authErrorResponse) {
-        const testResponse = AuthErrorResponseSchema.safeParse(error);
+        const testResponse = AuthErrorResponseSchema.safeParse(camelCaseError);
         if (testResponse.success) {
           throw new NylasAuthError(testResponse.data);
         }
       } else {
-        const testErrorResponse = ErrorResponseSchema.safeParse(error);
+        const testErrorResponse = ErrorResponseSchema.safeParse(camelCaseError);
         if (testErrorResponse.success) {
           throw new NylasApiError(testErrorResponse.data);
         }
       }
 
       throw new Error(
-        `received an error but could not validate error response from server: ${error}`
+        `Received an error but could not validate error response from server: ${error}`
       );
     }
 
