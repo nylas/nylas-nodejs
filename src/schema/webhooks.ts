@@ -28,9 +28,8 @@ export enum WebhookTriggers {
 const WebhookSchema = z.object({
   id: z.string(),
   description: z.string().optional(),
-  triggerTypes: z.array(z.nativeEnum(WebhookTriggers)).nonempty(),
+  triggerTypes: z.array(z.nativeEnum(WebhookTriggers)),
   callbackUrl: z.string(),
-  webhookSecret: z.string(),
   status: z.union([
     z.literal('active'),
     z.literal('failing'),
@@ -40,10 +39,17 @@ const WebhookSchema = z.object({
   notificationEmailAddress: z.string(),
   statusUpdatedAt: z.number(),
 });
+const WebhookWithSecretSchema = WebhookSchema.extend({
+  webhookSecret: z.string(),
+});
 
 export type Webhook = z.infer<typeof WebhookSchema>;
+export type WebhookWithSecret = z.infer<typeof WebhookWithSecretSchema>;
 export const WebhookResponseSchema = ItemResponseSchema.extend({
   data: WebhookSchema,
+});
+export const WebhookResponseWithSecretSchema = ItemResponseSchema.extend({
+  data: WebhookWithSecretSchema,
 });
 export const WebhookListResponseSchema = ListResponseSchema.extend({
   data: z.array(WebhookSchema),

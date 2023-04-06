@@ -8,6 +8,8 @@ import {
   WebhookIpAddressesResponseSchema,
   WebhookListResponseSchema,
   WebhookResponseSchema,
+  WebhookResponseWithSecretSchema,
+  WebhookWithSecret,
 } from '../schema/webhooks';
 
 interface CreateWebhookParams {
@@ -37,12 +39,14 @@ export class Webhooks extends BaseResource {
   public create({
     requestBody,
     overrides,
-  }: CreateWebhookParams & Overrides): Promise<ItemResponse<Webhook>> {
+  }: CreateWebhookParams & Overrides): Promise<
+    ItemResponse<WebhookWithSecret>
+  > {
     return super._create({
       path: `/v3/webhooks`,
       requestBody,
       overrides,
-      responseSchema: WebhookResponseSchema,
+      responseSchema: WebhookResponseWithSecretSchema,
     });
   }
 
@@ -77,7 +81,7 @@ export class Webhooks extends BaseResource {
       path: `/v3/webhooks/${webhookId}/rotate-secret`,
       requestBody: {},
       overrides,
-      responseSchema: WebhookResponseSchema,
+      responseSchema: WebhookResponseWithSecretSchema,
     });
   }
 
