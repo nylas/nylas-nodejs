@@ -74,7 +74,7 @@ export class Webhooks extends BaseResource {
     overrides,
   }: DestroyWebhookParams & Overrides): Promise<ItemResponse<Webhook>> {
     return super._update({
-      path: `/v3/webhooks/${webhookId}/rotate_secret`,
+      path: `/v3/webhooks/${webhookId}/rotate-secret`,
       requestBody: {},
       overrides,
       responseSchema: WebhookResponseSchema,
@@ -85,7 +85,7 @@ export class Webhooks extends BaseResource {
     ItemResponse<WebhookIpAddresses>
   > {
     return super._find({
-      path: `/v3/webhooks/ip_addresses`,
+      path: `/v3/webhooks/ip-addresses`,
       overrides,
       responseSchema: WebhookIpAddressesResponseSchema,
     });
