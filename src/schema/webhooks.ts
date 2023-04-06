@@ -59,3 +59,12 @@ export const WebhookListResponseSchema = ListResponseSchema.extend({
   data: z.array(WebhookSchema),
 });
 export type WebhookList = z.infer<typeof WebhookListResponseSchema>;
+
+const WebhookIpAddressesSchema = z.object({
+  ipAddresses: z.array(z.string()),
+  updatedAt: z.number(),
+});
+export const WebhookIpAddressesResponseSchema = ItemResponseSchema.extend({
+  data: WebhookIpAddressesSchema,
+});
+export type WebhookIpAddresses = z.infer<typeof WebhookIpAddressesSchema>;

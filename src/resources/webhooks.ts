@@ -4,6 +4,8 @@ import { ItemResponse, ListResponse } from '../schema/response';
 import {
   CreateWebhookRequestBody,
   Webhook,
+  WebhookIpAddresses,
+  WebhookIpAddressesResponseSchema,
   WebhookListResponseSchema,
   WebhookResponseSchema,
 } from '../schema/webhooks';
@@ -64,6 +66,28 @@ export class Webhooks extends BaseResource {
     return super._destroy({
       path: `/v3/webhooks/${webhookId}`,
       overrides,
+    });
+  }
+
+  public rotateSecret({
+    webhookId,
+    overrides,
+  }: DestroyWebhookParams & Overrides): Promise<ItemResponse<Webhook>> {
+    return super._update({
+      path: `/v3/webhooks/${webhookId}/rotate_secret`,
+      requestBody: {},
+      overrides,
+      responseSchema: WebhookResponseSchema,
+    });
+  }
+
+  public ipAddresses({ overrides }: Overrides = {}): Promise<
+    ItemResponse<WebhookIpAddresses>
+  > {
+    return super._find({
+      path: `/v3/webhooks/ip_addresses`,
+      overrides,
+      responseSchema: WebhookIpAddressesResponseSchema,
     });
   }
 }
