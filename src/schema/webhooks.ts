@@ -11,28 +11,18 @@ export interface CreateWebhookRequestBody {
 export type UpdateWebhookRequestBody = Partial<CreateWebhookRequestBody>;
 
 export enum WebhookTriggers {
-  AccountConnected = 'account.connected',
-  AccountRunning = 'account.running',
-  AccountStopped = 'account.stopped',
-  AccountInvalid = 'account.invalid',
-  AccountSyncError = 'account.sync_error',
-  MessageBounced = 'message.bounced',
-  MessageCreated = 'message.created',
-  MessageOpened = 'message.opened',
-  MessageUpdated = 'message.updated',
-  MessageLinkClicked = 'message.link_clicked',
-  ThreadReplied = 'thread.replied',
-  ContactCreated = 'contact.created',
-  ContactUpdated = 'contact.updated',
-  ContactDeleted = 'contact.deleted',
   CalendarCreated = 'calendar.created',
   CalendarUpdated = 'calendar.updated',
   CalendarDeleted = 'calendar.deleted',
   EventCreated = 'event.created',
   EventUpdated = 'event.updated',
   EventDeleted = 'event.deleted',
-  JobSuccessful = 'job.successful',
-  JobFailed = 'job.failed',
+  GrantCreated = 'grant.created',
+  GrantUpdated = 'grant.updated',
+  GrantDeleted = 'grant.deleted',
+  GrantExpired = 'grant.expired',
+  MessageSendSuccess = 'message.send_success',
+  MessageSendFailed = 'message.send_failed',
 }
 
 const WebhookSchema = z.object({
