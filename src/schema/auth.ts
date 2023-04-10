@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { ItemResponseSchema } from './response';
+import { GoogleScopes, MicrosoftScopes, Scope, YahooScopes } from './scopes';
 
 type AccessType = 'online' | 'offline';
-type Provider = 'google' | 'microsoft';
 
 export type AdminConsentAuth = SharedAuthParams & {
   credentialId: string;
@@ -12,7 +12,7 @@ type SharedAuthParams = {
   accessType?: AccessType;
   prompt?: string;
   redirectUri: string;
-  scope?: Array<string>;
+  scope?: Scope[];
   includeGrantScopes: boolean;
   metadata?: string;
   state?: string;
@@ -38,9 +38,19 @@ export const OpenIDSchema = z.object({
 	locale: z.string().optional(),
 })
 
-export type AuthConfig = SharedAuthParams & {
-  provider: Provider;
-};
+export type AuthConfig =
+  | (SharedAuthParams & {
+      scope: GoogleScopes[];
+      provider: 'google';
+    })
+  | (SharedAuthParams & {
+      scope: YahooScopes[];
+      provider: 'yahoo';
+    })
+  | (SharedAuthParams & {
+      scope: MicrosoftScopes[];
+      provider: 'microsoft';
+    });
 
 export interface CodeExchangeRequest {
   redirectUri: string;

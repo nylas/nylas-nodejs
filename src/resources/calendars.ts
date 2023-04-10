@@ -75,67 +75,51 @@ export class Calendars extends BaseResource {
     });
   }
 
-  public async find({
+  public find({
     calendarId,
     identifier,
     overrides,
   }: FindCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
-    return this.apiClient.request<ItemResponse<Calendar>>(
-      {
-        method: 'GET',
-        path: `/v3/grants/${identifier}/calendars/${calendarId}`,
-        overrides,
-      },
-      {
-        responseSchema: CalendarResponseSchema,
-      }
-    );
+    return super._find({
+      path: `/v3/grants/${identifier}/calendars/${calendarId}`,
+      responseSchema: CalendarResponseSchema,
+      overrides,
+    });
   }
 
-  public async create({
+  public create({
     identifier,
     requestBody,
     overrides,
   }: CreateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
-    return this.apiClient.request<ItemResponse<Calendar>>(
-      {
-        method: 'POST',
-        path: `/v3/grants/${identifier}/calendars`,
-        body: requestBody,
-        overrides,
-      },
-      {
-        responseSchema: CalendarResponseSchema,
-      }
-    );
+    return super._create({
+      path: `/v3/grants/${identifier}/calendars`,
+      responseSchema: CalendarResponseSchema,
+      requestBody,
+      overrides,
+    });
   }
 
-  public async update({
+  public update({
     calendarId,
     identifier,
     requestBody,
     overrides,
   }: UpdateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
-    return this.apiClient.request<ItemResponse<Calendar>>(
-      {
-        method: 'PUT',
-        path: `/v3/grants/${identifier}/calendars/${calendarId}`,
-        body: requestBody,
-        overrides,
-      },
-      {
-        responseSchema: CalendarResponseSchema,
-      }
-    );
+    return super._update({
+      path: `/v3/grants/${identifier}/calendars/${calendarId}`,
+      responseSchema: CalendarResponseSchema,
+      requestBody,
+      overrides,
+    });
   }
 
-  public async destroy({
+  public destroy({
     identifier,
     calendarId,
     overrides,
   }: DestroyCalendarParams & Overrides): Promise<undefined> {
-    return this.apiClient.request({
-      method: 'DELETE',
+    return super._destroy({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
       overrides,
     });

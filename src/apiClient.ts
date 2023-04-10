@@ -167,7 +167,9 @@ export default class APIClient {
       return testResponse.data;
     }
 
-    throw new Error('Could not validate response from the server.');
+    throw new Error(
+      `Could not validate response from the server. ${testResponse.error}`
+    );
   }
 
   async request(options: RequestOptionsParams): Promise<undefined>;
@@ -191,33 +193,35 @@ export default class APIClient {
     if (response.status > 299) {
       const text = await response.text();
       const error = JSON.parse(text);
-      const camelCaseRes = objKeysToCamelCase(error);
+
+      const camelCaseError = objKeysToCamelCase(error);
+
       const authErrorResponse =
-      options.path.includes('connect/token') ||
-      options.path.includes('connect/revoke');
+        options.path.includes('connect/token') ||
+        options.path.includes('connect/revoke');
+
       const tokenErrorResponse =
       options.path.includes('connect/tokeninfo')
       if (authErrorResponse && !tokenErrorResponse) {
-        const testResponse = AuthErrorResponseSchema.safeParse(camelCaseRes);
+        const testResponse = AuthErrorResponseSchema.safeParse(camelCaseError);
         if (testResponse.success) {
           throw new NylasAuthError(testResponse.data);
         }
       }else if (tokenErrorResponse){
-        const testResponse = TokenValidationErrorResponseSchema.safeParse(camelCaseRes);
+        const testResponse = TokenValidationErrorResponseSchema.safeParse(camelCaseError);
 
         if (testResponse.success) {
           throw new NylasTokenValidationError(testResponse.data);
         }
-      }
-       else {
-        const testErrorResponse = ErrorResponseSchema.safeParse(camelCaseRes);
+      } else {
+        const testErrorResponse = ErrorResponseSchema.safeParse(camelCaseError);
         if (testErrorResponse.success) {
           throw new NylasApiError(testErrorResponse.data);
         }
       }
 
       throw new Error(
-        `received an error but could not validate error response from server: ${error}`
+        `Received an error but could not validate error response from server: ${error}`
       );
     }
 
