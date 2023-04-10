@@ -1,5 +1,6 @@
 import {z} from 'zod'
 import { ItemResponseSchema } from './response';
+import { GoogleScopes, MicrosoftScopes, Scope, YahooScopes } from './scopes';
 
 type AccessType = 'online' | 'offline';
 type Provider = 'google' | 'microsoft';
@@ -12,16 +13,26 @@ type SharedAuthParams = {
   accessType?: AccessType;
   prompt?: string;
   redirectUri: string;
-  scope?: Array<string>;
+  scope?: Scope[];
   includeGrantScopes: boolean;
   metadata?: string;
   state?: string;
   loginHint?: string;
 };
 
-export type AuthConfig = SharedAuthParams & {
-  provider: Provider;
-};
+export type AuthConfig =
+  | (SharedAuthParams & {
+      scope: GoogleScopes[];
+      provider: 'google';
+    })
+  | (SharedAuthParams & {
+      scope: YahooScopes[];
+      provider: 'yahoo';
+    })
+  | (SharedAuthParams & {
+      scope: MicrosoftScopes[];
+      provider: 'microsoft';
+    });
 
 export interface CodeExchangeRequest {
   redirectUri: string;
@@ -33,14 +44,27 @@ export interface TokenExchangeRequest {
   refreshToken: string;
 }
 
-export type HostedAuthRequest = {
+type SharedHostedAuthRequest = {
   provider: Provider;
   redirectUri: string;
-  scope?: Array<string>;
   state?: string;
   loginHint?: string;
   cookieNonce?: string;
 };
+
+export type HostedAuthRequest =
+  | (SharedHostedAuthRequest & {
+      scope?: GoogleScopes[];
+      provider: 'google';
+    })
+  | (SharedHostedAuthRequest & {
+      scope?: YahooScopes[];
+      provider: 'yahoo';
+    })
+  | (SharedHostedAuthRequest & {
+      scope?: MicrosoftScopes[];
+      provider: 'microsoft';
+    });
 
 const HostedAuthSchema = z.object({
   url: z.string(),
