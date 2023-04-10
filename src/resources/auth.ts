@@ -6,6 +6,7 @@ import {
   AdminConsentAuth,
   CodeExchangeRequest,
   TokenExchangeRequest,
+  HostedAuthRequest
 } from '../schema/auth';
 import {
   ExchangeResponse,
@@ -160,6 +161,26 @@ export class Auth extends BaseResource {
     if (!this.apiClient.clientId || !this.apiClient.clientSecret) {
       throw new Error('ClientID & ClientSecret are required for using auth');
     }
+  }
+
+  /**
+   * Create a new authorization request and get a new unique login url. 
+   * Used only for hosted authentication. 
+   * This is the initial step requested from the server side to issue a new login url. 
+   * @param HostedAuthRequest params to initiate hosted auth request
+   */
+  public async hostedAuth(payload: HostedAuthRequest): Promise<boolean> {
+    await this.apiClient.request<EmptyResponse>(
+      {
+        method: 'POST',
+        path: `/v3/connect/revoke`,
+        body: payload
+      },
+      {
+        responseSchema: EmptyResponseSchema,
+      }
+    );
+    return true;
   }
 
   /**
