@@ -25,43 +25,47 @@ const DatespanSchema = z.object({
 });
 
 const WebExSchema = z.object({
-  password: z.string(),
-  pin: z.string(),
-  url: z.string(),
+  provider: z.literal('WebEx'),
+  details: z.object({
+    password: z.string(),
+    pin: z.string(),
+    url: z.string(),
+  }),
 });
 
 const ZoomMeetingSchema = z.object({
-  meetingCode: z.string(),
-  password: z.string(),
-  url: z.string(),
+  provider: z.literal('Zoom Meeting'),
+  details: z.object({
+    meetingCode: z.string(),
+    password: z.string(),
+    url: z.string(),
+  }),
 });
 
 const GoToMeetingSchema = z.object({
-  meetingCode: z.string(),
-  phone: z.array(z.string()),
-  url: z.string(),
+  provider: z.literal('GoToMeeting'),
+  details: z.object({
+    meetingCode: z.string(),
+    phone: z.array(z.string()),
+    url: z.string(),
+  }),
 });
 
 const GoogleMeetSchema = z.object({
-  phone: z.string(),
-  pin: z.string(),
-  url: z.string(),
+  provider: z.literal('Google Meet'),
+  details: z.object({
+    phone: z.string(),
+    pin: z.string(),
+    url: z.string(),
+  }),
 });
 
-const DetailsSchema = z.object({
-  provider: z.union([
-    z.literal('WebEx'),
-    z.literal('Zoom Meeting'),
-    z.literal('GoToMeeting'),
-    z.literal('Google Meet'),
-  ]),
-  details: z.union([
-    WebExSchema,
-    ZoomMeetingSchema,
-    GoToMeetingSchema,
-    GoogleMeetSchema,
-  ]),
-});
+const DetailsSchema = z.union([
+  WebExSchema,
+  ZoomMeetingSchema,
+  GoToMeetingSchema,
+  GoogleMeetSchema,
+]);
 
 const AutocreateSchema = z.object({
   provider: z.union([
