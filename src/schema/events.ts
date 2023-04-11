@@ -73,7 +73,7 @@ const AutocreateSchema = z.object({
     z.literal('Zoom Meeting'),
     z.literal('Microsoft Teams'),
   ]),
-  autocreate: z.any(), // TODO: FIX
+  autocreate: z.record(z.string(), z.any()),
 });
 
 const ParticipantSchema = z.object({
@@ -90,7 +90,11 @@ const ParticipantSchema = z.object({
 });
 
 const RecurrenceSchema = z.object({
-  rrule: z.array(z.any()), // TODO: FIX
+  rrule: z.array(
+    z
+      .string()
+      .regex(/^(RRULE|EXDATE)(?:;VALUE=([^:;]+))?(?:;TZID=([^:;]+))?:(.*)$/)
+  ),
   timezone: z.string(),
 });
 
@@ -102,6 +106,11 @@ const RemindersSchema = z.object({
     z.literal('sound'),
     z.literal('display'),
   ]),
+});
+
+const EmailNameSchema = z.object({
+  email: z.string(),
+  name: z.string().optional(),
 });
 
 type Time = z.infer<typeof TimeSchema>;
@@ -163,13 +172,11 @@ export type UpdateEventRequestBody = CreateEventRequestBody;
 export type DestroyEventQueryParams = CreateEventQueryParams;
 
 const EventSchema = z.object({
-  accountId: z.string().optional(),
   grantId: z.string().optional(),
   busy: z.boolean(),
   calendarId: z.string(),
-  capacity: z.number().optional(),
   conferencing: z.union([DetailsSchema, AutocreateSchema]).optional(),
-  createdAt: z.number().optional(),
+  createdAt: z.number(),
   description: z.string().nullable(),
   hideParticipants: z.boolean().optional(),
   icalUid: z.string().optional(),
@@ -177,15 +184,12 @@ const EventSchema = z.object({
   location: z.string().optional(),
   messageId: z.string().nullable(),
   metadata: z.record(z.string()).optional(),
-  object: APIObjects,
+  object: z.literal('event'),
   owner: z.string().optional(),
-  organizer: z.any().optional(), // TODO: FIX
+  organizer: EmailNameSchema.optional(),
   participants: z.array(ParticipantSchema),
-  providerArgs: z.any().optional(), // TODO: FIX
   readOnly: z.boolean(),
   recurrence: RecurrenceSchema.optional(),
-  reminderMinutes: z.any().optional(), // TODO: FIX
-  reminderMethod: z.string().optional(),
   reminders: RemindersSchema.nullable(),
   status: z
     .union([
@@ -195,10 +199,10 @@ const EventSchema = z.object({
     ])
     .optional(),
   title: z.string().optional(),
-  updatedAt: z.number().optional(),
+  updatedAt: z.number(),
   visibility: z.union([z.literal('public'), z.literal('private')]).optional(),
   when: z.union([TimeSchema, TimespanSchema, DateSchema, DatespanSchema]),
-  creator: z.any().optional(), // TODO: FIX
+  creator: EmailNameSchema.optional(),
   htmlLink: z.string().optional(),
 });
 
