@@ -94,4 +94,13 @@ export class Webhooks extends BaseResource {
       responseSchema: WebhookIpAddressesResponseSchema,
     });
   }
+
+  public extractChallengeParameter(url: string): string {
+    const urlObject = new URL(url);
+    const challengeParameter = urlObject.searchParams.get('challenge');
+    if (!challengeParameter) {
+      throw new Error('Invalid URL or no challenge parameter found.');
+    }
+    return challengeParameter;
+  }
 }
