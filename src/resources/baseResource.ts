@@ -3,6 +3,7 @@ import APIClient from '../apiClient';
 import { OverridableNylasConfig } from '../config';
 import { ListQueryParams } from '../schema/request';
 import {
+  DeleteResponse,
   ItemResponse,
   ListResponse,
   ListResponseInnerType,
@@ -196,7 +197,7 @@ export class BaseResource {
     path,
     queryParams,
     overrides,
-  }: DestroyParams): Promise<undefined> {
+  }: DestroyParams): Promise<DeleteResponse> {
     return this.apiClient.request({
       method: 'DELETE',
       path,
