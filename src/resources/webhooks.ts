@@ -26,6 +26,11 @@ interface DestroyWebhookParams {
 }
 
 export class Webhooks extends BaseResource {
+  /**
+   * List all webhook destinations for the application
+   * @param overrides Overrides for the request
+   * @returns The list of webhook destinations
+   */
   public list({ overrides }: Overrides = {}): AsyncListResponse<
     ListResponse<Webhook>
   > {
@@ -36,6 +41,12 @@ export class Webhooks extends BaseResource {
     });
   }
 
+  /**
+   * Create a webhook destination
+   * @param requestBody The webhook destination details
+   * @param overrides Overrides for the request
+   * @returns The created webhook destination
+   */
   public create({
     requestBody,
     overrides,
@@ -50,6 +61,13 @@ export class Webhooks extends BaseResource {
     });
   }
 
+  /**
+   * Update a webhook destination
+   * @param webhookId The ID of the webhook destination to update
+   * @param requestBody The updated webview destination details
+   * @param overrides Overrides for the request
+   * @returns The updated webhook destination
+   */
   public update({
     webhookId,
     requestBody,
@@ -63,6 +81,11 @@ export class Webhooks extends BaseResource {
     });
   }
 
+  /**
+   * Delete a webhook destination
+   * @param webhookId The ID of the webhook destination to delete
+   * @param overrides Overrides for the request
+   */
   public destroy({
     webhookId,
     overrides,
@@ -73,6 +96,12 @@ export class Webhooks extends BaseResource {
     });
   }
 
+  /**
+   * Update the webhook secret value for a destination
+   * @param webhookId The ID of the webhook destination to update
+   * @param overrides Overrides for the request
+   * @returns The updated webhook destination
+   */
   public rotateSecret({
     webhookId,
     overrides,
@@ -85,6 +114,11 @@ export class Webhooks extends BaseResource {
     });
   }
 
+  /**
+   * Get the current list of IP addresses that Nylas sends webhooks from
+   * @param overrides Overrides for the request
+   * @returns The list of IP addresses that Nylas sends webhooks from
+   */
   public ipAddresses({ overrides }: Overrides = {}): Promise<
     ItemResponse<WebhookIpAddresses>
   > {
@@ -95,6 +129,11 @@ export class Webhooks extends BaseResource {
     });
   }
 
+  /**
+   * Extract the challenge parameter from a URL
+   * @param url The URL sent by Nylas containing the challenge parameter
+   * @returns The challenge parameter
+   */
   public extractChallengeParameter(url: string): string {
     const urlObject = new URL(url);
     const challengeParameter = urlObject.searchParams.get('challenge');
