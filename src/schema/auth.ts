@@ -35,9 +35,16 @@ export type AuthConfig =
 export interface CodeExchangeRequest {
   redirectUri: string;
   code: string;
+  codeVerifier?: string; // Only For PKCE auth requests
 }
 
 export interface TokenExchangeRequest {
   redirectUri: string;
   refreshToken: string;
+}
+
+export interface PKCEAuthURL {
+  url: string;
+  secret: string;
+  secretHash: string;
 }
