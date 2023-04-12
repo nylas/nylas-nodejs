@@ -57,9 +57,19 @@ export interface ListResponse<T> {
   error?: NylasErrorObject;
 }
 
+export const DeleteResponseSchema = z.object({
+  requestId: z.string(),
+  data: z
+    .object({
+      status: z.literal('success'),
+    })
+    .optional(),
+});
+
 export type ExchangeResponse = z.infer<typeof ExchangeResponseSchema>;
 export type EmptyResponse = z.infer<typeof EmptyResponseSchema>;
 export type AuthErrorResponse = z.infer<typeof AuthErrorResponseSchema>;
+export type DeleteResponse = z.infer<typeof DeleteResponseSchema>;
 
 export type ListResponseInnerType<T> = T extends ListResponse<infer R>
   ? R
