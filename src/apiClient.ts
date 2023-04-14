@@ -126,9 +126,10 @@ export default class APIClient {
     // } else
 
     // TODO: function to set request body
-    // TODO: convert to snake case
     if (optionParams.body) {
-      requestOptions.body = JSON.stringify(optionParams.body);
+      requestOptions.body = JSON.stringify(
+        objKeysToSnakeCase(optionParams.body)
+      );
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
