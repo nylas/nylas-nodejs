@@ -59,11 +59,6 @@ export interface ListResponse<T> {
 
 export const DeleteResponseSchema = z.object({
   requestId: z.string(),
-  data: z
-    .object({
-      status: z.literal('success'),
-    })
-    .optional(),
 });
 
 export type ExchangeResponse = z.infer<typeof ExchangeResponseSchema>;
