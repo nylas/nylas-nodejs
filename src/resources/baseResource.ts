@@ -3,7 +3,7 @@ import APIClient from '../apiClient';
 import { OverridableNylasConfig } from '../config';
 import { ListQueryParams } from '../schema/request';
 import {
-  DeleteResponse,
+  DeleteResponseSchema,
   ItemResponse,
   ListResponse,
   ListResponseInnerType,
@@ -34,6 +34,7 @@ interface DestroyParams {
   path: string;
   queryParams?: Record<string, any>;
   overrides?: OverridableNylasConfig;
+  responseSchema?: ZodType;
 }
 
 type List<T> = ListResponse<ListResponseInnerType<T>>;
@@ -193,17 +194,23 @@ export class BaseResource {
     return this.payloadRequest('PATCH', params);
   }
 
-  protected _destroy({
+  protected _destroy<T>({
     path,
     queryParams,
     overrides,
-  }: DestroyParams): Promise<DeleteResponse> {
-    return this.apiClient.request({
-      method: 'DELETE',
-      path,
-      queryParams,
-      overrides,
-    });
+    responseSchema,
+  }: DestroyParams): Promise<T> {
+    return this.apiClient.request(
+      {
+        method: 'DELETE',
+        path,
+        queryParams,
+        overrides,
+      },
+      {
+        responseSchema: responseSchema ?? DeleteResponseSchema,
+      }
+    );
   }
 }
 

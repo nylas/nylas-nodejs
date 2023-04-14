@@ -4,8 +4,6 @@ import { NylasConfig, OverridableNylasConfig } from './config';
 import { NylasApiError, NylasAuthError } from './schema/error';
 import {
   AuthErrorResponseSchema,
-  DeleteResponse,
-  DeleteResponseSchema,
   ErrorResponseSchema,
 } from './schema/response';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
@@ -145,19 +143,10 @@ export default class APIClient {
     });
   }
 
-  // response has to be 204
-  async requestWithEmptyReturn(status: number): Promise<undefined> {
-    if (status === 204) {
-      return undefined;
-    }
-
-    throw new Error(`unexpected response, status: ${status}`);
-  }
-
   async requestWithResponse<T>(
     response: Response,
-    passthru?: OptionsPassthru<ZodType<T>>
-  ): Promise<T | DeleteResponse> {
+    passthru: OptionsPassthru<ZodType<T>>
+  ): Promise<T> {
     const text = await response.text();
 
     const responseJSON = JSON.parse(text);
@@ -165,12 +154,7 @@ export default class APIClient {
     // TODO: exclusion list for keys that should not be camelCased
     const camelCaseRes = objKeysToCamelCase(responseJSON);
 
-    let testResponse;
-    if (passthru) {
-      testResponse = passthru.responseSchema.safeParse(camelCaseRes);
-    } else {
-      testResponse = DeleteResponseSchema.safeParse(camelCaseRes);
-    }
+    const testResponse = passthru.responseSchema.safeParse(camelCaseRes);
     if (testResponse.success) {
       return testResponse.data;
     }
@@ -180,15 +164,10 @@ export default class APIClient {
     );
   }
 
-  async request(options: RequestOptionsParams): Promise<DeleteResponse>;
   async request<T>(
     options: RequestOptionsParams,
     passthru: OptionsPassthru<ZodType<T>>
-  ): Promise<T>;
-  async request<T>(
-    options: RequestOptionsParams,
-    passthru?: OptionsPassthru<ZodType<T>>
-  ): Promise<T | DeleteResponse> {
+  ): Promise<T> {
     const req = this.newRequest(options);
 
     const response = await fetch(req);
