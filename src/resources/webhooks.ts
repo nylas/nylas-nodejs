@@ -4,6 +4,8 @@ import { ItemResponse, ListResponse } from '../schema/response';
 import {
   CreateWebhookRequestBody,
   Webhook,
+  WebhookDeleteResponse,
+  WebhookDeleteResponseSchema,
   WebhookIpAddresses,
   WebhookIpAddressesResponseSchema,
   WebhookListResponseSchema,
@@ -89,10 +91,11 @@ export class Webhooks extends BaseResource {
   public destroy({
     webhookId,
     overrides,
-  }: DestroyWebhookParams & Overrides): Promise<void> {
+  }: DestroyWebhookParams & Overrides): Promise<WebhookDeleteResponse> {
     return super._destroy({
       path: `/v3/webhooks/${webhookId}`,
       overrides,
+      responseSchema: WebhookDeleteResponseSchema,
     });
   }
 

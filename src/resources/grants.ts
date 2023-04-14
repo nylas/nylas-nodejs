@@ -1,6 +1,6 @@
 import { BaseResource } from './baseResource';
 import { Overrides } from '../config';
-import { ItemResponse, ListResponse } from '../schema/response';
+import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
 import {
   CreateGrantRequestBody,
   Grant,
@@ -79,7 +79,7 @@ export class Grants extends BaseResource {
   public destroy({
     grantId,
     overrides,
-  }: DestroyGrantParams & Overrides): Promise<undefined> {
+  }: DestroyGrantParams & Overrides): Promise<DeleteResponse> {
     return super._destroy({
       path: `/v3/grants/${grantId}`,
       overrides,

@@ -42,9 +42,18 @@ const WebhookSchema = z.object({
 const WebhookWithSecretSchema = WebhookSchema.extend({
   webhookSecret: z.string(),
 });
+export const WebhookDeleteResponseSchema = z.object({
+  requestId: z.string(),
+  data: z
+    .object({
+      status: z.literal('success'),
+    })
+    .optional(),
+});
 
 export type Webhook = z.infer<typeof WebhookSchema>;
 export type WebhookWithSecret = z.infer<typeof WebhookWithSecretSchema>;
+export type WebhookDeleteResponse = z.infer<typeof WebhookDeleteResponseSchema>;
 export const WebhookResponseSchema = ItemResponseSchema.extend({
   data: WebhookSchema,
 });
