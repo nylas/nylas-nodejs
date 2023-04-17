@@ -10,7 +10,7 @@ import {
   UpdateEventQueryParams,
   UpdateEventRequestBody,
 } from '../schema/events';
-import { ItemResponse, ListResponse } from '../schema/response';
+import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
 import { AsyncListResponse, BaseResource } from './baseResource';
 
 interface FindEventParams {
@@ -98,7 +98,7 @@ export class Events extends BaseResource {
     eventId,
     queryParams,
     overrides,
-  }: DestroyEventParams & Overrides): Promise<undefined> {
+  }: DestroyEventParams & Overrides): Promise<DeleteResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/events/${eventId}`,
       queryParams,

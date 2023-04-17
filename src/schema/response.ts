@@ -20,6 +20,17 @@ export const AuthErrorResponseSchema = z.object({
   errorUri: z.string(),
 });
 
+export const TokenValidationErrorResponseSchema = z.object({
+  success: z.boolean(),
+  error: z.object({
+    httpCode: z.number(),
+    eventCode: z.number(),
+    type: z.string(),
+    message: z.string(),
+    requestId: z.string(),
+  })
+})
+
 export type NylasErrorResponse = z.infer<typeof ErrorResponseSchema>;
 
 export const ItemResponseSchema = z.object({
@@ -57,9 +68,15 @@ export interface ListResponse<T> {
   error?: NylasErrorObject;
 }
 
+export const DeleteResponseSchema = z.object({
+  requestId: z.string(),
+});
+
 export type ExchangeResponse = z.infer<typeof ExchangeResponseSchema>;
 export type EmptyResponse = z.infer<typeof EmptyResponseSchema>;
 export type AuthErrorResponse = z.infer<typeof AuthErrorResponseSchema>;
+export type TokenValidationErrorResponse = z.infer<typeof TokenValidationErrorResponseSchema>;
+export type DeleteResponse = z.infer<typeof DeleteResponseSchema>;
 
 export type ListResponseInnerType<T> = T extends ListResponse<infer R>
   ? R

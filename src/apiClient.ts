@@ -1,10 +1,11 @@
 import fetch, { Request, Response } from 'node-fetch';
 import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
-import { NylasApiError, NylasAuthError } from './schema/error';
+import { NylasApiError, NylasAuthError, NylasTokenValidationError } from './schema/error';
 import {
   AuthErrorResponseSchema,
   ErrorResponseSchema,
+  TokenValidationErrorResponseSchema,
 } from './schema/response';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
 // import { AppendOptions } from 'form-data';
@@ -124,9 +125,10 @@ export default class APIClient {
     // } else
 
     // TODO: function to set request body
-    // TODO: convert to snake case
     if (optionParams.body) {
-      requestOptions.body = JSON.stringify(optionParams.body);
+      requestOptions.body = JSON.stringify(
+        objKeysToSnakeCase(optionParams.body)
+      );
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
@@ -142,15 +144,6 @@ export default class APIClient {
     });
   }
 
-  // response has to be 204
-  async requestWithEmptyReturn(status: number): Promise<undefined> {
-    if (status === 204) {
-      return undefined;
-    }
-
-    throw new Error(`unexpected response, status: ${status}`);
-  }
-
   async requestWithResponse<T>(
     response: Response,
     passthru: OptionsPassthru<ZodType<T>>
@@ -158,7 +151,6 @@ export default class APIClient {
     const text = await response.text();
 
     const responseJSON = JSON.parse(text);
-
     // TODO: exclusion list for keys that should not be camelCased
     const camelCaseRes = objKeysToCamelCase(responseJSON);
 
@@ -172,15 +164,10 @@ export default class APIClient {
     );
   }
 
-  async request(options: RequestOptionsParams): Promise<undefined>;
   async request<T>(
     options: RequestOptionsParams,
     passthru: OptionsPassthru<ZodType<T>>
-  ): Promise<T>;
-  async request<T>(
-    options: RequestOptionsParams,
-    passthru?: OptionsPassthru<ZodType<T>>
-  ): Promise<T | undefined> {
+  ): Promise<T> {
     const req = this.newRequest(options);
 
     const response = await fetch(req);
@@ -200,10 +187,18 @@ export default class APIClient {
         options.path.includes('connect/token') ||
         options.path.includes('connect/revoke');
 
-      if (authErrorResponse) {
+      const tokenErrorResponse =
+      options.path.includes('connect/tokeninfo')
+      if (authErrorResponse && !tokenErrorResponse) {
         const testResponse = AuthErrorResponseSchema.safeParse(camelCaseError);
         if (testResponse.success) {
           throw new NylasAuthError(testResponse.data);
+        }
+      }else if (tokenErrorResponse){
+        const testResponse = TokenValidationErrorResponseSchema.safeParse(camelCaseError);
+
+        if (testResponse.success) {
+          throw new NylasTokenValidationError(testResponse.data);
         }
       } else {
         const testErrorResponse = ErrorResponseSchema.safeParse(camelCaseError);
@@ -215,10 +210,6 @@ export default class APIClient {
       throw new Error(
         `Received an error but could not validate error response from server: ${error}`
       );
-    }
-
-    if (!passthru) {
-      return this.requestWithEmptyReturn(response.status);
     }
 
     return this.requestWithResponse(response, passthru);

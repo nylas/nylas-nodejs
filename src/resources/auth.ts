@@ -2,6 +2,8 @@ import APIClient from '../apiClient';
 import { BaseResource } from './baseResource';
 import { Grants } from './grants';
 import {
+  OpenID,
+  OpenIDResponseSchema,
   AuthConfig,
   AdminConsentAuth,
   CodeExchangeRequest,
@@ -11,6 +13,7 @@ import {
   HostedAuthSchema
 } from '../schema/auth';
 import {
+  ItemResponse,
   ExchangeResponse,
   ExchangeResponseSchema,
   EmptyResponse,
@@ -88,6 +91,56 @@ export class Auth extends BaseResource {
 
     return res;
   }
+
+  /**
+   * Exchange a refresh token for an access token (and if rotation enabled refresh token as well)
+   * @param TokenExchangeRequest
+   * @return Information about the Nylas application
+   */
+  public validateIDToken(
+    token: string
+  ): Promise<ItemResponse<OpenID>> {
+    this.checkAuthCredentials();
+
+    return this.apiClient.request<ItemResponse<OpenID>>(
+      {
+        method: 'GET',
+        path: `/v3/connect/tokeninfo`,
+        queryParams: {
+          id_token: token
+        },
+      },
+      {
+        responseSchema: OpenIDResponseSchema,
+      }
+    );
+
+  }
+
+  /**
+   * Exchange a refresh token for an access token (and if rotation enabled refresh token as well)
+   * @param TokenExchangeRequest
+   * @return Information about the Nylas application
+   */
+  public async validateAccessToken(
+    token: string
+    ): Promise<ItemResponse<OpenID>> {
+      this.checkAuthCredentials();
+  
+      return this.apiClient.request<ItemResponse<OpenID>>(
+        {
+          method: 'GET',
+          path: `/v3/connect/tokeninfo`,
+          queryParams: {
+            access_token: token
+          },
+        },
+        {
+          responseSchema: OpenIDResponseSchema,
+        }
+      );
+  
+    }
 
   /**
    * Build the URL for authenticating users to your application via Hosted Authentication
