@@ -6,7 +6,9 @@ import {
   AdminConsentAuth,
   CodeExchangeRequest,
   TokenExchangeRequest,
-  HostedAuthRequest
+  HostedAuthRequest,
+  HostedAuth,
+  HostedAuthSchema
 } from '../schema/auth';
 import {
   ExchangeResponse,
@@ -170,14 +172,14 @@ export class Auth extends BaseResource {
    * @param HostedAuthRequest params to initiate hosted auth request
    */
   public async hostedAuth(payload: HostedAuthRequest): Promise<boolean> {
-    await this.apiClient.request<EmptyResponse>(
+    await this.apiClient.request<HostedAuth>(
       {
         method: 'POST',
-        path: `/v3/connect/revoke`,
+        path: `/v3/connect/auth`,
         body: payload
       },
       {
-        responseSchema: EmptyResponseSchema,
+        responseSchema: HostedAuthSchema,
       }
     );
     return true;

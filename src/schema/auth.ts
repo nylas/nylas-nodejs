@@ -1,5 +1,4 @@
 import {z} from 'zod'
-import { ItemResponseSchema } from './response';
 import { GoogleScopes, MicrosoftScopes, Scope, YahooScopes } from './scopes';
 
 type AccessType = 'online' | 'offline';
@@ -66,7 +65,7 @@ export type HostedAuthRequest =
       provider: 'microsoft';
     });
 
-const HostedAuthSchema = z.object({
+export const HostedAuthSchema = z.object({
   url: z.string(),
   id: z.string(),
   expiresIn: z.number(),
@@ -80,7 +79,4 @@ const HostedAuthSchema = z.object({
 });
 
 export type HostedAuth = z.infer<typeof HostedAuthSchema>;
-export const HostedAuthResponseSchema = ItemResponseSchema.extend({
-  data: HostedAuthSchema,
-});
 
