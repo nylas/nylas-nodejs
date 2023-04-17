@@ -1,7 +1,8 @@
+import { z } from 'zod';
+import { ItemResponseSchema } from './response';
 import { GoogleScopes, MicrosoftScopes, Scope, YahooScopes } from './scopes';
 
 type AccessType = 'online' | 'offline';
-type Provider = 'google' | 'microsoft';
 
 export type AdminConsentAuth = SharedAuthParams & {
   credentialId: string;
@@ -17,6 +18,25 @@ type SharedAuthParams = {
   state?: string;
   loginHint?: string;
 };
+
+export const OpenIDSchema = z.object({
+	iss: z.string(), // Issuer
+	aud: z.string(), // Application Slug
+	sub: z.string().optional(), // ID
+	email: z.string().optional(),
+	emailVerified: z.boolean().optional(),
+	atHash: z.string().optional(),
+	iat: z.number(), // Issued At
+	exp: z.number(), // Expites At
+	// Profile
+	name: z.string().optional(),
+	givenName: z.string().optional(),
+	familyName: z.string().optional(),
+	nickName: z.string().optional(),
+	pictureURL: z.string().optional(),
+	gender: z.string().optional(),
+	locale: z.string().optional(),
+})
 
 export type AuthConfig =
   | (SharedAuthParams & {
@@ -48,3 +68,7 @@ export interface PKCEAuthURL {
   secret: string;
   secretHash: string;
 }
+export type OpenID = z.infer<typeof OpenIDSchema>;
+export const OpenIDResponseSchema = ItemResponseSchema.extend({
+  data: OpenIDSchema,
+});

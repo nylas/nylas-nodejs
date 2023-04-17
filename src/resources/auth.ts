@@ -4,6 +4,8 @@ import APIClient from '../apiClient';
 import { BaseResource } from './baseResource';
 import { Grants } from './grants';
 import {
+  OpenID,
+  OpenIDResponseSchema,
   AuthConfig,
   AdminConsentAuth,
   CodeExchangeRequest,
@@ -11,6 +13,7 @@ import {
   PKCEAuthURL
 } from '../schema/auth';
 import {
+  ItemResponse,
   ExchangeResponse,
   ExchangeResponseSchema,
   EmptyResponse,
@@ -40,13 +43,13 @@ export class Auth extends BaseResource {
     this.checkAuthCredentials();
     const body: any = {
       code: payload.code,
-      redirect_uri: payload.redirectUri,
-      client_id: this.apiClient.clientId,
-      client_secret: this.apiClient.clientSecret,
-      grant_type: 'authorization_code',
+      redirectUri: payload.redirectUri,
+      clientId: this.apiClient.clientId,
+      clientSecret: this.apiClient.clientSecret,
+      grantType: 'authorization_code',
     }
     if (payload.codeVerifier){
-      body.code_verifier = payload.codeVerifier
+      body.codeVerifier = payload.codeVerifier
     }
     const res = await this.apiClient.request<ExchangeResponse>(
       {
@@ -77,11 +80,11 @@ export class Auth extends BaseResource {
         method: 'POST',
         path: `/v3/connect/token`,
         body: {
-          refresh_token: payload.refreshToken,
-          redirect_uri: payload.redirectUri,
-          client_id: this.apiClient.clientId,
-          client_secret: this.apiClient.clientSecret,
-          grant_type: 'refresh_token',
+          refreshToken: payload.refreshToken,
+          redirectUri: payload.redirectUri,
+          clientId: this.apiClient.clientId,
+          clientSecret: this.apiClient.clientSecret,
+          grantType: 'refresh_token',
         },
       },
       {
@@ -91,6 +94,56 @@ export class Auth extends BaseResource {
 
     return res;
   }
+
+  /**
+   * Exchange a refresh token for an access token (and if rotation enabled refresh token as well)
+   * @param TokenExchangeRequest
+   * @return Information about the Nylas application
+   */
+  public validateIDToken(
+    token: string
+  ): Promise<ItemResponse<OpenID>> {
+    this.checkAuthCredentials();
+
+    return this.apiClient.request<ItemResponse<OpenID>>(
+      {
+        method: 'GET',
+        path: `/v3/connect/tokeninfo`,
+        queryParams: {
+          id_token: token
+        },
+      },
+      {
+        responseSchema: OpenIDResponseSchema,
+      }
+    );
+
+  }
+
+  /**
+   * Exchange a refresh token for an access token (and if rotation enabled refresh token as well)
+   * @param TokenExchangeRequest
+   * @return Information about the Nylas application
+   */
+  public async validateAccessToken(
+    token: string
+    ): Promise<ItemResponse<OpenID>> {
+      this.checkAuthCredentials();
+  
+      return this.apiClient.request<ItemResponse<OpenID>>(
+        {
+          method: 'GET',
+          path: `/v3/connect/tokeninfo`,
+          queryParams: {
+            access_token: token
+          },
+        },
+        {
+          responseSchema: OpenIDResponseSchema,
+        }
+      );
+  
+    }
 
   /**
    * Build the URL for authenticating users to your application via Hosted Authentication
