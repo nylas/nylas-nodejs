@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { ListQueryParams } from './request';
 import { ItemResponseSchema, ListResponseSchema } from './response';
-import { APIObjects } from './utils';
 
 const TimeSchema = z.object({
   time: z.number(),
@@ -24,55 +23,27 @@ const DatespanSchema = z.object({
   endDate: z.string(),
 });
 
-const WebExSchema = z.object({
-  provider: z.literal('WebEx'),
-  details: z.object({
-    password: z.string(),
-    pin: z.string(),
-    url: z.string(),
-  }),
-});
-
-const ZoomMeetingSchema = z.object({
-  provider: z.literal('Zoom Meeting'),
-  details: z.object({
-    meetingCode: z.string(),
-    password: z.string(),
-    url: z.string(),
-  }),
-});
-
-const GoToMeetingSchema = z.object({
-  provider: z.literal('GoToMeeting'),
-  details: z.object({
-    meetingCode: z.string(),
-    phone: z.array(z.string()),
-    url: z.string(),
-  }),
-});
-
-const GoogleMeetSchema = z.object({
-  provider: z.literal('Google Meet'),
-  details: z.object({
-    phone: z.string(),
-    pin: z.string(),
-    url: z.string(),
-  }),
-});
-
-const DetailsSchema = z.union([
-  WebExSchema,
-  ZoomMeetingSchema,
-  GoToMeetingSchema,
-  GoogleMeetSchema,
+const ProviderSchema = z.union([
+  z.literal('Google Meet'),
+  z.literal('Zoom Meeting'),
+  z.literal('Microsoft Teams'),
+  z.literal('GoToMeeting'),
+  z.literal('WebEx'),
 ]);
 
+const DetailsSchema = z.object({
+  provider: ProviderSchema,
+  details: z.object({
+    meetingCode: z.string().optional(),
+    password: z.string().optional(),
+    url: z.string().optional(),
+    pin: z.string().optional(),
+    phone: z.array(z.string()).optional(),
+  }),
+});
+
 const AutocreateSchema = z.object({
-  provider: z.union([
-    z.literal('Google Meet'),
-    z.literal('Zoom Meeting'),
-    z.literal('Microsoft Teams'),
-  ]),
+  provider: ProviderSchema,
   autocreate: z.record(z.string(), z.any()),
 });
 
