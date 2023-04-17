@@ -1,10 +1,11 @@
 import fetch, { Request, Response } from 'node-fetch';
 import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
-import { NylasApiError, NylasAuthError } from './schema/error';
+import { NylasApiError, NylasAuthError, NylasTokenValidationError } from './schema/error';
 import {
   AuthErrorResponseSchema,
   ErrorResponseSchema,
+  TokenValidationErrorResponseSchema,
 } from './schema/response';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
 // import { AppendOptions } from 'form-data';
@@ -150,7 +151,6 @@ export default class APIClient {
     const text = await response.text();
 
     const responseJSON = JSON.parse(text);
-
     // TODO: exclusion list for keys that should not be camelCased
     const camelCaseRes = objKeysToCamelCase(responseJSON);
 
@@ -187,10 +187,18 @@ export default class APIClient {
         options.path.includes('connect/token') ||
         options.path.includes('connect/revoke');
 
-      if (authErrorResponse) {
+      const tokenErrorResponse =
+      options.path.includes('connect/tokeninfo')
+      if (authErrorResponse && !tokenErrorResponse) {
         const testResponse = AuthErrorResponseSchema.safeParse(camelCaseError);
         if (testResponse.success) {
           throw new NylasAuthError(testResponse.data);
+        }
+      }else if (tokenErrorResponse){
+        const testResponse = TokenValidationErrorResponseSchema.safeParse(camelCaseError);
+
+        if (testResponse.success) {
+          throw new NylasTokenValidationError(testResponse.data);
         }
       } else {
         const testErrorResponse = ErrorResponseSchema.safeParse(camelCaseError);
