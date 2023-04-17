@@ -125,9 +125,10 @@ export default class APIClient {
     // } else
 
     // TODO: function to set request body
-    // TODO: convert to snake case
     if (optionParams.body) {
-      requestOptions.body = JSON.stringify(optionParams.body);
+      requestOptions.body = JSON.stringify(
+        objKeysToSnakeCase(optionParams.body)
+      );
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
@@ -141,15 +142,6 @@ export default class APIClient {
       headers: newOptions.headers,
       body: newOptions.body,
     });
-  }
-
-  // response has to be 204
-  async requestWithEmptyReturn(status: number): Promise<undefined> {
-    if (status === 204) {
-      return undefined;
-    }
-
-    throw new Error(`unexpected response, status: ${status}`);
   }
 
   async requestWithResponse<T>(
@@ -172,15 +164,10 @@ export default class APIClient {
     );
   }
 
-  async request(options: RequestOptionsParams): Promise<undefined>;
   async request<T>(
     options: RequestOptionsParams,
     passthru: OptionsPassthru<ZodType<T>>
-  ): Promise<T>;
-  async request<T>(
-    options: RequestOptionsParams,
-    passthru?: OptionsPassthru<ZodType<T>>
-  ): Promise<T | undefined> {
+  ): Promise<T> {
     const req = this.newRequest(options);
 
     const response = await fetch(req);
@@ -223,10 +210,6 @@ export default class APIClient {
       throw new Error(
         `Received an error but could not validate error response from server: ${error}`
       );
-    }
-
-    if (!passthru) {
-      return this.requestWithEmptyReturn(response.status);
     }
 
     return this.requestWithResponse(response, passthru);

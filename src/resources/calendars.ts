@@ -10,7 +10,7 @@ import {
   ListCalendersQueryParams,
   UpdateCalenderRequestBody,
 } from '../schema/calendars';
-import { ItemResponse, ListResponse } from '../schema/response';
+import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
 import { BaseResource, AsyncListResponse } from './baseResource';
 
 interface FindCalendarParams {
@@ -118,7 +118,7 @@ export class Calendars extends BaseResource {
     identifier,
     calendarId,
     overrides,
-  }: DestroyCalendarParams & Overrides): Promise<undefined> {
+  }: DestroyCalendarParams & Overrides): Promise<DeleteResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
       overrides,
