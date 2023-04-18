@@ -61,7 +61,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
     "@babel/preset-env": "^7.3.1",
     "@types/backoff": "^2.5.1",
-    "@types/jest": "^25.1.4",
+    "@types/jest": "^25.2.3",
     "@types/node-fetch": "^2.5.8",
     "@types/uuid": "^8.3.4",
     "@types/websocket": "^1.0.5",
