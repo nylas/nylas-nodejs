@@ -55,6 +55,7 @@ export type AuthConfig =
 export interface CodeExchangeRequest {
   redirectUri: string;
   code: string;
+  codeVerifier?: string; // Only For PKCE auth requests
 }
 
 export interface TokenExchangeRequest {
@@ -62,6 +63,11 @@ export interface TokenExchangeRequest {
   refreshToken: string;
 }
 
+export interface PKCEAuthURL {
+  url: string;
+  secret: string;
+  secretHash: string;
+}
 export type OpenID = z.infer<typeof OpenIDSchema>;
 export const OpenIDResponseSchema = ItemResponseSchema.extend({
   data: OpenIDSchema,
