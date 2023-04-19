@@ -71,18 +71,19 @@ export default class APIClient {
     queryParams?: Record<string, unknown>
   ): URL {
     if (queryParams) {
-      const snakeCaseParams = objKeysToSnakeCase(queryParams);
+      const snakeCaseParams = objKeysToSnakeCase(queryParams, ['metadataPair']);
       // TODO: refactor this not manually turn params into query string
       for (const [key, value] of Object.entries(snakeCaseParams)) {
-        if (key == 'metadata_pair') {
+        if (key == 'metadataPair') {
           // The API understands a metadata_pair filter in the form of:
           // <key>:<value>
+          const metadataPair: string[] = [];
           for (const item in value as Record<string, string>) {
-            url.searchParams.set(
-              'metadata_pair',
+            metadataPair.push(
               `${item}:${(value as Record<string, string>)[item]}`
             );
           }
+          url.searchParams.set('metadata_pair', metadataPair.join(','));
         } else {
           url.searchParams.set(key, value as string);
         }
