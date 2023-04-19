@@ -63,12 +63,45 @@ export interface TokenExchangeRequest {
   refreshToken: string;
 }
 
+type SharedHostedAuthRequest = {
+  redirectUri: string;
+  state?: string;
+  loginHint?: string;
+  cookieNonce?: string;
+};
+
+export type HostedAuthRequest =
+  | (SharedHostedAuthRequest & {
+      scope?: GoogleScopes[];
+      provider: 'google';
+    })
+  | (SharedHostedAuthRequest & {
+      scope?: YahooScopes[];
+      provider: 'yahoo';
+    })
+  | (SharedHostedAuthRequest & {
+      scope?: MicrosoftScopes[];
+      provider: 'microsoft';
+    });
+
+export const HostedAuthSchema = z.object({
+  url: z.string(),
+  id: z.string(),
+  expiresIn: z.number(),
+  request: z.object({
+    redirectUri: z.string(),
+    provider: z.string(),
+    scope: z.array(z.string()).nullable(),
+    state: z.string().nullable(),
+    loginHint: z.string().nullable(),
+  })
+});
+
+export type HostedAuth = z.infer<typeof HostedAuthSchema>;
+
 export interface PKCEAuthURL {
   url: string;
   secret: string;
   secretHash: string;
 }
 export type OpenID = z.infer<typeof OpenIDSchema>;
-export const OpenIDResponseSchema = ItemResponseSchema.extend({
-  data: OpenIDSchema,
-});

@@ -5,15 +5,17 @@ import { BaseResource } from './baseResource';
 import { Grants } from './grants';
 import {
   OpenID,
-  OpenIDResponseSchema,
+  OpenIDSchema,
   AuthConfig,
   AdminConsentAuth,
   CodeExchangeRequest,
   TokenExchangeRequest,
+  HostedAuthRequest,
+  HostedAuth,
+  HostedAuthSchema,
   PKCEAuthURL
 } from '../schema/auth';
 import {
-  ItemResponse,
   ExchangeResponse,
   ExchangeResponseSchema,
   EmptyResponse,
@@ -102,10 +104,10 @@ export class Auth extends BaseResource {
    */
   public validateIDToken(
     token: string
-  ): Promise<ItemResponse<OpenID>> {
+  ): Promise<OpenID>{
     this.checkAuthCredentials();
 
-    return this.apiClient.request<ItemResponse<OpenID>>(
+    return this.apiClient.request<OpenID>(
       {
         method: 'GET',
         path: `/v3/connect/tokeninfo`,
@@ -114,7 +116,7 @@ export class Auth extends BaseResource {
         },
       },
       {
-        responseSchema: OpenIDResponseSchema,
+        responseSchema: OpenIDSchema,
       }
     );
 
@@ -127,10 +129,10 @@ export class Auth extends BaseResource {
    */
   public async validateAccessToken(
     token: string
-    ): Promise<ItemResponse<OpenID>> {
+    ): Promise<OpenID> {
       this.checkAuthCredentials();
   
-      return this.apiClient.request<ItemResponse<OpenID>>(
+      return this.apiClient.request<OpenID>(
         {
           method: 'GET',
           path: `/v3/connect/tokeninfo`,
@@ -139,7 +141,7 @@ export class Auth extends BaseResource {
           },
         },
         {
-          responseSchema: OpenIDResponseSchema,
+          responseSchema: OpenIDSchema,
         }
       );
   
@@ -269,6 +271,26 @@ export class Auth extends BaseResource {
     if (!this.apiClient.clientId || !this.apiClient.clientSecret) {
       throw new Error('ClientID & ClientSecret are required for using auth');
     }
+  }
+
+  /**
+   * Create a new authorization request and get a new unique login url. 
+   * Used only for hosted authentication. 
+   * This is the initial step requested from the server side to issue a new login url. 
+   * @param HostedAuthRequest params to initiate hosted auth request
+   */
+  public async hostedAuth(payload: HostedAuthRequest): Promise<boolean> {
+    await this.apiClient.request<HostedAuth>(
+      {
+        method: 'POST',
+        path: `/v3/connect/auth`,
+        body: payload
+      },
+      {
+        responseSchema: HostedAuthSchema,
+      }
+    );
+    return true;
   }
 
   /**
