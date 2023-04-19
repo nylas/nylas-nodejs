@@ -1,7 +1,11 @@
 import fetch, { Request, Response } from 'node-fetch';
 import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
-import { NylasApiError, NylasAuthError, NylasTokenValidationError } from './schema/error';
+import {
+  NylasApiError,
+  NylasAuthError,
+  NylasTokenValidationError,
+} from './schema/error';
 import {
   AuthErrorResponseSchema,
   ErrorResponseSchema,
@@ -188,15 +192,16 @@ export default class APIClient {
         options.path.includes('connect/token') ||
         options.path.includes('connect/revoke');
 
-      const tokenErrorResponse =
-      options.path.includes('connect/tokeninfo')
+      const tokenErrorResponse = options.path.includes('connect/tokeninfo');
       if (authErrorResponse && !tokenErrorResponse) {
         const testResponse = AuthErrorResponseSchema.safeParse(camelCaseError);
         if (testResponse.success) {
           throw new NylasAuthError(testResponse.data);
         }
-      }else if (tokenErrorResponse){
-        const testResponse = TokenValidationErrorResponseSchema.safeParse(camelCaseError);
+      } else if (tokenErrorResponse) {
+        const testResponse = TokenValidationErrorResponseSchema.safeParse(
+          camelCaseError
+        );
 
         if (testResponse.success) {
           throw new NylasTokenValidationError(testResponse.data);
