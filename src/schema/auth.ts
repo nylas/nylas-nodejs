@@ -55,6 +55,7 @@ export type AuthConfig =
 export interface CodeExchangeRequest {
   redirectUri: string;
   code: string;
+  codeVerifier?: string; // Only For PKCE auth requests
 }
 
 export interface TokenExchangeRequest {
@@ -98,7 +99,9 @@ export const HostedAuthSchema = z.object({
 
 export type HostedAuth = z.infer<typeof HostedAuthSchema>;
 
+export interface PKCEAuthURL {
+  url: string;
+  secret: string;
+  secretHash: string;
+}
 export type OpenID = z.infer<typeof OpenIDSchema>;
-export const OpenIDResponseSchema = ItemResponseSchema.extend({
-  data: OpenIDSchema,
-});
