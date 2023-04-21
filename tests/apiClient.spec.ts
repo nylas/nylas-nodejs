@@ -1,4 +1,4 @@
-import APIClient from '../src/apiClient';
+import APIClient, { RequestOptionsParams } from '../src/apiClient';
 import PACKAGE_JSON from '../package.json';
 
 describe('APIClient', () => {
@@ -89,6 +89,33 @@ describe('APIClient', () => {
             'https://api.us.nylas.com/test?metadata_pair=key%3Avalue%2CanotherKey%3AanotherValue'
           )
         );
+      });
+    });
+
+    describe('newRequest', () => {
+      it('should set all the fields properly', () => {
+        const options: RequestOptionsParams = {
+          path: '/test',
+          method: 'POST',
+          headers: { 'X-SDK-Test-Header': 'This is a test' },
+          queryParams: { param: 'value' },
+          body: { id: 'abc123' },
+          overrides: { serverUrl: 'https://override.api.nylas.com' },
+        };
+        const newRequest = client.newRequest(options);
+
+        expect(newRequest.method).toBe('POST');
+        expect(newRequest.headers.raw()).toEqual({
+          Accept: ['application/json'],
+          Authorization: ['Bearer testApiKey'],
+          'Content-Type': ['application/json'],
+          'User-Agent': [`Nylas Node SDK v${PACKAGE_JSON.version}`],
+          'X-SDK-Test-Header': ['This is a test'],
+        });
+        expect(newRequest.url).toEqual(
+          'https://override.api.nylas.com/test?param=value'
+        );
+        expect(newRequest.body.toString()).toBe('{"id":"abc123"}');
       });
     });
   });
