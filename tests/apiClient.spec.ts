@@ -26,7 +26,7 @@ describe('APIClient', () => {
     });
   });
 
-  describe('request', () => {
+  describe('request functions', () => {
     let client: APIClient;
 
     beforeAll(() => {
