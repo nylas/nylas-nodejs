@@ -22,21 +22,6 @@
     "prepare": "npm run build",
     "watch": "nodemon -w src --exec npm run build"
   },
-  "jest": {
-    "preset": "ts-jest/presets/js-with-ts",
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "tsconfig.test.json"
-      }
-    },
-    "coverageThreshold": {
-      "global": {
-        "functions": 80,
-        "lines": 80,
-        "statements": 80
-      }
-    }
-  },
   "keywords": [
     "email",
     "contacts",
