@@ -1,5 +1,7 @@
 import APIClient, { RequestOptionsParams } from '../src/apiClient';
 import PACKAGE_JSON from '../package.json';
+import { z, ZodError, ZodType } from 'zod';
+import { Response } from 'node-fetch';
 
 describe('APIClient', () => {
   describe('constructor', () => {
@@ -116,6 +118,54 @@ describe('APIClient', () => {
           'https://override.api.nylas.com/test?param=value'
         );
         expect(newRequest.body.toString()).toBe('{"id":"abc123"}');
+      });
+    });
+
+    describe('requestWithResponse', () => {
+      it('should return the data if the response is valid', async () => {
+        const payload = {
+          id: 123,
+          name: 'test',
+          is_valid: true,
+        };
+        jest.spyOn(ZodType.prototype, 'safeParse').mockImplementation(() => ({
+          success: true,
+          data: payload,
+        }));
+        jest
+          .spyOn(Response.prototype, 'text')
+          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+
+        const requestWithResponse = await client.requestWithResponse(
+          new Response(),
+          {
+            responseSchema: z.any(),
+          }
+        );
+
+        expect(requestWithResponse).toEqual(payload);
+      });
+
+      it('should return an error if the response is valid', async () => {
+        jest.spyOn(ZodType.prototype, 'safeParse').mockImplementation(() => ({
+          success: false,
+          error: new ZodError([
+            {
+              code: 'custom',
+              message: 'This is a custom error message',
+              path: ['json/path'],
+            },
+          ]),
+        }));
+        jest
+          .spyOn(Response.prototype, 'text')
+          .mockImplementation(() => Promise.resolve(JSON.stringify({})));
+
+        await expect(
+          client.requestWithResponse(new Response(), {
+            responseSchema: z.any(),
+          })
+        ).rejects.toThrow();
       });
     });
   });
