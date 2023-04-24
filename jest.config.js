@@ -15,6 +15,7 @@ const config = {
       statements: 80,
     },
   },
+  clearMocks: true,
 };
 
 module.exports = config;

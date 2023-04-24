@@ -186,10 +186,6 @@ describe('APIClient', () => {
     });
 
     describe('request', () => {
-      afterEach(() => {
-        jest.clearAllMocks();
-      });
-
       it('should return a response if the response is valid', async () => {
         const payload = {
           id: 123,
