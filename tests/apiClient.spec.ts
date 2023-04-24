@@ -2,6 +2,19 @@ import APIClient, { RequestOptionsParams } from '../src/apiClient';
 import PACKAGE_JSON from '../package.json';
 import { z, ZodError, ZodType } from 'zod';
 import { Response } from 'node-fetch';
+import {
+  NylasApiError,
+  NylasAuthError,
+  NylasTokenValidationError,
+} from '../src/schema/error';
+const fetch = require('node-fetch');
+jest.mock('node-fetch', () => {
+  const { Request, Response } = jest.requireActual('node-fetch');
+  const mockedFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
+  mockedFetch.Request = Request;
+  mockedFetch.Response = Response;
+  return mockedFetch;
+});
 
 describe('APIClient', () => {
   describe('constructor', () => {
@@ -147,6 +160,84 @@ describe('APIClient', () => {
       });
 
       it('should return an error if the response is valid', async () => {
+        const zodError = new ZodError([
+          {
+            code: 'custom',
+            message: 'This is a custom error message',
+            path: ['json/path'],
+          },
+        ]);
+        jest.spyOn(ZodType.prototype, 'safeParse').mockImplementation(() => ({
+          success: false,
+          error: zodError,
+        }));
+        jest
+          .spyOn(Response.prototype, 'text')
+          .mockImplementation(() => Promise.resolve(JSON.stringify({})));
+
+        await expect(
+          client.requestWithResponse(new Response(), {
+            responseSchema: z.any(),
+          })
+        ).rejects.toThrow(
+          new Error(`Could not validate response from the server. ${zodError}`)
+        );
+      });
+    });
+
+    describe('request', () => {
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('should return a response if the response is valid', async () => {
+        const payload = {
+          id: 123,
+          name: 'test',
+          is_valid: true,
+        };
+        fetch.mockImplementationOnce(() => new Response('', { status: 200 }));
+        jest.spyOn(ZodType.prototype, 'safeParse').mockImplementation(() => ({
+          success: true,
+          data: payload,
+        }));
+        jest
+          .spyOn(Response.prototype, 'text')
+          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+
+        const response = await client.request(
+          {
+            path: '/test',
+            method: 'GET',
+          },
+          {
+            responseSchema: z.any(),
+          }
+        );
+        expect(response).toEqual(payload);
+      });
+
+      it('should throw an error if the response is undefined', async () => {
+        fetch.mockImplementationOnce(() => undefined);
+
+        await expect(
+          client.request(
+            {
+              path: '/test',
+              method: 'GET',
+            },
+            {
+              responseSchema: z.any(),
+            }
+          )
+        ).rejects.toThrow(new Error('Failed to fetch response'));
+      });
+
+      it('should throw a general error if the response is an error but cannot be parsed', async () => {
+        const payload = {
+          invalid: true,
+        };
+        fetch.mockImplementationOnce(() => new Response('', { status: 400 }));
         jest.spyOn(ZodType.prototype, 'safeParse').mockImplementation(() => ({
           success: false,
           error: new ZodError([
@@ -159,13 +250,116 @@ describe('APIClient', () => {
         }));
         jest
           .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify({})));
+          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
 
         await expect(
-          client.requestWithResponse(new Response(), {
-            responseSchema: z.any(),
-          })
-        ).rejects.toThrow();
+          client.request(
+            {
+              path: '/test',
+              method: 'GET',
+            },
+            {
+              responseSchema: z.any(),
+            }
+          )
+        ).rejects.toThrow(
+          new Error(
+            `Received an error but could not validate error response from server: ${payload}`
+          )
+        );
+      });
+
+      it('should throw a NylasAuthError if the error comes from connect/token or connect/revoke', async () => {
+        const payload = {
+          requestId: 'abc123',
+          error: 'Test error',
+          errorCode: 400,
+          errorDescription: 'Nylas SDK Test error',
+          errorUri: 'https://test.api.nylas.com/docs/errors#test-error',
+        };
+        fetch.mockImplementation(() => new Response('', { status: 400 }));
+        jest
+          .spyOn(Response.prototype, 'text')
+          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+
+        await expect(
+          client.request(
+            {
+              path: '/connect/token',
+              method: 'POST',
+            },
+            {
+              responseSchema: z.any(),
+            }
+          )
+        ).rejects.toThrow(new NylasAuthError(payload));
+
+        await expect(
+          client.request(
+            {
+              path: '/connect/revoke',
+              method: 'POST',
+            },
+            {
+              responseSchema: z.any(),
+            }
+          )
+        ).rejects.toThrow(new NylasAuthError(payload));
+      });
+
+      it('should throw a TokenValidationError if the error comes from connect/tokeninfo', async () => {
+        const payload = {
+          success: false,
+          error: {
+            httpCode: 400,
+            eventCode: 10020,
+            message: 'Invalid access token',
+            type: 'AuthenticationError',
+            requestId: 'abc123',
+          },
+        };
+        fetch.mockImplementation(() => new Response('', { status: 400 }));
+        jest
+          .spyOn(Response.prototype, 'text')
+          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+
+        await expect(
+          client.request(
+            {
+              path: '/connect/tokeninfo',
+              method: 'POST',
+            },
+            {
+              responseSchema: z.any(),
+            }
+          )
+        ).rejects.toThrow(new NylasTokenValidationError(payload));
+      });
+
+      it('should throw a NylasApiError if the error comes from the other non-auth endpoints', async () => {
+        const payload = {
+          requestId: 'abc123',
+          error: {
+            type: 'invalid_request_error',
+            message: 'Invalid request',
+          },
+        };
+        fetch.mockImplementation(() => new Response('', { status: 400 }));
+        jest
+          .spyOn(Response.prototype, 'text')
+          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+
+        await expect(
+          client.request(
+            {
+              path: '/events',
+              method: 'POST',
+            },
+            {
+              responseSchema: z.any(),
+            }
+          )
+        ).rejects.toThrow(new NylasApiError(payload));
       });
     });
   });
