@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { ListQueryParams } from './request';
 import { ItemResponseSchema, ListResponseSchema } from './response';
-import { APIObjects } from './utils';
 
 export interface ListCalendersQueryParams extends ListQueryParams {
   /** Metadata */
@@ -29,12 +28,12 @@ const CalendarSchema = z.object({
   metadata: z.record(z.string(), z.string()).optional(),
   id: z.string(),
   grantId: z.string(),
-  object: APIObjects,
+  object: z.literal('calendar'),
   readOnly: z.boolean(),
   isPrimary: z.boolean().nullable(),
   isOwnedByUser: z.boolean(),
-  hexColor: z.string(),
-  hexForegroundColor: z.string(),
+  hexColor: z.string().optional(),
+  hexForegroundColor: z.string().optional(),
 });
 
 export type Calendar = z.infer<typeof CalendarSchema>;
