@@ -4,11 +4,14 @@ type CasingFunction = (input: string, options?: any) => string;
 
 function convertCase(
   obj: Record<string, unknown>,
-  casingFunction: CasingFunction
+  casingFunction: CasingFunction,
+  excludeKeys?: string[]
 ) {
   const newObj = {} as Record<string, unknown>;
   for (const key in obj) {
-    if (Array.isArray(obj[key])) {
+    if (excludeKeys?.includes(key)) {
+      newObj[key] = obj[key];
+    } else if (Array.isArray(obj[key])) {
       newObj[casingFunction(key)] = (obj[key] as any[]).map(item => {
         if (typeof item === 'object') {
           return convertCase(item, casingFunction);
@@ -30,14 +33,16 @@ function convertCase(
 
 // function that recursively converts all keys in an object to camelCase
 export function objKeysToCamelCase(
-  obj: Record<string, unknown>
+  obj: Record<string, unknown>,
+  exclude?: string[]
 ): Record<string, unknown> {
-  return convertCase(obj, camelCase);
+  return convertCase(obj, camelCase, exclude);
 }
 
 // function that recursively converts all keys in an object to snake_case
 export function objKeysToSnakeCase(
-  obj: Record<string, unknown>
+  obj: Record<string, unknown>,
+  exclude?: string[]
 ): Record<string, unknown> {
-  return convertCase(obj, snakeCase);
+  return convertCase(obj, snakeCase, exclude);
 }

@@ -1,7 +1,11 @@
 import fetch, { Request, Response } from 'node-fetch';
 import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
-import { NylasApiError, NylasAuthError, NylasTokenValidationError } from './schema/error';
+import {
+  NylasApiError,
+  NylasAuthError,
+  NylasTokenValidationError,
+} from './schema/error';
 import {
   AuthErrorResponseSchema,
   ErrorResponseSchema,
@@ -71,18 +75,19 @@ export default class APIClient {
     queryParams?: Record<string, unknown>
   ): URL {
     if (queryParams) {
-      const snakeCaseParams = objKeysToSnakeCase(queryParams);
+      const snakeCaseParams = objKeysToSnakeCase(queryParams, ['metadataPair']);
       // TODO: refactor this not manually turn params into query string
       for (const [key, value] of Object.entries(snakeCaseParams)) {
-        if (key == 'metadata_pair') {
+        if (key == 'metadataPair') {
           // The API understands a metadata_pair filter in the form of:
           // <key>:<value>
+          const metadataPair: string[] = [];
           for (const item in value as Record<string, string>) {
-            url.searchParams.set(
-              'metadata_pair',
+            metadataPair.push(
               `${item}:${(value as Record<string, string>)[item]}`
             );
           }
+          url.searchParams.set('metadata_pair', metadataPair.join(','));
         } else {
           url.searchParams.set(key, value as string);
         }
@@ -187,15 +192,16 @@ export default class APIClient {
         options.path.includes('connect/token') ||
         options.path.includes('connect/revoke');
 
-      const tokenErrorResponse =
-      options.path.includes('connect/tokeninfo')
+      const tokenErrorResponse = options.path.includes('connect/tokeninfo');
       if (authErrorResponse && !tokenErrorResponse) {
         const testResponse = AuthErrorResponseSchema.safeParse(camelCaseError);
         if (testResponse.success) {
           throw new NylasAuthError(testResponse.data);
         }
-      }else if (tokenErrorResponse){
-        const testResponse = TokenValidationErrorResponseSchema.safeParse(camelCaseError);
+      } else if (tokenErrorResponse) {
+        const testResponse = TokenValidationErrorResponseSchema.safeParse(
+          camelCaseError
+        );
 
         if (testResponse.success) {
           throw new NylasTokenValidationError(testResponse.data);

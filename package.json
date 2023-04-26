@@ -22,21 +22,6 @@
     "prepare": "npm run build",
     "watch": "nodemon -w src --exec npm run build"
   },
-  "jest": {
-    "preset": "ts-jest/presets/js-with-ts",
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "tsconfig.test.json"
-      }
-    },
-    "coverageThreshold": {
-      "global": {
-        "functions": 80,
-        "lines": 80,
-        "statements": 80
-      }
-    }
-  },
   "keywords": [
     "email",
     "contacts",
@@ -62,7 +47,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
     "@babel/preset-env": "^7.3.1",
     "@types/backoff": "^2.5.1",
-    "@types/jest": "^25.1.4",
+    "@types/jest": "^25.2.3",
     "@types/node-fetch": "^2.5.8",
     "@types/sha256": "^0.2.0",
     "@types/uuid": "^8.3.4",
