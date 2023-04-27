@@ -1,5 +1,5 @@
-import {v4 as uuid} from 'uuid'
-import sha256 from 'sha256'
+import { v4 as uuid } from 'uuid';
+import sha256 from 'sha256';
 import APIClient from '../apiClient';
 import { BaseResource } from './baseResource';
 import { Grants } from './grants';
@@ -13,7 +13,7 @@ import {
   HostedAuthRequest,
   HostedAuth,
   HostedAuthSchema,
-  PKCEAuthURL
+  PKCEAuthURL,
 } from '../schema/auth';
 import {
   ExchangeResponse,
@@ -36,24 +36,24 @@ export class Auth extends BaseResource {
 
   /**
    * Exchange an authorization code for an access token
-   * @param CodeExchangeRequest
+   * @param payload The request parameters for the code exchange
    * @return Information about the Nylas application
    */
   public async exchangeCodeForToken(
     payload: CodeExchangeRequest
   ): Promise<ExchangeResponse> {
     this.checkAuthCredentials();
-    const body: any = {
+    const body: Record<string, unknown> = {
       code: payload.code,
       redirectUri: payload.redirectUri,
       clientId: this.apiClient.clientId,
       clientSecret: this.apiClient.clientSecret,
       grantType: 'authorization_code',
+    };
+    if (payload.codeVerifier) {
+      body.codeVerifier = payload.codeVerifier;
     }
-    if (payload.codeVerifier){
-      body.codeVerifier = payload.codeVerifier
-    }
-    const res = await this.apiClient.request<ExchangeResponse>(
+    return this.apiClient.request<ExchangeResponse>(
       {
         method: 'POST',
         path: `/v3/connect/token`,
@@ -63,21 +63,19 @@ export class Auth extends BaseResource {
         responseSchema: ExchangeResponseSchema,
       }
     );
-
-    return res;
   }
 
   /**
    * Exchange a refresh token for an access token (and if rotation enabled refresh token as well)
-   * @param TokenExchangeRequest
+   * @param payload The request parameters for the token exchange
    * @return Information about the Nylas application
    */
-  public async exchangeToken(
+  public async refreshAccessToken(
     payload: TokenExchangeRequest
   ): Promise<ExchangeResponse> {
     this.checkAuthCredentials();
 
-    const res = await this.apiClient.request<ExchangeResponse>(
+    return this.apiClient.request<ExchangeResponse>(
       {
         method: 'POST',
         path: `/v3/connect/token`,
@@ -93,18 +91,14 @@ export class Auth extends BaseResource {
         responseSchema: ExchangeResponseSchema,
       }
     );
-
-    return res;
   }
 
   /**
-   * Exchange a refresh token for an access token (and if rotation enabled refresh token as well)
-   * @param TokenExchangeRequest
-   * @return Information about the Nylas application
+   * Validate and retrieve information about an ID token
+   * @param token The ID token
+   * @return Information about the ID token
    */
-  public validateIDToken(
-    token: string
-  ): Promise<OpenID>{
+  public validateIDToken(token: string): Promise<OpenID> {
     this.checkAuthCredentials();
 
     return this.apiClient.request<OpenID>(
@@ -112,44 +106,40 @@ export class Auth extends BaseResource {
         method: 'GET',
         path: `/v3/connect/tokeninfo`,
         queryParams: {
-          id_token: token
+          idToken: token,
         },
       },
       {
         responseSchema: OpenIDSchema,
       }
     );
-
   }
 
   /**
-   * Exchange a refresh token for an access token (and if rotation enabled refresh token as well)
-   * @param TokenExchangeRequest
-   * @return Information about the Nylas application
+   * Validate and retrieve information about an access token
+   * @param token The access token
+   * @return Information about the access token
    */
-  public async validateAccessToken(
-    token: string
-    ): Promise<OpenID> {
-      this.checkAuthCredentials();
-  
-      return this.apiClient.request<OpenID>(
-        {
-          method: 'GET',
-          path: `/v3/connect/tokeninfo`,
-          queryParams: {
-            access_token: token
-          },
+  public validateAccessToken(token: string): Promise<OpenID> {
+    this.checkAuthCredentials();
+
+    return this.apiClient.request<OpenID>(
+      {
+        method: 'GET',
+        path: `/v3/connect/tokeninfo`,
+        queryParams: {
+          accessToken: token,
         },
-        {
-          responseSchema: OpenIDSchema,
-        }
-      );
-  
-    }
+      },
+      {
+        responseSchema: OpenIDSchema,
+      }
+    );
+  }
 
   /**
    * Build the URL for authenticating users to your application via Hosted Authentication
-   * @param AuthConfig Configuration for the authentication process
+   * @param config Configuration for the authentication process
    * @return The URL for hosted authentication
    */
   public urlForAuthentication(config: AuthConfig): string {
@@ -187,7 +177,7 @@ export class Auth extends BaseResource {
   /**
    * Build the URL for authenticating users to your application via Hosted Authentication with PKCE
    * IMPORTANT: YOU WILL NEED TO STORE THE 'secret' returned to use it inside the CodeExchange flow
-   * @param AuthConfig Configuration for the authentication process
+   * @param config Configuration for the authentication process
    * @return The URL for hosted authentication
    */
   public urlForAuthenticationPKCE(config: AuthConfig): PKCEAuthURL {
@@ -221,21 +211,21 @@ export class Auth extends BaseResource {
     }
 
     // Add code challenge to URL generation
-    url += `&code_challenge_method=s256`
-    const secret = uuid()
-    const secretHash = this.hashPKCESecret(secret)
-    url += `&code_challenge=${secret}`
+    url += `&code_challenge_method=s256`;
+    const secret = uuid();
+    const secretHash = this.hashPKCESecret(secret);
+    url += `&code_challenge=${secret}`;
     // Return the url with secret & hashed secret
-    return {secret, secretHash, url};
+    return { secret, secretHash, url };
   }
 
-  private hashPKCESecret(secret: string): string{
+  private hashPKCESecret(secret: string): string {
     return Buffer.from(sha256(secret)).toString('base64');
   }
 
   /**
    * Build the URL for admin consent authentication for Microsoft
-   * @param AuthConfig Configuration for the authentication process
+   * @param config Configuration for the authentication process
    * @return The URL for hosted authentication
    */
   public urlForAdminConsent(config: AdminConsentAuth): string {
@@ -274,17 +264,18 @@ export class Auth extends BaseResource {
   }
 
   /**
-   * Create a new authorization request and get a new unique login url. 
-   * Used only for hosted authentication. 
-   * This is the initial step requested from the server side to issue a new login url. 
-   * @param HostedAuthRequest params to initiate hosted auth request
+   * Create a new authorization request and get a new unique login url.
+   * Used only for hosted authentication.
+   * This is the initial step requested from the server side to issue a new login url.
+   * @param payload params to initiate hosted auth request
+   * @return True if the request was successful
    */
   public async hostedAuth(payload: HostedAuthRequest): Promise<boolean> {
     await this.apiClient.request<HostedAuth>(
       {
         method: 'POST',
         path: `/v3/connect/auth`,
-        body: payload
+        body: payload,
       },
       {
         responseSchema: HostedAuthSchema,
@@ -296,6 +287,7 @@ export class Auth extends BaseResource {
   /**
    * Revoke a single access token
    * @param accessToken The access token to revoke
+   * @return True if the access token was revoked
    */
   public async revoke(accessToken: string): Promise<boolean> {
     await this.apiClient.request<EmptyResponse>(
