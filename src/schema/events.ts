@@ -105,7 +105,7 @@ export interface ListEventQueryParams extends ListQueryParams {
   metadataPair?: Record<string, string>;
   expandRecurring?: boolean;
   busy?: boolean;
-  particpants?: string;
+  participants?: string;
 }
 
 export interface CreateEventQueryParams {
@@ -114,23 +114,23 @@ export interface CreateEventQueryParams {
 }
 
 export interface CreateEventRequestBody {
-  title: string;
-  busy: boolean;
-  description: string;
   when: Time | Timespan | Date | Datespan;
-  location: string;
-  conferencing: Details | Autocreate;
-  reminderMinutes: string;
-  reminderMethod: string;
-  metadata: Record<string, string>;
-  participants: Participant[];
-  recurrence: Recurrence;
-  calendarId: string;
-  readOnly: boolean;
-  roundRobinOrder: string[];
-  visibility: 'public' | 'private';
-  capacity: number;
-  hideParticipants: boolean;
+  title?: string;
+  busy?: boolean;
+  description?: string;
+  location?: string;
+  conferencing?: Details | Autocreate;
+  reminderMinutes?: string;
+  reminderMethod?: string;
+  metadata?: Record<string, string>;
+  participants?: Participant[];
+  recurrence?: Recurrence;
+  calendarId?: string;
+  readOnly?: boolean;
+  roundRobinOrder?: string[];
+  visibility?: 'public' | 'private';
+  capacity?: number;
+  hideParticipants?: boolean;
 }
 
 export interface FindEventQueryParams {
@@ -138,7 +138,7 @@ export interface FindEventQueryParams {
 }
 
 export type UpdateEventQueryParams = CreateEventQueryParams;
-export type UpdateEventRequestBody = CreateEventRequestBody;
+export type UpdateEventRequestBody = Partial<CreateEventRequestBody>;
 
 export type DestroyEventQueryParams = CreateEventQueryParams;
 
