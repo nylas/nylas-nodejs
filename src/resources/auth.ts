@@ -39,7 +39,7 @@ export class Auth extends BaseResource {
    * @param payload The request parameters for the code exchange
    * @return Information about the Nylas application
    */
-  public async exchangeCodeForToken(
+  public exchangeCodeForToken(
     payload: CodeExchangeRequest
   ): Promise<ExchangeResponse> {
     this.checkAuthCredentials();
@@ -70,7 +70,7 @@ export class Auth extends BaseResource {
    * @param payload The request parameters for the token exchange
    * @return Information about the Nylas application
    */
-  public async refreshAccessToken(
+  public refreshAccessToken(
     payload: TokenExchangeRequest
   ): Promise<ExchangeResponse> {
     this.checkAuthCredentials();
