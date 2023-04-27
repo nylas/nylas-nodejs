@@ -99,20 +99,7 @@ export class Auth extends BaseResource {
    * @return Information about the ID token
    */
   public validateIDToken(token: string): Promise<OpenID> {
-    this.checkAuthCredentials();
-
-    return this.apiClient.request<OpenID>(
-      {
-        method: 'GET',
-        path: `/v3/connect/tokeninfo`,
-        queryParams: {
-          idToken: token,
-        },
-      },
-      {
-        responseSchema: OpenIDSchema,
-      }
-    );
+    return this.validateToken({ idToken: token });
   }
 
   /**
@@ -121,15 +108,19 @@ export class Auth extends BaseResource {
    * @return Information about the access token
    */
   public validateAccessToken(token: string): Promise<OpenID> {
+    return this.validateToken({
+      accessToken: token,
+    });
+  }
+
+  private validateToken(queryParams: Record<string, string>): Promise<OpenID> {
     this.checkAuthCredentials();
 
     return this.apiClient.request<OpenID>(
       {
         method: 'GET',
         path: `/v3/connect/tokeninfo`,
-        queryParams: {
-          accessToken: token,
-        },
+        queryParams,
       },
       {
         responseSchema: OpenIDSchema,
