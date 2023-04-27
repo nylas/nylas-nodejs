@@ -134,6 +134,10 @@ export class Auth extends BaseResource {
    * @return The URL for hosted authentication
    */
   public urlForAuthentication(config: AuthConfig): string {
+    return this.urlAuthBuilder(config).toString();
+  }
+
+  private urlAuthBuilder(config: Record<string, any>): URL {
     this.checkAuthCredentials();
 
     const url = new URL(`${this.apiClient.serverUrl}v3/connect/auth`);
@@ -169,7 +173,7 @@ export class Auth extends BaseResource {
       url.searchParams.set('state', config.state);
     }
 
-    return url.toString();
+    return url;
   }
 
   /**
@@ -179,15 +183,15 @@ export class Auth extends BaseResource {
    * @return The URL for hosted authentication
    */
   public urlForAuthenticationPKCE(config: AuthConfig): PKCEAuthURL {
-    let url = this.urlForAuthentication(config);
+    const url = this.urlAuthBuilder(config);
 
     // Add code challenge to URL generation
-    url += `&code_challenge_method=s256`;
+    url.searchParams.set('code_challenge_method', 's256');
     const secret = uuid();
     const secretHash = this.hashPKCESecret(secret);
-    url += `&code_challenge=${secret}`;
+    url.searchParams.set('code_challenge', secret);
     // Return the url with secret & hashed secret
-    return { secret, secretHash, url };
+    return { secret, secretHash, url: url.toString() };
   }
 
   private hashPKCESecret(secret: string): string {
@@ -200,32 +204,11 @@ export class Auth extends BaseResource {
    * @return The URL for hosted authentication
    */
   public urlForAdminConsent(config: AdminConsentAuth): string {
-    this.checkAuthCredentials();
-
-    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${
-      this.apiClient.clientId
-    }&redirect_uri=${config.redirectUri}&access_type=${
-      config.accessType ? config.accessType : 'offline'
-    }&response_type=adminconsent&provider=microsoft`;
-    if (config.loginHint) {
-      url += `&login_hint=${config.loginHint}`;
-      if (config.includeGrantScopes) {
-        url += `&include_grant_scopes=${config.includeGrantScopes}`;
-      }
-    }
-    if (config.scope) {
-      url += `&scope=${config.scope.join(' ')}`;
-    }
-    if (config.prompt) {
-      url += `&prompt=${config.prompt}`;
-    }
-    if (config.metadata) {
-      url += `&metadata=${config.metadata}`;
-    }
-    if (config.state) {
-      url += `&state=${config.state}`;
-    }
-    return url;
+    const configWithProvider = { ...config, provider: 'microsoft' };
+    const url = this.urlAuthBuilder(configWithProvider);
+    url.searchParams.set('response_type', 'adminconsent');
+    url.searchParams.set('credential_id', config.credentialId);
+    return url.toString();
   }
 
   private checkAuthCredentials(): void {
