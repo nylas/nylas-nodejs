@@ -136,33 +136,40 @@ export class Auth extends BaseResource {
   public urlForAuthentication(config: AuthConfig): string {
     this.checkAuthCredentials();
 
-    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${
-      this.apiClient.clientId
-    }&redirect_uri=${config.redirectUri}&access_type=${
+    const url = new URL(`${this.apiClient.serverUrl}v3/connect/auth`);
+    url.searchParams.set('client_id', this.apiClient.clientId as string);
+    url.searchParams.set('redirect_uri', config.redirectUri);
+    url.searchParams.set(
+      'access_type',
       config.accessType ? config.accessType : 'offline'
-    }&response_type=code`;
+    );
+    url.searchParams.set('response_type', 'code');
     if (config.provider) {
-      url += `&provider=${config.provider}`;
+      url.searchParams.set('provider', config.provider);
     }
     if (config.loginHint) {
-      url += `&login_hint=${config.loginHint}`;
+      url.searchParams.set('login_hint', config.loginHint);
       if (config.includeGrantScopes) {
-        url += `&include_grant_scopes=${config.includeGrantScopes}`;
+        url.searchParams.set(
+          'include_grant_scopes',
+          config.includeGrantScopes.toString()
+        );
       }
     }
     if (config.scope) {
-      url += `&scope=${config.scope.join(' ')}`;
+      url.searchParams.set('scope', config.scope.join(' '));
     }
     if (config.prompt) {
-      url += `&prompt=${config.prompt}`;
+      url.searchParams.set('prompt', config.prompt);
     }
     if (config.metadata) {
-      url += `&metadata=${config.metadata}`;
+      url.searchParams.set('metadata', config.metadata);
     }
     if (config.state) {
-      url += `&state=${config.state}`;
+      url.searchParams.set('state', config.state);
     }
-    return url;
+
+    return url.toString();
   }
 
   /**
@@ -172,34 +179,7 @@ export class Auth extends BaseResource {
    * @return The URL for hosted authentication
    */
   public urlForAuthenticationPKCE(config: AuthConfig): PKCEAuthURL {
-    this.checkAuthCredentials();
-
-    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${
-      this.apiClient.clientId
-    }&redirect_uri=${config.redirectUri}&access_type=${
-      config.accessType ? config.accessType : 'offline'
-    }&response_type=code`;
-    if (config.provider) {
-      url += `&provider=${config.provider}`;
-    }
-    if (config.loginHint) {
-      url += `&login_hint=${config.loginHint}`;
-      if (config.includeGrantScopes) {
-        url += `&include_grant_scopes=${config.includeGrantScopes}`;
-      }
-    }
-    if (config.scope) {
-      url += `&scope=${config.scope.join(' ')}`;
-    }
-    if (config.prompt) {
-      url += `&prompt=${config.prompt}`;
-    }
-    if (config.metadata) {
-      url += `&metadata=${config.metadata}`;
-    }
-    if (config.state) {
-      url += `&state=${config.state}`;
-    }
+    let url = this.urlForAuthentication(config);
 
     // Add code challenge to URL generation
     url += `&code_challenge_method=s256`;
