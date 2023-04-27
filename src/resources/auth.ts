@@ -140,7 +140,7 @@ export class Auth extends BaseResource {
   private urlAuthBuilder(config: Record<string, any>): URL {
     this.checkAuthCredentials();
 
-    const url = new URL(`${this.apiClient.serverUrl}v3/connect/auth`);
+    const url = new URL(`${this.apiClient.serverUrl}/v3/connect/auth`);
     url.searchParams.set('client_id', this.apiClient.clientId as string);
     url.searchParams.set('redirect_uri', config.redirectUri);
     url.searchParams.set(
