@@ -7,12 +7,13 @@ import {
   OpenID,
   OpenIDSchema,
   AuthConfig,
+  IMAPAuthConfig,
   AdminConsentAuth,
   CodeExchangeRequest,
   TokenExchangeRequest,
   HostedAuthRequest,
   HostedAuth,
-  HostedAuthSchema,
+  HostedAuthResponseSchema,
   PKCEAuthURL
 } from '../schema/auth';
 import {
@@ -20,6 +21,7 @@ import {
   ExchangeResponseSchema,
   EmptyResponse,
   EmptyResponseSchema,
+  ItemResponse
 } from '../schema/response';
 
 export class Auth extends BaseResource {
@@ -155,7 +157,7 @@ export class Auth extends BaseResource {
   public urlForAuthentication(config: AuthConfig): string {
     this.checkAuthCredentials();
 
-    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${
+    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
       this.apiClient.clientId
     }&redirect_uri=${config.redirectUri}&access_type=${
       config.accessType ? config.accessType : 'offline'
@@ -183,6 +185,33 @@ export class Auth extends BaseResource {
     }
     return url;
   }
+  /**
+   * Build the URL for authenticating users to your application via Hosted Authentication for IMAP providers
+   * @param AuthConfig Configuration for the authentication process
+   * @return The URL for hosted authentication IMAP
+   */
+  public urlForAuthenticationIMAP(config: IMAPAuthConfig): string {
+    this.checkAuthCredentials();
+
+    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
+      this.apiClient.clientId
+    }&redirect_uri=${config.redirectUri}&access_type=${
+      config.accessType ? config.accessType : 'offline'
+    }&response_type=code&provider=imap`;
+    if (config.loginHint) {
+      url += `&login_hint=${config.loginHint}`;
+    }
+    if (config.prompt) {
+      url += `&prompt=${config.prompt}`;
+    }
+    if (config.metadata) {
+      url += `&metadata=${config.metadata}`;
+    }
+    if (config.state) {
+      url += `&state=${config.state}`;
+    }
+    return url;
+  }
 
   /**
    * Build the URL for authenticating users to your application via Hosted Authentication with PKCE
@@ -193,7 +222,7 @@ export class Auth extends BaseResource {
   public urlForAuthenticationPKCE(config: AuthConfig): PKCEAuthURL {
     this.checkAuthCredentials();
 
-    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${
+    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
       this.apiClient.clientId
     }&redirect_uri=${config.redirectUri}&access_type=${
       config.accessType ? config.accessType : 'offline'
@@ -241,7 +270,7 @@ export class Auth extends BaseResource {
   public urlForAdminConsent(config: AdminConsentAuth): string {
     this.checkAuthCredentials();
 
-    let url = `${this.apiClient.serverUrl}v3/connect/auth?client_id=${
+    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
       this.apiClient.clientId
     }&redirect_uri=${config.redirectUri}&access_type=${
       config.accessType ? config.accessType : 'offline'
@@ -279,18 +308,25 @@ export class Auth extends BaseResource {
    * This is the initial step requested from the server side to issue a new login url. 
    * @param HostedAuthRequest params to initiate hosted auth request
    */
-  public async hostedAuth(payload: HostedAuthRequest): Promise<boolean> {
-    await this.apiClient.request<HostedAuth>(
+  public async hostedAuth(payload: HostedAuthRequest): Promise<ItemResponse<HostedAuth>> {
+    this.checkAuthCredentials()
+    const credentials = `${this.apiClient.clientId}:${this.apiClient.clientSecret}`
+    const buff = Buffer.from(credentials);
+    const resp = await this.apiClient.request<ItemResponse<HostedAuth>>(
       {
         method: 'POST',
         path: `/v3/connect/auth`,
+        headers:{
+          Authorization: `Basic ${buff.toString('base64')}`
+        },
+
         body: payload
       },
       {
-        responseSchema: HostedAuthSchema,
+        responseSchema: HostedAuthResponseSchema,
       }
     );
-    return true;
+    return resp;
   }
 
   /**
