@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { ItemResponseSchema } from './response';
 import { GoogleScopes, MicrosoftScopes, Scope, YahooScopes } from './scopes';
 
 type AccessType = 'online' | 'offline';

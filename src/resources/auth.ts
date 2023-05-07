@@ -3,6 +3,7 @@ import sha256 from 'sha256'
 import APIClient from '../apiClient';
 import { BaseResource } from './baseResource';
 import { Grants } from './grants';
+import { Providers } from './providers';
 import {
   OpenID,
   OpenIDSchema,
@@ -24,6 +25,7 @@ import {
 
 export class Auth extends BaseResource {
   public grants: Grants;
+  public providers: Providers;
 
   apiClient: APIClient;
 
@@ -32,6 +34,7 @@ export class Auth extends BaseResource {
     this.apiClient = apiClient;
 
     this.grants = new Grants(apiClient);
+    this.providers = new Providers(apiClient);
   }
 
   /**
