@@ -15,14 +15,14 @@ import {
   HostedAuthRequest,
   HostedAuth,
   HostedAuthResponseSchema,
-  PKCEAuthURL
+  PKCEAuthURL,
 } from '../schema/auth';
 import {
   ExchangeResponse,
   ExchangeResponseSchema,
   EmptyResponse,
   EmptyResponseSchema,
-  ItemResponse
+  ItemResponse,
 } from '../schema/response';
 
 export class Auth extends BaseResource {
@@ -145,11 +145,14 @@ export class Auth extends BaseResource {
   private urlAuthBuilder(config: Record<string, any>): URL {
     this.checkAuthCredentials();
 
-    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
-      this.apiClient.clientId
-    }&redirect_uri=${config.redirectUri}&access_type=${
-      config.accessType ? config.accessType : 'offline'
+    const url = new URL(
+      `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
+        this.apiClient.clientId
+      }&redirect_uri=${config.redirectUri}&access_type=${
+        config.accessType ? config.accessType : 'offline'
+      }`
     );
+
     url.searchParams.set('response_type', 'code');
     if (config.provider) {
       url.searchParams.set('provider', config.provider);
@@ -220,6 +223,7 @@ export class Auth extends BaseResource {
     }&redirect_uri=${config.redirectUri}&access_type=${
       config.accessType ? config.accessType : 'offline'
     }&response_type=code`;
+
     if (config.provider) {
       url += `&provider=${config.provider}`;
     }
@@ -242,13 +246,16 @@ export class Auth extends BaseResource {
       url += `&state=${config.state}`;
     }
 
+    // Create a URL object
+    const urlObj = new URL(url);
+
     // Add code challenge to URL generation
-    url.searchParams.set('code_challenge_method', 's256');
+    urlObj.searchParams.set('code_challenge_method', 's256');
     const secret = uuid();
     const secretHash = this.hashPKCESecret(secret);
-    url.searchParams.set('code_challenge', secret);
+    urlObj.searchParams.set('code_challenge', secret);
     // Return the url with secret & hashed secret
-    return { secret, secretHash, url: url.toString() };
+    return { secret, secretHash, url: urlObj.toString() };
   }
 
   private hashPKCESecret(secret: string): string {
@@ -302,19 +309,21 @@ export class Auth extends BaseResource {
    * @param payload params to initiate hosted auth request
    * @return True if the request was successful
    */
-  public async hostedAuth(payload: HostedAuthRequest): Promise<ItemResponse<HostedAuth>> {
-    this.checkAuthCredentials()
-    const credentials = `${this.apiClient.clientId}:${this.apiClient.clientSecret}`
+  public async hostedAuth(
+    payload: HostedAuthRequest
+  ): Promise<ItemResponse<HostedAuth>> {
+    this.checkAuthCredentials();
+    const credentials = `${this.apiClient.clientId}:${this.apiClient.clientSecret}`;
     const buff = Buffer.from(credentials);
     const resp = await this.apiClient.request<ItemResponse<HostedAuth>>(
       {
         method: 'POST',
         path: `/v3/connect/auth`,
-        headers:{
-          Authorization: `Basic ${buff.toString('base64')}`
+        headers: {
+          Authorization: `Basic ${buff.toString('base64')}`,
         },
 
-        body: payload
+        body: payload,
       },
       {
         responseSchema: HostedAuthResponseSchema,
