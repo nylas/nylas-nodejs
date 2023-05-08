@@ -20,12 +20,14 @@ interface ListParams<T> {
 interface FindParams<T> {
   path: string;
   responseSchema: ZodType<ItemResponse<T>>;
+  queryParams?: Record<string, any>;
   overrides?: OverridableNylasConfig;
 }
 
 interface PayloadParams<T> {
   path: string;
   responseSchema: ZodType<ItemResponse<T>>;
+  queryParams?: Record<string, any>;
   requestBody: Record<string, any>;
   overrides?: OverridableNylasConfig;
 }
@@ -149,12 +151,14 @@ export class BaseResource {
   protected _find<T>({
     path,
     responseSchema,
+    queryParams,
     overrides,
   }: FindParams<T>): Promise<ItemResponse<T>> {
     return this.apiClient.request<ItemResponse<T>>(
       {
         method: 'GET',
         path,
+        queryParams,
         overrides,
       },
       {
@@ -165,12 +169,19 @@ export class BaseResource {
 
   private payloadRequest<T>(
     method: 'POST' | 'PUT' | 'PATCH',
-    { path, responseSchema, requestBody, overrides }: PayloadParams<T>
+    {
+      path,
+      responseSchema,
+      queryParams,
+      requestBody,
+      overrides,
+    }: PayloadParams<T>
   ): Promise<ItemResponse<T>> {
     return this.apiClient.request<ItemResponse<T>>(
       {
         method,
         path,
+        queryParams,
         body: requestBody,
         overrides,
       },
