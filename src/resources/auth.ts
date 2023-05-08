@@ -3,27 +3,31 @@ import sha256 from 'sha256';
 import APIClient from '../apiClient';
 import { BaseResource } from './baseResource';
 import { Grants } from './grants';
+import { Providers } from './providers';
 import {
   OpenID,
   OpenIDSchema,
   AuthConfig,
+  IMAPAuthConfig,
   AdminConsentAuth,
   CodeExchangeRequest,
   TokenExchangeRequest,
   HostedAuthRequest,
   HostedAuth,
-  HostedAuthSchema,
-  PKCEAuthURL,
+  HostedAuthResponseSchema,
+  PKCEAuthURL
 } from '../schema/auth';
 import {
   ExchangeResponse,
   ExchangeResponseSchema,
   EmptyResponse,
   EmptyResponseSchema,
+  ItemResponse
 } from '../schema/response';
 
 export class Auth extends BaseResource {
   public grants: Grants;
+  public providers: Providers;
 
   apiClient: APIClient;
 
@@ -32,6 +36,7 @@ export class Auth extends BaseResource {
     this.apiClient = apiClient;
 
     this.grants = new Grants(apiClient);
+    this.providers = new Providers(apiClient);
   }
 
   /**
@@ -140,11 +145,9 @@ export class Auth extends BaseResource {
   private urlAuthBuilder(config: Record<string, any>): URL {
     this.checkAuthCredentials();
 
-    const url = new URL(`${this.apiClient.serverUrl}/v3/connect/auth`);
-    url.searchParams.set('client_id', this.apiClient.clientId as string);
-    url.searchParams.set('redirect_uri', config.redirectUri);
-    url.searchParams.set(
-      'access_type',
+    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
+      this.apiClient.clientId
+    }&redirect_uri=${config.redirectUri}&access_type=${
       config.accessType ? config.accessType : 'offline'
     );
     url.searchParams.set('response_type', 'code');
@@ -175,6 +178,33 @@ export class Auth extends BaseResource {
 
     return url;
   }
+  /**
+   * Build the URL for authenticating users to your application via Hosted Authentication for IMAP providers
+   * @param AuthConfig Configuration for the authentication process
+   * @return The URL for hosted authentication IMAP
+   */
+  public urlForAuthenticationIMAP(config: IMAPAuthConfig): string {
+    this.checkAuthCredentials();
+
+    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
+      this.apiClient.clientId
+    }&redirect_uri=${config.redirectUri}&access_type=${
+      config.accessType ? config.accessType : 'offline'
+    }&response_type=code&provider=imap`;
+    if (config.loginHint) {
+      url += `&login_hint=${config.loginHint}`;
+    }
+    if (config.prompt) {
+      url += `&prompt=${config.prompt}`;
+    }
+    if (config.metadata) {
+      url += `&metadata=${config.metadata}`;
+    }
+    if (config.state) {
+      url += `&state=${config.state}`;
+    }
+    return url;
+  }
 
   /**
    * Build the URL for authenticating users to your application via Hosted Authentication with PKCE
@@ -183,7 +213,34 @@ export class Auth extends BaseResource {
    * @return The URL for hosted authentication
    */
   public urlForAuthenticationPKCE(config: AuthConfig): PKCEAuthURL {
-    const url = this.urlAuthBuilder(config);
+    this.checkAuthCredentials();
+
+    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
+      this.apiClient.clientId
+    }&redirect_uri=${config.redirectUri}&access_type=${
+      config.accessType ? config.accessType : 'offline'
+    }&response_type=code`;
+    if (config.provider) {
+      url += `&provider=${config.provider}`;
+    }
+    if (config.loginHint) {
+      url += `&login_hint=${config.loginHint}`;
+      if (config.includeGrantScopes) {
+        url += `&include_grant_scopes=${config.includeGrantScopes}`;
+      }
+    }
+    if (config.scope) {
+      url += `&scope=${config.scope.join(' ')}`;
+    }
+    if (config.prompt) {
+      url += `&prompt=${config.prompt}`;
+    }
+    if (config.metadata) {
+      url += `&metadata=${config.metadata}`;
+    }
+    if (config.state) {
+      url += `&state=${config.state}`;
+    }
 
     // Add code challenge to URL generation
     url.searchParams.set('code_challenge_method', 's256');
@@ -204,11 +261,32 @@ export class Auth extends BaseResource {
    * @return The URL for hosted authentication
    */
   public urlForAdminConsent(config: AdminConsentAuth): string {
-    const configWithProvider = { ...config, provider: 'microsoft' };
-    const url = this.urlAuthBuilder(configWithProvider);
-    url.searchParams.set('response_type', 'adminconsent');
-    url.searchParams.set('credential_id', config.credentialId);
-    return url.toString();
+    this.checkAuthCredentials();
+
+    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
+      this.apiClient.clientId
+    }&redirect_uri=${config.redirectUri}&access_type=${
+      config.accessType ? config.accessType : 'offline'
+    }&response_type=adminconsent&provider=microsoft`;
+    if (config.loginHint) {
+      url += `&login_hint=${config.loginHint}`;
+      if (config.includeGrantScopes) {
+        url += `&include_grant_scopes=${config.includeGrantScopes}`;
+      }
+    }
+    if (config.scope) {
+      url += `&scope=${config.scope.join(' ')}`;
+    }
+    if (config.prompt) {
+      url += `&prompt=${config.prompt}`;
+    }
+    if (config.metadata) {
+      url += `&metadata=${config.metadata}`;
+    }
+    if (config.state) {
+      url += `&state=${config.state}`;
+    }
+    return url;
   }
 
   private checkAuthCredentials(): void {
@@ -224,18 +302,25 @@ export class Auth extends BaseResource {
    * @param payload params to initiate hosted auth request
    * @return True if the request was successful
    */
-  public async hostedAuth(payload: HostedAuthRequest): Promise<boolean> {
-    await this.apiClient.request<HostedAuth>(
+  public async hostedAuth(payload: HostedAuthRequest): Promise<ItemResponse<HostedAuth>> {
+    this.checkAuthCredentials()
+    const credentials = `${this.apiClient.clientId}:${this.apiClient.clientSecret}`
+    const buff = Buffer.from(credentials);
+    const resp = await this.apiClient.request<ItemResponse<HostedAuth>>(
       {
         method: 'POST',
         path: `/v3/connect/auth`,
-        body: payload,
+        headers:{
+          Authorization: `Basic ${buff.toString('base64')}`
+        },
+
+        body: payload
       },
       {
-        responseSchema: HostedAuthSchema,
+        responseSchema: HostedAuthResponseSchema,
       }
     );
-    return true;
+    return resp;
   }
 
   /**
