@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { GoogleScopes, MicrosoftScopes, Scope, YahooScopes } from './scopes';
+import { ItemResponseSchema } from './response';
 
 type AccessType = 'online' | 'offline';
 
@@ -106,7 +107,7 @@ export const HostedAuthSchema = z.object({
     loginHint: z.string().optional(),
     prompt: z.string().optional(),
     includeGrantedScopes: z.boolean().optional(),
-  })
+  }),
 });
 
 export type HostedAuth = z.infer<typeof HostedAuthSchema>;
