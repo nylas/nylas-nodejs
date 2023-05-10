@@ -9,16 +9,15 @@ export interface ListCalendersQueryParams extends ListQueryParams {
 
 export interface CreateCalenderRequestBody {
   name: string;
-  description: string;
-  location: string;
-  timezone: string;
-  metadata: Record<string, string>;
-}
-
-export interface UpdateCalenderRequestBody extends CreateCalenderRequestBody {
+  description?: string;
+  location?: string;
+  timezone?: string;
+  metadata?: Record<string, string>;
   hexColor?: string;
   hexForegroundColor?: string;
 }
+
+export type UpdateCalenderRequestBody = Partial<CreateCalenderRequestBody>;
 
 const CalendarSchema = z.object({
   name: z.string(),
