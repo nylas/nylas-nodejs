@@ -180,18 +180,6 @@ export class Auth extends BaseResource {
 
     return url;
   }
-  /**
-   * Build the URL for authenticating users to your application via Hosted Authentication for IMAP providers
-   * @param config Configuration for the authentication process
-   * @return The URL for hosted authentication IMAP
-   */
-  public urlForAuthenticationIMAP(config: IMAPAuthConfig): string {
-    this.checkAuthCredentials();
-
-    const url = this.urlAuthBuilder(config);
-    url.searchParams.set('provider', 'imap');
-    return url.toString();
-  }
 
   /**
    * Build the URL for authenticating users to your application via Hosted Authentication with PKCE
