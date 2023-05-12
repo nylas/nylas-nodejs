@@ -5,23 +5,23 @@ import { BaseResource } from './baseResource';
 import { Grants } from './grants';
 import { Providers } from './providers';
 import {
+  AdminConsentAuth,
+  AuthConfig,
+  CodeExchangeRequest,
+  HostedAuth,
+  HostedAuthRequest,
+  HostedAuthResponseSchema,
+  IMAPAuthConfig,
   OpenID,
   OpenIDSchema,
-  AuthConfig,
-  IMAPAuthConfig,
-  AdminConsentAuth,
-  CodeExchangeRequest,
-  TokenExchangeRequest,
-  HostedAuthRequest,
-  HostedAuth,
-  HostedAuthResponseSchema,
   PKCEAuthURL,
+  TokenExchangeRequest,
 } from '../schema/auth';
 import {
-  ExchangeResponse,
-  ExchangeResponseSchema,
   EmptyResponse,
   EmptyResponseSchema,
+  ExchangeResponse,
+  ExchangeResponseSchema,
   ItemResponse,
 } from '../schema/response';
 
@@ -182,31 +182,15 @@ export class Auth extends BaseResource {
   }
   /**
    * Build the URL for authenticating users to your application via Hosted Authentication for IMAP providers
-   * @param AuthConfig Configuration for the authentication process
+   * @param config Configuration for the authentication process
    * @return The URL for hosted authentication IMAP
    */
   public urlForAuthenticationIMAP(config: IMAPAuthConfig): string {
     this.checkAuthCredentials();
 
-    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
-      this.apiClient.clientId
-    }&redirect_uri=${config.redirectUri}&access_type=${
-      config.accessType ? config.accessType : 'offline'
-    }&response_type=code&provider=imap`;
-    if (config.loginHint) {
-      url += `&login_hint=${config.loginHint}`;
-    }
-    if (config.prompt) {
-      url.searchParams.set('prompt', config.prompt);
-    }
-    if (config.metadata) {
-      url.searchParams.set('metadata', config.metadata);
-    }
-    if (config.state) {
-      url.searchParams.set('state', config.state);
-    }
-
-    return url;
+    const url = this.urlAuthBuilder(config);
+    url.searchParams.set('provider', 'imap');
+    return url.toString();
   }
 
   /**
@@ -217,9 +201,6 @@ export class Auth extends BaseResource {
    */
   public urlForAuthenticationPKCE(config: AuthConfig): PKCEAuthURL {
     const url = this.urlAuthBuilder(config);
-
-    // Create a URL object
-    const urlObj = new URL(url);
 
     // Add code challenge to URL generation
     url.searchParams.set('code_challenge_method', 's256');
@@ -266,7 +247,8 @@ export class Auth extends BaseResource {
     this.checkAuthCredentials();
     const credentials = `${this.apiClient.clientId}:${this.apiClient.clientSecret}`;
     const buff = Buffer.from(credentials);
-    const resp = await this.apiClient.request<ItemResponse<HostedAuth>>(
+
+    return await this.apiClient.request<ItemResponse<HostedAuth>>(
       {
         method: 'POST',
         path: `/v3/connect/auth`,
@@ -279,7 +261,6 @@ export class Auth extends BaseResource {
         responseSchema: HostedAuthResponseSchema,
       }
     );
-    return resp;
   }
 
   /**
