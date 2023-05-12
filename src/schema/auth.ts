@@ -58,6 +58,9 @@ export type AuthConfig =
   | (SharedAuthParams & {
       scope: MicrosoftScopes[];
       provider: 'microsoft';
+    })
+  | (IMAPAuthConfig & {
+      provider: 'imap';
     });
 
 export interface CodeExchangeRequest {
