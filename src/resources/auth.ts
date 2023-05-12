@@ -3,16 +3,18 @@ import sha256 from 'sha256';
 import APIClient from '../apiClient';
 import { BaseResource } from './baseResource';
 import { Grants } from './grants';
+import { Providers } from './providers';
 import {
   OpenID,
   OpenIDSchema,
   AuthConfig,
+  IMAPAuthConfig,
   AdminConsentAuth,
   CodeExchangeRequest,
   TokenExchangeRequest,
   HostedAuthRequest,
   HostedAuth,
-  HostedAuthSchema,
+  HostedAuthResponseSchema,
   PKCEAuthURL,
 } from '../schema/auth';
 import {
@@ -20,10 +22,12 @@ import {
   ExchangeResponseSchema,
   EmptyResponse,
   EmptyResponseSchema,
+  ItemResponse,
 } from '../schema/response';
 
 export class Auth extends BaseResource {
   public grants: Grants;
+  public providers: Providers;
 
   apiClient: APIClient;
 
@@ -32,6 +36,7 @@ export class Auth extends BaseResource {
     this.apiClient = apiClient;
 
     this.grants = new Grants(apiClient);
+    this.providers = new Providers(apiClient);
   }
 
   /**
@@ -175,6 +180,34 @@ export class Auth extends BaseResource {
 
     return url;
   }
+  /**
+   * Build the URL for authenticating users to your application via Hosted Authentication for IMAP providers
+   * @param AuthConfig Configuration for the authentication process
+   * @return The URL for hosted authentication IMAP
+   */
+  public urlForAuthenticationIMAP(config: IMAPAuthConfig): string {
+    this.checkAuthCredentials();
+
+    let url = `${this.apiClient.serverUrl}/v3/connect/auth?client_id=${
+      this.apiClient.clientId
+    }&redirect_uri=${config.redirectUri}&access_type=${
+      config.accessType ? config.accessType : 'offline'
+    }&response_type=code&provider=imap`;
+    if (config.loginHint) {
+      url += `&login_hint=${config.loginHint}`;
+    }
+    if (config.prompt) {
+      url.searchParams.set('prompt', config.prompt);
+    }
+    if (config.metadata) {
+      url.searchParams.set('metadata', config.metadata);
+    }
+    if (config.state) {
+      url.searchParams.set('state', config.state);
+    }
+
+    return url;
+  }
 
   /**
    * Build the URL for authenticating users to your application via Hosted Authentication with PKCE
@@ -184,6 +217,9 @@ export class Auth extends BaseResource {
    */
   public urlForAuthenticationPKCE(config: AuthConfig): PKCEAuthURL {
     const url = this.urlAuthBuilder(config);
+
+    // Create a URL object
+    const urlObj = new URL(url);
 
     // Add code challenge to URL generation
     url.searchParams.set('code_challenge_method', 's256');
@@ -224,18 +260,26 @@ export class Auth extends BaseResource {
    * @param payload params to initiate hosted auth request
    * @return True if the request was successful
    */
-  public async hostedAuth(payload: HostedAuthRequest): Promise<boolean> {
-    await this.apiClient.request<HostedAuth>(
+  public async hostedAuth(
+    payload: HostedAuthRequest
+  ): Promise<ItemResponse<HostedAuth>> {
+    this.checkAuthCredentials();
+    const credentials = `${this.apiClient.clientId}:${this.apiClient.clientSecret}`;
+    const buff = Buffer.from(credentials);
+    const resp = await this.apiClient.request<ItemResponse<HostedAuth>>(
       {
         method: 'POST',
         path: `/v3/connect/auth`,
+        headers: {
+          Authorization: `Basic ${buff.toString('base64')}`,
+        },
         body: payload,
       },
       {
-        responseSchema: HostedAuthSchema,
+        responseSchema: HostedAuthResponseSchema,
       }
     );
-    return true;
+    return resp;
   }
 
   /**

@@ -6,7 +6,7 @@ function convertCase(
   obj: Record<string, unknown>,
   casingFunction: CasingFunction,
   excludeKeys?: string[]
-) {
+): Record<string, unknown> {
   const newObj = {} as Record<string, unknown>;
   for (const key in obj) {
     if (excludeKeys?.includes(key)) {

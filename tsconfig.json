@@ -8,5 +8,5 @@
     "resolveJsonModule": true,
     "strict": true
   },
-  "exclude": ["tests"]
+  "exclude": ["tests", "lib"]
 }

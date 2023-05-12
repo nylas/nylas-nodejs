@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { GoogleScopes, MicrosoftScopes, Scope, YahooScopes } from './scopes';
+import { ItemResponseSchema } from './response';
 
 type AccessType = 'online' | 'offline';
 
@@ -13,6 +14,14 @@ type SharedAuthParams = {
   redirectUri: string;
   scope?: Scope[];
   includeGrantScopes: boolean;
+  metadata?: string;
+  state?: string;
+  loginHint?: string;
+};
+export type IMAPAuthConfig = {
+  accessType?: AccessType;
+  prompt?: string;
+  redirectUri: string;
   metadata?: string;
   state?: string;
   loginHint?: string;
@@ -79,6 +88,9 @@ export type HostedAuthRequest =
       provider: 'yahoo';
     })
   | (SharedHostedAuthRequest & {
+      provider: 'imap';
+    })
+  | (SharedHostedAuthRequest & {
       scope?: MicrosoftScopes[];
       provider: 'microsoft';
     });
@@ -86,18 +98,22 @@ export type HostedAuthRequest =
 export const HostedAuthSchema = z.object({
   url: z.string(),
   id: z.string(),
-  expiresIn: z.number(),
+  expiresAt: z.number(),
   request: z.object({
     redirectUri: z.string(),
     provider: z.string(),
-    scope: z.array(z.string()).nullable(),
-    state: z.string().nullable(),
-    loginHint: z.string().nullable(),
+    scope: z.array(z.string()).optional(),
+    state: z.string().optional(),
+    loginHint: z.string().optional(),
+    prompt: z.string().optional(),
+    includeGrantedScopes: z.boolean().optional(),
   }),
 });
 
 export type HostedAuth = z.infer<typeof HostedAuthSchema>;
-
+export const HostedAuthResponseSchema = ItemResponseSchema.extend({
+  data: HostedAuthSchema,
+});
 export interface PKCEAuthURL {
   url: string;
   secret: string;
