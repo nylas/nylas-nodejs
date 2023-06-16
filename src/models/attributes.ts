@@ -95,11 +95,11 @@ class AttributeNumber extends Attribute {
     return val;
   }
   fromJSON(val: any): number | null {
-    if (!isNaN(Number(val))) {
-      return Number(val);
-    } else {
+    if (val === null || isNaN(Number(val))) {
       return null;
     }
+
+    return Number(val);
   }
 }
 
