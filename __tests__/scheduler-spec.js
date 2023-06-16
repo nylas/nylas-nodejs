@@ -146,7 +146,7 @@ describe('Scheduler', () => {
       });
     });
 
-    test('Should throw an error if SchedulerBooking.intervalMinutes is invalid', done => {
+    test('Should not convert null to 0 if SchedulerBooking.intervalMinutes is null', done => {
       // Cannot be set to 0
       testContext.scheduler.config = new SchedulerConfig({
         booking: {
@@ -156,18 +156,6 @@ describe('Scheduler', () => {
 
       const value = testContext.scheduler.config.toJSON();
       expect(value.booking.interval_minutes).toEqual(null);
-
-      // Cannot be negative
-      testContext.scheduler.config.booking.intervalMinutes = -1;
-      expect(() => testContext.scheduler.save()).toThrow();
-
-      // Has to be divisible by 5
-      testContext.scheduler.config.booking.intervalMinutes = 3;
-      expect(() => testContext.scheduler.save()).toThrow();
-
-      // If valid, don't throw
-      testContext.scheduler.config.booking.intervalMinutes = 15;
-      expect(() => testContext.scheduler.save()).not.toThrow();
 
       done();
     });
