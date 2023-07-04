@@ -1,8 +1,7 @@
 export type NylasConfig = {
   apiKey: string;
-  clientId?: string;
-  clientSecret?: string;
   serverUrl?: string; // TODO: rename to nylasAPIUrl
+  timeout?: number;
 };
 
 export type OverridableNylasConfig = Partial<

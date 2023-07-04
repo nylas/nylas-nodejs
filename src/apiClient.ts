@@ -50,14 +50,12 @@ interface RequestOptions {
 export default class APIClient {
   apiKey: string;
   serverUrl: string;
-  clientId?: string;
-  clientSecret?: string;
+  timeout: number; // TODO::Implement
 
-  constructor({ apiKey, serverUrl, clientId, clientSecret }: NylasConfig) {
+  constructor({ apiKey, serverUrl, timeout }: Required<NylasConfig>) {
     this.apiKey = apiKey;
-    this.serverUrl = serverUrl as string; // TODO: get rid of type assertion
-    this.clientSecret = clientSecret;
-    this.clientId = clientId;
+    this.serverUrl = serverUrl;
+    this.timeout = timeout;
   }
 
   private setRequestUrl({

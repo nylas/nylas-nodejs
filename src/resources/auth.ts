@@ -11,7 +11,6 @@ import {
   HostedAuth,
   HostedAuthRequest,
   HostedAuthResponseSchema,
-  IMAPAuthConfig,
   OpenID,
   OpenIDSchema,
   PKCEAuthURL,
@@ -30,10 +29,14 @@ export class Auth extends BaseResource {
   public providers: Providers;
 
   apiClient: APIClient;
+  clientId: string;
+  clientSecret: string;
 
-  constructor(apiClient: APIClient) {
+  constructor(apiClient: APIClient, clientId: string, clientSecret: string) {
     super(apiClient);
     this.apiClient = apiClient;
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
 
     this.grants = new Grants(apiClient);
     this.providers = new Providers(apiClient);
@@ -51,8 +54,8 @@ export class Auth extends BaseResource {
     const body: Record<string, unknown> = {
       code: payload.code,
       redirectUri: payload.redirectUri,
-      clientId: this.apiClient.clientId,
-      clientSecret: this.apiClient.clientSecret,
+      clientId: this.clientId,
+      clientSecret: this.clientSecret,
       grantType: 'authorization_code',
     };
     if (payload.codeVerifier) {
@@ -87,8 +90,8 @@ export class Auth extends BaseResource {
         body: {
           refreshToken: payload.refreshToken,
           redirectUri: payload.redirectUri,
-          clientId: this.apiClient.clientId,
-          clientSecret: this.apiClient.clientSecret,
+          clientId: this.clientId,
+          clientSecret: this.clientSecret,
           grantType: 'refresh_token',
         },
       },
@@ -146,11 +149,11 @@ export class Auth extends BaseResource {
     this.checkAuthCredentials();
 
     const url = new URL(`${this.apiClient.serverUrl}/v3/connect/auth`);
-    url.searchParams.set('client_id', this.apiClient.clientId as string);
+    url.searchParams.set('client_id', this.clientId as string);
     url.searchParams.set('redirect_uri', config.redirectUri);
     url.searchParams.set(
       'access_type',
-      config.accessType ? config.accessType : 'offline'
+      config.accessType ? config.accessType : 'online' //TODO::More secure
     );
     url.searchParams.set('response_type', 'code');
     if (config.provider) {
@@ -217,7 +220,7 @@ export class Auth extends BaseResource {
   }
 
   private checkAuthCredentials(): void {
-    if (!this.apiClient.clientId || !this.apiClient.clientSecret) {
+    if (!this.clientId || !this.clientSecret) {
       throw new Error('ClientID & ClientSecret are required for using auth');
     }
   }
@@ -229,17 +232,19 @@ export class Auth extends BaseResource {
    * @param payload params to initiate hosted auth request
    * @return True if the request was successful
    */
+  // TODO::RENAME TO SS AUTH
   public async hostedAuth(
     payload: HostedAuthRequest
   ): Promise<ItemResponse<HostedAuth>> {
     this.checkAuthCredentials();
-    const credentials = `${this.apiClient.clientId}:${this.apiClient.clientSecret}`;
+    const credentials = `${this.clientId}:${this.clientSecret}`;
     const buff = Buffer.from(credentials);
 
     return await this.apiClient.request<ItemResponse<HostedAuth>>(
       {
         method: 'POST',
         path: `/v3/connect/auth`,
+        // TODO::REMOVE AND REPLACE WITH API KEY
         headers: {
           Authorization: `Basic ${buff.toString('base64')}`,
         },

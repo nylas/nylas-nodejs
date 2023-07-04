@@ -1,30 +1,23 @@
 import { z } from 'zod';
-import { GoogleScopes, MicrosoftScopes, Scope, YahooScopes } from './scopes';
 import { ItemResponseSchema } from './response';
 
 type AccessType = 'online' | 'offline';
+type Provider = "google" | "imap" | "microsoft" | "yahoo"
 
-export type AdminConsentAuth = SharedAuthParams & {
+export type AuthConfig = {
+  redirectUri: string;
+  provider?: Provider;
+  accessType?: AccessType;
+  prompt?: string;
+  scope?: string[];
+  includeGrantScopes?: boolean;
+  metadata?: string;
+  state?: string;
+  loginHint?: string;
+};
+
+export type AdminConsentAuth = AuthConfig & {
   credentialId: string;
-};
-
-type SharedAuthParams = {
-  accessType?: AccessType;
-  prompt?: string;
-  redirectUri: string;
-  scope?: Scope[];
-  includeGrantScopes: boolean;
-  metadata?: string;
-  state?: string;
-  loginHint?: string;
-};
-export type IMAPAuthConfig = {
-  accessType?: AccessType;
-  prompt?: string;
-  redirectUri: string;
-  metadata?: string;
-  state?: string;
-  loginHint?: string;
 };
 
 export const OpenIDSchema = z.object({
@@ -46,23 +39,6 @@ export const OpenIDSchema = z.object({
   locale: z.string().optional(),
 });
 
-export type AuthConfig =
-  | (SharedAuthParams & {
-      scope: GoogleScopes[];
-      provider: 'google';
-    })
-  | (SharedAuthParams & {
-      scope: YahooScopes[];
-      provider: 'yahoo';
-    })
-  | (SharedAuthParams & {
-      scope: MicrosoftScopes[];
-      provider: 'microsoft';
-    })
-  | (IMAPAuthConfig & {
-      provider: 'imap';
-    });
-
 export interface CodeExchangeRequest {
   redirectUri: string;
   code: string;
@@ -74,29 +50,14 @@ export interface TokenExchangeRequest {
   refreshToken: string;
 }
 
-type SharedHostedAuthRequest = {
+export type HostedAuthRequest = {
   redirectUri: string;
   state?: string;
   loginHint?: string;
   cookieNonce?: string;
+  scope?: string[];
+  provider?: Provider;
 };
-
-export type HostedAuthRequest =
-  | (SharedHostedAuthRequest & {
-      scope?: GoogleScopes[];
-      provider: 'google';
-    })
-  | (SharedHostedAuthRequest & {
-      scope?: YahooScopes[];
-      provider: 'yahoo';
-    })
-  | (SharedHostedAuthRequest & {
-      provider: 'imap';
-    })
-  | (SharedHostedAuthRequest & {
-      scope?: MicrosoftScopes[];
-      provider: 'microsoft';
-    });
 
 export const HostedAuthSchema = z.object({
   url: z.string(),
