@@ -1,52 +1,49 @@
-import { NylasErrorResponse, AuthErrorResponse, TokenValidationErrorResponse } from './response';
+import {
+  NylasApiErrorResponse,
+  AuthErrorResponse,
+  TokenValidationErrorResponse,
+} from './response';
 
 /**
  * Extended Error class for errors returned from the Nylas API
  *
  * Properties:
- * name - The description of the HTTP status code
- * message - The error message returned from the Nylas API payload
- * statusCode - The status code returned from the API call
- * type - The type of error returned from the Nylas API payload
- * stack - The Error stacktrace
- * missingFields (optional) - The fields that were missing in the call returned from the Nylas API payload
- * serverError (optional) - The error returned by the provider returned from the Nylas API payload
  */
 export class NylasApiError extends Error {
   type: string;
-  requestId: string;
-  providerError: any;
+  request_id: string;
+  provider_error: any;
 
-  constructor(apiError: NylasErrorResponse) {
+  constructor(apiError: NylasApiErrorResponse) {
     super(apiError.error.message);
     this.type = apiError.error.type;
-    this.requestId = apiError.requestId;
-    this.providerError = apiError.error.providerError;
+    this.request_id = apiError.request_id;
+    this.provider_error = apiError.error.provider_error;
   }
 }
 
 export class NylasAuthError extends Error {
   type: string;
-  requestId: string;
-  providerError: any;
+  request_id: string;
+  provider_error: any;
 
   constructor(apiError: AuthErrorResponse) {
-    super(apiError.errorDescription);
+    super(apiError.error_description);
     this.type = apiError.error;
-    this.requestId = apiError.requestId;
-    this.providerError = apiError.errorDescription;
+    this.request_id = apiError.request_id;
+    this.provider_error = apiError.error_description;
   }
 }
 export class NylasTokenValidationError extends Error {
   type: string;
-  requestId: string;
-  providerError: any;
+  request_id: string;
+  provider_error: any;
 
   constructor(apiError: TokenValidationErrorResponse) {
     super(apiError.error.message);
     this.type = apiError.error.type;
-    this.requestId = apiError.error.requestId;
-    this.providerError = apiError.error.message;
+    this.request_id = apiError.error.request_id;
+    this.provider_error = apiError.error.message;
   }
 }
 

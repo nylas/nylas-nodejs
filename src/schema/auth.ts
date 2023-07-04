@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { ItemResponseSchema } from './response';
 
 type AccessType = 'online' | 'offline';
-type Provider = "google" | "imap" | "microsoft" | "yahoo"
+type Provider = 'google' | 'imap' | 'microsoft' | 'yahoo';
 
 export type AuthConfig = {
   redirectUri: string;

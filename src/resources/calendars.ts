@@ -1,12 +1,7 @@
 import { Overrides } from '../config';
 import {
-  Availability,
-  AvailabilityResponseSchema,
   Calendar,
-  CalendarListResponseSchema,
-  CalendarResponseSchema,
   CreateCalenderRequestBody,
-  GetAvailabilityRequestBody,
   ListCalendersQueryParams,
   UpdateCalenderRequestBody,
 } from '../schema/calendars';
@@ -37,32 +32,9 @@ interface DestroyCalendarParams {
   calendarId: string;
 }
 
-interface GetAvailabilityParams {
-  identifier: string;
-  requestBody: GetAvailabilityRequestBody;
-}
-
 type CalendarListParams = ListCalendersParams & Overrides;
 
 export class Calendars extends BaseResource {
-  public getAvailability({
-    identifier,
-    requestBody,
-    overrides,
-  }: GetAvailabilityParams & Overrides): Promise<Availability> {
-    return this.apiClient.request<Availability>(
-      {
-        method: 'POST',
-        path: `/v3/grants/${identifier}/calendars/availability`,
-        body: requestBody,
-        overrides,
-      },
-      {
-        responseSchema: AvailabilityResponseSchema,
-      }
-    );
-  }
-
   public list(
     { overrides, identifier }: CalendarListParams,
     queryParams?: ListCalendersQueryParams
@@ -71,7 +43,6 @@ export class Calendars extends BaseResource {
       queryParams,
       overrides,
       path: `/v3/grants/${identifier}/calendars`,
-      responseSchema: CalendarListResponseSchema,
     });
   }
 
@@ -82,7 +53,6 @@ export class Calendars extends BaseResource {
   }: FindCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
     return super._find({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
-      responseSchema: CalendarResponseSchema,
       overrides,
     });
   }
@@ -94,7 +64,6 @@ export class Calendars extends BaseResource {
   }: CreateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
     return super._create({
       path: `/v3/grants/${identifier}/calendars`,
-      responseSchema: CalendarResponseSchema,
       requestBody,
       overrides,
     });
@@ -108,7 +77,6 @@ export class Calendars extends BaseResource {
   }: UpdateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
     return super._update({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
-      responseSchema: CalendarResponseSchema,
       requestBody,
       overrides,
     });

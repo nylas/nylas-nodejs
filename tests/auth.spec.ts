@@ -25,7 +25,7 @@ describe('Auth', () => {
       timeout: 30,
     });
 
-    auth = new Auth(apiClient, "client_id", "client_secret");
+    auth = new Auth(apiClient, 'client_id', 'client_secret');
     jest.spyOn(APIClient.prototype, 'request').mockResolvedValue({});
   });
 
@@ -155,7 +155,7 @@ describe('Auth', () => {
       it('should build the correct url', () => {
         const url = auth.urlForAuthentication({
           redirectUri: 'https://redirect.uri/path',
-          scope: ["calendar"],
+          scope: ['calendar'],
           provider: 'google',
           includeGrantScopes: true,
         });
@@ -168,7 +168,7 @@ describe('Auth', () => {
       it('should build the correct url if all the fields are set', () => {
         const url = auth.urlForAuthentication({
           redirectUri: 'https://redirect.uri/path',
-          scope: ["calendar"],
+          scope: ['calendar'],
           provider: 'google',
           loginHint: 'loginHint',
           includeGrantScopes: true,
@@ -188,7 +188,7 @@ describe('Auth', () => {
       it('should hash the secret and build the URL correctly', () => {
         const pkce = auth.urlForAuthenticationPKCE({
           redirectUri: 'https://redirect.uri/path',
-          scope: ["calendar"],
+          scope: ['calendar'],
           provider: 'google',
           includeGrantScopes: true,
         });
@@ -209,7 +209,7 @@ describe('Auth', () => {
       it('should build the correct url', () => {
         const url = auth.urlForAdminConsent({
           redirectUri: 'https://redirect.uri/path',
-          scope: ["calendar"],
+          scope: ['calendar'],
           loginHint: 'loginHint',
           includeGrantScopes: true,
           prompt: 'prompt',
@@ -231,7 +231,7 @@ describe('Auth', () => {
         state: 'state',
         loginHint: 'loginHint',
         cookieNonce: 'nonce',
-        scope: ["calendar"],
+        scope: ['calendar'],
         provider: 'google',
       };
       await auth.hostedAuth(hostedAuthRequest);
@@ -245,7 +245,7 @@ describe('Auth', () => {
             state: 'state',
             loginHint: 'loginHint',
             cookieNonce: 'nonce',
-            scope: ["calendar"],
+            scope: ['calendar'],
             provider: 'google',
           },
         },

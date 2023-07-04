@@ -4,9 +4,7 @@ export type NylasConfig = {
   timeout?: number;
 };
 
-export type OverridableNylasConfig = Partial<
-  Omit<NylasConfig, 'clientId' | 'clientSecret'>
->;
+export type OverridableNylasConfig = Partial<NylasConfig>;
 
 export interface Overrides {
   overrides?: OverridableNylasConfig;

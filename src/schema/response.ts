@@ -1,82 +1,57 @@
-import { z } from 'zod';
-
-const ErrorObjectSchema = z.object({
-  type: z.string(),
-  message: z.string(),
-  providerError: z.any(),
-});
-export type NylasErrorObject = z.infer<typeof ErrorObjectSchema>;
-
-export const ErrorResponseSchema = z.object({
-  requestId: z.string(),
-  error: ErrorObjectSchema,
-});
-
-export const AuthErrorResponseSchema = z.object({
-  requestId: z.string(),
-  error: z.string(),
-  errorCode: z.number(),
-  errorDescription: z.string(),
-  errorUri: z.string(),
-});
-
-export const TokenValidationErrorResponseSchema = z.object({
-  success: z.boolean(),
-  error: z.object({
-    httpCode: z.number(),
-    eventCode: z.number(),
-    type: z.string(),
-    message: z.string(),
-    requestId: z.string(),
-  })
-})
-
-export type NylasErrorResponse = z.infer<typeof ErrorResponseSchema>;
-
-export const ItemResponseSchema = z.object({
-  requestId: z.string(),
-  error: ErrorObjectSchema.optional(),
-});
-
-export const ListResponseSchema = z.object({
-  requestId: z.string(),
-  nextCursor: z.string().optional(),
-  error: ErrorObjectSchema.optional(),
-});
-
 export interface ItemResponse<T> {
-  requestId: string;
+  request_id: string;
   data: T;
-  error?: NylasErrorObject;
 }
-
-export const ExchangeResponseSchema = z.object({
-  accessToken: z.string(),
-  grantId: z.string(),
-  expiresIn: z.number(),
-  refreshToken: z.string().optional(),
-  idToken: z.string().optional(),
-  tokenType: z.string().optional(),
-  scope: z.string(),
-});
-export const EmptyResponseSchema = z.object({});
 
 export interface ListResponse<T> {
-  requestId: string;
+  request_id: string;
   data: T[];
-  nextCursor?: string;
-  error?: NylasErrorObject;
+  next_cursor?: string;
 }
 
-export const DeleteResponseSchema = z.object({
-  requestId: z.string(),
-});
+export interface NylasApiErrorResponse {
+  request_id: string;
+  error: NylasApiError;
+}
 
-export type ExchangeResponse = z.infer<typeof ExchangeResponseSchema>;
-export type EmptyResponse = z.infer<typeof EmptyResponseSchema>;
-export type AuthErrorResponse = z.infer<typeof AuthErrorResponseSchema>;
-export type TokenValidationErrorResponse = z.infer<typeof TokenValidationErrorResponseSchema>;
-export type DeleteResponse = z.infer<typeof DeleteResponseSchema>;
+export interface NylasApiError {
+  type: string;
+  message: string;
+  provider_error?: Record<string, unknown>;
+}
+
+export interface DeleteResponse {
+  request_id: string;
+}
+
+export interface AuthErrorResponse {
+  request_id: string;
+  error: string;
+  error_code: number;
+  error_description: string;
+  error_uri: string;
+}
+
+export interface TokenValidationErrorResponse {
+  success: boolean;
+  error: {
+    http_code: number;
+    event_code: number;
+    type: string;
+    message: string;
+    request_id: string;
+  };
+}
+
+export interface ExchangeResponse {
+  access_token: string;
+  grant_id: string;
+  expires_in: number;
+  refresh_token?: string;
+  id_token?: string;
+  token_type?: string;
+  scope: string;
+}
 
 export type ListResponseInnerType<T> = T extends ListResponse<infer R>
   ? R

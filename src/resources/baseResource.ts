@@ -3,7 +3,6 @@ import APIClient from '../apiClient';
 import { OverridableNylasConfig } from '../config';
 import { ListQueryParams } from '../schema/request';
 import {
-  DeleteResponseSchema,
   ItemResponse,
   ListResponse,
   ListResponseInnerType,
@@ -13,20 +12,17 @@ interface ListParams<T> {
   queryParams?: ListQueryParams;
   path: string;
   overrides?: OverridableNylasConfig;
-  responseSchema: ZodType<T>;
   useGenerator?: boolean; // Add this line
 }
 
 interface FindParams<T> {
   path: string;
-  responseSchema: ZodType<ItemResponse<T>>;
   queryParams?: Record<string, any>;
   overrides?: OverridableNylasConfig;
 }
 
 interface PayloadParams<T> {
   path: string;
-  responseSchema: ZodType<ItemResponse<T>>;
   queryParams?: Record<string, any>;
   requestBody: Record<string, any>;
   overrides?: OverridableNylasConfig;
@@ -51,19 +47,13 @@ export class BaseResource {
     queryParams,
     path,
     overrides,
-    responseSchema,
   }: ListParams<T>): Promise<T> {
-    const res = await this.apiClient.request<T>(
-      {
-        method: 'GET',
-        path,
-        queryParams,
-        overrides,
-      },
-      {
-        responseSchema,
-      }
-    );
+    const res = await this.apiClient.request<T>({
+      method: 'GET',
+      path,
+      queryParams,
+      overrides,
+    });
 
     if (queryParams?.limit) {
       let entriesRemaining = queryParams.limit;
@@ -75,21 +65,16 @@ export class BaseResource {
           break;
         }
 
-        const nextRes = await this.apiClient.request<T>(
-          {
-            method: 'GET',
-            path,
-            queryParams: {
-              ...queryParams,
-              limit: entriesRemaining,
-              pageToken: res.nextCursor,
-            },
-            overrides,
+        const nextRes = await this.apiClient.request<T>({
+          method: 'GET',
+          path,
+          queryParams: {
+            ...queryParams,
+            limit: entriesRemaining,
+            pageToken: res.nextCursor,
           },
-          {
-            responseSchema,
-          }
-        );
+          overrides,
+        });
 
         res.data = res.data.concat(nextRes.data);
         res.requestId = nextRes.requestId;
@@ -150,45 +135,28 @@ export class BaseResource {
 
   protected _find<T>({
     path,
-    responseSchema,
     queryParams,
     overrides,
   }: FindParams<T>): Promise<ItemResponse<T>> {
-    return this.apiClient.request<ItemResponse<T>>(
-      {
-        method: 'GET',
-        path,
-        queryParams,
-        overrides,
-      },
-      {
-        responseSchema,
-      }
-    );
+    return this.apiClient.request<ItemResponse<T>>({
+      method: 'GET',
+      path,
+      queryParams,
+      overrides,
+    });
   }
 
   private payloadRequest<T>(
     method: 'POST' | 'PUT' | 'PATCH',
-    {
-      path,
-      responseSchema,
-      queryParams,
-      requestBody,
-      overrides,
-    }: PayloadParams<T>
+    { path, queryParams, requestBody, overrides }: PayloadParams<T>
   ): Promise<ItemResponse<T>> {
-    return this.apiClient.request<ItemResponse<T>>(
-      {
-        method,
-        path,
-        queryParams,
-        body: requestBody,
-        overrides,
-      },
-      {
-        responseSchema,
-      }
-    );
+    return this.apiClient.request<ItemResponse<T>>({
+      method,
+      path,
+      queryParams,
+      body: requestBody,
+      overrides,
+    });
   }
 
   protected _create<T>(params: PayloadParams<T>): Promise<ItemResponse<T>> {
@@ -209,19 +177,13 @@ export class BaseResource {
     path,
     queryParams,
     overrides,
-    responseSchema,
   }: DestroyParams): Promise<T> {
-    return this.apiClient.request(
-      {
-        method: 'DELETE',
-        path,
-        queryParams,
-        overrides,
-      },
-      {
-        responseSchema: responseSchema ?? DeleteResponseSchema,
-      }
-    );
+    return this.apiClient.request({
+      method: 'DELETE',
+      path,
+      queryParams,
+      overrides,
+    });
   }
 }
 

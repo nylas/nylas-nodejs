@@ -10,19 +10,11 @@ import {
   CodeExchangeRequest,
   HostedAuth,
   HostedAuthRequest,
-  HostedAuthResponseSchema,
   OpenID,
-  OpenIDSchema,
   PKCEAuthURL,
   TokenExchangeRequest,
 } from '../schema/auth';
-import {
-  EmptyResponse,
-  EmptyResponseSchema,
-  ExchangeResponse,
-  ExchangeResponseSchema,
-  ItemResponse,
-} from '../schema/response';
+import { ExchangeResponse, ItemResponse } from '../schema/response';
 
 export class Auth extends BaseResource {
   public grants: Grants;
@@ -61,16 +53,11 @@ export class Auth extends BaseResource {
     if (payload.codeVerifier) {
       body.codeVerifier = payload.codeVerifier;
     }
-    return this.apiClient.request<ExchangeResponse>(
-      {
-        method: 'POST',
-        path: `/v3/connect/token`,
-        body,
-      },
-      {
-        responseSchema: ExchangeResponseSchema,
-      }
-    );
+    return this.apiClient.request<ExchangeResponse>({
+      method: 'POST',
+      path: `/v3/connect/token`,
+      body,
+    });
   }
 
   /**
@@ -83,22 +70,17 @@ export class Auth extends BaseResource {
   ): Promise<ExchangeResponse> {
     this.checkAuthCredentials();
 
-    return this.apiClient.request<ExchangeResponse>(
-      {
-        method: 'POST',
-        path: `/v3/connect/token`,
-        body: {
-          refreshToken: payload.refreshToken,
-          redirectUri: payload.redirectUri,
-          clientId: this.clientId,
-          clientSecret: this.clientSecret,
-          grantType: 'refresh_token',
-        },
+    return this.apiClient.request<ExchangeResponse>({
+      method: 'POST',
+      path: `/v3/connect/token`,
+      body: {
+        refreshToken: payload.refreshToken,
+        redirectUri: payload.redirectUri,
+        clientId: this.clientId,
+        clientSecret: this.clientSecret,
+        grantType: 'refresh_token',
       },
-      {
-        responseSchema: ExchangeResponseSchema,
-      }
-    );
+    });
   }
 
   /**
@@ -124,16 +106,11 @@ export class Auth extends BaseResource {
   private validateToken(queryParams: Record<string, string>): Promise<OpenID> {
     this.checkAuthCredentials();
 
-    return this.apiClient.request<OpenID>(
-      {
-        method: 'GET',
-        path: `/v3/connect/tokeninfo`,
-        queryParams,
-      },
-      {
-        responseSchema: OpenIDSchema,
-      }
-    );
+    return this.apiClient.request<OpenID>({
+      method: 'GET',
+      path: `/v3/connect/tokeninfo`,
+      queryParams,
+    });
   }
 
   /**
@@ -240,20 +217,15 @@ export class Auth extends BaseResource {
     const credentials = `${this.clientId}:${this.clientSecret}`;
     const buff = Buffer.from(credentials);
 
-    return await this.apiClient.request<ItemResponse<HostedAuth>>(
-      {
-        method: 'POST',
-        path: `/v3/connect/auth`,
-        // TODO::REMOVE AND REPLACE WITH API KEY
-        headers: {
-          Authorization: `Basic ${buff.toString('base64')}`,
-        },
-        body: payload,
+    return await this.apiClient.request<ItemResponse<HostedAuth>>({
+      method: 'POST',
+      path: `/v3/connect/auth`,
+      // TODO::REMOVE AND REPLACE WITH API KEY
+      headers: {
+        Authorization: `Basic ${buff.toString('base64')}`,
       },
-      {
-        responseSchema: HostedAuthResponseSchema,
-      }
-    );
+      body: payload,
+    });
   }
 
   /**
@@ -262,18 +234,13 @@ export class Auth extends BaseResource {
    * @return True if the access token was revoked
    */
   public async revoke(accessToken: string): Promise<boolean> {
-    await this.apiClient.request<EmptyResponse>(
-      {
-        method: 'POST',
-        path: `/v3/connect/revoke`,
-        queryParams: {
-          token: accessToken,
-        },
+    await this.apiClient.request<undefined>({
+      method: 'POST',
+      path: `/v3/connect/revoke`,
+      queryParams: {
+        token: accessToken,
       },
-      {
-        responseSchema: EmptyResponseSchema,
-      }
-    );
+    });
     return true;
   }
 }
