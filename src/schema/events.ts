@@ -1,109 +1,67 @@
-import { z } from 'zod';
 import { ListQueryParams } from './request';
-import { ItemResponseSchema, ListResponseSchema } from './response';
 
-const TimeSchema = z.object({
-  time: z.number(),
-  timezone: z.string(),
-});
+export interface Event {
+  id: string;
+  grant_id: string;
+  object: 'event';
+  calendar_id: string;
+  busy: boolean;
+  read_only: boolean;
+  created_at: number;
+  updated_at: number;
+  participants: Participant[];
+  when: When;
+  conferencing: Conferencing;
+  description?: string;
+  location?: string;
+  message_id?: string;
+  owner?: string;
+  ical_uid?: string;
+  title?: string;
+  html_link?: string;
+  hide_participants?: boolean;
+  metadata?: Record<string, string>;
+  creator?: EmailName;
+  organizer: EmailName;
+  recurrence?: Recurrence;
+  reminders?: Reminder[];
+  status?: Status;
+  visibility?: Visibility;
+}
 
-const TimespanSchema = z.object({
-  startTime: z.number(),
-  endTime: z.number(),
-  startTimezone: z.string(),
-  endTimezone: z.string(),
-});
+export interface CreateEventRequest {
+  when: When;
+  title?: string;
+  busy?: boolean;
+  description?: string;
+  location?: string;
+  conferencing?: Conferencing;
+  reminder_minutes?: string;
+  reminder_method?: string;
+  metadata?: Record<string, unknown>;
+  participants?: Participant[];
+  recurrence?: Recurrence;
+  calendar_id?: string;
+  read_only?: boolean;
+  round_robin_order?: string[];
+  visibility?: 'public' | 'private';
+  capacity?: number;
+  hide_participants?: boolean;
+}
 
-const DateSchema = z.object({
-  date: z.string(),
-});
-
-const DatespanSchema = z.object({
-  startDate: z.string(),
-  endDate: z.string(),
-});
-
-const ProviderSchema = z.union([
-  z.literal('Google Meet'),
-  z.literal('Zoom Meeting'),
-  z.literal('Microsoft Teams'),
-  z.literal('GoToMeeting'),
-  z.literal('WebEx'),
-]);
-
-const DetailsSchema = z.object({
-  provider: ProviderSchema,
-  details: z.object({
-    meetingCode: z.string().optional(),
-    password: z.string().optional(),
-    url: z.string().optional(),
-    pin: z.string().optional(),
-    phone: z.array(z.string()).optional(),
-  }),
-});
-
-const AutocreateSchema = z.object({
-  provider: ProviderSchema,
-  autocreate: z.record(z.string(), z.any()),
-});
-
-const ParticipantSchema = z.object({
-  name: z.string().optional(),
-  email: z.string(),
-  status: z.union([
-    z.literal('noreply'),
-    z.literal('yes'),
-    z.literal('no'),
-    z.literal('maybe'),
-  ]),
-  comment: z.string().optional(),
-  phoneNumber: z.string().optional(),
-});
-
-const RecurrenceSchema = z.object({
-  rrule: z.array(
-    z
-      .string()
-      .regex(/^(RRULE|EXDATE)(?:;VALUE=([^:;]+))?(?:;TZID=([^:;]+))?:(.*)$/)
-  ),
-  timezone: z.string(),
-});
-
-const RemindersSchema = z.object({
-  reminderMinutes: z.string().regex(/^\[-?\d+\]+$/),
-  reminderMethod: z.union([
-    z.literal('email'),
-    z.literal('popup'),
-    z.literal('sound'),
-    z.literal('display'),
-  ]),
-});
-
-const EmailNameSchema = z.object({
-  email: z.string(),
-  name: z.string().optional(),
-});
-
-type Time = z.infer<typeof TimeSchema>;
-type Timespan = z.infer<typeof TimespanSchema>;
-type Date = z.infer<typeof DateSchema>;
-type Datespan = z.infer<typeof DatespanSchema>;
-type Details = z.infer<typeof DetailsSchema>;
-type Autocreate = z.infer<typeof AutocreateSchema>;
-type Participant = z.infer<typeof ParticipantSchema>;
-type Recurrence = z.infer<typeof RecurrenceSchema>;
+export type UpdateEventRequest = Subset<CreateEventRequest>;
 
 export interface ListEventQueryParams extends ListQueryParams {
-  showCancelled?: boolean;
-  eventId?: string;
-  calendarId: string;
+  show_cancelled?: boolean;
+  event_id?: string;
+  calendar_id: string;
   title?: string;
   description?: string;
   location?: string;
   end?: string;
   start?: string;
-  metadataPair?: Record<string, string>;
-  expandRecurring?: boolean;
+  metadata_pair?: Record<string, unknown>;
+  expand_recurring?: boolean;
   busy?: boolean;
   participants?: string;
 }
@@ -113,75 +71,79 @@ export interface CreateEventQueryParams {
   notifyParticipants?: boolean;
 }
 
-export interface CreateEventRequestBody {
-  when: Time | Timespan | Date | Datespan;
-  title?: string;
-  busy?: boolean;
-  description?: string;
-  location?: string;
-  conferencing?: Details | Autocreate;
-  reminderMinutes?: string;
-  reminderMethod?: string;
-  metadata?: Record<string, string>;
-  participants?: Participant[];
-  recurrence?: Recurrence;
-  calendarId?: string;
-  readOnly?: boolean;
-  roundRobinOrder?: string[];
-  visibility?: 'public' | 'private';
-  capacity?: number;
-  hideParticipants?: boolean;
-}
-
 export interface FindEventQueryParams {
   calendarId: string;
 }
 
 export type UpdateEventQueryParams = CreateEventQueryParams;
-export type UpdateEventRequestBody = Partial<CreateEventRequestBody>;
-
 export type DestroyEventQueryParams = CreateEventQueryParams;
 
-const EventSchema = z.object({
-  grantId: z.string().optional(),
-  busy: z.boolean(),
-  calendarId: z.string(),
-  conferencing: z.union([DetailsSchema, AutocreateSchema]).optional(),
-  createdAt: z.number(),
-  description: z.string().nullable(),
-  hideParticipants: z.boolean().optional(),
-  icalUid: z.string().optional(),
-  id: z.string(),
-  location: z.string().optional(),
-  messageId: z.string().nullable(),
-  metadata: z.record(z.string()).optional(),
-  object: z.literal('event'),
-  owner: z.string().optional(),
-  organizer: EmailNameSchema.optional(),
-  participants: z.array(ParticipantSchema),
-  readOnly: z.boolean(),
-  recurrence: RecurrenceSchema.optional(),
-  reminders: RemindersSchema.nullable(),
-  status: z
-    .union([
-      z.literal('confirmed'),
-      z.literal('tentative'),
-      z.literal('cancelled'),
-    ])
-    .optional(),
-  title: z.string().optional(),
-  updatedAt: z.number(),
-  visibility: z.union([z.literal('public'), z.literal('private')]).optional(),
-  when: z.union([TimeSchema, TimespanSchema, DateSchema, DatespanSchema]),
-  creator: EmailNameSchema.optional(),
-  htmlLink: z.string().optional(),
-});
+type Status = 'confirmed' | 'tentative' | 'cancelled';
+type Visibility = 'public' | 'private';
+type ConferencingProvider = 'Google Meet' | 'Zoom Meeting' | 'Microsoft Teams' | 'GoToMeeting' | 'WebEx';
+type ParticipantStatus = 'noreply' | 'yes' | 'no' | 'maybe';
+type ReminderMethod = 'email' | 'popup' | 'sound' | 'display';
+type Conferencing = Details | Autocreate;
+type When = Time | Timespan | Date | Datespan;
 
-export const EventResponseSchema = ItemResponseSchema.extend({
-  data: EventSchema,
-});
-export const EventListResponseSchema = ListResponseSchema.extend({
-  data: z.array(EventSchema),
-});
+export interface Details {
+  provider: ConferencingProvider;
+  details: DetailsConfig;
+}
 
-export type Event = z.infer<typeof EventSchema>;
+export interface DetailsConfig {
+  meeting_code?: string;
+  password?: string;
+  url?: string;
+  pin?: string;
+  phone?: string[];
+}
+
+export interface Autocreate {
+  provider: ConferencingProvider;
+  autocreate: Record<string, unknown>;
+}
+
+export interface Time {
+  time: number;
+  timezone: string;
+}
+
+export interface Timespan {
+  start_time: number;
+  end_time: number;
+  start_timezone: string;
+  end_timezone: string;
+}
+
+export interface Date {
+  date: string;
+}
+
+export interface Datespan {
+  start_date: string;
+  end_date: string;
+}
+
+export interface Participant {
+  email: string;
+  name?: string;
+  status: ParticipantStatus;
+  comment?: string;
+  phone_number?: string;
+}
+
+export interface Recurrence {
+  rrule: string[];
+  timezone: string;
+}
+
+export interface Reminder {
+  reminder_minutes: string;
+  reminder_method: ReminderMethod;
+}
+
+export interface EmailName {
+  email: string;
+  name?: string;
+}

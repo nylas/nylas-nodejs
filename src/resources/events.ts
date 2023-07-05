@@ -1,15 +1,13 @@
 import { Overrides } from '../config';
 import {
   CreateEventQueryParams,
-  CreateEventRequestBody,
+  CreateEventRequest,
   DestroyEventQueryParams,
   Event,
-  EventListResponseSchema,
-  EventResponseSchema,
   FindEventQueryParams,
   ListEventQueryParams,
   UpdateEventQueryParams,
-  UpdateEventRequestBody,
+  UpdateEventRequest,
 } from '../schema/events';
 import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
 import { AsyncListResponse, Resource } from './resource';
@@ -27,14 +25,14 @@ interface ListEventParams {
 interface CreateEventParams {
   identifier: string;
   queryParams: CreateEventQueryParams;
-  requestBody: CreateEventRequestBody;
+  requestBody: CreateEventRequest;
 }
 
 interface UpdateEventParams {
   eventId: string;
   identifier: string;
   queryParams: UpdateEventQueryParams;
-  requestBody: UpdateEventRequestBody;
+  requestBody: UpdateEventRequest;
 }
 
 interface DestroyEventParams {
@@ -52,7 +50,6 @@ export class Events extends Resource {
       queryParams,
       path: `/v3/grants/${identifier}/events`,
       overrides,
-      responseSchema: EventListResponseSchema,
     });
   }
 
@@ -64,7 +61,6 @@ export class Events extends Resource {
   }: FindEventParams & Overrides): Promise<ItemResponse<Event>> {
     return super._find({
       path: `/v3/grants/${identifier}/events/${eventId}`,
-      responseSchema: EventResponseSchema,
       queryParams,
       overrides,
     });
@@ -78,7 +74,6 @@ export class Events extends Resource {
   }: CreateEventParams & Overrides): Promise<ItemResponse<Event>> {
     return super._create({
       path: `/v3/grants/${identifier}/events`,
-      responseSchema: EventResponseSchema,
       queryParams,
       requestBody,
       overrides,
@@ -94,7 +89,6 @@ export class Events extends Resource {
   }: UpdateEventParams & Overrides): Promise<ItemResponse<Event>> {
     return super._update({
       path: `/v3/grants/${identifier}/events/${eventId}`,
-      responseSchema: EventResponseSchema,
       queryParams,
       requestBody,
       overrides,
