@@ -5,7 +5,6 @@ import {
   NylasAuthError,
   NylasTokenValidationError,
 } from './schema/error';
-import { objKeysToSnakeCase } from './utils';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -95,9 +94,7 @@ export default class APIClient {
     requestOptions.method = optionParams.method;
 
     if (optionParams.body) {
-      requestOptions.body = JSON.stringify(
-        objKeysToSnakeCase(optionParams.body)
-      );
+      requestOptions.body = optionParams.body
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
