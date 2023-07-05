@@ -12,7 +12,7 @@ import {
   UpdateEventRequestBody,
 } from '../schema/events';
 import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
-import { AsyncListResponse, BaseResource } from './baseResource';
+import { AsyncListResponse, Resource } from './resource';
 
 interface FindEventParams {
   eventId: string;
@@ -42,7 +42,7 @@ interface DestroyEventParams {
   eventId: string;
   queryParams: DestroyEventQueryParams;
 }
-export class Events extends BaseResource {
+export class Events extends Resource {
   public list({
     identifier,
     queryParams,

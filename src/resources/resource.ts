@@ -36,7 +36,7 @@ interface DestroyParams {
 }
 
 type List<T> = ListResponse<ListResponseInnerType<T>>;
-export class BaseResource {
+export class Resource {
   protected apiClient: APIClient;
 
   constructor(apiClient: APIClient) {
@@ -61,7 +61,7 @@ export class BaseResource {
       while (res.data.length != queryParams.limit) {
         entriesRemaining = queryParams.limit - res.data.length;
 
-        if (!res.nextCursor) {
+        if (!res.next_cursor) {
           break;
         }
 
@@ -71,14 +71,14 @@ export class BaseResource {
           queryParams: {
             ...queryParams,
             limit: entriesRemaining,
-            pageToken: res.nextCursor,
+            pageToken: res.next_cursor,
           },
           overrides,
         });
 
         res.data = res.data.concat(nextRes.data);
-        res.requestId = nextRes.requestId;
-        res.nextCursor = nextRes.nextCursor;
+        res.request_id = nextRes.request_id;
+        res.next_cursor = nextRes.next_cursor;
       }
     }
 
@@ -87,15 +87,15 @@ export class BaseResource {
 
   private async *listIterator<T extends List<T>>(
     listParams: ListParams<T>
-  ): AsyncGenerator<T, undefined> {
+  ): AsyncGenerator<List<T>, undefined> {
     const first = await this.fetchList(listParams);
 
     yield first;
 
-    let pageToken = first.nextCursor;
+    let pageToken = first.next_cursor;
 
     while (pageToken) {
-      const res = await this.fetchList({
+      const res: List<T> = await this.fetchList({
         ...listParams,
         queryParams: pageToken
           ? {
@@ -107,7 +107,7 @@ export class BaseResource {
 
       yield res;
 
-      pageToken = res.nextCursor;
+      pageToken = res.next_cursor;
     }
 
     return undefined;

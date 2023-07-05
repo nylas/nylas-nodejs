@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import sha256 from 'sha256';
 import APIClient from '../apiClient';
-import { BaseResource } from './baseResource';
+import { Resource } from './resource';
 import { Grants } from './grants';
 import { Providers } from './providers';
 import {
@@ -16,7 +16,7 @@ import {
 } from '../schema/auth';
 import { ExchangeResponse, ItemResponse } from '../schema/response';
 
-export class Auth extends BaseResource {
+export class Auth extends Resource {
   public grants: Grants;
   public providers: Providers;
 

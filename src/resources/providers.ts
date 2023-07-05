@@ -1,4 +1,4 @@
-import { BaseResource } from './baseResource';
+import { Resource } from './resource';
 import { ListResponse, ItemResponse } from '../schema/response';
 import {
   ProviderListResponseSchema,
@@ -8,7 +8,7 @@ import {
   ProviderDetect,
 } from '../schema/providers';
 
-export class Providers extends BaseResource {
+export class Providers extends Resource {
   private checkCreadentials(): void {
     if (!this.apiClient.clientId) {
       throw new Error('ClientID is required for using providers');

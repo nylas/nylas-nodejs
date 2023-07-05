@@ -1,12 +1,12 @@
 import { Overrides } from '../config';
-import { BaseResource } from './baseResource';
+import { Resource } from './resource';
 import { GetAvailabilityRequest } from '../schema/availability';
 
 interface GetAvailabilityParams {
   requestBody: GetAvailabilityRequest;
 }
 
-export class Availability extends BaseResource {
+export class Availability extends Resource {
   public getAvailability({
     requestBody,
     overrides,

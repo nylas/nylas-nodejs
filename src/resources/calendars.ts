@@ -6,7 +6,7 @@ import {
   UpdateCalenderRequestBody,
 } from '../schema/calendars';
 import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
-import { BaseResource, AsyncListResponse } from './baseResource';
+import { Resource, AsyncListResponse } from './resource';
 
 interface FindCalendarParams {
   calendarId: string;
@@ -34,7 +34,7 @@ interface DestroyCalendarParams {
 
 type CalendarListParams = ListCalendersParams & Overrides;
 
-export class Calendars extends BaseResource {
+export class Calendars extends Resource {
   public list(
     { overrides, identifier }: CalendarListParams,
     queryParams?: ListCalendersQueryParams

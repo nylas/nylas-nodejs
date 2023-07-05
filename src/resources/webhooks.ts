@@ -1,4 +1,4 @@
-import { AsyncListResponse, BaseResource } from './baseResource';
+import { AsyncListResponse, Resource } from './resource';
 import { Overrides } from '../config';
 import { ItemResponse, ListResponse } from '../schema/response';
 import {
@@ -27,7 +27,7 @@ interface DestroyWebhookParams {
   webhookId: string;
 }
 
-export class Webhooks extends BaseResource {
+export class Webhooks extends Resource {
   /**
    * List all webhook destinations for the application
    * @param overrides Overrides for the request

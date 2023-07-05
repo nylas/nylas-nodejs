@@ -1,4 +1,4 @@
-import { BaseResource } from './baseResource';
+import { Resource } from './resource';
 import { Overrides } from '../config';
 import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
 import {
@@ -27,7 +27,7 @@ interface DestroyGrantParams {
   grantId: string;
 }
 
-export class Grants extends BaseResource {
+export class Grants extends Resource {
   public async list(
     { overrides }: Overrides = {},
     queryParams?: ListGrantsQueryParams
