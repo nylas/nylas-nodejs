@@ -30,15 +30,16 @@
   "author": "Nylas, Inc.",
   "license": "MIT",
   "dependencies": {
-    "node-fetch": "^3.3.1",
+    "node-fetch": "^2.6.12",
     "sha256": "^0.2.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.3.3",
+    "@types/jest": "^29.5.2",
+    "@types/node-fetch": "^2.6.4",
     "@types/sha256": "^0.2.0",
     "@types/uuid": "^8.3.4",
-    "@types/jest": "^29.5.2",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
     "change-case": "^4.1.2",
