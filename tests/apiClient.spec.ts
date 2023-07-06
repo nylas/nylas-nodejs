@@ -1,6 +1,5 @@
 import APIClient, { RequestOptionsParams } from '../src/apiClient';
 import PACKAGE_JSON from '../package.json';
-import { z, ZodError, ZodType } from 'zod';
 import { Response } from 'node-fetch';
 import {
   NylasApiError,
