@@ -5,16 +5,17 @@ import { Resource } from './resource';
 import { Grants } from './grants';
 import { Providers } from './providers';
 import {
-  AdminConsentAuth,
-  AuthConfig,
+  URLForAdminConsentConfig,
+  URLForAuthenticationConfig,
   CodeExchangeRequest,
-  HostedAuth,
-  HostedAuthRequest,
+  ServerSideHostedAuthResponse,
+  ServerSideHostedAuthRequest,
   OpenID,
   PKCEAuthURL,
   TokenExchangeRequest,
+  CodeExchangeResponse,
 } from '../schema/auth';
-import { ExchangeResponse, ItemResponse } from '../schema/response';
+import { Response } from '../schema/response';
 
 export class Auth extends Resource {
   public grants: Grants;
@@ -31,7 +32,7 @@ export class Auth extends Resource {
     this.clientSecret = clientSecret;
 
     this.grants = new Grants(apiClient);
-    this.providers = new Providers(apiClient);
+    this.providers = new Providers(apiClient, clientId, clientSecret);
   }
 
   /**
@@ -41,7 +42,7 @@ export class Auth extends Resource {
    */
   public exchangeCodeForToken(
     payload: CodeExchangeRequest
-  ): Promise<ExchangeResponse> {
+  ): Promise<Response<CodeExchangeResponse>> {
     this.checkAuthCredentials();
     const body: Record<string, unknown> = {
       code: payload.code,
@@ -53,7 +54,7 @@ export class Auth extends Resource {
     if (payload.codeVerifier) {
       body.codeVerifier = payload.codeVerifier;
     }
-    return this.apiClient.request<ExchangeResponse>({
+    return this.apiClient.request<Response<CodeExchangeResponse>>({
       method: 'POST',
       path: `/v3/connect/token`,
       body,
@@ -67,10 +68,10 @@ export class Auth extends Resource {
    */
   public refreshAccessToken(
     payload: TokenExchangeRequest
-  ): Promise<ExchangeResponse> {
+  ): Promise<Response<CodeExchangeResponse>> {
     this.checkAuthCredentials();
 
-    return this.apiClient.request<ExchangeResponse>({
+    return this.apiClient.request<Response<CodeExchangeResponse>>({
       method: 'POST',
       path: `/v3/connect/token`,
       body: {
@@ -88,7 +89,7 @@ export class Auth extends Resource {
    * @param token The ID token
    * @return Information about the ID token
    */
-  public validateIDToken(token: string): Promise<OpenID> {
+  public validateIDToken(token: string): Promise<Response<OpenID>> {
     return this.validateToken({ idToken: token });
   }
 
@@ -97,16 +98,18 @@ export class Auth extends Resource {
    * @param token The access token
    * @return Information about the access token
    */
-  public validateAccessToken(token: string): Promise<OpenID> {
+  public validateAccessToken(token: string): Promise<Response<OpenID>> {
     return this.validateToken({
       accessToken: token,
     });
   }
 
-  private validateToken(queryParams: Record<string, string>): Promise<OpenID> {
+  private validateToken(
+    queryParams: Record<string, string>
+  ): Promise<Response<OpenID>> {
     this.checkAuthCredentials();
 
-    return this.apiClient.request<OpenID>({
+    return this.apiClient.request<Response<OpenID>>({
       method: 'GET',
       path: `/v3/connect/tokeninfo`,
       queryParams,
@@ -118,7 +121,7 @@ export class Auth extends Resource {
    * @param config Configuration for the authentication process
    * @return The URL for hosted authentication
    */
-  public urlForAuthentication(config: AuthConfig): string {
+  public urlForAuthentication(config: URLForAuthenticationConfig): string {
     return this.urlAuthBuilder(config).toString();
   }
 
@@ -167,7 +170,9 @@ export class Auth extends Resource {
    * @param config Configuration for the authentication process
    * @return The URL for hosted authentication
    */
-  public urlForAuthenticationPKCE(config: AuthConfig): PKCEAuthURL {
+  public urlForAuthenticationPKCE(
+    config: URLForAuthenticationConfig
+  ): PKCEAuthURL {
     const url = this.urlAuthBuilder(config);
 
     // Add code challenge to URL generation
@@ -188,7 +193,7 @@ export class Auth extends Resource {
    * @param config Configuration for the authentication process
    * @return The URL for hosted authentication
    */
-  public urlForAdminConsent(config: AdminConsentAuth): string {
+  public urlForAdminConsent(config: URLForAdminConsentConfig): string {
     const configWithProvider = { ...config, provider: 'microsoft' };
     const url = this.urlAuthBuilder(configWithProvider);
     url.searchParams.set('response_type', 'adminconsent');
@@ -209,23 +214,16 @@ export class Auth extends Resource {
    * @param payload params to initiate hosted auth request
    * @return True if the request was successful
    */
-  // TODO::RENAME TO SS AUTH
-  public async hostedAuth(
-    payload: HostedAuthRequest
-  ): Promise<ItemResponse<HostedAuth>> {
-    this.checkAuthCredentials();
-    const credentials = `${this.clientId}:${this.clientSecret}`;
-    const buff = Buffer.from(credentials);
-
-    return await this.apiClient.request<ItemResponse<HostedAuth>>({
-      method: 'POST',
-      path: `/v3/connect/auth`,
-      // TODO::REMOVE AND REPLACE WITH API KEY
-      headers: {
-        Authorization: `Basic ${buff.toString('base64')}`,
-      },
-      body: payload,
-    });
+  public async serverSideHostedAuth(
+    payload: ServerSideHostedAuthRequest
+  ): Promise<Response<ServerSideHostedAuthResponse>> {
+    return await this.apiClient.request<Response<ServerSideHostedAuthResponse>>(
+      {
+        method: 'POST',
+        path: `/v3/connect/auth`,
+        body: payload,
+      }
+    );
   }
 
   /**

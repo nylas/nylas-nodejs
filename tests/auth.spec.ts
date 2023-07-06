@@ -2,7 +2,7 @@ import APIClient from '../src/apiClient';
 import { Auth } from '../src/resources/auth';
 import {
   CodeExchangeRequest,
-  HostedAuthRequest,
+  ServerSideHostedAuthRequest,
   HostedAuthSchema,
   OpenIDSchema,
   TokenExchangeRequest,
@@ -226,7 +226,7 @@ describe('Auth', () => {
   });
   describe('hostedAuth', () => {
     it('should call apiClient.request with the correct params', async () => {
-      const hostedAuthRequest: HostedAuthRequest = {
+      const hostedAuthRequest: ServerSideHostedAuthRequest = {
         redirectUri: 'https://redirect.uri/path',
         state: 'state',
         loginHint: 'loginHint',

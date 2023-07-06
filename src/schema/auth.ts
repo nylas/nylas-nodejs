@@ -1,7 +1,7 @@
 type AccessType = 'online' | 'offline';
 type Provider = 'google' | 'imap' | 'microsoft' | 'yahoo';
 
-export type AuthConfig = {
+export type URLForAuthenticationConfig = {
   redirectUri: string;
   provider?: Provider;
   accessType?: AccessType;
@@ -13,7 +13,7 @@ export type AuthConfig = {
   loginHint?: string;
 };
 
-export type AdminConsentAuth = AuthConfig & {
+export type URLForAdminConsentConfig = URLForAuthenticationConfig & {
   credentialId: string;
 };
 
@@ -47,7 +47,7 @@ export interface TokenExchangeRequest {
   refreshToken: string;
 }
 
-export type HostedAuthRequest = {
+export type ServerSideHostedAuthRequest = {
   redirectUri: string;
   provider?: Provider;
   state?: string;
@@ -59,15 +59,25 @@ export type HostedAuthRequest = {
   settings?: Record<string, unknown>;
 };
 
-export interface HostedAuth {
+export interface ServerSideHostedAuthResponse {
   url: string;
   id: string;
   expiresAt: number;
-  request: HostedAuthRequest;
+  request: ServerSideHostedAuthRequest;
 }
 
 export interface PKCEAuthURL {
   url: string;
   secret: string;
   secretHash: string;
+}
+
+export interface CodeExchangeResponse {
+  accessToken: string;
+  grantId: string;
+  expiresIn: number;
+  refreshToken?: string;
+  idToken?: string;
+  tokenType?: string;
+  scope: string;
 }

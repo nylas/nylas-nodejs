@@ -1,13 +1,11 @@
 import { Resource } from './resource';
 import { Overrides } from '../config';
-import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
+import { DeleteResponse, Response, ListResponse } from '../schema/response';
 import {
-  CreateGrantRequestBody,
+  CreateGrantRequest,
   Grant,
-  GrantListResponseSchema,
-  GrantResponseSchema,
   ListGrantsQueryParams,
-  UpdateGrantRequestBody,
+  UpdateGrantRequest,
 } from '../schema/grants';
 
 interface FindGrantParams {
@@ -15,12 +13,12 @@ interface FindGrantParams {
 }
 
 interface CreateGrantParams {
-  requestBody: CreateGrantRequestBody;
+  requestBody: CreateGrantRequest;
 }
 
 interface UpdateGrantParams {
   grantId: string;
-  requestBody: UpdateGrantRequestBody;
+  requestBody: UpdateGrantRequest;
 }
 
 interface DestroyGrantParams {
@@ -36,17 +34,15 @@ export class Grants extends Resource {
       queryParams,
       path: `/v3/grants`,
       overrides,
-      responseSchema: GrantListResponseSchema,
     });
   }
 
   public find({
     grantId,
     overrides,
-  }: FindGrantParams & Overrides): Promise<ItemResponse<Grant>> {
+  }: FindGrantParams & Overrides): Promise<Response<Grant>> {
     return super._find({
       path: `/v3/grants/${grantId}`,
-      responseSchema: GrantResponseSchema,
       overrides,
     });
   }
@@ -54,12 +50,11 @@ export class Grants extends Resource {
   public create({
     requestBody,
     overrides,
-  }: CreateGrantParams & Overrides): Promise<ItemResponse<Grant>> {
+  }: CreateGrantParams & Overrides): Promise<Response<Grant>> {
     return super._create({
       path: `/v3/grants`,
       requestBody,
       overrides,
-      responseSchema: GrantResponseSchema,
     });
   }
 
@@ -67,12 +62,11 @@ export class Grants extends Resource {
     grantId,
     requestBody,
     overrides,
-  }: UpdateGrantParams & Overrides): Promise<ItemResponse<Grant>> {
+  }: UpdateGrantParams & Overrides): Promise<Response<Grant>> {
     return super._updatePatch({
       path: `/v3/grants/${grantId}`,
       requestBody,
       overrides,
-      responseSchema: GrantResponseSchema,
     });
   }
 

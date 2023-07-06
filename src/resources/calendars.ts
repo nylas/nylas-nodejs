@@ -5,7 +5,7 @@ import {
   ListCalendersQueryParams,
   UpdateCalenderRequestBody,
 } from '../schema/calendars';
-import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
+import { DeleteResponse, Response, ListResponse } from '../schema/response';
 import { Resource, AsyncListResponse } from './resource';
 
 interface FindCalendarParams {
@@ -50,7 +50,7 @@ export class Calendars extends Resource {
     calendarId,
     identifier,
     overrides,
-  }: FindCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
+  }: FindCalendarParams & Overrides): Promise<Response<Calendar>> {
     return super._find({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
       overrides,
@@ -61,7 +61,7 @@ export class Calendars extends Resource {
     identifier,
     requestBody,
     overrides,
-  }: CreateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
+  }: CreateCalendarParams & Overrides): Promise<Response<Calendar>> {
     return super._create({
       path: `/v3/grants/${identifier}/calendars`,
       requestBody,
@@ -74,7 +74,7 @@ export class Calendars extends Resource {
     identifier,
     requestBody,
     overrides,
-  }: UpdateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
+  }: UpdateCalendarParams & Overrides): Promise<Response<Calendar>> {
     return super._update({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
       requestBody,

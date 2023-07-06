@@ -1,16 +1,24 @@
 import { Resource } from './resource';
-import { ListResponse, ItemResponse } from '../schema/response';
+import { ListResponse, Response } from '../schema/response';
 import {
-  ProviderListResponseSchema,
-  ProviderDetectParams,
-  ProviderDetectResponseSchema,
   Provider,
-  ProviderDetect,
+  ProviderDetectParams,
+  ProviderDetectResponse,
 } from '../schema/providers';
+import APIClient from '../apiClient';
 
 export class Providers extends Resource {
-  private checkCreadentials(): void {
-    if (!this.apiClient.clientId) {
+  clientId: string;
+  clientSecret: string;
+
+  constructor(apiClient: APIClient, clientId: string, clientSecret: string) {
+    super(apiClient);
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+  }
+
+  private checkAuthCredentials(): void {
+    if (!this.clientId) {
       throw new Error('ClientID is required for using providers');
     }
   }
@@ -20,44 +28,31 @@ export class Providers extends Resource {
    * @return List of created providers with type & settings if supported
    */
   public async list(): Promise<ListResponse<Provider>> {
-    this.checkCreadentials();
-    const res = await this.apiClient.request<ListResponse<Provider>>(
-      {
-        method: 'GET',
-        path: `/v3/connect/providers/find`,
-        queryParams: {
-          clientId: this.apiClient.clientId,
-        },
+    this.checkAuthCredentials();
+    return await this.apiClient.request<ListResponse<Provider>>({
+      method: 'GET',
+      path: `/v3/connect/providers/find`,
+      queryParams: {
+        clientId: this.clientId,
       },
-      {
-        responseSchema: ProviderListResponseSchema,
-      }
-    );
-    return res;
+    });
   }
 
   /**
    * Detects provider for passed email (if allProviderTypes set to true tries to detect provider based on all supported providers)
-   * @param ProviderDetectParams
    * @return Information about the passed provider email
    */
   public async detect(
     params: ProviderDetectParams
-  ): Promise<ItemResponse<ProviderDetect>> {
-    this.checkCreadentials();
-    const res = await this.apiClient.request<ItemResponse<ProviderDetect>>(
-      {
-        method: 'POST',
-        path: `/v3/providers/detect`,
-        queryParams: {
-          clientId: this.apiClient.clientId,
-          ...params,
-        },
+  ): Promise<Response<ProviderDetectResponse>> {
+    this.checkAuthCredentials();
+    return await this.apiClient.request<Response<ProviderDetectResponse>>({
+      method: 'POST',
+      path: `/v3/providers/detect`,
+      queryParams: {
+        clientId: this.clientId,
+        ...params,
       },
-      {
-        responseSchema: ProviderDetectResponseSchema,
-      }
-    );
-    return res;
+    });
   }
 }

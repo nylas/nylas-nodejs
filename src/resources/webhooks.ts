@@ -1,26 +1,22 @@
 import { AsyncListResponse, Resource } from './resource';
 import { Overrides } from '../config';
-import { ItemResponse, ListResponse } from '../schema/response';
+import { Response, ListResponse } from '../schema/response';
 import {
-  CreateWebhookRequestBody,
+  CreateWebhookRequest,
+  UpdateWebhookRequestBody,
   Webhook,
   WebhookDeleteResponse,
-  WebhookDeleteResponseSchema,
-  WebhookIpAddresses,
-  WebhookIpAddressesResponseSchema,
-  WebhookListResponseSchema,
-  WebhookResponseSchema,
-  WebhookResponseWithSecretSchema,
+  WebhookIpAddressesResponse,
   WebhookWithSecret,
 } from '../schema/webhooks';
 
 interface CreateWebhookParams {
-  requestBody: CreateWebhookRequestBody;
+  requestBody: CreateWebhookRequest;
 }
 
 interface UpdateWebhookParams {
   webhookId: string;
-  requestBody: CreateWebhookRequestBody;
+  requestBody: UpdateWebhookRequestBody;
 }
 
 interface DestroyWebhookParams {
@@ -39,7 +35,6 @@ export class Webhooks extends Resource {
     return super._list<ListResponse<Webhook>>({
       overrides,
       path: `/v3/webhooks`,
-      responseSchema: WebhookListResponseSchema,
     });
   }
 
@@ -52,14 +47,11 @@ export class Webhooks extends Resource {
   public create({
     requestBody,
     overrides,
-  }: CreateWebhookParams & Overrides): Promise<
-    ItemResponse<WebhookWithSecret>
-  > {
+  }: CreateWebhookParams & Overrides): Promise<Response<WebhookWithSecret>> {
     return super._create({
       path: `/v3/webhooks`,
       requestBody,
       overrides,
-      responseSchema: WebhookResponseWithSecretSchema,
     });
   }
 
@@ -74,12 +66,11 @@ export class Webhooks extends Resource {
     webhookId,
     requestBody,
     overrides,
-  }: UpdateWebhookParams & Overrides): Promise<ItemResponse<Webhook>> {
+  }: UpdateWebhookParams & Overrides): Promise<Response<Webhook>> {
     return super._update({
       path: `/v3/webhooks/${webhookId}`,
       requestBody,
       overrides,
-      responseSchema: WebhookResponseSchema,
     });
   }
 
@@ -95,7 +86,6 @@ export class Webhooks extends Resource {
     return super._destroy({
       path: `/v3/webhooks/${webhookId}`,
       overrides,
-      responseSchema: WebhookDeleteResponseSchema,
     });
   }
 
@@ -108,12 +98,11 @@ export class Webhooks extends Resource {
   public rotateSecret({
     webhookId,
     overrides,
-  }: DestroyWebhookParams & Overrides): Promise<ItemResponse<Webhook>> {
+  }: DestroyWebhookParams & Overrides): Promise<Response<Webhook>> {
     return super._update({
       path: `/v3/webhooks/${webhookId}/rotate-secret`,
       requestBody: {},
       overrides,
-      responseSchema: WebhookResponseWithSecretSchema,
     });
   }
 
@@ -123,12 +112,11 @@ export class Webhooks extends Resource {
    * @returns The list of IP addresses that Nylas sends webhooks from
    */
   public ipAddresses({ overrides }: Overrides = {}): Promise<
-    ItemResponse<WebhookIpAddresses>
+    Response<WebhookIpAddressesResponse>
   > {
     return super._find({
       path: `/v3/webhooks/ip-addresses`,
       overrides,
-      responseSchema: WebhookIpAddressesResponseSchema,
     });
   }
 

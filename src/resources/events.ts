@@ -9,7 +9,7 @@ import {
   UpdateEventQueryParams,
   UpdateEventRequest,
 } from '../schema/events';
-import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
+import { DeleteResponse, Response, ListResponse } from '../schema/response';
 import { AsyncListResponse, Resource } from './resource';
 
 interface FindEventParams {
@@ -58,7 +58,7 @@ export class Events extends Resource {
     eventId,
     queryParams,
     overrides,
-  }: FindEventParams & Overrides): Promise<ItemResponse<Event>> {
+  }: FindEventParams & Overrides): Promise<Response<Event>> {
     return super._find({
       path: `/v3/grants/${identifier}/events/${eventId}`,
       queryParams,
@@ -71,7 +71,7 @@ export class Events extends Resource {
     requestBody,
     queryParams,
     overrides,
-  }: CreateEventParams & Overrides): Promise<ItemResponse<Event>> {
+  }: CreateEventParams & Overrides): Promise<Response<Event>> {
     return super._create({
       path: `/v3/grants/${identifier}/events`,
       queryParams,
@@ -86,7 +86,7 @@ export class Events extends Resource {
     requestBody,
     queryParams,
     overrides,
-  }: UpdateEventParams & Overrides): Promise<ItemResponse<Event>> {
+  }: UpdateEventParams & Overrides): Promise<Response<Event>> {
     return super._update({
       path: `/v3/grants/${identifier}/events/${eventId}`,
       queryParams,

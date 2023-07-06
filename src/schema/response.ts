@@ -1,4 +1,4 @@
-export interface ItemResponse<T> {
+export interface Response<T> {
   requestId: string;
   data: T;
 }
@@ -41,16 +41,6 @@ export interface TokenValidationErrorResponse {
     message: string;
     requestId: string;
   };
-}
-
-export interface ExchangeResponse {
-  accessToken: string;
-  grantId: string;
-  expiresIn: number;
-  refreshToken?: string;
-  idToken?: string;
-  tokenType?: string;
-  scope: string;
 }
 
 export type ListResponseInnerType<T> = T extends ListResponse<infer R>
