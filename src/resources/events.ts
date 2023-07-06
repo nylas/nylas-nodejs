@@ -8,8 +8,8 @@ import {
   ListEventQueryParams,
   UpdateEventQueryParams,
   UpdateEventRequest,
-} from '../schema/events';
-import { DeleteResponse, Response, ListResponse } from '../schema/response';
+} from '../models/events';
+import { DeleteResponse, Response, ListResponse } from '../models/response';
 import { AsyncListResponse, Resource } from './resource';
 
 interface FindEventParams {

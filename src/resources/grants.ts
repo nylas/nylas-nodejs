@@ -1,12 +1,12 @@
 import { Resource } from './resource';
 import { Overrides } from '../config';
-import { DeleteResponse, Response, ListResponse } from '../schema/response';
+import { DeleteResponse, Response, ListResponse } from '../models/response';
 import {
   CreateGrantRequest,
   Grant,
   ListGrantsQueryParams,
   UpdateGrantRequest,
-} from '../schema/grants';
+} from '../models/grants';
 
 interface FindGrantParams {
   grantId: string;

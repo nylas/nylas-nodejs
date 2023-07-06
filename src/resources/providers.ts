@@ -1,10 +1,10 @@
 import { Resource } from './resource';
-import { ListResponse, Response } from '../schema/response';
+import { ListResponse, Response } from '../models/response';
 import {
   Provider,
   ProviderDetectParams,
   ProviderDetectResponse,
-} from '../schema/providers';
+} from '../models/providers';
 import APIClient from '../apiClient';
 
 export class Providers extends Resource {

@@ -1,6 +1,6 @@
 import { Overrides } from '../config';
 import { Resource } from './resource';
-import { GetAvailabilityRequest } from '../schema/availability';
+import { GetAvailabilityRequest } from '../models/availability';
 
 interface GetAvailabilityParams {
   requestBody: GetAvailabilityRequest;

@@ -4,7 +4,7 @@ import {
   NylasApiError,
   NylasAuthError,
   NylasTokenValidationError,
-} from './schema/error';
+} from './models/error';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
 
 const PACKAGE_JSON = require('../package.json');

@@ -1,6 +1,6 @@
 import { AsyncListResponse, Resource } from './resource';
 import { Overrides } from '../config';
-import { Response, ListResponse } from '../schema/response';
+import { Response, ListResponse } from '../models/response';
 import {
   CreateWebhookRequest,
   UpdateWebhookRequestBody,
@@ -8,7 +8,7 @@ import {
   WebhookDeleteResponse,
   WebhookIpAddressesResponse,
   WebhookWithSecret,
-} from '../schema/webhooks';
+} from '../models/webhooks';
 
 interface CreateWebhookParams {
   requestBody: CreateWebhookRequest;

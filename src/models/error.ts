@@ -47,4 +47,4 @@ export class NylasTokenValidationError extends Error {
   }
 }
 
-// TODO: sdk error schema?
+// TODO: sdk error models?

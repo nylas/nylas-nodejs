@@ -1,11 +1,11 @@
 import APIClient from '../apiClient';
 import { OverridableNylasConfig } from '../config';
-import { ListQueryParams } from '../schema/request';
+import { ListQueryParams } from '../models/request';
 import {
   Response,
   ListResponse,
   ListResponseInnerType,
-} from '../schema/response';
+} from '../models/response';
 
 interface ListParams<T> {
   queryParams?: ListQueryParams;
@@ -165,9 +165,7 @@ export class Resource {
     return this.payloadRequest('PUT', params);
   }
 
-  protected _updatePatch<T>(
-    params: PayloadParams<T>
-  ): Promise<Response<T>> {
+  protected _updatePatch<T>(params: PayloadParams<T>): Promise<Response<T>> {
     return this.payloadRequest('PATCH', params);
   }
 

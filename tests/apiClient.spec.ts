@@ -5,7 +5,7 @@ import {
   NylasApiError,
   NylasAuthError,
   NylasTokenValidationError,
-} from '../src/schema/error';
+} from '../src/models/error';
 const fetch = require('node-fetch');
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');

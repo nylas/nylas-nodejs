@@ -4,7 +4,7 @@ import {
   CodeExchangeRequest,
   ServerSideHostedAuthRequest,
   TokenExchangeRequest,
-} from '../src/schema/auth';
+} from '../src/models/auth';
 import sha256 from 'sha256';
 jest.mock('uuid', () => ({ v4: (): string => '123456789' }));
 

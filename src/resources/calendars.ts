@@ -4,8 +4,8 @@ import {
   CreateCalenderRequestBody,
   ListCalendersQueryParams,
   UpdateCalenderRequestBody,
-} from '../schema/calendars';
-import { DeleteResponse, Response, ListResponse } from '../schema/response';
+} from '../models/calendars';
+import { DeleteResponse, Response, ListResponse } from '../models/response';
 import { Resource, AsyncListResponse } from './resource';
 
 interface FindCalendarParams {

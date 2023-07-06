@@ -14,8 +14,8 @@ import {
   PKCEAuthURL,
   TokenExchangeRequest,
   CodeExchangeResponse,
-} from '../schema/auth';
-import { Response } from '../schema/response';
+} from '../models/auth';
+import { Response } from '../models/response';
 
 export class Auth extends Resource {
   public grants: Grants;
