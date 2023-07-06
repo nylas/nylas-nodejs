@@ -1,6 +1,6 @@
 import { AsyncListResponse, Resource } from './resource';
 import { Overrides } from '../config';
-import { Response, ListResponse } from '../models/response';
+import { NylasResponse, NylasListResponse } from '../models/response';
 import {
   CreateWebhookRequest,
   UpdateWebhookRequestBody,
@@ -30,9 +30,9 @@ export class Webhooks extends Resource {
    * @returns The list of webhook destinations
    */
   public list({ overrides }: Overrides = {}): AsyncListResponse<
-    ListResponse<Webhook>
+    NylasListResponse<Webhook>
   > {
-    return super._list<ListResponse<Webhook>>({
+    return super._list<NylasListResponse<Webhook>>({
       overrides,
       path: `/v3/webhooks`,
     });
@@ -47,7 +47,9 @@ export class Webhooks extends Resource {
   public create({
     requestBody,
     overrides,
-  }: CreateWebhookParams & Overrides): Promise<Response<WebhookWithSecret>> {
+  }: CreateWebhookParams & Overrides): Promise<
+    NylasResponse<WebhookWithSecret>
+  > {
     return super._create({
       path: `/v3/webhooks`,
       requestBody,
@@ -66,7 +68,7 @@ export class Webhooks extends Resource {
     webhookId,
     requestBody,
     overrides,
-  }: UpdateWebhookParams & Overrides): Promise<Response<Webhook>> {
+  }: UpdateWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
     return super._update({
       path: `/v3/webhooks/${webhookId}`,
       requestBody,
@@ -98,7 +100,7 @@ export class Webhooks extends Resource {
   public rotateSecret({
     webhookId,
     overrides,
-  }: DestroyWebhookParams & Overrides): Promise<Response<Webhook>> {
+  }: DestroyWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
     return super._update({
       path: `/v3/webhooks/${webhookId}/rotate-secret`,
       requestBody: {},
@@ -112,7 +114,7 @@ export class Webhooks extends Resource {
    * @returns The list of IP addresses that Nylas sends webhooks from
    */
   public ipAddresses({ overrides }: Overrides = {}): Promise<
-    Response<WebhookIpAddressesResponse>
+    NylasResponse<WebhookIpAddressesResponse>
   > {
     return super._find({
       path: `/v3/webhooks/ip-addresses`,

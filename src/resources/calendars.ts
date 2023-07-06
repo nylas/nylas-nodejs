@@ -5,7 +5,11 @@ import {
   ListCalendersQueryParams,
   UpdateCalenderRequestBody,
 } from '../models/calendars';
-import { DeleteResponse, Response, ListResponse } from '../models/response';
+import {
+  NylasDeleteResponse,
+  NylasResponse,
+  NylasListResponse,
+} from '../models/response';
 import { Resource, AsyncListResponse } from './resource';
 
 interface FindCalendarParams {
@@ -38,8 +42,8 @@ export class Calendars extends Resource {
   public list(
     { overrides, identifier }: CalendarListParams,
     queryParams?: ListCalendersQueryParams
-  ): AsyncListResponse<ListResponse<Calendar>> {
-    return super._list<ListResponse<Calendar>>({
+  ): AsyncListResponse<NylasListResponse<Calendar>> {
+    return super._list<NylasListResponse<Calendar>>({
       queryParams,
       overrides,
       path: `/v3/grants/${identifier}/calendars`,
@@ -50,7 +54,7 @@ export class Calendars extends Resource {
     calendarId,
     identifier,
     overrides,
-  }: FindCalendarParams & Overrides): Promise<Response<Calendar>> {
+  }: FindCalendarParams & Overrides): Promise<NylasResponse<Calendar>> {
     return super._find({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
       overrides,
@@ -61,7 +65,7 @@ export class Calendars extends Resource {
     identifier,
     requestBody,
     overrides,
-  }: CreateCalendarParams & Overrides): Promise<Response<Calendar>> {
+  }: CreateCalendarParams & Overrides): Promise<NylasResponse<Calendar>> {
     return super._create({
       path: `/v3/grants/${identifier}/calendars`,
       requestBody,
@@ -74,7 +78,7 @@ export class Calendars extends Resource {
     identifier,
     requestBody,
     overrides,
-  }: UpdateCalendarParams & Overrides): Promise<Response<Calendar>> {
+  }: UpdateCalendarParams & Overrides): Promise<NylasResponse<Calendar>> {
     return super._update({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
       requestBody,
@@ -86,7 +90,7 @@ export class Calendars extends Resource {
     identifier,
     calendarId,
     overrides,
-  }: DestroyCalendarParams & Overrides): Promise<DeleteResponse> {
+  }: DestroyCalendarParams & Overrides): Promise<NylasDeleteResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
       overrides,

@@ -1,9 +1,9 @@
-export interface Response<T> {
+export interface NylasResponse<T> {
   requestId: string;
   data: T;
 }
 
-export interface ListResponse<T> {
+export interface NylasListResponse<T> {
   requestId: string;
   data: T[];
   nextCursor?: string;
@@ -20,7 +20,7 @@ export interface NylasApiError {
   providerError?: Record<string, unknown>;
 }
 
-export interface DeleteResponse {
+export interface NylasDeleteResponse {
   requestId: string;
 }
 
@@ -43,6 +43,6 @@ export interface TokenValidationErrorResponse {
   };
 }
 
-export type ListResponseInnerType<T> = T extends ListResponse<infer R>
+export type ListResponseInnerType<T> = T extends NylasListResponse<infer R>
   ? R
   : never;

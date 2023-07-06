@@ -1,5 +1,5 @@
 import { Resource } from './resource';
-import { ListResponse, Response } from '../models/response';
+import { NylasListResponse, NylasResponse } from '../models/response';
 import {
   Provider,
   ProviderDetectParams,
@@ -27,9 +27,9 @@ export class Providers extends Resource {
    * Lists created providers(integrations)
    * @return List of created providers with type & settings if supported
    */
-  public async list(): Promise<ListResponse<Provider>> {
+  public async list(): Promise<NylasListResponse<Provider>> {
     this.checkAuthCredentials();
-    return await this.apiClient.request<ListResponse<Provider>>({
+    return await this.apiClient.request<NylasListResponse<Provider>>({
       method: 'GET',
       path: `/v3/connect/providers/find`,
       queryParams: {
@@ -44,9 +44,9 @@ export class Providers extends Resource {
    */
   public async detect(
     params: ProviderDetectParams
-  ): Promise<Response<ProviderDetectResponse>> {
+  ): Promise<NylasResponse<ProviderDetectResponse>> {
     this.checkAuthCredentials();
-    return await this.apiClient.request<Response<ProviderDetectResponse>>({
+    return await this.apiClient.request<NylasResponse<ProviderDetectResponse>>({
       method: 'POST',
       path: `/v3/providers/detect`,
       queryParams: {

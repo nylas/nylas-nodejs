@@ -1,5 +1,9 @@
 import { AsyncListResponse, Resource } from './resource';
-import { DeleteResponse, Response, ListResponse } from '../models/response';
+import {
+  NylasDeleteResponse,
+  NylasResponse,
+  NylasListResponse,
+} from '../models/response';
 import {
   CreateRedirectUriRequest,
   RedirectUri,
@@ -9,15 +13,15 @@ import { Overrides } from '../config';
 
 export class RedirectUris extends Resource {
   public list({ overrides }: Overrides = {}): AsyncListResponse<
-    ListResponse<RedirectUri>
+    NylasListResponse<RedirectUri>
   > {
-    return super._list<ListResponse<RedirectUri>>({
+    return super._list<NylasListResponse<RedirectUri>>({
       overrides,
       path: '/v3/applications/redirect-uris',
     });
   }
 
-  public find(redirectUriId: string): Promise<Response<RedirectUris>> {
+  public find(redirectUriId: string): Promise<NylasResponse<RedirectUris>> {
     return super._find({
       path: `/v3/applications/redirect-uris/${redirectUriId}`,
     });
@@ -25,7 +29,7 @@ export class RedirectUris extends Resource {
 
   public create(
     requestBody: CreateRedirectUriRequest
-  ): Promise<Response<RedirectUris>> {
+  ): Promise<NylasResponse<RedirectUris>> {
     return super._create({
       path: '/v3/applications/redirect-uris',
       requestBody,
@@ -35,14 +39,16 @@ export class RedirectUris extends Resource {
   public update(
     redirectUriId: string,
     requestBody: UpdateRedirectUriRequest
-  ): Promise<Response<RedirectUris>> {
+  ): Promise<NylasResponse<RedirectUris>> {
     return super._update({
       path: `/v3/applications/redirect-uris/${redirectUriId}`,
       requestBody,
     });
   }
 
-  public destroy(redirectUriId: string): Promise<Response<DeleteResponse>> {
+  public destroy(
+    redirectUriId: string
+  ): Promise<NylasResponse<NylasDeleteResponse>> {
     return super._destroy({
       path: `/v1/redirect_uris/${redirectUriId}`,
     });

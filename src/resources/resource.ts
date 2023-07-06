@@ -2,8 +2,8 @@ import APIClient from '../apiClient';
 import { OverridableNylasConfig } from '../config';
 import { ListQueryParams } from '../models/request';
 import {
-  Response,
-  ListResponse,
+  NylasResponse,
+  NylasListResponse,
   ListResponseInnerType,
 } from '../models/response';
 
@@ -33,7 +33,7 @@ interface DestroyParams {
   overrides?: OverridableNylasConfig;
 }
 
-type List<T> = ListResponse<ListResponseInnerType<T>>;
+type List<T> = NylasListResponse<ListResponseInnerType<T>>;
 export class Resource {
   protected apiClient: APIClient;
 
@@ -135,8 +135,8 @@ export class Resource {
     path,
     queryParams,
     overrides,
-  }: FindParams<T>): Promise<Response<T>> {
-    return this.apiClient.request<Response<T>>({
+  }: FindParams<T>): Promise<NylasResponse<T>> {
+    return this.apiClient.request<NylasResponse<T>>({
       method: 'GET',
       path,
       queryParams,
@@ -147,8 +147,8 @@ export class Resource {
   private payloadRequest<T>(
     method: 'POST' | 'PUT' | 'PATCH',
     { path, queryParams, requestBody, overrides }: PayloadParams<T>
-  ): Promise<Response<T>> {
-    return this.apiClient.request<Response<T>>({
+  ): Promise<NylasResponse<T>> {
+    return this.apiClient.request<NylasResponse<T>>({
       method,
       path,
       queryParams,
@@ -157,15 +157,17 @@ export class Resource {
     });
   }
 
-  protected _create<T>(params: PayloadParams<T>): Promise<Response<T>> {
+  protected _create<T>(params: PayloadParams<T>): Promise<NylasResponse<T>> {
     return this.payloadRequest('POST', params);
   }
 
-  protected _update<T>(params: PayloadParams<T>): Promise<Response<T>> {
+  protected _update<T>(params: PayloadParams<T>): Promise<NylasResponse<T>> {
     return this.payloadRequest('PUT', params);
   }
 
-  protected _updatePatch<T>(params: PayloadParams<T>): Promise<Response<T>> {
+  protected _updatePatch<T>(
+    params: PayloadParams<T>
+  ): Promise<NylasResponse<T>> {
     return this.payloadRequest('PATCH', params);
   }
 

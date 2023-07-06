@@ -1,6 +1,10 @@
 import { Resource } from './resource';
 import { Overrides } from '../config';
-import { DeleteResponse, Response, ListResponse } from '../models/response';
+import {
+  NylasDeleteResponse,
+  NylasResponse,
+  NylasListResponse,
+} from '../models/response';
 import {
   CreateGrantRequest,
   Grant,
@@ -29,8 +33,8 @@ export class Grants extends Resource {
   public async list(
     { overrides }: Overrides = {},
     queryParams?: ListGrantsQueryParams
-  ): Promise<ListResponse<Grant>> {
-    return super._list<ListResponse<Grant>>({
+  ): Promise<NylasListResponse<Grant>> {
+    return super._list<NylasListResponse<Grant>>({
       queryParams,
       path: `/v3/grants`,
       overrides,
@@ -40,7 +44,7 @@ export class Grants extends Resource {
   public find({
     grantId,
     overrides,
-  }: FindGrantParams & Overrides): Promise<Response<Grant>> {
+  }: FindGrantParams & Overrides): Promise<NylasResponse<Grant>> {
     return super._find({
       path: `/v3/grants/${grantId}`,
       overrides,
@@ -50,7 +54,7 @@ export class Grants extends Resource {
   public create({
     requestBody,
     overrides,
-  }: CreateGrantParams & Overrides): Promise<Response<Grant>> {
+  }: CreateGrantParams & Overrides): Promise<NylasResponse<Grant>> {
     return super._create({
       path: `/v3/grants`,
       requestBody,
@@ -62,7 +66,7 @@ export class Grants extends Resource {
     grantId,
     requestBody,
     overrides,
-  }: UpdateGrantParams & Overrides): Promise<Response<Grant>> {
+  }: UpdateGrantParams & Overrides): Promise<NylasResponse<Grant>> {
     return super._updatePatch({
       path: `/v3/grants/${grantId}`,
       requestBody,
@@ -73,7 +77,7 @@ export class Grants extends Resource {
   public destroy({
     grantId,
     overrides,
-  }: DestroyGrantParams & Overrides): Promise<DeleteResponse> {
+  }: DestroyGrantParams & Overrides): Promise<NylasDeleteResponse> {
     return super._destroy({
       path: `/v3/grants/${grantId}`,
       overrides,

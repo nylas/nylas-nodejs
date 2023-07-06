@@ -15,7 +15,7 @@ import {
   TokenExchangeRequest,
   CodeExchangeResponse,
 } from '../models/auth';
-import { Response } from '../models/response';
+import { NylasResponse } from '../models/response';
 
 export class Auth extends Resource {
   public grants: Grants;
@@ -42,7 +42,7 @@ export class Auth extends Resource {
    */
   public exchangeCodeForToken(
     payload: CodeExchangeRequest
-  ): Promise<Response<CodeExchangeResponse>> {
+  ): Promise<NylasResponse<CodeExchangeResponse>> {
     this.checkAuthCredentials();
     const body: Record<string, unknown> = {
       code: payload.code,
@@ -54,7 +54,7 @@ export class Auth extends Resource {
     if (payload.codeVerifier) {
       body.codeVerifier = payload.codeVerifier;
     }
-    return this.apiClient.request<Response<CodeExchangeResponse>>({
+    return this.apiClient.request<NylasResponse<CodeExchangeResponse>>({
       method: 'POST',
       path: `/v3/connect/token`,
       body,
@@ -68,10 +68,10 @@ export class Auth extends Resource {
    */
   public refreshAccessToken(
     payload: TokenExchangeRequest
-  ): Promise<Response<CodeExchangeResponse>> {
+  ): Promise<NylasResponse<CodeExchangeResponse>> {
     this.checkAuthCredentials();
 
-    return this.apiClient.request<Response<CodeExchangeResponse>>({
+    return this.apiClient.request<NylasResponse<CodeExchangeResponse>>({
       method: 'POST',
       path: `/v3/connect/token`,
       body: {
@@ -89,7 +89,7 @@ export class Auth extends Resource {
    * @param token The ID token
    * @return Information about the ID token
    */
-  public validateIDToken(token: string): Promise<Response<OpenID>> {
+  public validateIDToken(token: string): Promise<NylasResponse<OpenID>> {
     return this.validateToken({ idToken: token });
   }
 
@@ -98,7 +98,7 @@ export class Auth extends Resource {
    * @param token The access token
    * @return Information about the access token
    */
-  public validateAccessToken(token: string): Promise<Response<OpenID>> {
+  public validateAccessToken(token: string): Promise<NylasResponse<OpenID>> {
     return this.validateToken({
       accessToken: token,
     });
@@ -106,10 +106,10 @@ export class Auth extends Resource {
 
   private validateToken(
     queryParams: Record<string, string>
-  ): Promise<Response<OpenID>> {
+  ): Promise<NylasResponse<OpenID>> {
     this.checkAuthCredentials();
 
-    return this.apiClient.request<Response<OpenID>>({
+    return this.apiClient.request<NylasResponse<OpenID>>({
       method: 'GET',
       path: `/v3/connect/tokeninfo`,
       queryParams,
@@ -216,14 +216,14 @@ export class Auth extends Resource {
    */
   public async serverSideHostedAuth(
     payload: ServerSideHostedAuthRequest
-  ): Promise<Response<ServerSideHostedAuthResponse>> {
-    return await this.apiClient.request<Response<ServerSideHostedAuthResponse>>(
-      {
-        method: 'POST',
-        path: `/v3/connect/auth`,
-        body: payload,
-      }
-    );
+  ): Promise<NylasResponse<ServerSideHostedAuthResponse>> {
+    return await this.apiClient.request<
+      NylasResponse<ServerSideHostedAuthResponse>
+    >({
+      method: 'POST',
+      path: `/v3/connect/auth`,
+      body: payload,
+    });
   }
 
   /**

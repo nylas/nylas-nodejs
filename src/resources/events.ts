@@ -9,7 +9,11 @@ import {
   UpdateEventQueryParams,
   UpdateEventRequest,
 } from '../models/events';
-import { DeleteResponse, Response, ListResponse } from '../models/response';
+import {
+  NylasDeleteResponse,
+  NylasResponse,
+  NylasListResponse,
+} from '../models/response';
 import { AsyncListResponse, Resource } from './resource';
 
 interface FindEventParams {
@@ -45,7 +49,7 @@ export class Events extends Resource {
     identifier,
     queryParams,
     overrides,
-  }: ListEventParams & Overrides): AsyncListResponse<ListResponse<Event>> {
+  }: ListEventParams & Overrides): AsyncListResponse<NylasListResponse<Event>> {
     return super._list({
       queryParams,
       path: `/v3/grants/${identifier}/events`,
@@ -58,7 +62,7 @@ export class Events extends Resource {
     eventId,
     queryParams,
     overrides,
-  }: FindEventParams & Overrides): Promise<Response<Event>> {
+  }: FindEventParams & Overrides): Promise<NylasResponse<Event>> {
     return super._find({
       path: `/v3/grants/${identifier}/events/${eventId}`,
       queryParams,
@@ -71,7 +75,7 @@ export class Events extends Resource {
     requestBody,
     queryParams,
     overrides,
-  }: CreateEventParams & Overrides): Promise<Response<Event>> {
+  }: CreateEventParams & Overrides): Promise<NylasResponse<Event>> {
     return super._create({
       path: `/v3/grants/${identifier}/events`,
       queryParams,
@@ -86,7 +90,7 @@ export class Events extends Resource {
     requestBody,
     queryParams,
     overrides,
-  }: UpdateEventParams & Overrides): Promise<Response<Event>> {
+  }: UpdateEventParams & Overrides): Promise<NylasResponse<Event>> {
     return super._update({
       path: `/v3/grants/${identifier}/events/${eventId}`,
       queryParams,
@@ -100,7 +104,7 @@ export class Events extends Resource {
     eventId,
     queryParams,
     overrides,
-  }: DestroyEventParams & Overrides): Promise<DeleteResponse> {
+  }: DestroyEventParams & Overrides): Promise<NylasDeleteResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/events/${eventId}`,
       queryParams,
