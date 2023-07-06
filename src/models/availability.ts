@@ -1,4 +1,4 @@
-export type Availability = {
+export type GetAvailabilityResponse = {
   order: string[];
   timeSlots: TimeSlot[];
 };
