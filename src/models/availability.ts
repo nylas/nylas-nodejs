@@ -9,7 +9,7 @@ export interface GetAvailabilityRequest {
   /** Unix timestamp for the end time to check availability for. */
   endTime: number;
   participants: Participant[];
-  durationMinutes?: number;
+  durationMinutes: number;
   intervalMinutes?: number;
   roundTo30Minutes?: boolean;
   availabilityRules?: AvailabilityRules;
