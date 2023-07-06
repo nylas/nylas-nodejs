@@ -1,85 +1,73 @@
-import { ItemResponseSchema } from './response';
-
 type AccessType = 'online' | 'offline';
 type Provider = 'google' | 'imap' | 'microsoft' | 'yahoo';
 
 export type AuthConfig = {
-  redirectUri: string;
+  redirect_uri: string;
   provider?: Provider;
-  accessType?: AccessType;
+  access_type?: AccessType;
   prompt?: string;
   scope?: string[];
-  includeGrantScopes?: boolean;
+  include_grant_scopes?: boolean;
   metadata?: string;
   state?: string;
-  loginHint?: string;
+  login_hint?: string;
 };
 
 export type AdminConsentAuth = AuthConfig & {
   credentialId: string;
 };
 
-export const OpenIDSchema = z.object({
-  iss: z.string(), // Issuer
-  aud: z.string(), // Application Slug
-  sub: z.string().optional(), // ID
-  email: z.string().optional(),
-  emailVerified: z.boolean().optional(),
-  atHash: z.string().optional(),
-  iat: z.number(), // Issued At
-  exp: z.number(), // Expites At
+export interface OpenID {
+  iss: string; // Issuer
+  aud: string; // Application Slug
+  sub?: string; // ID
+  email?: string;
+  email_verified?: boolean;
+  at_hash?: string;
+  iat: number; // Issued At
+  exp: number; // Expites At
   // Profile
-  name: z.string().optional(),
-  givenName: z.string().optional(),
-  familyName: z.string().optional(),
-  nickName: z.string().optional(),
-  pictureURL: z.string().optional(),
-  gender: z.string().optional(),
-  locale: z.string().optional(),
-});
+  name?: string;
+  given_name?: string;
+  family_name?: string;
+  nick_name?: string;
+  picture_url?: string;
+  gender?: string;
+  locale?: string;
+}
 
 export interface CodeExchangeRequest {
-  redirectUri: string;
+  redirect_uri: string;
   code: string;
-  codeVerifier?: string; // Only For PKCE auth requests
+  code_verifier?: string; // Only For PKCE auth requests
 }
 
 export interface TokenExchangeRequest {
-  redirectUri: string;
-  refreshToken: string;
+  redirect_uri: string;
+  refresh_token: string;
 }
 
 export type HostedAuthRequest = {
-  redirectUri: string;
-  state?: string;
-  loginHint?: string;
-  cookieNonce?: string;
-  scope?: string[];
+  redirect_uri: string;
   provider?: Provider;
+  state?: string;
+  login_hint?: string;
+  cookie_nonce?: string;
+  grant_id?: string;
+  scope?: string[];
+  expires_in?: number;
+  settings?: Record<string, unknown>;
 };
 
-export const HostedAuthSchema = z.object({
-  url: z.string(),
-  id: z.string(),
-  expiresAt: z.number(),
-  request: z.object({
-    redirectUri: z.string(),
-    provider: z.string(),
-    scope: z.array(z.string()).optional(),
-    state: z.string().optional(),
-    loginHint: z.string().optional(),
-    prompt: z.string().optional(),
-    includeGrantedScopes: z.boolean().optional(),
-  }),
-});
+export interface HostedAuth {
+  url: string;
+  id: string;
+  expires_at: number;
+  request: HostedAuthRequest;
+}
 
-export type HostedAuth = z.infer<typeof HostedAuthSchema>;
-export const HostedAuthResponseSchema = ItemResponseSchema.extend({
-  data: HostedAuthSchema,
-});
 export interface PKCEAuthURL {
   url: string;
   secret: string;
-  secretHash: string;
+  secret_hash: string;
 }
-export type OpenID = z.infer<typeof OpenIDSchema>;
