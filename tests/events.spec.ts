@@ -1,10 +1,5 @@
 import APIClient from '../src/apiClient';
 import { Events } from '../src/resources/events';
-import {
-  EventListResponseSchema,
-  EventResponseSchema,
-} from '../src/schema/events';
-import { DeleteResponseSchema } from '../src/schema/response';
 jest.mock('../src/apiClient');
 
 describe('Events', () => {
@@ -13,9 +8,9 @@ describe('Events', () => {
 
   beforeAll(() => {
     apiClient = new APIClient({
-      clientId: 'clientId',
-      clientSecret: 'clientSecret',
       apiKey: 'apiKey',
+      serverUrl: 'https://test.api.nylas.com',
+      timeout: 30,
     }) as jest.Mocked<APIClient>;
 
     events = new Events(apiClient);
@@ -34,21 +29,16 @@ describe('Events', () => {
         },
       });
 
-      expect(apiClient.request).toHaveBeenCalledWith(
-        {
-          method: 'GET',
-          path: '/v3/grants/id123/events',
-          queryParams: {
-            calendarId: 'calendar123',
-          },
-          overrides: {
-            serverUrl: 'https://test.api.nylas.com',
-          },
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/events',
+        queryParams: {
+          calendarId: 'calendar123',
         },
-        {
-          responseSchema: EventListResponseSchema,
-        }
-      );
+        overrides: {
+          serverUrl: 'https://test.api.nylas.com',
+        },
+      });
     });
 
     it('should paginate correctly if a nextCursor is present', async () => {
@@ -83,22 +73,17 @@ describe('Events', () => {
       await eventList.next();
 
       expect(apiClient.request).toBeCalledTimes(2);
-      expect(apiClient.request).toHaveBeenLastCalledWith(
-        {
-          method: 'GET',
-          path: '/v3/grants/id123/events',
-          queryParams: {
-            calendarId: 'calendar123',
-            pageToken: 'cursor123',
-          },
-          overrides: {
-            serverUrl: 'https://test.api.nylas.com',
-          },
+      expect(apiClient.request).toHaveBeenLastCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/events',
+        queryParams: {
+          calendarId: 'calendar123',
+          pageToken: 'cursor123',
         },
-        {
-          responseSchema: EventListResponseSchema,
-        }
-      );
+        overrides: {
+          serverUrl: 'https://test.api.nylas.com',
+        },
+      });
     });
 
     it('should not paginate if nextCursor is not present', async () => {
@@ -150,21 +135,16 @@ describe('Events', () => {
         },
       });
 
-      expect(apiClient.request).toHaveBeenCalledWith(
-        {
-          method: 'GET',
-          path: '/v3/grants/id123/events/event123',
-          queryParams: {
-            calendarId: 'calendar123',
-          },
-          overrides: {
-            serverUrl: 'https://test.api.nylas.com',
-          },
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/events/event123',
+        queryParams: {
+          calendarId: 'calendar123',
         },
-        {
-          responseSchema: EventResponseSchema,
-        }
-      );
+        overrides: {
+          serverUrl: 'https://test.api.nylas.com',
+        },
+      });
     });
   });
 
@@ -186,27 +166,22 @@ describe('Events', () => {
         },
       });
 
-      expect(apiClient.request).toHaveBeenCalledWith(
-        {
-          method: 'POST',
-          path: '/v3/grants/id123/events',
-          body: {
-            when: {
-              time: 123,
-              timezone: 'America/Toronto',
-            },
-          },
-          queryParams: {
-            calendarId: 'calendar123',
-          },
-          overrides: {
-            serverUrl: 'https://test.api.nylas.com',
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/id123/events',
+        body: {
+          when: {
+            time: 123,
+            timezone: 'America/Toronto',
           },
         },
-        {
-          responseSchema: EventResponseSchema,
-        }
-      );
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+        overrides: {
+          serverUrl: 'https://test.api.nylas.com',
+        },
+      });
     });
   });
 
@@ -229,27 +204,22 @@ describe('Events', () => {
         },
       });
 
-      expect(apiClient.request).toHaveBeenCalledWith(
-        {
-          method: 'PUT',
-          path: '/v3/grants/id123/events/event123',
-          body: {
-            when: {
-              time: 123,
-              timezone: 'America/Toronto',
-            },
-          },
-          queryParams: {
-            calendarId: 'calendar123',
-          },
-          overrides: {
-            serverUrl: 'https://test.api.nylas.com',
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'PUT',
+        path: '/v3/grants/id123/events/event123',
+        body: {
+          when: {
+            time: 123,
+            timezone: 'America/Toronto',
           },
         },
-        {
-          responseSchema: EventResponseSchema,
-        }
-      );
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+        overrides: {
+          serverUrl: 'https://test.api.nylas.com',
+        },
+      });
     });
   });
 
@@ -266,21 +236,16 @@ describe('Events', () => {
         },
       });
 
-      expect(apiClient.request).toHaveBeenCalledWith(
-        {
-          method: 'DELETE',
-          path: '/v3/grants/id123/events/event123',
-          queryParams: {
-            calendarId: 'calendar123',
-          },
-          overrides: {
-            serverUrl: 'https://test.api.nylas.com',
-          },
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'DELETE',
+        path: '/v3/grants/id123/events/event123',
+        queryParams: {
+          calendarId: 'calendar123',
         },
-        {
-          responseSchema: DeleteResponseSchema,
-        }
-      );
+        overrides: {
+          serverUrl: 'https://test.api.nylas.com',
+        },
+      });
     });
   });
 });

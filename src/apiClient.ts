@@ -139,27 +139,32 @@ export default class APIClient {
 
     // handle error response
     if (response.status > 299) {
-      const text = await response.text();
-      let camelCaseError;
-      try {
-        const error = JSON.parse(text);
-        camelCaseError = objKeysToCamelCase(error);
-      } catch (e) {
-        throw new Error(`Could not parse response from the server: ${text}`);
-      }
-
       const authErrorResponse =
         options.path.includes('connect/token') ||
         options.path.includes('connect/revoke');
 
       const tokenErrorResponse = options.path.includes('connect/tokeninfo');
-      if (authErrorResponse && !tokenErrorResponse) {
-        throw new NylasAuthError(camelCaseError);
-      } else if (tokenErrorResponse) {
-        throw new NylasTokenValidationError(camelCaseError);
-      } else {
-        throw new NylasApiError(camelCaseError);
+
+      const text = await response.text();
+      let error: Error;
+      try {
+        const parsedError = JSON.parse(text);
+        const camelCaseError = objKeysToCamelCase(parsedError);
+
+        if (authErrorResponse && !tokenErrorResponse) {
+          error = new NylasAuthError(camelCaseError);
+        } else if (tokenErrorResponse) {
+          error = new NylasTokenValidationError(camelCaseError);
+        } else {
+          error = new NylasApiError(camelCaseError);
+        }
+      } catch (e) {
+        throw new Error(
+          `Received an error but could not parse response from the server: ${text}`
+        );
       }
+
+      throw error;
     }
 
     return this.requestWithResponse(response);

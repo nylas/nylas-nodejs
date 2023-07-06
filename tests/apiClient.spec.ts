@@ -17,24 +17,16 @@ jest.mock('node-fetch', () => {
 
 describe('APIClient', () => {
   describe('constructor', () => {
-    it('should be initialized with the apiKey minimum', () => {
-      const client = new APIClient({ apiKey: 'test' });
-
-      expect(client.constructor.name).toBe('APIClient');
-    });
-
     it('should initialize all the values', () => {
       const client = new APIClient({
         apiKey: 'test',
         serverUrl: 'https://test.api.nylas.com',
-        clientId: 'testClientId',
-        clientSecret: 'testClientSecret',
+        timeout: 30,
       });
 
       expect(client.apiKey).toBe('test');
       expect(client.serverUrl).toBe('https://test.api.nylas.com');
-      expect(client.clientId).toBe('testClientId');
-      expect(client.clientSecret).toBe('testClientSecret');
+      expect(client.timeout).toBe(30000);
     });
   });
 
@@ -45,6 +37,7 @@ describe('APIClient', () => {
       client = new APIClient({
         apiKey: 'testApiKey',
         serverUrl: 'https://api.us.nylas.com',
+        timeout: 30,
       });
     });
 
@@ -129,7 +122,7 @@ describe('APIClient', () => {
         expect(newRequest.url).toEqual(
           'https://override.api.nylas.com/test?param=value'
         );
-        expect(newRequest.body.toString()).toBe('{"id":"abc123"}');
+        expect(newRequest.body?.toString()).toBe('{"id":"abc123"}');
       });
     });
 
@@ -138,49 +131,17 @@ describe('APIClient', () => {
         const payload = {
           id: 123,
           name: 'test',
-          is_valid: true,
+          isValid: true,
         };
-        jest.spyOn(ZodType.prototype, 'safeParse').mockImplementation(() => ({
-          success: true,
-          data: payload,
-        }));
         jest
           .spyOn(Response.prototype, 'text')
           .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
 
         const requestWithResponse = await client.requestWithResponse(
-          new Response(),
-          {
-            responseSchema: z.any(),
-          }
+          new Response()
         );
 
         expect(requestWithResponse).toEqual(payload);
-      });
-
-      it('should return an error if the response is valid', async () => {
-        const zodError = new ZodError([
-          {
-            code: 'custom',
-            message: 'This is a custom error message',
-            path: ['json/path'],
-          },
-        ]);
-        jest.spyOn(ZodType.prototype, 'safeParse').mockImplementation(() => ({
-          success: false,
-          error: zodError,
-        }));
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify({})));
-
-        await expect(
-          client.requestWithResponse(new Response(), {
-            responseSchema: z.any(),
-          })
-        ).rejects.toThrow(
-          new Error(`Could not validate response from the server. ${zodError}`)
-        );
       });
     });
 
@@ -189,26 +150,17 @@ describe('APIClient', () => {
         const payload = {
           id: 123,
           name: 'test',
-          is_valid: true,
+          isValid: true,
         };
         fetch.mockImplementationOnce(() => new Response('', { status: 200 }));
-        jest.spyOn(ZodType.prototype, 'safeParse').mockImplementation(() => ({
-          success: true,
-          data: payload,
-        }));
         jest
           .spyOn(Response.prototype, 'text')
           .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
 
-        const response = await client.request(
-          {
-            path: '/test',
-            method: 'GET',
-          },
-          {
-            responseSchema: z.any(),
-          }
-        );
+        const response = await client.request({
+          path: '/test',
+          method: 'GET',
+        });
         expect(response).toEqual(payload);
       });
 
@@ -216,15 +168,10 @@ describe('APIClient', () => {
         fetch.mockImplementationOnce(() => undefined);
 
         await expect(
-          client.request(
-            {
-              path: '/test',
-              method: 'GET',
-            },
-            {
-              responseSchema: z.any(),
-            }
-          )
+          client.request({
+            path: '/test',
+            method: 'GET',
+          })
         ).rejects.toThrow(new Error('Failed to fetch response'));
       });
 
@@ -233,33 +180,18 @@ describe('APIClient', () => {
           invalid: true,
         };
         fetch.mockImplementationOnce(() => new Response('', { status: 400 }));
-        jest.spyOn(ZodType.prototype, 'safeParse').mockImplementation(() => ({
-          success: false,
-          error: new ZodError([
-            {
-              code: 'custom',
-              message: 'This is a custom error message',
-              path: ['json/path'],
-            },
-          ]),
-        }));
         jest
           .spyOn(Response.prototype, 'text')
           .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
 
         await expect(
-          client.request(
-            {
-              path: '/test',
-              method: 'GET',
-            },
-            {
-              responseSchema: z.any(),
-            }
-          )
+          client.request({
+            path: '/test',
+            method: 'GET',
+          })
         ).rejects.toThrow(
           new Error(
-            `Received an error but could not validate error response from server: ${payload}`
+            'Received an error but could not parse response from the server: {"invalid":true}'
           )
         );
       });
@@ -278,27 +210,17 @@ describe('APIClient', () => {
           .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
 
         await expect(
-          client.request(
-            {
-              path: '/connect/token',
-              method: 'POST',
-            },
-            {
-              responseSchema: z.any(),
-            }
-          )
+          client.request({
+            path: '/connect/token',
+            method: 'POST',
+          })
         ).rejects.toThrow(new NylasAuthError(payload));
 
         await expect(
-          client.request(
-            {
-              path: '/connect/revoke',
-              method: 'POST',
-            },
-            {
-              responseSchema: z.any(),
-            }
-          )
+          client.request({
+            path: '/connect/revoke',
+            method: 'POST',
+          })
         ).rejects.toThrow(new NylasAuthError(payload));
       });
 
@@ -319,15 +241,10 @@ describe('APIClient', () => {
           .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
 
         await expect(
-          client.request(
-            {
-              path: '/connect/tokeninfo',
-              method: 'POST',
-            },
-            {
-              responseSchema: z.any(),
-            }
-          )
+          client.request({
+            path: '/connect/tokeninfo',
+            method: 'POST',
+          })
         ).rejects.toThrow(new NylasTokenValidationError(payload));
       });
 
@@ -345,15 +262,10 @@ describe('APIClient', () => {
           .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
 
         await expect(
-          client.request(
-            {
-              path: '/events',
-              method: 'POST',
-            },
-            {
-              responseSchema: z.any(),
-            }
-          )
+          client.request({
+            path: '/events',
+            method: 'POST',
+          })
         ).rejects.toThrow(new NylasApiError(payload));
       });
     });
