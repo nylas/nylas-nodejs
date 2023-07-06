@@ -1,4 +1,4 @@
 export interface ListQueryParams {
   limit?: number;
-  pageToken?: string;
+  page_token?: string;
 }

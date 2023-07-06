@@ -1,4 +1,3 @@
-import { ZodType } from 'zod';
 import APIClient from '../apiClient';
 import { OverridableNylasConfig } from '../config';
 import { ListQueryParams } from '../schema/request';
@@ -32,7 +31,6 @@ interface DestroyParams {
   path: string;
   queryParams?: Record<string, any>;
   overrides?: OverridableNylasConfig;
-  responseSchema?: ZodType;
 }
 
 type List<T> = ListResponse<ListResponseInnerType<T>>;

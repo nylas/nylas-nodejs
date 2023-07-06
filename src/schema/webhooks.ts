@@ -1,14 +1,37 @@
-import { z } from 'zod';
-import { ItemResponseSchema, ListResponseSchema } from './response';
-
-export interface CreateWebhookRequestBody {
-  triggerTypes: WebhookTriggers[];
-  callbackUrl: string;
+export interface Webhook {
+  id: string;
   description?: string;
-  notificationEmailAddress?: string;
+  trigger_types: WebhookTriggers[];
+  callback_url: string;
+  status: 'active' | 'failing' | 'failed' | 'pause';
+  notification_email_address?: string;
+  status_updated_at: number;
 }
 
-export type UpdateWebhookRequestBody = Partial<CreateWebhookRequestBody>;
+export interface WebhookWithSecret extends Webhook {
+  webhook_secret: string;
+}
+
+export interface WebhookDeleteResponse {
+  request_id: string;
+  data?: {
+    status: 'success';
+  };
+}
+
+export interface WebhookIpAddressesResponse {
+  ip_addresses: string[];
+  updated_at: number;
+}
+
+export interface CreateWebhookRequest {
+  trigger_types: WebhookTriggers[];
+  callback_url: string;
+  description?: string;
+  notification_email_address?: string;
+}
+
+export type UpdateWebhookRequestBody = Partial<CreateWebhookRequest>;
 
 export enum WebhookTriggers {
   CalendarCreated = 'calendar.created',
@@ -24,52 +47,3 @@ export enum WebhookTriggers {
   MessageSendSuccess = 'message.send_success',
   MessageSendFailed = 'message.send_failed',
 }
-
-const WebhookSchema = z.object({
-  id: z.string(),
-  description: z.string().optional(),
-  triggerTypes: z.array(z.nativeEnum(WebhookTriggers)),
-  callbackUrl: z.string(),
-  status: z.union([
-    z.literal('active'),
-    z.literal('failing'),
-    z.literal('failed'),
-    z.literal('pause'),
-  ]),
-  notificationEmailAddress: z.string(),
-  statusUpdatedAt: z.number(),
-});
-const WebhookWithSecretSchema = WebhookSchema.extend({
-  webhookSecret: z.string(),
-});
-export const WebhookDeleteResponseSchema = z.object({
-  requestId: z.string(),
-  data: z
-    .object({
-      status: z.literal('success'),
-    })
-    .optional(),
-});
-
-export type Webhook = z.infer<typeof WebhookSchema>;
-export type WebhookWithSecret = z.infer<typeof WebhookWithSecretSchema>;
-export type WebhookDeleteResponse = z.infer<typeof WebhookDeleteResponseSchema>;
-export const WebhookResponseSchema = ItemResponseSchema.extend({
-  data: WebhookSchema,
-});
-export const WebhookResponseWithSecretSchema = ItemResponseSchema.extend({
-  data: WebhookWithSecretSchema,
-});
-export const WebhookListResponseSchema = ListResponseSchema.extend({
-  data: z.array(WebhookSchema),
-});
-export type WebhookList = z.infer<typeof WebhookListResponseSchema>;
-
-const WebhookIpAddressesSchema = z.object({
-  ipAddresses: z.array(z.string()),
-  updatedAt: z.number(),
-});
-export const WebhookIpAddressesResponseSchema = ItemResponseSchema.extend({
-  data: WebhookIpAddressesSchema,
-});
-export type WebhookIpAddresses = z.infer<typeof WebhookIpAddressesSchema>;
