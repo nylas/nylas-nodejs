@@ -5,8 +5,10 @@ import { Events } from './resources/events';
 import { Auth } from './resources/auth';
 import { Webhooks } from './resources/webhooks';
 import { Availability } from './resources/availability';
+import { Applications } from './resources/applications';
 
 class Nylas {
+  public applications: Applications;
   public availability: Availability;
   public calendars: Calendars;
   public events: Events;
@@ -21,6 +23,7 @@ class Nylas {
       timeout: config.timeout || 30,
     });
 
+    this.applications = new Applications(this.apiClient);
     this.availability = new Availability(this.apiClient);
     this.calendars = new Calendars(this.apiClient);
     this.events = new Events(this.apiClient);
