@@ -1,25 +1,26 @@
 import { ListQueryParams } from './request';
+import { Subset } from '../utils';
 
 export interface Event {
   id: string;
-  grant_id: string;
+  grantId: string;
   object: 'event';
-  calendar_id: string;
+  calendarId: string;
   busy: boolean;
-  read_only: boolean;
-  created_at: number;
-  updated_at: number;
+  readOnly: boolean;
+  createdAt: number;
+  updatedAt: number;
   participants: Participant[];
   when: When;
   conferencing: Conferencing;
   description?: string;
   location?: string;
-  message_id?: string;
+  messageId?: string;
   owner?: string;
-  ical_uid?: string;
+  icalUid?: string;
   title?: string;
-  html_link?: string;
-  hide_participants?: boolean;
+  htmlLink?: string;
+  hideParticipants?: boolean;
   metadata?: Record<string, string>;
   creator?: EmailName;
   organizer: EmailName;
@@ -36,32 +37,32 @@ export interface CreateEventRequest {
   description?: string;
   location?: string;
   conferencing?: Conferencing;
-  reminder_minutes?: string;
-  reminder_method?: string;
+  reminderMinutes?: string;
+  reminderMethod?: string;
   metadata?: Record<string, unknown>;
   participants?: Participant[];
   recurrence?: Recurrence;
-  calendar_id?: string;
-  read_only?: boolean;
-  round_robin_order?: string[];
+  calendarId?: string;
+  readOnly?: boolean;
+  roundRobinOrder?: string[];
   visibility?: 'public' | 'private';
   capacity?: number;
-  hide_participants?: boolean;
+  hideParticipants?: boolean;
 }
 
 export type UpdateEventRequest = Subset<CreateEventRequest>;
 
 export interface ListEventQueryParams extends ListQueryParams {
-  show_cancelled?: boolean;
-  event_id?: string;
-  calendar_id: string;
+  showCancelled?: boolean;
+  eventId?: string;
+  calendarId: string;
   title?: string;
   description?: string;
   location?: string;
   end?: string;
   start?: string;
-  metadata_pair?: Record<string, unknown>;
-  expand_recurring?: boolean;
+  metadataPair?: Record<string, unknown>;
+  expandRecurring?: boolean;
   busy?: boolean;
   participants?: string;
 }
@@ -80,7 +81,12 @@ export type DestroyEventQueryParams = CreateEventQueryParams;
 
 type Status = 'confirmed' | 'tentative' | 'cancelled';
 type Visibility = 'public' | 'private';
-type ConferencingProvider = 'Google Meet' | 'Zoom Meeting' | 'Microsoft Teams' | 'GoToMeeting' | 'WebEx';
+type ConferencingProvider =
+  | 'Google Meet'
+  | 'Zoom Meeting'
+  | 'Microsoft Teams'
+  | 'GoToMeeting'
+  | 'WebEx';
 type ParticipantStatus = 'noreply' | 'yes' | 'no' | 'maybe';
 type ReminderMethod = 'email' | 'popup' | 'sound' | 'display';
 type Conferencing = Details | Autocreate;
@@ -92,7 +98,7 @@ export interface Details {
 }
 
 export interface DetailsConfig {
-  meeting_code?: string;
+  meetingCode?: string;
   password?: string;
   url?: string;
   pin?: string;
@@ -110,10 +116,10 @@ export interface Time {
 }
 
 export interface Timespan {
-  start_time: number;
-  end_time: number;
-  start_timezone: string;
-  end_timezone: string;
+  startTime: number;
+  endTime: number;
+  startTimezone: string;
+  endTimezone: string;
 }
 
 export interface Date {
@@ -121,8 +127,8 @@ export interface Date {
 }
 
 export interface Datespan {
-  start_date: string;
-  end_date: string;
+  startDate: string;
+  endDate: string;
 }
 
 export interface Participant {
@@ -130,7 +136,7 @@ export interface Participant {
   name?: string;
   status: ParticipantStatus;
   comment?: string;
-  phone_number?: string;
+  phoneNumber?: string;
 }
 
 export interface Recurrence {
@@ -139,8 +145,8 @@ export interface Recurrence {
 }
 
 export interface Reminder {
-  reminder_minutes: string;
-  reminder_method: ReminderMethod;
+  reminderMinutes: string;
+  reminderMethod: ReminderMethod;
 }
 
 export interface EmailName {

@@ -59,7 +59,7 @@ export class Resource {
       while (res.data.length != queryParams.limit) {
         entriesRemaining = queryParams.limit - res.data.length;
 
-        if (!res.next_cursor) {
+        if (!res.nextCursor) {
           break;
         }
 
@@ -69,14 +69,14 @@ export class Resource {
           queryParams: {
             ...queryParams,
             limit: entriesRemaining,
-            pageToken: res.next_cursor,
+            pageToken: res.nextCursor,
           },
           overrides,
         });
 
         res.data = res.data.concat(nextRes.data);
-        res.request_id = nextRes.request_id;
-        res.next_cursor = nextRes.next_cursor;
+        res.requestId = nextRes.requestId;
+        res.nextCursor = nextRes.nextCursor;
       }
     }
 
@@ -90,10 +90,10 @@ export class Resource {
 
     yield first;
 
-    let pageToken = first.next_cursor;
+    let pageToken = first.nextCursor;
 
     while (pageToken) {
-      const res: List<T> = await this.fetchList({
+      const res = await this.fetchList({
         ...listParams,
         queryParams: pageToken
           ? {
@@ -105,7 +105,7 @@ export class Resource {
 
       yield res;
 
-      pageToken = res.next_cursor;
+      pageToken = res.nextCursor;
     }
 
     return undefined;

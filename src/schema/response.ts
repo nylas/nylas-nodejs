@@ -1,55 +1,55 @@
 export interface ItemResponse<T> {
-  request_id: string;
+  requestId: string;
   data: T;
 }
 
 export interface ListResponse<T> {
-  request_id: string;
+  requestId: string;
   data: T[];
-  next_cursor?: string;
+  nextCursor?: string;
 }
 
 export interface NylasApiErrorResponse {
-  request_id: string;
+  requestId: string;
   error: NylasApiError;
 }
 
 export interface NylasApiError {
   type: string;
   message: string;
-  provider_error?: Record<string, unknown>;
+  providerError?: Record<string, unknown>;
 }
 
 export interface DeleteResponse {
-  request_id: string;
+  requestId: string;
 }
 
 export interface AuthErrorResponse {
-  request_id: string;
+  requestId: string;
   error: string;
-  error_code: number;
-  error_description: string;
-  error_uri: string;
+  errorCode: number;
+  errorDescription: string;
+  errorUri: string;
 }
 
 export interface TokenValidationErrorResponse {
   success: boolean;
   error: {
-    http_code: number;
-    event_code: number;
+    httpCode: number;
+    eventCode: number;
     type: string;
     message: string;
-    request_id: string;
+    requestId: string;
   };
 }
 
 export interface ExchangeResponse {
-  access_token: string;
-  grant_id: string;
-  expires_in: number;
-  refresh_token?: string;
-  id_token?: string;
-  token_type?: string;
+  accessToken: string;
+  grantId: string;
+  expiresIn: number;
+  refreshToken?: string;
+  idToken?: string;
+  tokenType?: string;
   scope: string;
 }
 

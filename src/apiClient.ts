@@ -5,6 +5,7 @@ import {
   NylasAuthError,
   NylasTokenValidationError,
 } from './schema/error';
+import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -53,8 +54,9 @@ export default class APIClient {
     queryParams?: Record<string, unknown>
   ): URL {
     if (queryParams) {
+      const snakeCaseParams = objKeysToSnakeCase(queryParams, ['metadataPair']);
       // TODO: refactor this not manually turn params into query string
-      for (const [key, value] of Object.entries(queryParams)) {
+      for (const [key, value] of Object.entries(snakeCaseParams)) {
         if (key == 'metadataPair') {
           // The API understands a metadata_pair filter in the form of:
           // <key>:<value>
@@ -94,7 +96,9 @@ export default class APIClient {
     requestOptions.method = optionParams.method;
 
     if (optionParams.body) {
-      requestOptions.body = optionParams.body
+      requestOptions.body = JSON.stringify(
+        objKeysToSnakeCase(optionParams.body)
+      );
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
@@ -114,7 +118,8 @@ export default class APIClient {
     const text = await response.text();
 
     try {
-      return JSON.parse(text);
+      const responseJSON = JSON.parse(text);
+      return objKeysToCamelCase(responseJSON);
     } catch (e) {
       throw new Error(`Could not parse response from the server: ${text}`);
     }
@@ -135,9 +140,10 @@ export default class APIClient {
     // handle error response
     if (response.status > 299) {
       const text = await response.text();
-      let error;
+      let camelCaseError;
       try {
-        error = JSON.parse(text);
+        const error = JSON.parse(text);
+        camelCaseError = objKeysToCamelCase(error);
       } catch (e) {
         throw new Error(`Could not parse response from the server: ${text}`);
       }
@@ -148,11 +154,11 @@ export default class APIClient {
 
       const tokenErrorResponse = options.path.includes('connect/tokeninfo');
       if (authErrorResponse && !tokenErrorResponse) {
-        throw new NylasAuthError(error);
+        throw new NylasAuthError(camelCaseError);
       } else if (tokenErrorResponse) {
-        throw new NylasTokenValidationError(error);
+        throw new NylasTokenValidationError(camelCaseError);
       } else {
-        throw new NylasApiError(error);
+        throw new NylasApiError(camelCaseError);
       }
     }
 

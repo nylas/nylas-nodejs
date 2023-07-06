@@ -2,14 +2,14 @@ export interface Grant {
   id: string;
   provider: string;
   scope: string[];
-  created_at: number;
-  grant_status?: string;
+  createdAt: number;
+  grantStatus?: string;
   email?: string;
-  user_agent?: string;
+  userAgent?: string;
   ip?: string;
   state?: string;
-  updated_at?: number;
-  provider_user_id?: string;
+  updatedAt?: number;
+  providerUserId?: string;
   settings?: Record<string, unknown>;
 }
 
@@ -28,12 +28,12 @@ export interface UpdateGrantRequest {
 export interface ListGrantsQueryParams {
   limit?: number;
   offset?: number;
-  sort_by?: 'created_at' | 'updated_at';
-  order_by?: 'asc' | 'desc';
+  sortBy?: 'createdAt' | 'updatedAt';
+  orderBy?: 'asc' | 'desc';
   since?: number;
   before?: number;
   email?: string;
-  grant_status?: string;
+  grantStatus?: string;
   ip?: string;
   provider?: string;
 }

@@ -4,7 +4,7 @@ export interface ProviderDetectParams {
 }
 
 export interface ProviderDetectResponse {
-  email_address: string;
+  emailAddress: string;
   provider?: string;
   type?: string;
 }
@@ -18,10 +18,10 @@ export interface Provider {
 
 interface ProviderSettings {
   name?: string;
-  imap_host?: string;
-  imap_port?: number;
-  smtp_host?: string;
-  smtp_port?: number;
-  password_link?: string;
+  imapHost?: string;
+  imapPort?: number;
+  smtpHost?: string;
+  smtpPort?: number;
+  passwordLink?: string;
   primary?: boolean;
 }

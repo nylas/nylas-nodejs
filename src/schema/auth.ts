@@ -2,15 +2,15 @@ type AccessType = 'online' | 'offline';
 type Provider = 'google' | 'imap' | 'microsoft' | 'yahoo';
 
 export type AuthConfig = {
-  redirect_uri: string;
+  redirectUri: string;
   provider?: Provider;
-  access_type?: AccessType;
+  accessType?: AccessType;
   prompt?: string;
   scope?: string[];
-  include_grant_scopes?: boolean;
+  includeGrantScopes?: boolean;
   metadata?: string;
   state?: string;
-  login_hint?: string;
+  loginHint?: string;
 };
 
 export type AdminConsentAuth = AuthConfig & {
@@ -22,52 +22,52 @@ export interface OpenID {
   aud: string; // Application Slug
   sub?: string; // ID
   email?: string;
-  email_verified?: boolean;
-  at_hash?: string;
+  emailVerified?: boolean;
+  atHash?: string;
   iat: number; // Issued At
   exp: number; // Expites At
   // Profile
   name?: string;
-  given_name?: string;
-  family_name?: string;
-  nick_name?: string;
-  picture_url?: string;
+  givenName?: string;
+  familyName?: string;
+  nickName?: string;
+  pictureUrl?: string;
   gender?: string;
   locale?: string;
 }
 
 export interface CodeExchangeRequest {
-  redirect_uri: string;
+  redirectUri: string;
   code: string;
-  code_verifier?: string; // Only For PKCE auth requests
+  codeVerifier?: string; // Only For PKCE auth requests
 }
 
 export interface TokenExchangeRequest {
-  redirect_uri: string;
-  refresh_token: string;
+  redirectUri: string;
+  refreshToken: string;
 }
 
 export type HostedAuthRequest = {
-  redirect_uri: string;
+  redirectUri: string;
   provider?: Provider;
   state?: string;
-  login_hint?: string;
-  cookie_nonce?: string;
-  grant_id?: string;
+  loginHint?: string;
+  cookieNonce?: string;
+  grantId?: string;
   scope?: string[];
-  expires_in?: number;
+  expiresIn?: number;
   settings?: Record<string, unknown>;
 };
 
 export interface HostedAuth {
   url: string;
   id: string;
-  expires_at: number;
+  expiresAt: number;
   request: HostedAuthRequest;
 }
 
 export interface PKCEAuthURL {
   url: string;
   secret: string;
-  secret_hash: string;
+  secretHash: string;
 }

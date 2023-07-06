@@ -5,14 +5,14 @@ export type Availability = {
 
 export interface GetAvailabilityRequest {
   /** Unix timestamp for the start time to check availability for. */
-  start_time: number;
+  startTime: number;
   /** Unix timestamp for the end time to check availability for. */
-  end_time: number;
+  endTime: number;
   participants: Participant[];
-  duration_minutes?: number;
-  interval_minutes?: number;
-  round_to_30_minutes?: boolean;
-  availability_rules?: AvailabilityRules;
+  durationMinutes?: number;
+  intervalMinutes?: number;
+  roundTo30Minutes?: boolean;
+  availabilityRules?: AvailabilityRules;
 }
 
 export type TimeSlot = {
@@ -22,10 +22,10 @@ export type TimeSlot = {
 };
 
 export interface AvailabilityRules {
-  availability_method?: AvailabilityMethod;
+  availabilityMethod?: AvailabilityMethod;
   buffer?: MeetingBuffer;
-  default_open_hours?: OpenHours[];
-  round_robin_event_id?: string;
+  defaultOpenHours?: OpenHours[];
+  roundRobinEventId?: string;
 }
 
 export interface MeetingBuffer {
@@ -42,8 +42,8 @@ export interface OpenHours {
 
 export interface Participant {
   email: string;
-  calendar_ids?: string[];
-  open_hours?: OpenHours[];
+  calendarIds?: string[];
+  openHours?: OpenHours[];
 }
 
 export enum AvailabilityMethod {

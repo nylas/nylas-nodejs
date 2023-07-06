@@ -20,16 +20,16 @@ export interface UpdateCalenderRequestBody extends CreateCalenderRequestBody {
 
 export type Calendar = {
   id: string;
-  grant_id: string;
+  grantId: string;
   name: string;
   object: string;
   timezone: string;
-  read_only: boolean;
-  is_owned_by_user: boolean;
+  readOnly: boolean;
+  isOwnedByUser: boolean;
   description?: string;
   location?: string;
-  hex_color?: string;
-  hex_foreground_color?: string;
-  is_primary?: boolean;
+  hexColor?: string;
+  hexForegroundColor?: string;
+  isPrimary?: boolean;
   metadata?: Record<string, unknown>;
 };

@@ -1,34 +1,34 @@
 export interface Webhook {
   id: string;
   description?: string;
-  trigger_types: WebhookTriggers[];
-  callback_url: string;
+  triggerTypes: WebhookTriggers[];
+  callbackUrl: string;
   status: 'active' | 'failing' | 'failed' | 'pause';
-  notification_email_address?: string;
-  status_updated_at: number;
+  notificationEmailAddress?: string;
+  statusUpdatedAt: number;
 }
 
 export interface WebhookWithSecret extends Webhook {
-  webhook_secret: string;
+  webhookSecret: string;
 }
 
 export interface WebhookDeleteResponse {
-  request_id: string;
+  requestId: string;
   data?: {
     status: 'success';
   };
 }
 
 export interface WebhookIpAddressesResponse {
-  ip_addresses: string[];
-  updated_at: number;
+  ipAddresses: string[];
+  updatedAt: number;
 }
 
 export interface CreateWebhookRequest {
-  trigger_types: WebhookTriggers[];
-  callback_url: string;
+  triggerTypes: WebhookTriggers[];
+  callbackUrl: string;
   description?: string;
-  notification_email_address?: string;
+  notificationEmailAddress?: string;
 }
 
 export type UpdateWebhookRequestBody = Partial<CreateWebhookRequest>;
