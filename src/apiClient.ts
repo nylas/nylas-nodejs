@@ -30,12 +30,12 @@ interface RequestOptions {
 export default class APIClient {
   apiKey: string;
   serverUrl: string;
-  timeout: number; // TODO::Implement
+  timeout: number;
 
   constructor({ apiKey, serverUrl, timeout }: Required<NylasConfig>) {
     this.apiKey = apiKey;
     this.serverUrl = serverUrl;
-    this.timeout = timeout;
+    this.timeout = timeout * 1000; // fetch timeout uses milliseconds
   }
 
   private setRequestUrl({
@@ -122,8 +122,11 @@ export default class APIClient {
 
   async request<T>(options: RequestOptionsParams): Promise<T> {
     const req = this.newRequest(options);
+    const controller: AbortController = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), this.timeout);
 
-    const response = await fetch(req);
+    const response = await fetch(req, { signal: controller.signal });
+    clearTimeout(timeout);
 
     if (typeof response === 'undefined') {
       throw new Error('Failed to fetch response');
