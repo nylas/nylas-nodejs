@@ -1,17 +1,16 @@
 import { Overrides } from '../config';
 import {
-  Availability,
-  AvailabilityResponseSchema,
   Calendar,
-  CalendarListResponseSchema,
-  CalendarResponseSchema,
   CreateCalenderRequestBody,
-  GetAvailabilityRequestBody,
   ListCalendersQueryParams,
   UpdateCalenderRequestBody,
-} from '../schema/calendars';
-import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
-import { BaseResource, AsyncListResponse } from './baseResource';
+} from '../models/calendars';
+import {
+  NylasDeleteResponse,
+  NylasResponse,
+  NylasListResponse,
+} from '../models/response';
+import { Resource, AsyncListResponse } from './resource';
 
 interface FindCalendarParams {
   calendarId: string;
@@ -37,41 +36,17 @@ interface DestroyCalendarParams {
   calendarId: string;
 }
 
-interface GetAvailabilityParams {
-  identifier: string;
-  requestBody: GetAvailabilityRequestBody;
-}
-
 type CalendarListParams = ListCalendersParams & Overrides;
 
-export class Calendars extends BaseResource {
-  public getAvailability({
-    identifier,
-    requestBody,
-    overrides,
-  }: GetAvailabilityParams & Overrides): Promise<Availability> {
-    return this.apiClient.request<Availability>(
-      {
-        method: 'POST',
-        path: `/v3/grants/${identifier}/calendars/availability`,
-        body: requestBody,
-        overrides,
-      },
-      {
-        responseSchema: AvailabilityResponseSchema,
-      }
-    );
-  }
-
+export class Calendars extends Resource {
   public list(
     { overrides, identifier }: CalendarListParams,
     queryParams?: ListCalendersQueryParams
-  ): AsyncListResponse<ListResponse<Calendar>> {
-    return super._list<ListResponse<Calendar>>({
+  ): AsyncListResponse<NylasListResponse<Calendar>> {
+    return super._list<NylasListResponse<Calendar>>({
       queryParams,
       overrides,
       path: `/v3/grants/${identifier}/calendars`,
-      responseSchema: CalendarListResponseSchema,
     });
   }
 
@@ -79,10 +54,9 @@ export class Calendars extends BaseResource {
     calendarId,
     identifier,
     overrides,
-  }: FindCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
+  }: FindCalendarParams & Overrides): Promise<NylasResponse<Calendar>> {
     return super._find({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
-      responseSchema: CalendarResponseSchema,
       overrides,
     });
   }
@@ -91,10 +65,9 @@ export class Calendars extends BaseResource {
     identifier,
     requestBody,
     overrides,
-  }: CreateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
+  }: CreateCalendarParams & Overrides): Promise<NylasResponse<Calendar>> {
     return super._create({
       path: `/v3/grants/${identifier}/calendars`,
-      responseSchema: CalendarResponseSchema,
       requestBody,
       overrides,
     });
@@ -105,10 +78,9 @@ export class Calendars extends BaseResource {
     identifier,
     requestBody,
     overrides,
-  }: UpdateCalendarParams & Overrides): Promise<ItemResponse<Calendar>> {
+  }: UpdateCalendarParams & Overrides): Promise<NylasResponse<Calendar>> {
     return super._update({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
-      responseSchema: CalendarResponseSchema,
       requestBody,
       overrides,
     });
@@ -118,7 +90,7 @@ export class Calendars extends BaseResource {
     identifier,
     calendarId,
     overrides,
-  }: DestroyCalendarParams & Overrides): Promise<DeleteResponse> {
+  }: DestroyCalendarParams & Overrides): Promise<NylasDeleteResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
       overrides,

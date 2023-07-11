@@ -17,7 +17,6 @@ describe('Nylas', () => {
 
       expect(nylas.calendars.constructor.name).toBe('Calendars');
       expect(nylas.events.constructor.name).toBe('Events');
-      expect(nylas.auth.constructor.name).toBe('Auth');
       expect(nylas.webhooks.constructor.name).toBe('Webhooks');
     });
 
@@ -25,14 +24,12 @@ describe('Nylas', () => {
       const nylas = new Nylas({
         apiKey: 'test',
         serverUrl: 'https://test.nylas.com',
-        clientId: 'testClientId',
-        clientSecret: 'testClientSecret',
+        timeout: 30,
       });
 
-      expect(nylas.auth.apiClient.apiKey).toBe('test');
-      expect(nylas.auth.apiClient.serverUrl).toBe('https://test.nylas.com');
-      expect(nylas.auth.apiClient.clientId).toBe('testClientId');
-      expect(nylas.auth.apiClient.clientSecret).toBe('testClientSecret');
+      expect(nylas.apiClient.apiKey).toBe('test');
+      expect(nylas.apiClient.serverUrl).toBe('https://test.nylas.com');
+      expect(nylas.apiClient.timeout).toBe(30000);
     });
 
     it('should default to the production server', () => {
@@ -40,7 +37,7 @@ describe('Nylas', () => {
         apiKey: 'test',
       });
 
-      expect(nylas.auth.apiClient.serverUrl).toBe('https://api.us.nylas.com');
+      expect(nylas.apiClient.serverUrl).toBe('https://api.us.nylas.com');
     });
   });
 });

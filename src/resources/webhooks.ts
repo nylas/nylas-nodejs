@@ -1,45 +1,40 @@
-import { AsyncListResponse, BaseResource } from './baseResource';
+import { AsyncListResponse, Resource } from './resource';
 import { Overrides } from '../config';
-import { ItemResponse, ListResponse } from '../schema/response';
+import { NylasResponse, NylasListResponse } from '../models/response';
 import {
-  CreateWebhookRequestBody,
+  CreateWebhookRequest,
+  UpdateWebhookRequestBody,
   Webhook,
   WebhookDeleteResponse,
-  WebhookDeleteResponseSchema,
-  WebhookIpAddresses,
-  WebhookIpAddressesResponseSchema,
-  WebhookListResponseSchema,
-  WebhookResponseSchema,
-  WebhookResponseWithSecretSchema,
+  WebhookIpAddressesResponse,
   WebhookWithSecret,
-} from '../schema/webhooks';
+} from '../models/webhooks';
 
 interface CreateWebhookParams {
-  requestBody: CreateWebhookRequestBody;
+  requestBody: CreateWebhookRequest;
 }
 
 interface UpdateWebhookParams {
   webhookId: string;
-  requestBody: CreateWebhookRequestBody;
+  requestBody: UpdateWebhookRequestBody;
 }
 
 interface DestroyWebhookParams {
   webhookId: string;
 }
 
-export class Webhooks extends BaseResource {
+export class Webhooks extends Resource {
   /**
    * List all webhook destinations for the application
    * @param overrides Overrides for the request
    * @returns The list of webhook destinations
    */
   public list({ overrides }: Overrides = {}): AsyncListResponse<
-    ListResponse<Webhook>
+    NylasListResponse<Webhook>
   > {
-    return super._list<ListResponse<Webhook>>({
+    return super._list<NylasListResponse<Webhook>>({
       overrides,
       path: `/v3/webhooks`,
-      responseSchema: WebhookListResponseSchema,
     });
   }
 
@@ -53,13 +48,12 @@ export class Webhooks extends BaseResource {
     requestBody,
     overrides,
   }: CreateWebhookParams & Overrides): Promise<
-    ItemResponse<WebhookWithSecret>
+    NylasResponse<WebhookWithSecret>
   > {
     return super._create({
       path: `/v3/webhooks`,
       requestBody,
       overrides,
-      responseSchema: WebhookResponseWithSecretSchema,
     });
   }
 
@@ -74,12 +68,11 @@ export class Webhooks extends BaseResource {
     webhookId,
     requestBody,
     overrides,
-  }: UpdateWebhookParams & Overrides): Promise<ItemResponse<Webhook>> {
+  }: UpdateWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
     return super._update({
       path: `/v3/webhooks/${webhookId}`,
       requestBody,
       overrides,
-      responseSchema: WebhookResponseSchema,
     });
   }
 
@@ -95,7 +88,6 @@ export class Webhooks extends BaseResource {
     return super._destroy({
       path: `/v3/webhooks/${webhookId}`,
       overrides,
-      responseSchema: WebhookDeleteResponseSchema,
     });
   }
 
@@ -108,12 +100,11 @@ export class Webhooks extends BaseResource {
   public rotateSecret({
     webhookId,
     overrides,
-  }: DestroyWebhookParams & Overrides): Promise<ItemResponse<Webhook>> {
+  }: DestroyWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
     return super._update({
       path: `/v3/webhooks/${webhookId}/rotate-secret`,
       requestBody: {},
       overrides,
-      responseSchema: WebhookResponseWithSecretSchema,
     });
   }
 
@@ -123,12 +114,11 @@ export class Webhooks extends BaseResource {
    * @returns The list of IP addresses that Nylas sends webhooks from
    */
   public ipAddresses({ overrides }: Overrides = {}): Promise<
-    ItemResponse<WebhookIpAddresses>
+    NylasResponse<WebhookIpAddressesResponse>
   > {
     return super._find({
       path: `/v3/webhooks/ip-addresses`,
       overrides,
-      responseSchema: WebhookIpAddressesResponseSchema,
     });
   }
 

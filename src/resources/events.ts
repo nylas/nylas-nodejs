@@ -1,18 +1,20 @@
 import { Overrides } from '../config';
 import {
   CreateEventQueryParams,
-  CreateEventRequestBody,
+  CreateEventRequest,
   DestroyEventQueryParams,
   Event,
-  EventListResponseSchema,
-  EventResponseSchema,
   FindEventQueryParams,
   ListEventQueryParams,
   UpdateEventQueryParams,
-  UpdateEventRequestBody,
-} from '../schema/events';
-import { DeleteResponse, ItemResponse, ListResponse } from '../schema/response';
-import { AsyncListResponse, BaseResource } from './baseResource';
+  UpdateEventRequest,
+} from '../models/events';
+import {
+  NylasDeleteResponse,
+  NylasResponse,
+  NylasListResponse,
+} from '../models/response';
+import { AsyncListResponse, Resource } from './resource';
 
 interface FindEventParams {
   eventId: string;
@@ -27,14 +29,14 @@ interface ListEventParams {
 interface CreateEventParams {
   identifier: string;
   queryParams: CreateEventQueryParams;
-  requestBody: CreateEventRequestBody;
+  requestBody: CreateEventRequest;
 }
 
 interface UpdateEventParams {
   eventId: string;
   identifier: string;
   queryParams: UpdateEventQueryParams;
-  requestBody: UpdateEventRequestBody;
+  requestBody: UpdateEventRequest;
 }
 
 interface DestroyEventParams {
@@ -42,17 +44,16 @@ interface DestroyEventParams {
   eventId: string;
   queryParams: DestroyEventQueryParams;
 }
-export class Events extends BaseResource {
+export class Events extends Resource {
   public list({
     identifier,
     queryParams,
     overrides,
-  }: ListEventParams & Overrides): AsyncListResponse<ListResponse<Event>> {
+  }: ListEventParams & Overrides): AsyncListResponse<NylasListResponse<Event>> {
     return super._list({
       queryParams,
       path: `/v3/grants/${identifier}/events`,
       overrides,
-      responseSchema: EventListResponseSchema,
     });
   }
 
@@ -61,10 +62,9 @@ export class Events extends BaseResource {
     eventId,
     queryParams,
     overrides,
-  }: FindEventParams & Overrides): Promise<ItemResponse<Event>> {
+  }: FindEventParams & Overrides): Promise<NylasResponse<Event>> {
     return super._find({
       path: `/v3/grants/${identifier}/events/${eventId}`,
-      responseSchema: EventResponseSchema,
       queryParams,
       overrides,
     });
@@ -75,10 +75,9 @@ export class Events extends BaseResource {
     requestBody,
     queryParams,
     overrides,
-  }: CreateEventParams & Overrides): Promise<ItemResponse<Event>> {
+  }: CreateEventParams & Overrides): Promise<NylasResponse<Event>> {
     return super._create({
       path: `/v3/grants/${identifier}/events`,
-      responseSchema: EventResponseSchema,
       queryParams,
       requestBody,
       overrides,
@@ -91,10 +90,9 @@ export class Events extends BaseResource {
     requestBody,
     queryParams,
     overrides,
-  }: UpdateEventParams & Overrides): Promise<ItemResponse<Event>> {
+  }: UpdateEventParams & Overrides): Promise<NylasResponse<Event>> {
     return super._update({
       path: `/v3/grants/${identifier}/events/${eventId}`,
-      responseSchema: EventResponseSchema,
       queryParams,
       requestBody,
       overrides,
@@ -106,7 +104,7 @@ export class Events extends BaseResource {
     eventId,
     queryParams,
     overrides,
-  }: DestroyEventParams & Overrides): Promise<DeleteResponse> {
+  }: DestroyEventParams & Overrides): Promise<NylasDeleteResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/events/${eventId}`,
       queryParams,

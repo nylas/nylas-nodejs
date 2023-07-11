@@ -4,32 +4,36 @@ import { Calendars } from './resources/calendars';
 import { Events } from './resources/events';
 import { Auth } from './resources/auth';
 import { Webhooks } from './resources/webhooks';
+import { Availability } from './resources/availability';
+import { Applications } from './resources/applications';
 
 class Nylas {
-  // TODO: remove from config?
-  clientId?: string;
-  clientSecret?: string;
-
+  public applications: Applications;
+  public availability: Availability;
   public calendars: Calendars;
   public events: Events;
-  public auth: Auth;
   public webhooks: Webhooks;
 
+  apiClient: APIClient;
+
   constructor(config: NylasConfig) {
-    const apiClient = new APIClient({
+    this.apiClient = new APIClient({
       apiKey: config.apiKey,
       serverUrl: config.serverUrl || DEFAULT_SERVER_URL,
-      clientId: config.clientId,
-      clientSecret: config.clientSecret,
+      timeout: config.timeout || 30,
     });
 
-    this.calendars = new Calendars(apiClient);
-    this.events = new Events(apiClient);
-    this.auth = new Auth(apiClient);
-    this.webhooks = new Webhooks(apiClient);
-    // etc.
+    this.applications = new Applications(this.apiClient);
+    this.availability = new Availability(this.apiClient);
+    this.calendars = new Calendars(this.apiClient);
+    this.events = new Events(this.apiClient);
+    this.webhooks = new Webhooks(this.apiClient);
 
     return this;
+  }
+
+  public auth(clientId: string, clientSecret: string): Auth {
+    return new Auth(this.apiClient, clientId, clientSecret);
   }
 }
 

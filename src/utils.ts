@@ -35,7 +35,7 @@ function convertCase(
 export function objKeysToCamelCase(
   obj: Record<string, unknown>,
   exclude?: string[]
-): Record<string, unknown> {
+): any {
   return convertCase(obj, camelCase, exclude);
 }
 
@@ -43,6 +43,20 @@ export function objKeysToCamelCase(
 export function objKeysToSnakeCase(
   obj: Record<string, unknown>,
   exclude?: string[]
-): Record<string, unknown> {
+): any {
   return convertCase(obj, snakeCase, exclude);
 }
+
+/**
+ * A better "Partial" type that makes all properties optional, including nested ones.
+ * @see https://grrr.tech/posts/2021/typescript-partial/
+ */
+export type Subset<K> = {
+  [attr in keyof K]?: K[attr] extends object
+    ? Subset<K[attr]>
+    : K[attr] extends object | null
+    ? Subset<K[attr]> | null
+    : K[attr] extends object | null | undefined
+    ? Subset<K[attr]> | null | undefined
+    : K[attr];
+};

@@ -1,42 +1,38 @@
 import { v4 as uuid } from 'uuid';
 import sha256 from 'sha256';
 import APIClient from '../apiClient';
-import { BaseResource } from './baseResource';
+import { Resource } from './resource';
 import { Grants } from './grants';
 import { Providers } from './providers';
 import {
-  AdminConsentAuth,
-  AuthConfig,
+  URLForAdminConsentConfig,
+  URLForAuthenticationConfig,
   CodeExchangeRequest,
-  HostedAuth,
-  HostedAuthRequest,
-  HostedAuthResponseSchema,
-  IMAPAuthConfig,
+  ServerSideHostedAuthResponse,
+  ServerSideHostedAuthRequest,
   OpenID,
-  OpenIDSchema,
   PKCEAuthURL,
   TokenExchangeRequest,
-} from '../schema/auth';
-import {
-  EmptyResponse,
-  EmptyResponseSchema,
-  ExchangeResponse,
-  ExchangeResponseSchema,
-  ItemResponse,
-} from '../schema/response';
+  CodeExchangeResponse,
+} from '../models/auth';
+import { NylasResponse } from '../models/response';
 
-export class Auth extends BaseResource {
+export class Auth extends Resource {
   public grants: Grants;
   public providers: Providers;
 
   apiClient: APIClient;
+  clientId: string;
+  clientSecret: string;
 
-  constructor(apiClient: APIClient) {
+  constructor(apiClient: APIClient, clientId: string, clientSecret: string) {
     super(apiClient);
     this.apiClient = apiClient;
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
 
     this.grants = new Grants(apiClient);
-    this.providers = new Providers(apiClient);
+    this.providers = new Providers(apiClient, clientId, clientSecret);
   }
 
   /**
@@ -46,28 +42,23 @@ export class Auth extends BaseResource {
    */
   public exchangeCodeForToken(
     payload: CodeExchangeRequest
-  ): Promise<ExchangeResponse> {
+  ): Promise<NylasResponse<CodeExchangeResponse>> {
     this.checkAuthCredentials();
     const body: Record<string, unknown> = {
       code: payload.code,
       redirectUri: payload.redirectUri,
-      clientId: this.apiClient.clientId,
-      clientSecret: this.apiClient.clientSecret,
+      clientId: this.clientId,
+      clientSecret: this.clientSecret,
       grantType: 'authorization_code',
     };
     if (payload.codeVerifier) {
       body.codeVerifier = payload.codeVerifier;
     }
-    return this.apiClient.request<ExchangeResponse>(
-      {
-        method: 'POST',
-        path: `/v3/connect/token`,
-        body,
-      },
-      {
-        responseSchema: ExchangeResponseSchema,
-      }
-    );
+    return this.apiClient.request<NylasResponse<CodeExchangeResponse>>({
+      method: 'POST',
+      path: `/v3/connect/token`,
+      body,
+    });
   }
 
   /**
@@ -77,25 +68,20 @@ export class Auth extends BaseResource {
    */
   public refreshAccessToken(
     payload: TokenExchangeRequest
-  ): Promise<ExchangeResponse> {
+  ): Promise<NylasResponse<CodeExchangeResponse>> {
     this.checkAuthCredentials();
 
-    return this.apiClient.request<ExchangeResponse>(
-      {
-        method: 'POST',
-        path: `/v3/connect/token`,
-        body: {
-          refreshToken: payload.refreshToken,
-          redirectUri: payload.redirectUri,
-          clientId: this.apiClient.clientId,
-          clientSecret: this.apiClient.clientSecret,
-          grantType: 'refresh_token',
-        },
+    return this.apiClient.request<NylasResponse<CodeExchangeResponse>>({
+      method: 'POST',
+      path: `/v3/connect/token`,
+      body: {
+        refreshToken: payload.refreshToken,
+        redirectUri: payload.redirectUri,
+        clientId: this.clientId,
+        clientSecret: this.clientSecret,
+        grantType: 'refresh_token',
       },
-      {
-        responseSchema: ExchangeResponseSchema,
-      }
-    );
+    });
   }
 
   /**
@@ -103,7 +89,7 @@ export class Auth extends BaseResource {
    * @param token The ID token
    * @return Information about the ID token
    */
-  public validateIDToken(token: string): Promise<OpenID> {
+  public validateIDToken(token: string): Promise<NylasResponse<OpenID>> {
     return this.validateToken({ idToken: token });
   }
 
@@ -112,25 +98,22 @@ export class Auth extends BaseResource {
    * @param token The access token
    * @return Information about the access token
    */
-  public validateAccessToken(token: string): Promise<OpenID> {
+  public validateAccessToken(token: string): Promise<NylasResponse<OpenID>> {
     return this.validateToken({
       accessToken: token,
     });
   }
 
-  private validateToken(queryParams: Record<string, string>): Promise<OpenID> {
+  private validateToken(
+    queryParams: Record<string, string>
+  ): Promise<NylasResponse<OpenID>> {
     this.checkAuthCredentials();
 
-    return this.apiClient.request<OpenID>(
-      {
-        method: 'GET',
-        path: `/v3/connect/tokeninfo`,
-        queryParams,
-      },
-      {
-        responseSchema: OpenIDSchema,
-      }
-    );
+    return this.apiClient.request<NylasResponse<OpenID>>({
+      method: 'GET',
+      path: `/v3/connect/tokeninfo`,
+      queryParams,
+    });
   }
 
   /**
@@ -138,7 +121,7 @@ export class Auth extends BaseResource {
    * @param config Configuration for the authentication process
    * @return The URL for hosted authentication
    */
-  public urlForAuthentication(config: AuthConfig): string {
+  public urlForAuthentication(config: URLForAuthenticationConfig): string {
     return this.urlAuthBuilder(config).toString();
   }
 
@@ -146,11 +129,11 @@ export class Auth extends BaseResource {
     this.checkAuthCredentials();
 
     const url = new URL(`${this.apiClient.serverUrl}/v3/connect/auth`);
-    url.searchParams.set('client_id', this.apiClient.clientId as string);
+    url.searchParams.set('client_id', this.clientId as string);
     url.searchParams.set('redirect_uri', config.redirectUri);
     url.searchParams.set(
       'access_type',
-      config.accessType ? config.accessType : 'offline'
+      config.accessType ? config.accessType : 'online' //TODO::More secure
     );
     url.searchParams.set('response_type', 'code');
     if (config.provider) {
@@ -187,7 +170,9 @@ export class Auth extends BaseResource {
    * @param config Configuration for the authentication process
    * @return The URL for hosted authentication
    */
-  public urlForAuthenticationPKCE(config: AuthConfig): PKCEAuthURL {
+  public urlForAuthenticationPKCE(
+    config: URLForAuthenticationConfig
+  ): PKCEAuthURL {
     const url = this.urlAuthBuilder(config);
 
     // Add code challenge to URL generation
@@ -208,7 +193,7 @@ export class Auth extends BaseResource {
    * @param config Configuration for the authentication process
    * @return The URL for hosted authentication
    */
-  public urlForAdminConsent(config: AdminConsentAuth): string {
+  public urlForAdminConsent(config: URLForAdminConsentConfig): string {
     const configWithProvider = { ...config, provider: 'microsoft' };
     const url = this.urlAuthBuilder(configWithProvider);
     url.searchParams.set('response_type', 'adminconsent');
@@ -217,7 +202,7 @@ export class Auth extends BaseResource {
   }
 
   private checkAuthCredentials(): void {
-    if (!this.apiClient.clientId || !this.apiClient.clientSecret) {
+    if (!this.clientId || !this.clientSecret) {
       throw new Error('ClientID & ClientSecret are required for using auth');
     }
   }
@@ -229,26 +214,16 @@ export class Auth extends BaseResource {
    * @param payload params to initiate hosted auth request
    * @return True if the request was successful
    */
-  public async hostedAuth(
-    payload: HostedAuthRequest
-  ): Promise<ItemResponse<HostedAuth>> {
-    this.checkAuthCredentials();
-    const credentials = `${this.apiClient.clientId}:${this.apiClient.clientSecret}`;
-    const buff = Buffer.from(credentials);
-
-    return await this.apiClient.request<ItemResponse<HostedAuth>>(
-      {
-        method: 'POST',
-        path: `/v3/connect/auth`,
-        headers: {
-          Authorization: `Basic ${buff.toString('base64')}`,
-        },
-        body: payload,
-      },
-      {
-        responseSchema: HostedAuthResponseSchema,
-      }
-    );
+  public async serverSideHostedAuth(
+    payload: ServerSideHostedAuthRequest
+  ): Promise<NylasResponse<ServerSideHostedAuthResponse>> {
+    return await this.apiClient.request<
+      NylasResponse<ServerSideHostedAuthResponse>
+    >({
+      method: 'POST',
+      path: `/v3/connect/auth`,
+      body: payload,
+    });
   }
 
   /**
@@ -257,18 +232,13 @@ export class Auth extends BaseResource {
    * @return True if the access token was revoked
    */
   public async revoke(accessToken: string): Promise<boolean> {
-    await this.apiClient.request<EmptyResponse>(
-      {
-        method: 'POST',
-        path: `/v3/connect/revoke`,
-        queryParams: {
-          token: accessToken,
-        },
+    await this.apiClient.request<undefined>({
+      method: 'POST',
+      path: `/v3/connect/revoke`,
+      queryParams: {
+        token: accessToken,
       },
-      {
-        responseSchema: EmptyResponseSchema,
-      }
-    );
+    });
     return true;
   }
 }

@@ -1,23 +1,15 @@
 import fetch, { Request, Response } from 'node-fetch';
-import { ZodType } from 'zod';
 import { NylasConfig, OverridableNylasConfig } from './config';
 import {
   NylasApiError,
   NylasAuthError,
   NylasTokenValidationError,
-} from './schema/error';
-import {
-  AuthErrorResponseSchema,
-  ErrorResponseSchema,
-  TokenValidationErrorResponseSchema,
-} from './schema/response';
+} from './models/error';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
-// import { AppendOptions } from 'form-data';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
 
-// TODO: refactor for new apiclient
 export interface RequestOptionsParams {
   path: string;
   method: string;
@@ -25,12 +17,6 @@ export interface RequestOptionsParams {
   queryParams?: Record<string, any>;
   body?: any;
   overrides?: OverridableNylasConfig;
-  // json?: boolean;
-  // formData?: Record<string, FormDataType>;
-}
-
-interface OptionsPassthru<D extends ZodType> {
-  responseSchema: D;
 }
 
 interface RequestOptions {
@@ -42,22 +28,15 @@ interface RequestOptions {
   overrides?: Partial<NylasConfig>;
 }
 
-// export type FormDataType = {
-//   value: unknown;
-//   options?: Record<string, unknown> | AppendOptions;
-// };
-
 export default class APIClient {
   apiKey: string;
   serverUrl: string;
-  clientId?: string;
-  clientSecret?: string;
+  timeout: number;
 
-  constructor({ apiKey, serverUrl, clientId, clientSecret }: NylasConfig) {
+  constructor({ apiKey, serverUrl, timeout }: Required<NylasConfig>) {
     this.apiKey = apiKey;
-    this.serverUrl = serverUrl as string; // TODO: get rid of type assertion
-    this.clientSecret = clientSecret;
-    this.clientId = clientId;
+    this.serverUrl = serverUrl;
+    this.timeout = timeout * 1000; // fetch timeout uses milliseconds
   }
 
   private setRequestUrl({
@@ -115,21 +94,7 @@ export default class APIClient {
     requestOptions.url = this.setRequestUrl(optionParams);
     requestOptions.headers = this.setRequestHeaders(optionParams);
     requestOptions.method = optionParams.method;
-    // logic for setting request body if is formdata
-    // if (options.formData) {
-    //   const fd = new FormData();
-    //   for (const [key, obj] of Object.entries(options.formData)) {
-    //     if (obj.options) {
-    //       fd.append(key, obj.value, obj.options);
-    //     } else {
-    //       fd.append(key, obj.value);
-    //     }
-    //   }
-    //   options.body = fd;
-    //   options.headers['Content-Type'] = 'multipart/form-data';
-    // } else
 
-    // TODO: function to set request body
     if (optionParams.body) {
       requestOptions.body = JSON.stringify(
         objKeysToSnakeCase(optionParams.body)
@@ -149,33 +114,24 @@ export default class APIClient {
     });
   }
 
-  async requestWithResponse<T>(
-    response: Response,
-    passthru: OptionsPassthru<ZodType<T>>
-  ): Promise<T> {
+  async requestWithResponse<T>(response: Response): Promise<T> {
     const text = await response.text();
 
-    const responseJSON = JSON.parse(text);
-    // TODO: exclusion list for keys that should not be camelCased
-    const camelCaseRes = objKeysToCamelCase(responseJSON);
-
-    const testResponse = passthru.responseSchema.safeParse(camelCaseRes);
-    if (testResponse.success) {
-      return testResponse.data;
+    try {
+      const responseJSON = JSON.parse(text);
+      return objKeysToCamelCase(responseJSON);
+    } catch (e) {
+      throw new Error(`Could not parse response from the server: ${text}`);
     }
-
-    throw new Error(
-      `Could not validate response from the server. ${testResponse.error}`
-    );
   }
 
-  async request<T>(
-    options: RequestOptionsParams,
-    passthru: OptionsPassthru<ZodType<T>>
-  ): Promise<T> {
+  async request<T>(options: RequestOptionsParams): Promise<T> {
     const req = this.newRequest(options);
+    const controller: AbortController = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), this.timeout);
 
-    const response = await fetch(req);
+    const response = await fetch(req, { signal: controller.signal });
+    clearTimeout(timeout);
 
     if (typeof response === 'undefined') {
       throw new Error('Failed to fetch response');
@@ -183,41 +139,34 @@ export default class APIClient {
 
     // handle error response
     if (response.status > 299) {
-      const text = await response.text();
-      const error = JSON.parse(text);
-
-      const camelCaseError = objKeysToCamelCase(error);
-
       const authErrorResponse =
         options.path.includes('connect/token') ||
         options.path.includes('connect/revoke');
 
       const tokenErrorResponse = options.path.includes('connect/tokeninfo');
-      if (authErrorResponse && !tokenErrorResponse) {
-        const testResponse = AuthErrorResponseSchema.safeParse(camelCaseError);
-        if (testResponse.success) {
-          throw new NylasAuthError(testResponse.data);
-        }
-      } else if (tokenErrorResponse) {
-        const testResponse = TokenValidationErrorResponseSchema.safeParse(
-          camelCaseError
-        );
 
-        if (testResponse.success) {
-          throw new NylasTokenValidationError(testResponse.data);
+      const text = await response.text();
+      let error: Error;
+      try {
+        const parsedError = JSON.parse(text);
+        const camelCaseError = objKeysToCamelCase(parsedError);
+
+        if (authErrorResponse && !tokenErrorResponse) {
+          error = new NylasAuthError(camelCaseError);
+        } else if (tokenErrorResponse) {
+          error = new NylasTokenValidationError(camelCaseError);
+        } else {
+          error = new NylasApiError(camelCaseError);
         }
-      } else {
-        const testErrorResponse = ErrorResponseSchema.safeParse(camelCaseError);
-        if (testErrorResponse.success) {
-          throw new NylasApiError(testErrorResponse.data);
-        }
+      } catch (e) {
+        throw new Error(
+          `Received an error but could not parse response from the server: ${text}`
+        );
       }
 
-      throw new Error(
-        `Received an error but could not validate error response from server: ${error}`
-      );
+      throw error;
     }
 
-    return this.requestWithResponse(response, passthru);
+    return this.requestWithResponse(response);
   }
 }

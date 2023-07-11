@@ -1,18 +1,24 @@
-import { BaseResource } from './baseResource';
-import { ListResponse, ItemResponse } from '../schema/response';
+import { Resource } from './resource';
+import { NylasListResponse, NylasResponse } from '../models/response';
 import {
-  ProviderListResponseSchema,
-  ProviderDetectParams,
-  ProviderDetectResponseSchema,
   Provider,
-  ProviderDetect
-} from '../schema/providers';
+  ProviderDetectParams,
+  ProviderDetectResponse,
+} from '../models/providers';
+import APIClient from '../apiClient';
 
+export class Providers extends Resource {
+  clientId: string;
+  clientSecret: string;
 
+  constructor(apiClient: APIClient, clientId: string, clientSecret: string) {
+    super(apiClient);
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+  }
 
-export class Providers extends BaseResource {
-  private checkCreadentials(): void{
-    if(!this.apiClient.clientId){
+  private checkAuthCredentials(): void {
+    if (!this.clientId) {
       throw new Error('ClientID is required for using providers');
     }
   }
@@ -20,48 +26,33 @@ export class Providers extends BaseResource {
   /**
    * Lists created providers(integrations)
    * @return List of created providers with type & settings if supported
-  */
-  public async list(
-  ): Promise<ListResponse<Provider>> {
-    this.checkCreadentials()
-    const res = await this.apiClient.request<ListResponse<Provider>>(
-      {
-        method: 'GET',
-        path: `/v3/connect/providers/find`,
-        queryParams: {
-          clientId: this.apiClient.clientId
-        },
+   */
+  public async list(): Promise<NylasListResponse<Provider>> {
+    this.checkAuthCredentials();
+    return await this.apiClient.request<NylasListResponse<Provider>>({
+      method: 'GET',
+      path: `/v3/connect/providers/find`,
+      queryParams: {
+        clientId: this.clientId,
       },
-      {
-        responseSchema: ProviderListResponseSchema,
-      }
-    );
-    return res
+    });
   }
 
   /**
    * Detects provider for passed email (if allProviderTypes set to true tries to detect provider based on all supported providers)
-   * @param ProviderDetectParams
    * @return Information about the passed provider email
-  */
+   */
   public async detect(
     params: ProviderDetectParams
-  ): Promise<ItemResponse<ProviderDetect>> {
-    this.checkCreadentials()
-    const res = await this.apiClient.request<ItemResponse<ProviderDetect>>(
-      {
-        method: 'POST',
-        path: `/v3/providers/detect`,
-        queryParams: {
-          clientId: this.apiClient.clientId,
-          ...params
-        },
+  ): Promise<NylasResponse<ProviderDetectResponse>> {
+    this.checkAuthCredentials();
+    return await this.apiClient.request<NylasResponse<ProviderDetectResponse>>({
+      method: 'POST',
+      path: `/v3/providers/detect`,
+      queryParams: {
+        clientId: this.clientId,
+        ...params,
       },
-      {
-        responseSchema: ProviderDetectResponseSchema,
-      }
-    );
-    return res
+    });
   }
-
 }
