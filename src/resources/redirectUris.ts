@@ -21,7 +21,7 @@ export class RedirectUris extends Resource {
     });
   }
 
-  public find(redirectUriId: string): Promise<NylasResponse<RedirectUris>> {
+  public find(redirectUriId: string): Promise<NylasResponse<RedirectUri>> {
     return super._find({
       path: `/v3/applications/redirect-uris/${redirectUriId}`,
     });
@@ -29,7 +29,7 @@ export class RedirectUris extends Resource {
 
   public create(
     requestBody: CreateRedirectUriRequest
-  ): Promise<NylasResponse<RedirectUris>> {
+  ): Promise<NylasResponse<RedirectUri>> {
     return super._create({
       path: '/v3/applications/redirect-uris',
       requestBody,
@@ -39,7 +39,7 @@ export class RedirectUris extends Resource {
   public update(
     redirectUriId: string,
     requestBody: UpdateRedirectUriRequest
-  ): Promise<NylasResponse<RedirectUris>> {
+  ): Promise<NylasResponse<RedirectUri>> {
     return super._update({
       path: `/v3/applications/redirect-uris/${redirectUriId}`,
       requestBody,
