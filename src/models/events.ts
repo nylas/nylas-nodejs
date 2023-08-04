@@ -15,8 +15,6 @@ export interface Event {
   conferencing: Conferencing;
   description?: string;
   location?: string;
-  messageId?: string;
-  owner?: string;
   icalUid?: string;
   title?: string;
   htmlLink?: string;
@@ -118,8 +116,8 @@ export interface Time {
 export interface Timespan {
   startTime: number;
   endTime: number;
-  startTimezone: string;
-  endTimezone: string;
+  startTimezone?: string;
+  endTimezone?: string;
 }
 
 export interface Date {
