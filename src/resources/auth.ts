@@ -42,7 +42,7 @@ export class Auth extends Resource {
    */
   public exchangeCodeForToken(
     payload: CodeExchangeRequest
-  ): Promise<NylasResponse<CodeExchangeResponse>> {
+  ): Promise<CodeExchangeResponse> {
     this.checkAuthCredentials();
     const body: Record<string, unknown> = {
       code: payload.code,
@@ -54,7 +54,7 @@ export class Auth extends Resource {
     if (payload.codeVerifier) {
       body.codeVerifier = payload.codeVerifier;
     }
-    return this.apiClient.request<NylasResponse<CodeExchangeResponse>>({
+    return this.apiClient.request<CodeExchangeResponse>({
       method: 'POST',
       path: `/v3/connect/token`,
       body,
@@ -68,10 +68,10 @@ export class Auth extends Resource {
    */
   public refreshAccessToken(
     payload: TokenExchangeRequest
-  ): Promise<NylasResponse<CodeExchangeResponse>> {
+  ): Promise<CodeExchangeResponse> {
     this.checkAuthCredentials();
 
-    return this.apiClient.request<NylasResponse<CodeExchangeResponse>>({
+    return this.apiClient.request<CodeExchangeResponse>({
       method: 'POST',
       path: `/v3/connect/token`,
       body: {
