@@ -22,7 +22,7 @@ export interface Event {
   metadata?: Record<string, string>;
   creator?: EmailName;
   organizer: EmailName;
-  recurrence?: Recurrence;
+  recurrence?: string[];
   reminders?: Reminder[];
   status?: Status;
   visibility?: Visibility;
@@ -39,7 +39,7 @@ export interface CreateEventRequest {
   reminderMethod?: string;
   metadata?: Record<string, unknown>;
   participants?: Participant[];
-  recurrence?: Recurrence;
+  recurrence?: string[];
   calendarId?: string;
   readOnly?: boolean;
   roundRobinOrder?: string[];
@@ -135,11 +135,6 @@ export interface Participant {
   status: ParticipantStatus;
   comment?: string;
   phoneNumber?: string;
-}
-
-export interface Recurrence {
-  rrule: string[];
-  timezone: string;
 }
 
 export interface Reminder {
