@@ -25,22 +25,10 @@ export interface NylasDeleteResponse {
 }
 
 export interface AuthErrorResponse {
-  requestId: string;
   error: string;
   errorCode: number;
   errorDescription: string;
   errorUri: string;
-}
-
-export interface TokenValidationErrorResponse {
-  success: boolean;
-  error: {
-    httpCode: number;
-    eventCode: number;
-    type: string;
-    message: string;
-    requestId: string;
-  };
 }
 
 export type ListResponseInnerType<T> = T extends NylasListResponse<infer R>
