@@ -1,0 +1,43 @@
+name: sdk-reference
+
+on:
+  push:
+    branches:
+      - v7.0.0-beta
+  pull_request:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    environment:
+      name: sdk-reference
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Nodejs
+        uses: actions/setup-node@v1
+        with:
+          node-version: 18.x
+      - name: Install dependencies and build
+        run: npm install
+      - name: Build docs
+        run: npm run build:docs
+      - name: Set env BRANCH
+        run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
+      - name: Set env CLOUDFLARE_BRANCH
+        run: |
+          if [[ $BRANCH == 'v7.0.0-beta' && $GITHUB_EVENT_NAME == 'push' ]]; then
+              echo "CLOUDFLARE_BRANCH=main" >> "$GITHUB_ENV"
+          else
+              echo "CLOUDFLARE_BRANCH=$BRANCH" >> "$GITHUB_ENV"
+          fi
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        id: deploy
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: nylas-nodejs-sdk-reference
+          directory: docs
+          wranglerVersion: "3"
+          branch: ${{ env.CLOUDFLARE_BRANCH }}
