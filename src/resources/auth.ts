@@ -12,6 +12,12 @@ import {
   CodeExchangeResponse,
 } from '../models/auth';
 
+/**
+ * A collection of authentication related API endpoints
+ *
+ * These endpoints allow for various functionality related to authentication.
+ * Also contains the Grants API and collection of provider API endpoints.
+ */
 export class Auth extends Resource {
   /**
    * Access the Grants API
@@ -20,6 +26,9 @@ export class Auth extends Resource {
 
   apiClient: APIClient;
 
+  /**
+   * @param apiClient The configured Nylas API client
+   */
   constructor(apiClient: APIClient) {
     super(apiClient);
     this.apiClient = apiClient;
@@ -58,9 +67,9 @@ export class Auth extends Resource {
   }
 
   /**
-   * Exchange a refresh token for an access token (and if rotation enabled refresh token as well)
-   * @param request The request parameters for the token exchange
-   * @return Information about the Nylas application
+   * Refresh an access token
+   * @param request The refresh token request
+   * @return The response containing the new access token
    */
   public refreshAccessToken(
     request: TokenExchangeRequest

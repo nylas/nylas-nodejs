@@ -44,7 +44,20 @@ interface DestroyEventParams {
   eventId: string;
   queryParams: DestroyEventQueryParams;
 }
+
+/**
+ * Nylas Events API
+ *
+ * The Nylas Events API allows you to create, update, and delete events on user calendars.
+ */
 export class Events extends Resource {
+  /**
+   * Return all Events
+   * @param identifier The identifier of the grant to act upon
+   * @param queryParams The query parameters to include in the request
+   * @param overrides Optional overrides to apply to this request
+   * @return The list of Events
+   */
   public list({
     identifier,
     queryParams,
@@ -57,6 +70,14 @@ export class Events extends Resource {
     });
   }
 
+  /**
+   * Return an Event
+   * @param identifier The identifier of the grant to act upon
+   * @param eventId The id of the Event to retrieve.
+   * @param queryParams The query parameters to include in the request
+   * @param overrides Optional overrides to apply to this request
+   * @return The Event
+   */
   public find({
     identifier,
     eventId,
@@ -70,6 +91,14 @@ export class Events extends Resource {
     });
   }
 
+  /**
+   * Create an Event
+   * @param identifier The identifier of the grant to act upon
+   * @param requestBody The values to create the Event with
+   * @param queryParams The query parameters to include in the request
+   * @param overrides Optional overrides to apply to this request
+   * @return The created Event
+   */
   public create({
     identifier,
     requestBody,
@@ -84,6 +113,15 @@ export class Events extends Resource {
     });
   }
 
+  /**
+   * Update an Event
+   * @param identifier The identifier of the grant to act upon
+   * @param eventId The id of the Event to update.
+   * @param requestBody The values to update the Event with
+   * @param queryParams The query parameters to include in the request
+   * @param overrides Optional overrides to apply to this request
+   * @return The updated Event
+   */
   public update({
     identifier,
     eventId,
@@ -99,6 +137,14 @@ export class Events extends Resource {
     });
   }
 
+  /**
+   * Delete an Event
+   * @param identifier The identifier of the grant to act upon
+   * @param eventId The id of the Event to delete.
+   * @param queryParams The query parameters to include in the request
+   * @param overrides Optional overrides to apply to this request
+   * @return The deletion response
+   */
   public destroy({
     identifier,
     eventId,

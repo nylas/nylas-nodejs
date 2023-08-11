@@ -10,6 +10,12 @@ interface GetAvailabilityParams {
 }
 
 export class Availability extends Resource {
+  /**
+   * Get Availability for a given account / accounts
+   * @param requestBody The availability request
+   * @param overrides Overrides to the request
+   * @return The availability response
+   */
   public getAvailability({
     requestBody,
     overrides,

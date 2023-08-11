@@ -34,9 +34,18 @@ interface DestroyParams {
 }
 
 type List<T> = NylasListResponse<ListResponseInnerType<T>>;
+
+/**
+ * Base class for Nylas API resources
+ *
+ * @suppress No public constructor or functions
+ */
 export class Resource {
   protected apiClient: APIClient;
 
+  /**
+   * @param apiClient client The configured Nylas API client
+   */
   constructor(apiClient: APIClient) {
     this.apiClient = apiClient;
   }

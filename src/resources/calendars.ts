@@ -38,7 +38,20 @@ interface DestroyCalendarParams {
 
 type CalendarListParams = ListCalendersParams & Overrides;
 
+/**
+ * Nylas Calendar API
+ *
+ * The Nylas calendar API allows you to create new calendars or manage existing ones.
+ * A calendar can be accessed by one, or several people, and can contain events.
+ */
 export class Calendars extends Resource {
+  /**
+   * Return all Calendars
+   * @param identifier The identifier of the grant to act upon
+   * @param queryParams The query parameters to include in the request
+   * @param overrides Overrides to the request
+   * @return A list of calendars
+   */
   public list(
     { overrides, identifier }: CalendarListParams,
     queryParams?: ListCalendersQueryParams
@@ -50,6 +63,13 @@ export class Calendars extends Resource {
     });
   }
 
+  /**
+   * Return a Calendar
+   * @param identifier The identifier of the grant to act upon
+   * @param calendarId The id of the Calendar to retrieve. Use "primary" to refer to the primary calendar associated with grant.
+   * @param overrides Overrides to the request
+   * @return The calendar
+   */
   public find({
     calendarId,
     identifier,
@@ -61,6 +81,12 @@ export class Calendars extends Resource {
     });
   }
 
+  /**
+   * Create a Calendar
+   * @param identifier The identifier of the grant to act upon
+   * @param requestBody The values to create the Calendar with
+   * @param overrides The created Calendar
+   */
   public create({
     identifier,
     requestBody,
@@ -73,6 +99,14 @@ export class Calendars extends Resource {
     });
   }
 
+  /**
+   * Update a Calendar
+   * @param identifier The identifier of the grant to act upon
+   * @param calendarId The id of the Calendar to update. Use "primary" to refer to the primary calendar associated with grant.
+   * @param requestBody The values to update the Calendar with
+   * @param overrides Overrides to the request
+   * @return The updated Calendar
+   */
   public update({
     calendarId,
     identifier,
@@ -86,6 +120,13 @@ export class Calendars extends Resource {
     });
   }
 
+  /**
+   * Delete a Calendar
+   * @param identifier The identifier of the grant to act upon
+   * @param calendarId The id of the Calendar to delete. Use "primary" to refer to the primary calendar associated with grant.
+   * @param overrides Overrides to the request
+   * @return The deleted Calendar
+   */
   public destroy({
     identifier,
     calendarId,
