@@ -19,7 +19,8 @@
     "lint:prettier": "prettier --write '**/*.{ts,js}'",
     "lint:prettier:check": "prettier --check '**/*.{ts,js}'",
     "build": "tsc",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "build:docs": "typedoc --out docs"
   },
   "keywords": [
     "email",
@@ -50,6 +51,8 @@
     "jest": "^29.6.1",
     "prettier": "^1.19.1",
     "ts-jest": "^29.1.1",
+    "typedoc": "^0.24.8",
+    "typedoc-plugin-missing-exports": "^2.0.1",
     "typescript": "^4.9.5"
   },
   "repository": {
