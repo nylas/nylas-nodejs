@@ -8,5 +8,12 @@
     "resolveJsonModule": true,
     "strict": true
   },
+  "typedocOptions": {
+      "entryPoints": ["src/nylas.ts"],
+      "out": "docs",
+      "plugin": ["typedoc-plugin-missing-exports"],
+      "excludeExternals": true,
+      "excludePrivate": true,
+  },
   "exclude": ["tests", "lib"]
 }
