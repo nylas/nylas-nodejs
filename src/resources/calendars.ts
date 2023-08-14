@@ -11,6 +11,10 @@ import {
   NylasListResponse,
 } from '../models/response';
 import { Resource, AsyncListResponse } from './resource';
+import {
+  GetAvailabilityRequest,
+  GetAvailabilityResponse,
+} from '../models/availability';
 
 /**
  * The parameters for the {@link Calendars.find} method
@@ -63,6 +67,13 @@ interface DestroyCalendarParams {
   calendarId: string;
 }
 
+/**
+ * The parameters for the {@link Calendars.getAvailability} method
+ * @property requestBody The availability request
+ */
+interface GetAvailabilityParams {
+  requestBody: GetAvailabilityRequest;
+}
 
 /**
  * Nylas Calendar API
@@ -148,6 +159,22 @@ export class Calendars extends Resource {
   }: DestroyCalendarParams & Overrides): Promise<NylasDeleteResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
+      overrides,
+    });
+  }
+
+  /**
+   * Get Availability for a given account / accounts
+   * @return The availability response
+   */
+  public getAvailability({
+    requestBody,
+    overrides,
+  }: GetAvailabilityParams & Overrides): Promise<GetAvailabilityResponse> {
+    return this.apiClient.request<GetAvailabilityResponse>({
+      method: 'POST',
+      path: `/v3/calendars/availability`,
+      body: requestBody,
       overrides,
     });
   }
