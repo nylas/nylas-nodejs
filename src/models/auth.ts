@@ -2,6 +2,7 @@ type AccessType = 'online' | 'offline';
 type Provider = 'google' | 'imap' | 'microsoft' | 'yahoo';
 
 export type URLForAuthenticationConfig = {
+  clientId: string;
   redirectUri: string;
   provider?: Provider;
   accessType?: AccessType;
@@ -17,25 +18,6 @@ export type URLForAdminConsentConfig = URLForAuthenticationConfig & {
   credentialId: string;
 };
 
-export interface OpenID {
-  iss: string; // Issuer
-  aud: string; // Application Slug
-  sub?: string; // ID
-  email?: string;
-  emailVerified?: boolean;
-  atHash?: string;
-  iat: number; // Issued At
-  exp: number; // Expites At
-  // Profile
-  name?: string;
-  givenName?: string;
-  familyName?: string;
-  nickName?: string;
-  pictureUrl?: string;
-  gender?: string;
-  locale?: string;
-}
-
 export interface CodeExchangeRequest {
   redirectUri: string;
   code: string;
@@ -45,25 +27,8 @@ export interface CodeExchangeRequest {
 export interface TokenExchangeRequest {
   redirectUri: string;
   refreshToken: string;
-}
-
-export type ServerSideHostedAuthRequest = {
-  redirectUri: string;
-  provider?: Provider;
-  state?: string;
-  loginHint?: string;
-  cookieNonce?: string;
-  grantId?: string;
-  scope?: string[];
-  expiresIn?: number;
-  settings?: Record<string, unknown>;
-};
-
-export interface ServerSideHostedAuthResponse {
-  url: string;
-  id: string;
-  expiresAt: number;
-  request: ServerSideHostedAuthRequest;
+  clientId: string;
+  clientSecret: string;
 }
 
 export interface PKCEAuthURL {

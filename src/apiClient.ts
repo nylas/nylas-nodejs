@@ -2,12 +2,12 @@ import fetch, { Request, Response } from 'node-fetch';
 import { NylasConfig, OverridableNylasConfig } from './config';
 import {
   NylasApiError,
-  NylasAuthError,
-  NylasTokenValidationError,
+  NylasOAuthError,
+  NylasSdkTimeoutError,
 } from './models/error';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
+import PACKAGE_JSON from '../package.json';
 
-const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
 
 export interface RequestOptionsParams {
@@ -128,7 +128,10 @@ export default class APIClient {
   async request<T>(options: RequestOptionsParams): Promise<T> {
     const req = this.newRequest(options);
     const controller: AbortController = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), this.timeout);
+    const timeout = setTimeout(() => {
+      controller.abort();
+      throw new NylasSdkTimeoutError(req.url, this.timeout);
+    }, this.timeout);
 
     const response = await fetch(req, { signal: controller.signal });
     clearTimeout(timeout);
@@ -143,20 +146,16 @@ export default class APIClient {
         options.path.includes('connect/token') ||
         options.path.includes('connect/revoke');
 
-      const tokenErrorResponse = options.path.includes('connect/tokeninfo');
-
       const text = await response.text();
       let error: Error;
       try {
         const parsedError = JSON.parse(text);
         const camelCaseError = objKeysToCamelCase(parsedError);
 
-        if (authErrorResponse && !tokenErrorResponse) {
-          error = new NylasAuthError(camelCaseError);
-        } else if (tokenErrorResponse) {
-          error = new NylasTokenValidationError(camelCaseError);
+        if (authErrorResponse) {
+          error = new NylasOAuthError(camelCaseError, response.status);
         } else {
-          error = new NylasApiError(camelCaseError);
+          error = new NylasApiError(camelCaseError, response.status);
         }
       } catch (e) {
         throw new Error(

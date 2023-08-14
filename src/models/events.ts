@@ -15,8 +15,6 @@ export interface Event {
   conferencing: Conferencing;
   description?: string;
   location?: string;
-  messageId?: string;
-  owner?: string;
   icalUid?: string;
   title?: string;
   htmlLink?: string;
@@ -24,7 +22,7 @@ export interface Event {
   metadata?: Record<string, string>;
   creator?: EmailName;
   organizer: EmailName;
-  recurrence?: Recurrence;
+  recurrence?: string[];
   reminders?: Reminder[];
   status?: Status;
   visibility?: Visibility;
@@ -41,7 +39,7 @@ export interface CreateEventRequest {
   reminderMethod?: string;
   metadata?: Record<string, unknown>;
   participants?: Participant[];
-  recurrence?: Recurrence;
+  recurrence?: string[];
   calendarId?: string;
   readOnly?: boolean;
   roundRobinOrder?: string[];
@@ -118,8 +116,8 @@ export interface Time {
 export interface Timespan {
   startTime: number;
   endTime: number;
-  startTimezone: string;
-  endTimezone: string;
+  startTimezone?: string;
+  endTimezone?: string;
 }
 
 export interface Date {
@@ -137,11 +135,6 @@ export interface Participant {
   status: ParticipantStatus;
   comment?: string;
   phoneNumber?: string;
-}
-
-export interface Recurrence {
-  rrule: string[];
-  timezone: string;
 }
 
 export interface Reminder {

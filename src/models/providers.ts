@@ -5,6 +5,7 @@ export interface ProviderDetectParams {
 
 export interface ProviderDetectResponse {
   emailAddress: string;
+  detected: boolean;
   provider?: string;
   type?: string;
 }

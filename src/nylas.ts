@@ -4,12 +4,11 @@ import { Calendars } from './resources/calendars';
 import { Events } from './resources/events';
 import { Auth } from './resources/auth';
 import { Webhooks } from './resources/webhooks';
-import { Availability } from './resources/availability';
 import { Applications } from './resources/applications';
 
 class Nylas {
   public applications: Applications;
-  public availability: Availability;
+  public auth: Auth;
   public calendars: Calendars;
   public events: Events;
   public webhooks: Webhooks;
@@ -24,16 +23,12 @@ class Nylas {
     });
 
     this.applications = new Applications(this.apiClient);
-    this.availability = new Availability(this.apiClient);
+    this.auth = new Auth(this.apiClient);
     this.calendars = new Calendars(this.apiClient);
     this.events = new Events(this.apiClient);
     this.webhooks = new Webhooks(this.apiClient);
 
     return this;
-  }
-
-  public auth(clientId: string, clientSecret: string): Auth {
-    return new Auth(this.apiClient, clientId, clientSecret);
   }
 }
 

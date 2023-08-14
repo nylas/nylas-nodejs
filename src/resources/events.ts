@@ -16,35 +16,71 @@ import {
 } from '../models/response';
 import { AsyncListResponse, Resource } from './resource';
 
+/**
+ * @property eventId The id of the Event to retrieve.
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ */
 interface FindEventParams {
+  identifier: string;
   eventId: string;
   queryParams: FindEventQueryParams;
-  identifier: string;
 }
+
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ */
 interface ListEventParams {
   identifier: string;
   queryParams: ListEventQueryParams;
 }
 
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ * @property requestBody The values to create the Event with
+ */
 interface CreateEventParams {
   identifier: string;
-  queryParams: CreateEventQueryParams;
   requestBody: CreateEventRequest;
+  queryParams: CreateEventQueryParams;
 }
 
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property eventId The id of the Event to retrieve.
+ * @property requestBody The values to update the Event with
+ * @property queryParams The query parameters to include in the request
+ */
 interface UpdateEventParams {
-  eventId: string;
   identifier: string;
-  queryParams: UpdateEventQueryParams;
+  eventId: string;
   requestBody: UpdateEventRequest;
+  queryParams: UpdateEventQueryParams;
 }
 
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property eventId The id of the Event to retrieve.
+ * @property queryParams The query parameters to include in the request
+ */
 interface DestroyEventParams {
   identifier: string;
   eventId: string;
   queryParams: DestroyEventQueryParams;
 }
+
+/**
+ * Nylas Events API
+ *
+ * The Nylas Events API allows you to create, update, and delete events on user calendars.
+ */
 export class Events extends Resource {
+  /**
+   * Return all Events
+   * @return The list of Events
+   */
   public list({
     identifier,
     queryParams,
@@ -57,6 +93,10 @@ export class Events extends Resource {
     });
   }
 
+  /**
+   * Return an Event
+   * @return The Event
+   */
   public find({
     identifier,
     eventId,
@@ -70,6 +110,10 @@ export class Events extends Resource {
     });
   }
 
+  /**
+   * Create an Event
+   * @return The created Event
+   */
   public create({
     identifier,
     requestBody,
@@ -84,6 +128,10 @@ export class Events extends Resource {
     });
   }
 
+  /**
+   * Update an Event
+   * @return The updated Event
+   */
   public update({
     identifier,
     eventId,
@@ -99,6 +147,10 @@ export class Events extends Resource {
     });
   }
 
+  /**
+   * Delete an Event
+   * @return The deletion response
+   */
   public destroy({
     identifier,
     eventId,
