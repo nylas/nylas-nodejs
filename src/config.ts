@@ -6,6 +6,10 @@ export type NylasConfig = {
 
 export type OverridableNylasConfig = Partial<NylasConfig>;
 
+/**
+ * An object that can be used to override the default Nylas API client configuration on a per-request basis.
+ * @property overrides Overrides to the default Nylas API client configuration
+ */
 export interface Overrides {
   overrides?: OverridableNylasConfig;
 }

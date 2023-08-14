@@ -10,15 +10,25 @@ import {
   WebhookWithSecret,
 } from '../models/webhooks';
 
+/**
+ * @property requestBody The webhook destination details
+ */
 interface CreateWebhookParams {
   requestBody: CreateWebhookRequest;
 }
 
+/**
+ * @property webhookId The ID of the webhook destination to update
+ * @property requestBody The updated webview destination details
+ */
 interface UpdateWebhookParams {
   webhookId: string;
   requestBody: UpdateWebhookRequestBody;
 }
 
+/**
+ * @property webhookId The ID of the webhook destination to delete
+ */
 interface DestroyWebhookParams {
   webhookId: string;
 }
@@ -26,7 +36,6 @@ interface DestroyWebhookParams {
 export class Webhooks extends Resource {
   /**
    * List all webhook destinations for the application
-   * @param overrides Overrides for the request
    * @returns The list of webhook destinations
    */
   public list({ overrides }: Overrides = {}): AsyncListResponse<
@@ -40,8 +49,6 @@ export class Webhooks extends Resource {
 
   /**
    * Create a webhook destination
-   * @param requestBody The webhook destination details
-   * @param overrides Overrides for the request
    * @returns The created webhook destination
    */
   public create({
@@ -59,9 +66,6 @@ export class Webhooks extends Resource {
 
   /**
    * Update a webhook destination
-   * @param webhookId The ID of the webhook destination to update
-   * @param requestBody The updated webview destination details
-   * @param overrides Overrides for the request
    * @returns The updated webhook destination
    */
   public update({
@@ -78,8 +82,7 @@ export class Webhooks extends Resource {
 
   /**
    * Delete a webhook destination
-   * @param webhookId The ID of the webhook destination to delete
-   * @param overrides Overrides for the request
+   * @returns The deletion response
    */
   public destroy({
     webhookId,
@@ -93,8 +96,6 @@ export class Webhooks extends Resource {
 
   /**
    * Update the webhook secret value for a destination
-   * @param webhookId The ID of the webhook destination to update
-   * @param overrides Overrides for the request
    * @returns The updated webhook destination
    */
   public rotateSecret({
@@ -110,7 +111,6 @@ export class Webhooks extends Resource {
 
   /**
    * Get the current list of IP addresses that Nylas sends webhooks from
-   * @param overrides Overrides for the request
    * @returns The list of IP addresses that Nylas sends webhooks from
    */
   public ipAddresses({ overrides }: Overrides = {}): Promise<

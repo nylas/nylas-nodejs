@@ -16,29 +16,55 @@ import {
 } from '../models/response';
 import { AsyncListResponse, Resource } from './resource';
 
+/**
+ * @property eventId The id of the Event to retrieve.
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ */
 interface FindEventParams {
+  identifier: string;
   eventId: string;
   queryParams: FindEventQueryParams;
-  identifier: string;
 }
+
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ */
 interface ListEventParams {
   identifier: string;
   queryParams: ListEventQueryParams;
 }
 
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ * @property requestBody The values to create the Event with
+ */
 interface CreateEventParams {
   identifier: string;
-  queryParams: CreateEventQueryParams;
   requestBody: CreateEventRequest;
+  queryParams: CreateEventQueryParams;
 }
 
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property eventId The id of the Event to retrieve.
+ * @property requestBody The values to update the Event with
+ * @property queryParams The query parameters to include in the request
+ */
 interface UpdateEventParams {
-  eventId: string;
   identifier: string;
-  queryParams: UpdateEventQueryParams;
+  eventId: string;
   requestBody: UpdateEventRequest;
+  queryParams: UpdateEventQueryParams;
 }
 
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property eventId The id of the Event to retrieve.
+ * @property queryParams The query parameters to include in the request
+ */
 interface DestroyEventParams {
   identifier: string;
   eventId: string;
@@ -53,9 +79,6 @@ interface DestroyEventParams {
 export class Events extends Resource {
   /**
    * Return all Events
-   * @param identifier The identifier of the grant to act upon
-   * @param queryParams The query parameters to include in the request
-   * @param overrides Optional overrides to apply to this request
    * @return The list of Events
    */
   public list({
@@ -72,10 +95,6 @@ export class Events extends Resource {
 
   /**
    * Return an Event
-   * @param identifier The identifier of the grant to act upon
-   * @param eventId The id of the Event to retrieve.
-   * @param queryParams The query parameters to include in the request
-   * @param overrides Optional overrides to apply to this request
    * @return The Event
    */
   public find({
@@ -93,10 +112,6 @@ export class Events extends Resource {
 
   /**
    * Create an Event
-   * @param identifier The identifier of the grant to act upon
-   * @param requestBody The values to create the Event with
-   * @param queryParams The query parameters to include in the request
-   * @param overrides Optional overrides to apply to this request
    * @return The created Event
    */
   public create({
@@ -115,11 +130,6 @@ export class Events extends Resource {
 
   /**
    * Update an Event
-   * @param identifier The identifier of the grant to act upon
-   * @param eventId The id of the Event to update.
-   * @param requestBody The values to update the Event with
-   * @param queryParams The query parameters to include in the request
-   * @param overrides Optional overrides to apply to this request
    * @return The updated Event
    */
   public update({
@@ -139,10 +149,6 @@ export class Events extends Resource {
 
   /**
    * Delete an Event
-   * @param identifier The identifier of the grant to act upon
-   * @param eventId The id of the Event to delete.
-   * @param queryParams The query parameters to include in the request
-   * @param overrides Optional overrides to apply to this request
    * @return The deletion response
    */
   public destroy({

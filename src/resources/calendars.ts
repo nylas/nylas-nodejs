@@ -12,31 +12,57 @@ import {
 } from '../models/response';
 import { Resource, AsyncListResponse } from './resource';
 
+/**
+ * The parameters for the {@link Calendars.find} method
+ * @property calendarId The id of the Calendar to retrieve. Use "primary" to refer to the primary calendar associated with grant.
+ * @property identifier The identifier of the grant to act upon
+ */
 interface FindCalendarParams {
+  identifier: string;
   calendarId: string;
-  identifier: string;
-}
-interface ListCalendersParams {
-  identifier: string;
 }
 
+/**
+ * The parameters for the {@link Calendars.list} method
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ */
+interface ListCalendersParams {
+  identifier: string;
+  queryParams?: ListCalendersQueryParams;
+}
+
+/**
+ * The parameters for the {@link Calendars.create} method
+ * @property identifier The identifier of the grant to act upon
+ * @property requestBody The request body to create a calendar
+ */
 interface CreateCalendarParams {
   identifier: string;
   requestBody: CreateCalenderRequestBody;
 }
 
+/**
+ * The parameters for the {@link Calendars.update} method
+ * @property identifier The identifier of the grant to act upon
+ * @property calendarId The id of the Calendar to retrieve. Use "primary" to refer to the primary calendar associated with grant.
+ */
 interface UpdateCalendarParams {
-  calendarId: string;
   identifier: string;
+  calendarId: string;
   requestBody: UpdateCalenderRequestBody;
 }
 
+/**
+ * The parameters for the {@link Calendars.destroy} method
+ * @property identifier The identifier of the grant to act upon
+ * @property calendarId The id of the Calendar to retrieve. Use "primary" to refer to the primary calendar associated with grant.
+ */
 interface DestroyCalendarParams {
   identifier: string;
   calendarId: string;
 }
 
-type CalendarListParams = ListCalendersParams & Overrides;
 
 /**
  * Nylas Calendar API
@@ -47,15 +73,15 @@ type CalendarListParams = ListCalendersParams & Overrides;
 export class Calendars extends Resource {
   /**
    * Return all Calendars
-   * @param identifier The identifier of the grant to act upon
-   * @param queryParams The query parameters to include in the request
-   * @param overrides Overrides to the request
    * @return A list of calendars
    */
-  public list(
-    { overrides, identifier }: CalendarListParams,
-    queryParams?: ListCalendersQueryParams
-  ): AsyncListResponse<NylasListResponse<Calendar>> {
+  public list({
+    identifier,
+    queryParams,
+    overrides,
+  }: ListCalendersParams &
+    ListCalendersQueryParams &
+    Overrides): AsyncListResponse<NylasListResponse<Calendar>> {
     return super._list<NylasListResponse<Calendar>>({
       queryParams,
       overrides,
@@ -65,14 +91,11 @@ export class Calendars extends Resource {
 
   /**
    * Return a Calendar
-   * @param identifier The identifier of the grant to act upon
-   * @param calendarId The id of the Calendar to retrieve. Use "primary" to refer to the primary calendar associated with grant.
-   * @param overrides Overrides to the request
    * @return The calendar
    */
   public find({
-    calendarId,
     identifier,
+    calendarId,
     overrides,
   }: FindCalendarParams & Overrides): Promise<NylasResponse<Calendar>> {
     return super._find({
@@ -83,9 +106,7 @@ export class Calendars extends Resource {
 
   /**
    * Create a Calendar
-   * @param identifier The identifier of the grant to act upon
-   * @param requestBody The values to create the Calendar with
-   * @param overrides The created Calendar
+   * @return The created calendar
    */
   public create({
     identifier,
@@ -101,10 +122,6 @@ export class Calendars extends Resource {
 
   /**
    * Update a Calendar
-   * @param identifier The identifier of the grant to act upon
-   * @param calendarId The id of the Calendar to update. Use "primary" to refer to the primary calendar associated with grant.
-   * @param requestBody The values to update the Calendar with
-   * @param overrides Overrides to the request
    * @return The updated Calendar
    */
   public update({
@@ -122,9 +139,6 @@ export class Calendars extends Resource {
 
   /**
    * Delete a Calendar
-   * @param identifier The identifier of the grant to act upon
-   * @param calendarId The id of the Calendar to delete. Use "primary" to refer to the primary calendar associated with grant.
-   * @param overrides Overrides to the request
    * @return The deleted Calendar
    */
   public destroy({

@@ -11,19 +11,32 @@ import {
 } from '../models/redirectUri';
 import { Overrides } from '../config';
 
+/**
+ * @property redirectUriId The id of the Redirect URI to retrieve.
+ */
 interface FindRedirectUrisParams {
   redirectUriId: string;
 }
 
+/**
+ * @property requestBody The values to create the Redirect URI with.
+ */
 interface CreateRedirectUrisParams {
   requestBody: CreateRedirectUriRequest;
 }
 
+/**
+ * @property redirectUriId The id of the Redirect URI to update.
+ * @property requestBody The values to update the Redirect URI with.
+ */
 interface UpdateRedirectUrisParams {
   redirectUriId: string;
   requestBody: UpdateRedirectUriRequest;
 }
 
+/**
+ * @property redirectUriId The id of the Redirect URI to delete.
+ */
 interface DestroyRedirectUrisParams {
   redirectUriId: string;
 }
@@ -36,7 +49,6 @@ interface DestroyRedirectUrisParams {
 export class RedirectUris extends Resource {
   /**
    * Return all Redirect URIs
-   * @param overrides Overrides for the request
    * @return The list of Redirect URIs
    */
   public list({ overrides }: Overrides = {}): AsyncListResponse<
@@ -50,8 +62,6 @@ export class RedirectUris extends Resource {
 
   /**
    * Return a Redirect URI
-   * @param redirectUriId The id of the Redirect URI to retrieve.
-   * @param overrides Overrides for the request
    * @return The Redirect URI
    */
   public find({
@@ -66,8 +76,6 @@ export class RedirectUris extends Resource {
 
   /**
    * Create a Redirect URI
-   * @param requestBody The values to create the Redirect URI with
-   * @param overrides Overrides for the request
    * @return The created Redirect URI
    */
   public create({
@@ -85,9 +93,6 @@ export class RedirectUris extends Resource {
 
   /**
    * Update a Redirect URI
-   * @param redirectUriId The id of the Redirect URI to update.
-   * @param requestBody The values to update the Redirect URI with
-   * @param overrides Overrides for the request
    * @return The updated Redirect URI
    */
   public update({
@@ -106,8 +111,6 @@ export class RedirectUris extends Resource {
 
   /**
    * Delete a Redirect URI
-   * @param redirectUriId The id of the Redirect URI to delete.
-   * @param overrides Overrides for the request
    * @return The deleted Redirect URI
    */
   public destroy({

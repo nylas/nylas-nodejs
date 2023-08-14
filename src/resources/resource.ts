@@ -38,7 +38,7 @@ type List<T> = NylasListResponse<ListResponseInnerType<T>>;
 /**
  * Base class for Nylas API resources
  *
- * @suppress No public constructor or functions
+ * @ignore No public constructor or functions
  */
 export class Resource {
   protected apiClient: APIClient;

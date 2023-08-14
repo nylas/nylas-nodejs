@@ -12,19 +12,32 @@ import {
   UpdateGrantRequest,
 } from '../models/grants';
 
+/**
+ * @property grantId The id of the Grant to retrieve.
+ */
 interface FindGrantParams {
   grantId: string;
 }
 
+/**
+ * @property requestBody The values to create the Grant with.
+ */
 interface CreateGrantParams {
   requestBody: CreateGrantRequest;
 }
 
+/**
+ * @property grantId The id of the Grant to update.
+ * @property requestBody The values to update the Grant with.
+ */
 interface UpdateGrantParams {
   grantId: string;
   requestBody: UpdateGrantRequest;
 }
 
+/**
+ * @property grantId The id of the Grant to delete.
+ */
 interface DestroyGrantParams {
   grantId: string;
 }
@@ -37,8 +50,6 @@ interface DestroyGrantParams {
 export class Grants extends Resource {
   /**
    * Return all Grants
-   * @param overrides Optional overrides to apply to this request
-   * @param queryParams The query parameters to include in the request
    * @return The list of Grants
    */
   public async list(
@@ -54,8 +65,6 @@ export class Grants extends Resource {
 
   /**
    * Return a Grant
-   * @param grantId The id of the Grant to retrieve.
-   * @param overrides Optional overrides to apply to this request
    * @return The Grant
    */
   public find({
@@ -70,8 +79,6 @@ export class Grants extends Resource {
 
   /**
    * Create a Grant
-   * @param requestBody The values to create the Grant with
-   * @param overrides Optional overrides to apply to this request
    * @return The created Grant
    */
   public create({
@@ -87,9 +94,6 @@ export class Grants extends Resource {
 
   /**
    * Update a Grant
-   * @param grantId The id of the Grant to update.
-   * @param requestBody The values to update the Grant with
-   * @param overrides Optional overrides to apply to this request
    * @return The updated Grant
    */
   public update({
@@ -106,8 +110,6 @@ export class Grants extends Resource {
 
   /**
    * Delete a Grant
-   * @param grantId The id of the Grant to delete.
-   * @param overrides Optional overrides to apply to this request
    * @return The deletion response
    */
   public destroy({
