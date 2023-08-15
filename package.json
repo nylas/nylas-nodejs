@@ -18,9 +18,8 @@
     "lint:ci": "npm run lint:fix -- --quiet",
     "lint:prettier": "prettier --write '**/*.{ts,js}'",
     "lint:prettier:check": "prettier --check '**/*.{ts,js}'",
-    "build": "tsc",
     "build": "npm run build-esm",
-    "build-cjs": "mkdir -p cjs && tsc -p tsconfig.json && echo '{\"type\":\"commonjs\"}' > cjs/package.json",
+    "build-cjs": "mkdir -p cjs && tsc -p tsconfig.cjs.json && echo '{\"type\":\"commonjs\"}' > cjs/package.json",
     "prepare": "npm run build",
     "build:docs": "typedoc --out docs"
   },
