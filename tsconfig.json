@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es2021",
     "declaration": true,
+    "declarationDir": "lib/types",
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
@@ -17,5 +18,6 @@
     "excludeExternals": true,
     "excludePrivate": true,
   },
-  "exclude": ["tests", "cjs", "esm"]
+  "include": ["src/**/*"],
+  "exclude": ["tests", "lib"]
 }

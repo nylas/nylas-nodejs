@@ -6,7 +6,7 @@ import {
   NylasSdkTimeoutError,
 } from './models/error';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
-import PACKAGE_JSON from '../package.json';
+const PACKAGE_JSON = require('package.json').default;
 
 const SDK_VERSION = PACKAGE_JSON.version;
 
@@ -55,7 +55,6 @@ export default class APIClient {
   ): URL {
     if (queryParams) {
       const snakeCaseParams = objKeysToSnakeCase(queryParams, ['metadataPair']);
-      // TODO: refactor this not manually turn params into query string
       for (const [key, value] of Object.entries(snakeCaseParams)) {
         if (key == 'metadataPair') {
           // The API understands a metadata_pair filter in the form of:
