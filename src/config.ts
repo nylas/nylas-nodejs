@@ -1,9 +1,18 @@
+/**
+ * Configuration options for initializing the Nylas SDK.
+ * @property apiKey The Nylas API key to use for authentication
+ * @property serverUrl The URL to use for communicating with the Nylas API
+ * @property timeout The timeout for requests to the Nylas API, in seconds
+ */
 export type NylasConfig = {
   apiKey: string;
   serverUrl?: string; // TODO: rename to nylasAPIUrl
   timeout?: number;
 };
 
+/**
+ * The options that can override the default Nylas API client configuration.
+ */
 export type OverridableNylasConfig = Partial<NylasConfig>;
 
 /**
@@ -14,32 +23,30 @@ export interface Overrides {
   overrides?: OverridableNylasConfig;
 }
 
-export enum ResponseType {
-  CODE = 'code',
-  TOKEN = 'token',
-}
-
-export type AuthenticateUrlConfig = {
-  redirectURI: string;
-  redirectOnError?: boolean;
-  loginHint?: string;
-  state?: string;
-  provider?: string;
-  scopes?: string[];
-  responseType?: ResponseType;
-};
-
+/**
+ * Enum representing the available Nylas API regions.
+ */
 export enum Region {
   Us = 'us',
   Eu = 'eu',
 }
 
+/**
+ * The default Nylas API region.
+ * @default Region.Us
+ */
 export const DEFAULT_REGION = Region.Us;
 
+/**
+ * The configuration options for each Nylas API region.
+ */
 type RegionConfig = {
   nylasAPIUrl: string;
 };
 
+/**
+ * The available preset configuration values for each Nylas API region.
+ */
 export const REGION_CONFIG: Record<Region, RegionConfig> = {
   [Region.Us]: {
     nylasAPIUrl: 'https://api.us.nylas.com',
@@ -49,4 +56,8 @@ export const REGION_CONFIG: Record<Region, RegionConfig> = {
   },
 };
 
+/**
+ * The default Nylas API URL.
+ * @default https://api.us.nylas.com
+ */
 export const DEFAULT_SERVER_URL = REGION_CONFIG[DEFAULT_REGION].nylasAPIUrl;

@@ -33,6 +33,11 @@ interface DestroyWebhookParams {
   webhookId: string;
 }
 
+/**
+ * Nylas Webhooks API
+ *
+ * The Nylas Webhooks API allows your application to receive notifications in real-time when certain events occur.
+ */
 export class Webhooks extends Resource {
   /**
    * List all webhook destinations for the application

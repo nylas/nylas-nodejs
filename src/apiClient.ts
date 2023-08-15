@@ -10,6 +10,16 @@ import PACKAGE_JSON from '../package.json';
 
 const SDK_VERSION = PACKAGE_JSON.version;
 
+/**
+ * Options for a request to the Nylas API
+ * @property path The path to the API endpoint
+ * @property method The HTTP method to use
+ * @property headers Additional headers to send with the request
+ * @property queryParams Query parameters to send with the request
+ * @property body The body of the request
+ * @property overrides Overrides to the default Nylas API client configuration
+ * @ignore Not for public use
+ */
 export interface RequestOptionsParams {
   path: string;
   method: string;
@@ -19,6 +29,16 @@ export interface RequestOptionsParams {
   overrides?: OverridableNylasConfig;
 }
 
+/**
+ * Options for building a request for fetch to understand
+ * @property path The path to the API endpoint
+ * @property method The HTTP method to use
+ * @property headers Additional headers to send with the request
+ * @property url The URL of the request
+ * @property body The body of the request
+ * @property overrides Overrides to the default Nylas API client configuration
+ * @ignore Not for public use
+ */
 interface RequestOptions {
   path: string;
   method: string;
@@ -28,9 +48,22 @@ interface RequestOptions {
   overrides?: Partial<NylasConfig>;
 }
 
+/**
+ * The API client for communicating with the Nylas API
+ * @ignore Not for public use
+ */
 export default class APIClient {
+  /**
+   * The API key to use for authentication
+   */
   apiKey: string;
+  /**
+   * The URL to use for communicating with the Nylas API
+   */
   serverUrl: string;
+  /**
+   * The timeout for requests to the Nylas API, in seconds
+   */
   timeout: number;
 
   constructor({ apiKey, serverUrl, timeout }: Required<NylasConfig>) {

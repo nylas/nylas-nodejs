@@ -1,7 +1,19 @@
 import { camelCase, snakeCase } from 'change-case';
 
+/**
+ * The type of function that converts a string to a different casing.
+ * @ignore Not for public use.
+ */
 type CasingFunction = (input: string, options?: any) => string;
 
+/**
+ * A utility function that recursively converts all keys in an object to a given case.
+ * @param obj The object to convert
+ * @param casingFunction The function to use to convert the keys
+ * @param excludeKeys An array of keys to exclude from conversion
+ * @returns The converted object
+ * @ignore Not for public use.
+ */
 function convertCase(
   obj: Record<string, unknown>,
   casingFunction: CasingFunction,
@@ -31,7 +43,13 @@ function convertCase(
   return newObj;
 }
 
-// function that recursively converts all keys in an object to camelCase
+/**
+ * A utility function that recursively converts all keys in an object to camelCase.
+ * @param obj The object to convert
+ * @param exclude An array of keys to exclude from conversion
+ * @returns The converted object
+ * @ignore Not for public use.
+ */
 export function objKeysToCamelCase(
   obj: Record<string, unknown>,
   exclude?: string[]
@@ -39,7 +57,12 @@ export function objKeysToCamelCase(
   return convertCase(obj, camelCase, exclude);
 }
 
-// function that recursively converts all keys in an object to snake_case
+/**
+ * A utility function that recursively converts all keys in an object to snake_case.
+ * @param obj The object to convert
+ * @param exclude An array of keys to exclude from conversion
+ * @returns The converted object
+ */
 export function objKeysToSnakeCase(
   obj: Record<string, unknown>,
   exclude?: string[]
