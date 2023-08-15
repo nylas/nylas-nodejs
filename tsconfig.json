@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2021",
     "module": "commonjs",
     "declaration": true,
-    "outDir": "./lib",
+    "outDir": "./cjs",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "strict": true
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true
   },
   "typedocOptions": {
       "entryPoints": ["src/nylas.ts"],
@@ -15,5 +17,5 @@
       "excludeExternals": true,
       "excludePrivate": true,
   },
-  "exclude": ["tests", "lib"]
+  "exclude": ["tests", "cjs"]
 }
