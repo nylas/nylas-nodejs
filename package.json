@@ -33,6 +33,7 @@
   "author": "Nylas, Inc.",
   "license": "MIT",
   "dependencies": {
+    "change-case": "^4.1.2",
     "node-fetch": "^2.6.12",
     "sha256": "^0.2.0",
     "uuid": "^8.3.2"
@@ -45,7 +46,6 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
-    "change-case": "^4.1.2",
     "eslint": "^5.14.0",
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-custom-rules": "^0.0.0",
