@@ -2,8 +2,9 @@
   "name": "nylas",
   "version": "7.0.0",
   "description": "A NodeJS wrapper for the Nylas REST API for email, contacts, and calendar.",
-  "main": "lib/nylas.js",
-  "types": "lib/nylas.d.ts",
+  "main": "lib/cjs/nylas.js",
+  "types": "lib/types/nylas.d.ts",
+  "module": "lib/esm/nylas.js",
   "files": [
     "lib"
   ],
@@ -18,7 +19,9 @@
     "lint:ci": "npm run lint:fix -- --quiet",
     "lint:prettier": "prettier --write '**/*.{ts,js}'",
     "lint:prettier:check": "prettier --check '**/*.{ts,js}'",
-    "build": "tsc",
+    "build": "rm -rf lib && npm run build-esm && npm run build-cjs",
+    "build-esm": "tsc -p tsconfig.esm.json",
+    "build-cjs": "tsc -p tsconfig.cjs.json",
     "prepare": "npm run build",
     "build:docs": "typedoc --out docs"
   },
@@ -31,6 +34,7 @@
   "author": "Nylas, Inc.",
   "license": "MIT",
   "dependencies": {
+    "change-case": "^4.1.2",
     "node-fetch": "^2.6.12",
     "sha256": "^0.2.0",
     "uuid": "^8.3.2"
@@ -43,7 +47,6 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
-    "change-case": "^4.1.2",
     "eslint": "^5.14.0",
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-custom-rules": "^0.0.0",
@@ -58,5 +61,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/nylas/nylas-nodejs.git"
+  },
+  "exports": {
+    "import": "./lib/esm/nylas.js",
+    "require": "./lib/cjs/nylas.js",
+    "types": "./lib/types/nylas.d.ts"
   }
 }

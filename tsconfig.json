@@ -1,19 +1,23 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "es2021",
     "declaration": true,
-    "outDir": "./lib",
-    "esModuleInterop": true,
+    "declarationDir": "lib/types",
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "strict": true
+    "moduleResolution": "node",
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true
   },
   "typedocOptions": {
-      "entryPoints": ["src/nylas.ts"],
-      "out": "docs",
-      "plugin": ["typedoc-plugin-missing-exports"],
-      "excludeExternals": true,
-      "excludePrivate": true,
+    "entryPoints": ["src/nylas.ts"],
+    "out": "docs",
+    "plugin": ["typedoc-plugin-missing-exports"],
+    "excludeExternals": true,
+    "excludePrivate": true,
   },
+  "include": ["src/**/*"],
   "exclude": ["tests", "lib"]
 }
