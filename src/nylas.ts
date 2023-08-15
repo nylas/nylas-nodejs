@@ -12,7 +12,7 @@ import { Applications } from './resources/applications';
  * A Nylas instance holds a configured http client pointing to a base URL and is intended to be reused and shared
  * across threads and time.
  */
-class Nylas {
+export default class Nylas {
   /**
    * Access the Applications API
    */
@@ -59,5 +59,3 @@ class Nylas {
     return this;
   }
 }
-
-export = Nylas;

@@ -11,3 +11,5 @@ CTAGS
 .idea
 coverage
 docs
+cjs
+esm
