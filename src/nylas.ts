@@ -6,7 +6,7 @@ import { Auth } from './resources/auth';
 import { Webhooks } from './resources/webhooks';
 import { Applications } from './resources/applications';
 
-class Nylas {
+export default class Nylas {
   public applications: Applications;
   public auth: Auth;
   public calendars: Calendars;
@@ -31,5 +31,3 @@ class Nylas {
     return this;
   }
 }
-
-export = Nylas;
