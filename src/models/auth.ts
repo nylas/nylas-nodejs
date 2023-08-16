@@ -162,3 +162,43 @@ export interface CodeExchangeResponse {
    */
   tokenType?: string;
 }
+
+/**
+ * Interface representing the object used to set parameters for detecting a provider.
+ */
+export interface ProviderDetectParams {
+  /**
+   * Email address to detect the provider for.
+   */
+  email: string;
+  /**
+   * Client ID of the Nylas application.
+   */
+  clientId: string;
+  /**
+   * Search by all providers regardless of created integrations. If unset, defaults to false.
+   */
+  allProviderTypes?: boolean;
+}
+
+/**
+ * Interface representing the Nylas provider detect response.
+ */
+export interface ProviderDetectResponse {
+  /**
+   * Email provided for autodetection
+   */
+  emailAddress: string;
+  /**
+   * Whether the provider was detected
+   */
+  detected: boolean;
+  /**
+   * Detected provider
+   */
+  provider?: string;
+  /**
+   * Provider type (if IMAP provider detected displays the IMAP provider)
+   */
+  type?: string;
+}
