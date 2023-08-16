@@ -6,7 +6,7 @@ type AccessType = 'online' | 'offline';
 /**
  * Type for the different OAuth providers Nylas supports.
  */
-type Provider = 'google' | 'imap' | 'microsoft' | 'yahoo';
+export type Provider = 'google' | 'imap' | 'microsoft';
 
 /**
  * Configuration for generating a URL for OAuth 2.0 authentication.

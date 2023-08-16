@@ -11,6 +11,13 @@ import {
 } from '../models/webhooks';
 
 /**
+ * @property webhookId The ID of the webhook destination to update
+ */
+interface FindWebhookParams {
+  webhookId: string;
+}
+
+/**
  * @property requestBody The webhook destination details
  */
 interface CreateWebhookParams {
@@ -53,15 +60,27 @@ export class Webhooks extends Resource {
   }
 
   /**
+   * Return a webhook destination
+   * @return The webhook destination
+   */
+  public find({
+    webhookId,
+    overrides,
+  }: FindWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
+    return super._find({
+      path: `/v3/webhooks/${webhookId}`,
+      overrides,
+    });
+  }
+
+  /**
    * Create a webhook destination
    * @returns The created webhook destination
    */
   public create({
     requestBody,
     overrides,
-  }: CreateWebhookParams & Overrides): Promise<
-    NylasResponse<WebhookWithSecret>
-  > {
+  }: CreateWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
     return super._create({
       path: `/v3/webhooks`,
       requestBody,
@@ -101,7 +120,7 @@ export class Webhooks extends Resource {
 
   /**
    * Update the webhook secret value for a destination
-   * @returns The updated webhook destination
+   * @returns The updated webhook destination with the webhook secret
    */
   public rotateSecret({
     webhookId,
