@@ -12,7 +12,8 @@
     "noImplicitThis": true
   },
   "typedocOptions": {
-    "entryPoints": ["src/nylas.ts"],
+    "entryPointStrategy": "expand",
+    "entryPoints": ["./src"],
     "out": "docs",
     "plugin": ["typedoc-plugin-rename-defaults"],
     "excludeExternals": true,
