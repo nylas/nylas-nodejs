@@ -1,6 +1,6 @@
 import APIClient from '../apiClient';
 import { OverridableNylasConfig } from '../config';
-import { ListQueryParams } from '../models/request';
+import { ListQueryParams } from '../models/listQueryParams';
 import {
   NylasResponse,
   NylasListResponse,

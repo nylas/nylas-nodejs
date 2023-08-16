@@ -1,4 +1,4 @@
-import { ListQueryParams } from './request';
+import { ListQueryParams } from './listQueryParams';
 
 /**
  * Interface of the query parameters for listing calendars.

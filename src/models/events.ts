@@ -1,4 +1,4 @@
-import { ListQueryParams } from './request';
+import { ListQueryParams } from './listQueryParams';
 import { Subset } from '../utils';
 
 /**
