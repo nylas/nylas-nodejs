@@ -1,9 +1,9 @@
 import { Overrides } from '../config';
 import {
   Calendar,
-  CreateCalenderRequestBody,
+  CreateCalenderRequest,
   ListCalendersQueryParams,
-  UpdateCalenderRequestBody,
+  UpdateCalenderRequest,
 } from '../models/calendars';
 import {
   NylasDeleteResponse,
@@ -43,7 +43,7 @@ interface ListCalendersParams {
  */
 interface CreateCalendarParams {
   identifier: string;
-  requestBody: CreateCalenderRequestBody;
+  requestBody: CreateCalenderRequest;
 }
 
 /**
@@ -54,7 +54,7 @@ interface CreateCalendarParams {
 interface UpdateCalendarParams {
   identifier: string;
   calendarId: string;
-  requestBody: UpdateCalenderRequestBody;
+  requestBody: UpdateCalenderRequest;
 }
 
 /**

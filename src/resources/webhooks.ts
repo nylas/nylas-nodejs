@@ -3,7 +3,7 @@ import { Overrides } from '../config';
 import { NylasResponse, NylasListResponse } from '../models/response';
 import {
   CreateWebhookRequest,
-  UpdateWebhookRequestBody,
+  UpdateWebhookRequest,
   Webhook,
   WebhookDeleteResponse,
   WebhookIpAddressesResponse,
@@ -30,7 +30,7 @@ interface CreateWebhookParams {
  */
 interface UpdateWebhookParams {
   webhookId: string;
-  requestBody: UpdateWebhookRequestBody;
+  requestBody: UpdateWebhookRequest;
 }
 
 /**

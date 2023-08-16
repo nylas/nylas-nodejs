@@ -33,7 +33,7 @@ export interface CreateWebhookRequest {
   notificationEmailAddress?: string;
 }
 
-export type UpdateWebhookRequestBody = Partial<CreateWebhookRequest>;
+export type UpdateWebhookRequest = Partial<CreateWebhookRequest>;
 
 export enum WebhookTriggers {
   CalendarCreated = 'calendar.created',

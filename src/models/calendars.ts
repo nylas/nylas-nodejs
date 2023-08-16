@@ -23,7 +23,7 @@ export interface ListCalendersQueryParams extends ListQueryParams {
 /**
  * Interface of a Nylas create calendar request
  */
-export interface CreateCalenderRequestBody {
+export interface CreateCalenderRequest {
   /**
    * Name of the Calendar.
    */
@@ -50,7 +50,7 @@ export interface CreateCalenderRequestBody {
 /**
  * Interface of a Nylas update calendar request
  */
-export interface UpdateCalenderRequestBody extends CreateCalenderRequestBody {
+export interface UpdateCalenderRequest extends CreateCalenderRequest {
   /**
    * The background color of the calendar in the hexadecimal format (e.g. #0099EE).
    * Empty indicates default color.
