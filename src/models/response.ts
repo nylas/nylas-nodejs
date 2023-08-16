@@ -30,47 +30,11 @@ export interface NylasListResponse<T> {
   nextCursor?: string;
 }
 
-export interface NylasApiErrorResponse {
-  requestId: string;
-  error: NylasApiError;
-}
-
-/**
- * Interface representation of a general Nylas API error.
- */
-export interface NylasApiError {
-  type: string;
-  message: string;
-  providerError?: Record<string, unknown>;
-}
-
 /**
  * Interface representing a response to a delete request.
  */
 export interface NylasDeleteResponse {
   requestId: string;
-}
-
-/**
- * Interface representing an OAuth error returned by the Nylas API.
- */
-export interface NylasOAuthErrorResponse {
-  /**
-   * Error type.
-   */
-  error: string;
-  /**
-   * Error code used for referencing the docs, logs, and data stream.
-   */
-  errorCode: number;
-  /**
-   * Human readable error description.
-   */
-  errorDescription: string;
-  /**
-   * URL to the related documentation and troubleshooting regarding this error.
-   */
-  errorUri: string;
 }
 
 /**
