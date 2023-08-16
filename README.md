@@ -50,7 +50,7 @@ For code examples that demonstrate how to use this SDK, take a look at our [Node
 
 ### 🚀 Making Your First Request
 
-Every resource (i.e., messages, events, contacts) is accessed via an instance of `Nylas`. Before making any requests, be sure to call `config` and initialize the `Nylas` instance with your `clientId` and `clientSecret`. Then, call `with` and pass it your `accessToken`. The `accessToken` allows `Nylas` to make requests for a given account's resources.
+Every resource (i.e., messages, events, contacts) is accessed via an instance of `Nylas`. The `Nylas` object must be initialized with your Nylas API key, and you can provide other additional configurations such as the Nylas API url and the timeout.
 
 ```typescript
 import Nylas from "nylas";
@@ -60,7 +60,7 @@ const nylas = new Nylas({
 });
 ```
 
-Then, you can use Nylas to access information about a user's account:
+Once initialized you can use the object to make requests for a given account's resources, for example to list all the calendars for a given account:
 ```typescript
 nylas.calendars.list({ identifier: "GRANT_ID" }).then(calendars => {
   console.log(calendars);
