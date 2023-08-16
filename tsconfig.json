@@ -12,11 +12,12 @@
     "noImplicitThis": true
   },
   "typedocOptions": {
-    "entryPoints": ["src/nylas.ts"],
+    "entryPointStrategy": "expand",
+    "entryPoints": ["./src"],
     "out": "docs",
-    "plugin": ["typedoc-plugin-missing-exports"],
+    "plugin": ["typedoc-plugin-rename-defaults"],
     "excludeExternals": true,
-    "excludePrivate": true,
+    "excludePrivate": true
   },
   "include": ["src/**/*"],
   "exclude": ["tests", "lib"]

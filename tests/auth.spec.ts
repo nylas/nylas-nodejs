@@ -15,7 +15,7 @@ describe('Auth', () => {
   beforeAll(() => {
     apiClient = new APIClient({
       apiKey: 'apiKey',
-      serverUrl: 'https://test.api.nylas.com',
+      apiUri: 'https://test.api.nylas.com',
       timeout: 30,
     });
 

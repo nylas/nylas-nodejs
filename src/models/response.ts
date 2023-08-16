@@ -1,36 +1,45 @@
+/**
+ * Interface representation of a Nylas response object
+ */
 export interface NylasResponse<T> {
-  requestId: string;
+  /**
+   * The requested data object
+   */
   data: T;
+  /**
+   * The request ID
+   */
+  requestId: string;
 }
 
+/**
+ * Interface representation of a Nylas response object that contains a list of objects.
+ */
 export interface NylasListResponse<T> {
-  requestId: string;
+  /**
+   * The list of requested data objects.
+   */
   data: T[];
+  /**
+   * The request ID.
+   */
+  requestId: string;
+  /**
+   * The cursor to use to get the next page of data.
+   */
   nextCursor?: string;
 }
 
-export interface NylasApiErrorResponse {
-  requestId: string;
-  error: NylasApiError;
-}
-
-export interface NylasApiError {
-  type: string;
-  message: string;
-  providerError?: Record<string, unknown>;
-}
-
+/**
+ * Interface representing a response to a delete request.
+ */
 export interface NylasDeleteResponse {
   requestId: string;
 }
 
-export interface AuthErrorResponse {
-  error: string;
-  errorCode: number;
-  errorDescription: string;
-  errorUri: string;
-}
-
+/**
+ * Helper type for pagination
+ */
 export type ListResponseInnerType<T> = T extends NylasListResponse<infer R>
   ? R
   : never;

@@ -1,5 +1,3 @@
-import { NylasApiErrorResponse, AuthErrorResponse } from './response';
-
 /**
  * Base class for all Nylas API errors.
  */
@@ -22,7 +20,8 @@ export abstract class AbstractNylasSdkError extends Error {}
 /**
  * Class representation of a general Nylas API error.
  */
-export class NylasApiError extends AbstractNylasApiError {
+export class NylasApiError extends AbstractNylasApiError
+  implements NylasApiErrorResponseData {
   /**
    * Error type.
    */
@@ -44,7 +43,8 @@ export class NylasApiError extends AbstractNylasApiError {
 /**
  * Class representing an OAuth error returned by the Nylas API.
  */
-export class NylasOAuthError extends AbstractNylasApiError {
+export class NylasOAuthError extends AbstractNylasApiError
+  implements NylasOAuthErrorResponse {
   /**
    * Error type.
    */
@@ -62,7 +62,7 @@ export class NylasOAuthError extends AbstractNylasApiError {
    */
   errorUri: string;
 
-  constructor(apiError: AuthErrorResponse, statusCode?: number) {
+  constructor(apiError: NylasOAuthErrorResponse, statusCode?: number) {
     super(apiError.errorDescription);
     this.error = apiError.error;
     this.errorCode = apiError.errorCode;
@@ -90,4 +90,44 @@ export class NylasSdkTimeoutError extends AbstractNylasSdkError {
     this.url = url;
     this.timeout = timeout;
   }
+}
+
+/**
+ * Interface representing the error response from the Nylas API.
+ */
+
+export interface NylasApiErrorResponse {
+  requestId: string;
+  error: NylasApiErrorResponseData;
+}
+
+/**
+ * Interface representing the error data within the response object.
+ */
+export interface NylasApiErrorResponseData {
+  type: string;
+  message: string;
+  providerError?: any;
+}
+
+/**
+ * Interface representing an OAuth error returned by the Nylas API.
+ */
+export interface NylasOAuthErrorResponse {
+  /**
+   * Error type.
+   */
+  error: string;
+  /**
+   * Error code used for referencing the docs, logs, and data stream.
+   */
+  errorCode: number;
+  /**
+   * Human readable error description.
+   */
+  errorDescription: string;
+  /**
+   * URL to the related documentation and troubleshooting regarding this error.
+   */
+  errorUri: string;
 }

@@ -11,6 +11,13 @@ import {
 } from '../models/webhooks';
 
 /**
+ * @property webhookId The ID of the webhook destination to update
+ */
+interface FindWebhookParams {
+  webhookId: string;
+}
+
+/**
  * @property requestBody The webhook destination details
  */
 interface CreateWebhookParams {
@@ -33,6 +40,11 @@ interface DestroyWebhookParams {
   webhookId: string;
 }
 
+/**
+ * Nylas Webhooks API
+ *
+ * The Nylas Webhooks API allows your application to receive notifications in real-time when certain events occur.
+ */
 export class Webhooks extends Resource {
   /**
    * List all webhook destinations for the application
@@ -48,15 +60,27 @@ export class Webhooks extends Resource {
   }
 
   /**
+   * Return a webhook destination
+   * @return The webhook destination
+   */
+  public find({
+    webhookId,
+    overrides,
+  }: FindWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
+    return super._find({
+      path: `/v3/webhooks/${webhookId}`,
+      overrides,
+    });
+  }
+
+  /**
    * Create a webhook destination
    * @returns The created webhook destination
    */
   public create({
     requestBody,
     overrides,
-  }: CreateWebhookParams & Overrides): Promise<
-    NylasResponse<WebhookWithSecret>
-  > {
+  }: CreateWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
     return super._create({
       path: `/v3/webhooks`,
       requestBody,
@@ -96,12 +120,14 @@ export class Webhooks extends Resource {
 
   /**
    * Update the webhook secret value for a destination
-   * @returns The updated webhook destination
+   * @returns The updated webhook destination with the webhook secret
    */
   public rotateSecret({
     webhookId,
     overrides,
-  }: DestroyWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
+  }: DestroyWebhookParams & Overrides): Promise<
+    NylasResponse<WebhookWithSecret>
+  > {
     return super._update({
       path: `/v3/webhooks/${webhookId}/rotate-secret`,
       requestBody: {},

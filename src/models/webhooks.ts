@@ -6,6 +6,8 @@ export interface Webhook {
   status: 'active' | 'failing' | 'failed' | 'pause';
   notificationEmailAddress?: string;
   statusUpdatedAt: number;
+  createdAt: number;
+  updatedAt: number;
 }
 
 export interface WebhookWithSecret extends Webhook {

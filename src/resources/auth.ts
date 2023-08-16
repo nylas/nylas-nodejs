@@ -10,6 +10,8 @@ import {
   PKCEAuthURL,
   TokenExchangeRequest,
   CodeExchangeResponse,
+  ProviderDetectParams,
+  ProviderDetectResponse,
 } from '../models/auth';
 
 /**
@@ -130,6 +132,21 @@ export class Auth extends Resource {
     });
 
     return true;
+  }
+
+  /**
+   * Detect provider from email address
+   * @param params The parameters to include in the request
+   * @return The detected provider, if found
+   */
+  public async detectProvider(
+    params: ProviderDetectParams
+  ): Promise<ProviderDetectResponse> {
+    return this.apiClient.request<ProviderDetectResponse>({
+      method: 'POST',
+      path: `/v3/grants/providers/detect`,
+      queryParams: params,
+    });
   }
 
   private urlAuthBuilder(config: Record<string, any>): URL {
