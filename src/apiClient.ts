@@ -66,9 +66,9 @@ export default class APIClient {
    */
   timeout: number;
 
-  constructor({ apiKey, serverUrl, timeout }: Required<NylasConfig>) {
+  constructor({ apiKey, apiUri, timeout }: Required<NylasConfig>) {
     this.apiKey = apiKey;
-    this.serverUrl = serverUrl;
+    this.serverUrl = apiUri;
     this.timeout = timeout * 1000; // fetch timeout uses milliseconds
   }
 
@@ -77,7 +77,7 @@ export default class APIClient {
     path,
     queryParams,
   }: RequestOptionsParams): URL {
-    const url = new URL(`${overrides?.serverUrl || this.serverUrl}${path}`);
+    const url = new URL(`${overrides?.apiUri || this.serverUrl}${path}`);
 
     return this.setQueryStrings(url, queryParams);
   }

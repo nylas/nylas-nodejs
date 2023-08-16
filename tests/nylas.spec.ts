@@ -23,7 +23,7 @@ describe('Nylas', () => {
     it('should configure the apiClient', () => {
       const nylas = new Nylas({
         apiKey: 'test',
-        serverUrl: 'https://test.nylas.com',
+        apiUri: 'https://test.nylas.com',
         timeout: 30,
       });
 

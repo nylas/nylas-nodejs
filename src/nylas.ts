@@ -46,7 +46,7 @@ export default class Nylas {
   constructor(config: NylasConfig) {
     this.apiClient = new APIClient({
       apiKey: config.apiKey,
-      serverUrl: config.serverUrl || DEFAULT_SERVER_URL,
+      apiUri: config.apiUri || DEFAULT_SERVER_URL,
       timeout: config.timeout || 30,
     });
 

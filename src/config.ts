@@ -1,12 +1,12 @@
 /**
  * Configuration options for initializing the Nylas SDK.
  * @property apiKey The Nylas API key to use for authentication
- * @property serverUrl The URL to use for communicating with the Nylas API
+ * @property apiUri The URL to use for communicating with the Nylas API
  * @property timeout The timeout for requests to the Nylas API, in seconds
  */
 export type NylasConfig = {
   apiKey: string;
-  serverUrl?: string; // TODO: rename to nylasAPIUrl
+  apiUri?: string;
   timeout?: number;
 };
 

@@ -20,7 +20,7 @@ describe('APIClient', () => {
     it('should initialize all the values', () => {
       const client = new APIClient({
         apiKey: 'test',
-        serverUrl: 'https://test.api.nylas.com',
+        apiUri: 'https://test.api.nylas.com',
         timeout: 30,
       });
 
@@ -36,7 +36,7 @@ describe('APIClient', () => {
     beforeAll(() => {
       client = new APIClient({
         apiKey: 'testApiKey',
-        serverUrl: 'https://api.us.nylas.com',
+        apiUri: 'https://api.us.nylas.com',
         timeout: 30,
       });
     });
@@ -49,7 +49,7 @@ describe('APIClient', () => {
           headers: { 'X-SDK-Test-Header': 'This is a test' },
           queryParams: { param: 'value' },
           body: { id: 'abc123' },
-          overrides: { serverUrl: 'https://test.api.nylas.com' },
+          overrides: { apiUri: 'https://test.api.nylas.com' },
         });
 
         expect(options.method).toBe('GET');
@@ -107,7 +107,7 @@ describe('APIClient', () => {
           headers: { 'X-SDK-Test-Header': 'This is a test' },
           queryParams: { param: 'value' },
           body: { id: 'abc123' },
-          overrides: { serverUrl: 'https://override.api.nylas.com' },
+          overrides: { apiUri: 'https://override.api.nylas.com' },
         };
         const newRequest = client.newRequest(options);
 

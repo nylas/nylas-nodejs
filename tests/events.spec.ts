@@ -9,7 +9,7 @@ describe('Events', () => {
   beforeAll(() => {
     apiClient = new APIClient({
       apiKey: 'apiKey',
-      serverUrl: 'https://test.api.nylas.com',
+      apiUri: 'https://test.api.nylas.com',
       timeout: 30,
     }) as jest.Mocked<APIClient>;
 
@@ -25,7 +25,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
 
@@ -58,7 +58,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
       apiClient.request.mockResolvedValueOnce({
@@ -102,7 +102,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
       apiClient.request.mockResolvedValueOnce({
@@ -131,7 +131,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
 
@@ -162,7 +162,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
 
@@ -200,7 +200,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
 
@@ -232,7 +232,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
 
