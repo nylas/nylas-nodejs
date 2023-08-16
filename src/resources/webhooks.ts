@@ -125,7 +125,9 @@ export class Webhooks extends Resource {
   public rotateSecret({
     webhookId,
     overrides,
-  }: DestroyWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
+  }: DestroyWebhookParams & Overrides): Promise<
+    NylasResponse<WebhookWithSecret>
+  > {
     return super._update({
       path: `/v3/webhooks/${webhookId}/rotate-secret`,
       requestBody: {},
