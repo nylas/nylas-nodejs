@@ -19,7 +19,7 @@
     "lint:ci": "npm run lint:fix -- --quiet",
     "lint:prettier": "prettier --write '**/*.{ts,js}'",
     "lint:prettier:check": "prettier --check '**/*.{ts,js}'",
-    "export-version": "node -p \"'export const SDK_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
+    "export-version": "node scripts/exportVersion.js",
     "prebuild": "npm run export-version",
     "build": "rm -rf lib && npm run build-esm && npm run build-cjs",
     "build-esm": "tsc -p tsconfig.esm.json",
