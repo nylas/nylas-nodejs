@@ -26,7 +26,7 @@
     "build-cjs": "tsc -p tsconfig.cjs.json",
     "prepare": "npm run build",
     "build:docs": "typedoc --out docs",
-    "postversion": "npm run export-version"
+    "version": "npm run export-version && git add src/version.ts"
   },
   "keywords": [
     "email",
