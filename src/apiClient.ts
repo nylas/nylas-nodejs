@@ -6,9 +6,7 @@ import {
   NylasSdkTimeoutError,
 } from './models/error';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
-const PACKAGE_JSON = require('package.json').default;
-
-const SDK_VERSION = PACKAGE_JSON.version;
+import { SDK_VERSION } from './version';
 
 /**
  * Options for a request to the Nylas API

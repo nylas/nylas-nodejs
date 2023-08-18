@@ -1,4 +1,5 @@
 import { ListQueryParams } from './listQueryParams';
+import { NylasListResponse } from './response';
 import { Subset } from '../utils';
 
 /**
@@ -260,7 +261,7 @@ export interface ListEventQueryParams extends ListQueryParams {
   limit?: number;
   /**
    * An identifier that specifies which page of data to return.
-   * This value should be taken from the {@link ListResponse.nextCursor} response field.
+   * This value should be taken from the {@link NylasListResponse.nextCursor} response field.
    */
   pageToken?: string;
 }

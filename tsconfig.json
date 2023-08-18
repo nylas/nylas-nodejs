@@ -14,11 +14,12 @@
   "typedocOptions": {
     "entryPointStrategy": "expand",
     "entryPoints": ["./src"],
+    "exclude": ["src/version.ts"],
     "out": "docs",
     "plugin": ["typedoc-plugin-rename-defaults"],
     "excludeExternals": true,
     "excludePrivate": true
   },
   "include": ["src/**/*"],
-  "exclude": ["tests", "lib"]
+  "exclude": ["tests", "lib", "scripts"]
 }
