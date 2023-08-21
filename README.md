@@ -26,7 +26,7 @@ Here are some resources to help you get started:
 To run the Nylas Node SDK, you will first need to have [Node](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/get-npm) installed on your machine.
 
 Then, head to the nearest command line and run the following:
-`npm install nylas`
+`npm install nylas@beta`
 
 Alternatively, if you prefer to use [Yarn](https://yarnpkg.com/en/), you can install the Nylas Node SDK with `yarn add nylas`
 

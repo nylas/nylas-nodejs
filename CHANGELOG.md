@@ -1,5 +1,9 @@
 # Changelog
 
+### 7.0.0-beta.2 / 2023-08-21
+* Fix issue with getting the current Nylas SDK package version
+* Fix issue with ESM imports not working correctly
+
 ### 7.0.0-beta.1 / 2023-08-16
 * **BREAKING CHANGE**: Node SDK v7 supports the Nylas API v3 exclusively, dropping support for any endpoints that are not available in v3.
 * **BREAKING CHANGE**: Convert `Nylas` class from a static to a non-static class
