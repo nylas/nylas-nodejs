@@ -1,10 +1,10 @@
-import APIClient from '../src/apiClient';
-import { Auth } from '../src/resources/auth';
+import APIClient from '../src/apiClient.js';
+import { Auth } from '../src/resources/auth.js';
 import {
   CodeExchangeRequest,
   ServerSideHostedAuthRequest,
   TokenExchangeRequest,
-} from '../src/models/auth';
+} from '../src/models/auth.js';
 import sha256 from 'sha256';
 jest.mock('uuid', () => ({ v4: (): string => '123456789' }));
 

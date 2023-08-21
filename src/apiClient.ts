@@ -1,12 +1,12 @@
 import fetch, { Request, Response } from 'node-fetch';
-import { NylasConfig, OverridableNylasConfig } from './config';
+import { NylasConfig, OverridableNylasConfig } from './config.js';
 import {
   NylasApiError,
   NylasOAuthError,
   NylasSdkTimeoutError,
-} from './models/error';
-import { objKeysToCamelCase, objKeysToSnakeCase } from './utils';
-import { SDK_VERSION } from './version';
+} from './models/error.js';
+import { objKeysToCamelCase, objKeysToSnakeCase } from './utils.js';
+import { SDK_VERSION } from './version.js';
 
 /**
  * Options for a request to the Nylas API

@@ -1,4 +1,4 @@
-import { Overrides } from '../config';
+import { Overrides } from '../config.js';
 import {
   CreateEventQueryParams,
   CreateEventRequest,
@@ -8,13 +8,13 @@ import {
   ListEventQueryParams,
   UpdateEventQueryParams,
   UpdateEventRequest,
-} from '../models/events';
+} from '../models/events.js';
 import {
   NylasDeleteResponse,
   NylasResponse,
   NylasListResponse,
-} from '../models/response';
-import { AsyncListResponse, Resource } from './resource';
+} from '../models/response.js';
+import { AsyncListResponse, Resource } from './resource.js';
 
 /**
  * @property eventId The id of the Event to retrieve.

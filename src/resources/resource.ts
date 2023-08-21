@@ -1,11 +1,11 @@
-import APIClient from '../apiClient';
-import { OverridableNylasConfig } from '../config';
-import { ListQueryParams } from '../models/listQueryParams';
+import APIClient from '../apiClient.js';
+import { OverridableNylasConfig } from '../config.js';
+import { ListQueryParams } from '../models/listQueryParams.js';
 import {
   NylasResponse,
   NylasListResponse,
   ListResponseInnerType,
-} from '../models/response';
+} from '../models/response.js';
 
 interface ListParams<T> {
   queryParams?: ListQueryParams;

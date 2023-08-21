@@ -1,6 +1,6 @@
-import { AsyncListResponse, Resource } from './resource';
-import { Overrides } from '../config';
-import { NylasResponse, NylasListResponse } from '../models/response';
+import { AsyncListResponse, Resource } from './resource.js';
+import { Overrides } from '../config.js';
+import { NylasResponse, NylasListResponse } from '../models/response.js';
 import {
   CreateWebhookRequest,
   UpdateWebhookRequest,
@@ -8,7 +8,7 @@ import {
   WebhookDeleteResponse,
   WebhookIpAddressesResponse,
   WebhookWithSecret,
-} from '../models/webhooks';
+} from '../models/webhooks.js';
 
 /**
  * @property webhookId The ID of the webhook destination to update

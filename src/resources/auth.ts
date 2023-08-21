@@ -1,8 +1,8 @@
 import { v4 as uuid } from 'uuid';
 import sha256 from 'sha256';
-import APIClient from '../apiClient';
-import { Resource } from './resource';
-import { Grants } from './grants';
+import APIClient from '../apiClient.js';
+import { Resource } from './resource.js';
+import { Grants } from './grants.js';
 import {
   URLForAdminConsentConfig,
   URLForAuthenticationConfig,
@@ -12,7 +12,7 @@ import {
   CodeExchangeResponse,
   ProviderDetectParams,
   ProviderDetectResponse,
-} from '../models/auth';
+} from '../models/auth.js';
 
 /**
  * A collection of authentication related API endpoints

@@ -20,8 +20,9 @@
     "lint:prettier": "prettier --write '**/*.{ts,js}'",
     "lint:prettier:check": "prettier --check '**/*.{ts,js}'",
     "export-version": "node scripts/exportVersion.js",
+    "generate-lib-package-json": "node scripts/generateLibPackageJson.js",
     "prebuild": "npm run export-version",
-    "build": "rm -rf lib && npm run build-esm && npm run build-cjs",
+    "build": "rm -rf lib && npm run build-esm && npm run build-cjs && npm run generate-lib-package-json",
     "build-esm": "tsc -p tsconfig.esm.json",
     "build-cjs": "tsc -p tsconfig.cjs.json",
     "prepare": "npm run build",
@@ -38,6 +39,7 @@
   "license": "MIT",
   "dependencies": {
     "change-case": "^4.1.2",
+    "eslint-plugin-import": "^2.28.1",
     "node-fetch": "^2.6.12",
     "sha256": "^0.2.0",
     "uuid": "^8.3.2"

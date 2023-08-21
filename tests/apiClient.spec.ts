@@ -1,11 +1,11 @@
-import APIClient, { RequestOptionsParams } from '../src/apiClient';
+import APIClient, { RequestOptionsParams } from '../src/apiClient.js';
 import PACKAGE_JSON from '../package.json';
 import { Response } from 'node-fetch';
 import {
   NylasApiError,
   NylasAuthError,
   NylasTokenValidationError,
-} from '../src/models/error';
+} from '../src/models/error.js';
 const fetch = require('node-fetch');
 jest.mock('node-fetch', () => {
   const { Request, Response } = jest.requireActual('node-fetch');

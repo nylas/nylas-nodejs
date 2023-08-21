@@ -1,6 +1,5 @@
-import { ListQueryParams } from './listQueryParams';
-import { NylasListResponse } from './response';
-import { Subset } from '../utils';
+import { ListQueryParams } from './listQueryParams.js';
+import { Subset } from '../utils.js';
 
 /**
  * Interface representing a Nylas Event object.

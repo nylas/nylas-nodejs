@@ -1,4 +1,4 @@
-import { Provider } from './auth';
+import { Provider } from './auth.js';
 
 /**
  * Interface representing a Nylas Grant object.

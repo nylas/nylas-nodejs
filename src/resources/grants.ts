@@ -1,16 +1,16 @@
-import { Resource } from './resource';
-import { Overrides } from '../config';
+import { Resource } from './resource.js';
+import { Overrides } from '../config.js';
 import {
   NylasDeleteResponse,
   NylasResponse,
   NylasListResponse,
-} from '../models/response';
+} from '../models/response.js';
 import {
   CreateGrantRequest,
   Grant,
   ListGrantsQueryParams,
   UpdateGrantRequest,
-} from '../models/grants';
+} from '../models/grants.js';
 
 /**
  * @property grantId The id of the Grant to retrieve.

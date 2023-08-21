@@ -1,5 +1,5 @@
-import APIClient from '../src/apiClient';
-import { Events } from '../src/resources/events';
+import APIClient from '../src/apiClient.js';
+import { Events } from '../src/resources/events.js';
 jest.mock('../src/apiClient');
 
 describe('Events', () => {

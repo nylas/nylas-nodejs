@@ -1,15 +1,15 @@
-import { AsyncListResponse, Resource } from './resource';
+import { AsyncListResponse, Resource } from './resource.js';
 import {
   NylasDeleteResponse,
   NylasResponse,
   NylasListResponse,
-} from '../models/response';
+} from '../models/response.js';
 import {
   CreateRedirectUriRequest,
   RedirectUri,
   UpdateRedirectUriRequest,
-} from '../models/redirectUri';
-import { Overrides } from '../config';
+} from '../models/redirectUri.js';
+import { Overrides } from '../config.js';
 
 /**
  * @property redirectUriId The id of the Redirect URI to retrieve.

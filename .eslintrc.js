@@ -9,7 +9,7 @@ module.exports = {
     ecmaVersion: 2016,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'eslint-plugin-import'],
   extends: [
     'eslint:recommended',
     'prettier',
@@ -30,5 +30,9 @@ module.exports = {
       { properties: 'never', ignoreDestructuring: true },
     ],
     'no-undef': 'error',
+    'import/extensions': ['error', 'ignorePackages'],
+  },
+  settings: {
+    'import/extensions': ['.js'],
   },
 };

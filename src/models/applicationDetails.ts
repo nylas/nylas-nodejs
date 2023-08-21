@@ -1,4 +1,4 @@
-import { RedirectUri } from './redirectUri';
+import { RedirectUri } from './redirectUri.js';
 
 /**
  * Interface for a Nylas application details object
