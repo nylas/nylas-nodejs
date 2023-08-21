@@ -21,11 +21,10 @@
     "lint:prettier:check": "prettier --check '**/*.{ts,js}'",
     "export-version": "node scripts/exportVersion.js",
     "generate-lib-package-json": "node scripts/generateLibPackageJson.js",
-    "default-export-cjs-fix": "node scripts/defaultExportCjsFix.js",
     "prebuild": "npm run export-version",
     "build": "rm -rf lib && npm run build-esm && npm run build-cjs && npm run generate-lib-package-json",
     "build-esm": "tsc -p tsconfig.esm.json",
-    "build-cjs": "tsc -p tsconfig.cjs.json && npm run default-export-cjs-fix",
+    "build-cjs": "tsc -p tsconfig.cjs.json",
     "prepare": "npm run build",
     "build:docs": "typedoc --out docs",
     "version": "npm run export-version && git add src/version.ts"
