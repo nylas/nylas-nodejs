@@ -1,9 +1,9 @@
-import { Resource } from './resource';
-import { RedirectUris } from './redirectUris';
-import APIClient from '../apiClient';
-import { ApplicationDetails } from '../models/applicationDetails';
-import { NylasResponse } from '../models/response';
-import { Overrides } from '../config';
+import { Resource } from './resource.js';
+import { RedirectUris } from './redirectUris.js';
+import APIClient from '../apiClient.js';
+import { ApplicationDetails } from '../models/applicationDetails.js';
+import { NylasResponse } from '../models/response.js';
+import { Overrides } from '../config.js';
 
 /**
  * Nylas Applications API

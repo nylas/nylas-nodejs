@@ -1,4 +1,4 @@
-import Nylas from '../src/nylas';
+import Nylas from '../src/nylas.js';
 
 describe('Nylas', () => {
   describe('constructor', () => {

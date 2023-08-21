@@ -1,10 +1,10 @@
-import APIClient from './apiClient';
-import { NylasConfig, DEFAULT_SERVER_URL } from './config';
-import { Calendars } from './resources/calendars';
-import { Events } from './resources/events';
-import { Auth } from './resources/auth';
-import { Webhooks } from './resources/webhooks';
-import { Applications } from './resources/applications';
+import APIClient from './apiClient.js';
+import { NylasConfig, DEFAULT_SERVER_URL } from './config.js';
+import { Calendars } from './resources/calendars.js';
+import { Events } from './resources/events.js';
+import { Auth } from './resources/auth.js';
+import { Webhooks } from './resources/webhooks.js';
+import { Applications } from './resources/applications.js';
 
 /**
  * The entry point to the Node SDK

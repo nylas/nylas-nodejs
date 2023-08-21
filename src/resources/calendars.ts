@@ -1,20 +1,20 @@
-import { Overrides } from '../config';
+import { Overrides } from '../config.js';
 import {
   Calendar,
   CreateCalenderRequest,
   ListCalendersQueryParams,
   UpdateCalenderRequest,
-} from '../models/calendars';
+} from '../models/calendars.js';
 import {
   NylasDeleteResponse,
   NylasResponse,
   NylasListResponse,
-} from '../models/response';
-import { Resource, AsyncListResponse } from './resource';
+} from '../models/response.js';
+import { Resource, AsyncListResponse } from './resource.js';
 import {
   GetAvailabilityRequest,
   GetAvailabilityResponse,
-} from '../models/availability';
+} from '../models/availability.js';
 
 /**
  * The parameters for the {@link Calendars.find} method
