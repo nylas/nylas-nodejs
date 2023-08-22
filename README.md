@@ -4,7 +4,7 @@
 
 # Nylas Node.js SDK  
 
-[![npm](https://img.shields.io/npm/v/nylas%2Fbeta?label=nylas%40beta)
+[![npm](https://img.shields.io/npm/v/nylas%2Fbeta?label=npm%40beta)
 ](https://www.npmjs.com/package/nylas/v/beta@)
 [![codecov](https://codecov.io/gh/nylas/nylas-nodejs/branch/main/graph/badge.svg?token=94IMGU4F09)](https://codecov.io/gh/nylas/nylas-nodejs)
 

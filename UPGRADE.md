@@ -2,7 +2,7 @@
 
 The Nylas Node SDK has been refactored and large parts of it have been rewritten for the upcoming release of the Nylas API v3. The goal was to have a product that is intuitive and easier to use. This guide will help you upgrade your code to use the new SDK. The new SDK also includes [documentation for the SDK's methods and models](https://nylas-nodejs-sdk-reference.pages.dev/) so you can easily find the implementation details you need.
 
-⚠️ **Note:** The Nylas Node SDK v2.0 is not compatible with Nylas APIs earlier than 3.0 beta. If you are still using an earlier version of the API (such as Nylas v2.7), keep using the Nylas Node SDK v6.x until you can upgrade.
+⚠️ **Note:** The Nylas Node SDK v7.0 is not compatible with Nylas APIs earlier than 3.0 beta. If you are still using an earlier version of the API (such as Nylas v2.7), keep using the Nylas Node SDK v6.x until you can upgrade.
 
 ## Initial Set up
 
