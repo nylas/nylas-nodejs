@@ -4,6 +4,8 @@
 
 # Nylas Node.js SDK  
 
+[![npm](https://img.shields.io/npm/v/nylas%2Fbeta?label=nylas%40beta)
+](https://www.npmjs.com/package/nylas/v/beta@)
 [![codecov](https://codecov.io/gh/nylas/nylas-nodejs/branch/main/graph/badge.svg?token=94IMGU4F09)](https://codecov.io/gh/nylas/nylas-nodejs)
 
 This is the GitHub repository for the Nylas Node SDK and this repo is primarily for anyone who wants to make contributions to the SDK or install it from source. If you are looking to use Node to access the Nylas Email, Calendar, or Contacts API you should refer to our official [Node SDK Quickstart Guide](https://developer.nylas.com/docs/developer-tools/sdk/node-sdk/).
@@ -12,9 +14,11 @@ The Nylas Communications Platform provides REST APIs for [Email](https://develop
 
 Here are some resources to help you get started:
 
-- [Nylas SDK Tutorials](https://developer.nylas.com/docs/the-basics/tutorials/nodejs/)
-- [Quickstart](https://developer.nylas.com/docs/the-basics/quickstart/)
+- [Sign up for your free Nylas account](https://dashboard.nylas.com/register)
+- [Nylas API v3 Quickstart Guide](https://developer.nylas.com/docs/v3-beta/v3-quickstart/)
+- [Nylas SDK Reference](https://nylas-nodejs-sdk-reference.pages.dev/)
 - [Nylas API Reference](https://developer.nylas.com/docs/api/)
+- [Nylas Samples repo for code samples and example applications](https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=javascript)
 
 
 ## ⚙️ Install
@@ -70,6 +74,12 @@ nylas.calendars.list({ identifier: "GRANT_ID" }).then(calendars => {
 ## 📚 Documentation
 
 Nylas maintains a [reference guide for the Node SDK](https://nylas-nodejs-sdk-reference.pages.dev/) to help you get familiar with the available methods and classes.
+
+## ✨ Upgrading from 6.x
+
+See [UPGRADE.md](UPGRADE.md) for instructions on upgrading from 6.x to 7.x.
+
+**Note**: The Node SDK v7.x is not compatible with the Nylas API earlier than v3-beta.
 
 ## 💙 Contributing
 
