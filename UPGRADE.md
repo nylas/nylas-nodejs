@@ -8,6 +8,8 @@ The Nylas Node SDK has been refactored and large parts of it have been rewritten
 
 To upgrade to the new SDK, you update your dependencies to use the new version. This can be done by installing the new version of the SDK using npm or yarn.
 
+**Note:** There is a minimum Node version has now been set to the lowest supported LTS, Node v16.
+
 ```bash
 npm install nylas@beta
 ```
