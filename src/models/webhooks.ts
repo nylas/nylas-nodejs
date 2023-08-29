@@ -88,7 +88,7 @@ export interface WebhookIpAddressesResponse {
  */
 export interface CreateWebhookRequest {
   /**
-   * Select the event that triggers the webhook.
+   * List of events that triggers the webhook.
    */
   triggerTypes: WebhookTriggers[];
   /**
