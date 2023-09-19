@@ -80,7 +80,9 @@ export class Webhooks extends Resource {
   public create({
     requestBody,
     overrides,
-  }: CreateWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
+  }: CreateWebhookParams & Overrides): Promise<
+    NylasResponse<WebhookWithSecret>
+  > {
     return super._create({
       path: `/v3/webhooks`,
       requestBody,
