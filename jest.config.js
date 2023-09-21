@@ -8,6 +8,11 @@ const config = {
       },
     ],
   },
+  moduleNameMapper: {
+    '^../src/([^/]+)$': '../lib/esm/$1.js',
+    '^../src/resources/([^/]+)$': '../lib/esm/resources/$1.js',
+    '^../src/models/([^/]+)$': '../lib/esm/models/$1.js',
+  },
   coverageThreshold: {
     global: {
       functions: 80,
