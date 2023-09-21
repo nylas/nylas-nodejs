@@ -1,5 +1,5 @@
-import APIClient from '../src/apiClient.js';
-import { Events } from '../src/resources/events.js';
+import APIClient from '../lib/esm/apiClient.js';
+import { Events } from '../lib/esm/resources/events.js';
 jest.mock('../src/apiClient');
 
 describe('Events', () => {
@@ -36,7 +36,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
     });
@@ -81,7 +81,7 @@ describe('Events', () => {
           pageToken: 'cursor123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
     });
@@ -142,7 +142,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
     });
@@ -179,7 +179,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
     });
@@ -217,7 +217,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
     });
@@ -243,7 +243,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
         },
         overrides: {
-          serverUrl: 'https://test.api.nylas.com',
+          apiUri: 'https://test.api.nylas.com',
         },
       });
     });

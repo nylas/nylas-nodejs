@@ -1,5 +1,5 @@
-import APIClient from '../src/apiClient.js';
-import { Auth } from '../src/resources/auth.js';
+import APIClient from '../src/apiClient';
+import { Auth } from '../src/resources/auth';
 import {
   CodeExchangeRequest,
   ServerSideHostedAuthRequest,
