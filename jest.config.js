@@ -1,10 +1,10 @@
 const config = {
   preset: 'ts-jest/presets/js-with-ts',
   transform: {
-    '^.+\\\\.{ts|tsx}?$': [
+    '^.+\\.tsx?$': [
       'ts-jest',
       {
-        tsConfig: 'tsconfig.test.json',
+        tsconfig: 'tsconfig.test.json',
       },
     ],
   },
