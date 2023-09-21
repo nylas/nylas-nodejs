@@ -35,4 +35,12 @@ module.exports = {
   settings: {
     'import/extensions': ['.js'],
   },
+  overrides: [
+    {
+      files: ['*.spec.ts'],
+      rules: {
+        'import/extensions': 'off',
+      },
+    },
+  ],
 };
