@@ -1,15 +1,24 @@
 import APIClient, { RequestOptionsParams } from '../src/apiClient';
-import { SDK_VERSION } from '../src/version';
-import { Response } from 'node-fetch';
 import { NylasApiError, NylasOAuthError } from '../src/models/error';
+import { SDK_VERSION } from '../src/version';
 import fetch from 'node-fetch';
+
 jest.mock('node-fetch', () => {
-  const { Request, Response } = jest.requireActual('node-fetch');
-  const mockedFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
-  mockedFetch.Request = Request;
-  mockedFetch.Response = Response;
-  return mockedFetch;
+  const originalModule = jest.requireActual('node-fetch');
+  return {
+    ...originalModule,
+    default: jest.fn(),
+  };
 });
+
+const mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
+const mockResponse = (body: string, status = 200): any => {
+  return {
+    status,
+    text: jest.fn().mockResolvedValue(body),
+    json: jest.fn().mockResolvedValue(JSON.parse(body)),
+  };
+};
 
 describe('APIClient', () => {
   describe('constructor', () => {
@@ -129,12 +138,9 @@ describe('APIClient', () => {
           name: 'test',
           isValid: true,
         };
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
 
         const requestWithResponse = await client.requestWithResponse(
-          new Response()
+          mockResponse(JSON.stringify(payload))
         );
 
         expect(requestWithResponse).toEqual(payload);
@@ -148,10 +154,9 @@ describe('APIClient', () => {
           name: 'test',
           isValid: true,
         };
-        fetch.mockImplementationOnce(() => new Response('', { status: 200 }));
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+        mockedFetch.mockImplementationOnce(() =>
+          Promise.resolve(mockResponse(JSON.stringify(payload)))
+        );
 
         const response = await client.request({
           path: '/test',
@@ -161,7 +166,9 @@ describe('APIClient', () => {
       });
 
       it('should throw an error if the response is undefined', async () => {
-        fetch.mockImplementationOnce(() => undefined);
+        mockedFetch.mockImplementationOnce(() =>
+          Promise.resolve(undefined as any)
+        );
 
         await expect(
           client.request({
@@ -175,10 +182,9 @@ describe('APIClient', () => {
         const payload = {
           invalid: true,
         };
-        fetch.mockImplementationOnce(() => new Response('', { status: 400 }));
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+        mockedFetch.mockImplementationOnce(() =>
+          Promise.resolve(mockResponse(JSON.stringify(payload), 400))
+        );
 
         await expect(
           client.request({
@@ -200,10 +206,9 @@ describe('APIClient', () => {
           errorDescription: 'Nylas SDK Test error',
           errorUri: 'https://test.api.nylas.com/docs/errors#test-error',
         };
-        fetch.mockImplementation(() => new Response('', { status: 400 }));
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+        mockedFetch.mockImplementation(() =>
+          Promise.resolve(mockResponse(JSON.stringify(payload), 400))
+        );
 
         await expect(
           client.request({
@@ -231,7 +236,7 @@ describe('APIClient', () => {
       //       requestId: 'abc123',
       //     },
       //   };
-      //   fetch.mockImplementation(() => new Response('', { status: 400 }));
+      //   mockedFetch.mockImplementation(() => new Response('', { status: 400 }));
       //   jest
       //     .spyOn(Response.prototype, 'text')
       //     .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
@@ -252,10 +257,10 @@ describe('APIClient', () => {
             message: 'Invalid request',
           },
         };
-        fetch.mockImplementation(() => new Response('', { status: 400 }));
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+
+        mockedFetch.mockImplementation(() =>
+          Promise.resolve(mockResponse(JSON.stringify(payload), 400))
+        );
 
         await expect(
           client.request({
