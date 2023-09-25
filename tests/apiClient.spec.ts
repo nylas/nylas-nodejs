@@ -1,7 +1,7 @@
 import APIClient, { RequestOptionsParams } from '../src/apiClient';
 import { NylasApiError, NylasOAuthError } from '../src/models/error';
 import { SDK_VERSION } from '../src/version';
-import fetch from 'node-fetch';
+import { mockedFetch, mockResponse } from './testUtils';
 
 jest.mock('node-fetch', () => {
   const originalModule = jest.requireActual('node-fetch');
@@ -10,15 +10,6 @@ jest.mock('node-fetch', () => {
     default: jest.fn(),
   };
 });
-
-const mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
-const mockResponse = (body: string, status = 200): any => {
-  return {
-    status,
-    text: jest.fn().mockResolvedValue(body),
-    json: jest.fn().mockResolvedValue(JSON.parse(body)),
-  };
-};
 
 describe('APIClient', () => {
   describe('constructor', () => {
