@@ -1,9 +1,9 @@
-import APIClient from '../src/apiClient';
-import { Auth } from '../src/resources/auth';
+import APIClient from '../../src/apiClient';
+import { Auth } from '../../src/resources/auth';
 import {
   CodeExchangeRequest,
   TokenExchangeRequest,
-} from '../src/models/auth.js';
+} from '../../src/models/auth';
 jest.mock('uuid', () => ({ v4: (): string => 'nylas' }));
 
 describe('Auth', () => {
