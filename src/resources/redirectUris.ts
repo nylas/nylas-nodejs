@@ -121,7 +121,7 @@ export class RedirectUris extends Resource {
   > {
     return super._destroy({
       overrides,
-      path: `/v1/redirect_uris/${redirectUriId}`,
+      path: `/v3/applications/redirect-uris/${redirectUriId}`,
     });
   }
 }
