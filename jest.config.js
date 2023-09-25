@@ -9,9 +9,9 @@ const config = {
     ],
   },
   moduleNameMapper: {
-    '^../src/([^/]+)$': '../lib/esm/$1.js',
-    '^../src/resources/([^/]+)$': '../lib/esm/resources/$1.js',
-    '^../src/models/([^/]+)$': '../lib/esm/models/$1.js',
+    '^[../]+src/([^/]+)$': '<rootDir>/lib/esm/$1.js',
+    '^[../]+src/resources/([^/]+)$': '<rootDir>/lib/esm/resources/$1.js',
+    '^[../]+src/models/([^/]+)$': '<rootDir>/lib/esm/models/$1.js',
   },
   coverageThreshold: {
     global: {
