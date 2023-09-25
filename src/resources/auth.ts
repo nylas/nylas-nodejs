@@ -176,9 +176,6 @@ export class Auth extends Resource {
     if (config.prompt) {
       url.searchParams.set('prompt', config.prompt);
     }
-    if (config.metadata) {
-      url.searchParams.set('metadata', config.metadata);
-    }
     if (config.state) {
       url.searchParams.set('state', config.state);
     }

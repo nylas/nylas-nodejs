@@ -197,6 +197,15 @@ describe('Auth', () => {
       });
     });
   });
+  describe('Detect Provider', () => {
+    it('should call apiClient.request with the correct params', async () => {
+      await auth.detectProvider({
+        email: 'email@example.com',
+        clientId: 'testClientId',
+        allProviderTypes: true,
+      });
+    });
+  });
   describe('revoke', () => {
     it('should call apiClient.request with the correct params', async () => {
       await auth.revoke('accessToken123');
