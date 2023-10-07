@@ -237,7 +237,7 @@ export default class NylasConnection {
       controller = new AbortController();
       timeout = setTimeout(() => {
         controller.abort();
-      }, 150);
+      }, config.timeout);
     }
 
     return new Promise<any>((resolve, reject) => {
