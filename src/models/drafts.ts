@@ -1,17 +1,17 @@
 import { BaseMessage, BaseCreateMessage } from './messages.js';
 
-export interface CreateDraft extends BaseCreateMessage {
+export interface CreateDraftRequest extends BaseCreateMessage {
   sendAt?: number;
   useDraft?: boolean;
   replyToMessageId?: string;
   trackingOptions?: TrackingOptions;
 }
 
-export interface Draft extends BaseMessage, CreateDraft {
+export interface Draft extends BaseMessage, CreateDraftRequest {
   object: 'draft';
 }
 
-export type UpdateDraft = Partial<CreateDraft>;
+export type UpdateDraftRequest = Partial<CreateDraftRequest>;
 
 export interface TrackingOptions {
   label?: string;
