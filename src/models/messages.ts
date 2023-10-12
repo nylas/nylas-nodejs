@@ -1,7 +1,7 @@
 import { EmailName } from './events.js';
 import { File } from './files.js';
 
-export interface BaseMessage {
+export interface BaseCreateMessage {
   to: EmailName[];
   bcc?: EmailName[];
   cc?: EmailName[];
@@ -16,11 +16,16 @@ export interface BaseMessage {
   unread?: boolean;
 }
 
-export interface Message extends BaseMessage {
+export interface BaseMessage extends BaseCreateMessage {
   id: string;
   grantId: string;
   date: number;
-  folders?: string[];
+  createdAt: number;
+  folders: string[];
+}
+
+export interface Message extends BaseMessage {
+  object: 'message';
   metadata?: Record<string, unknown>;
 }
 
