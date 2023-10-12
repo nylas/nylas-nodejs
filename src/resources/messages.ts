@@ -134,7 +134,7 @@ export class Messages extends Resource {
 
       // Add a separate form field for each attachment
       requestBody.attachments?.forEach((attachment, index) => {
-        form.append(`file${index}`, fs.createReadStream(attachment.filename), {
+        form.append(`file${index}`, attachment.content, {
           filename: attachment.filename,
           contentType: attachment.contentType,
         });
