@@ -7,7 +7,9 @@ export interface CreateDraftRequest extends BaseCreateMessage {
   trackingOptions?: TrackingOptions;
 }
 
-export interface Draft extends BaseMessage, CreateDraftRequest {
+export interface Draft
+  extends BaseMessage,
+    Omit<CreateDraftRequest, 'attachments'> {
   object: 'draft';
 }
 

@@ -1,11 +1,14 @@
-export interface File {
-  id: string;
-  grantId: string;
-  filename?: string;
+export interface CreateFileRequest {
+  filename: string;
+  contentType: string;
+  content: string;
   size?: number;
-  contentType?: string;
   isInline?: boolean;
-  content?: string;
   contentId?: string;
   contentDisposition?: string;
+}
+
+export interface File extends CreateFileRequest {
+  id: string;
+  grantId: string;
 }

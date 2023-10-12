@@ -12,6 +12,12 @@ import {
   NylasResponse,
 } from '../models/response.js';
 import { CreateDraftRequest } from '../models/drafts.js';
+import { CreateFileRequest } from '../models/files.js';
+import * as fs from 'fs';
+import FormData from 'form-data';
+import path from 'path';
+import mime from 'mime-types';
+import { objKeysToSnakeCase } from '../utils.js';
 
 interface ListMessagesParams {
   identifier: string;
@@ -104,5 +110,75 @@ export class Messages extends Resource {
       path: `/v3/grants/${identifier}/messages/${messageId}`,
       overrides,
     });
+  }
+
+  public send({
+    identifier,
+    requestBody,
+    overrides,
+  }: SendMessageParams & Overrides): Promise<NylasResponse<Message>> {
+    const sendPath = `/v3/grants/${identifier}/messages/send`;
+
+    if (this._useMultipart(requestBody.attachments)) {
+      const form = new FormData();
+
+      // Split out the message payload from the attachments
+      const messagePayload = {
+        ...requestBody,
+        attachments: undefined,
+      };
+      form.append(
+        'message',
+        JSON.stringify(objKeysToSnakeCase(messagePayload))
+      );
+
+      // Add a separate form field for each attachment
+      requestBody.attachments?.forEach((attachment, index) => {
+        form.append(`file${index}`, fs.createReadStream(attachment.filename), {
+          filename: attachment.filename,
+          contentType: attachment.contentType,
+        });
+      });
+
+      return this.apiClient.request({
+        method: 'POST',
+        path: sendPath,
+        form,
+        overrides,
+      });
+    } else {
+      return super._create({
+        path: sendPath,
+        requestBody,
+        overrides,
+      });
+    }
+  }
+
+  public createFileRequestBuilder(filePath: string): CreateFileRequest {
+    const stats = fs.statSync(filePath);
+    const filename = path.basename(filePath);
+    const contentType = mime.lookup(filePath) || 'application/octet-stream';
+    const content = fs.readFileSync(filePath).toString('base64');
+
+    return {
+      filename,
+      contentType,
+      content,
+      size: stats.size,
+    };
+  }
+
+  private _useMultipart(attachments?: CreateFileRequest[]): boolean {
+    if (!attachments || attachments.length == 0) {
+      return false;
+    }
+
+    const totalSize = attachments.reduce((acc, attachment) => {
+      const stats = attachment.size || 0;
+      return acc + stats;
+    }, 0);
+
+    return totalSize > 3 * 1024 * 1024; // 3MB in bytes
   }
 }

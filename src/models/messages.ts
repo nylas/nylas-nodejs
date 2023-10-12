@@ -1,5 +1,5 @@
 import { EmailName } from './events.js';
-import { File } from './files.js';
+import { CreateFileRequest, File } from './files.js';
 import { ListQueryParams } from './listQueryParams.js';
 
 export interface BaseCreateMessage {
@@ -8,7 +8,7 @@ export interface BaseCreateMessage {
   cc?: EmailName[];
   from?: EmailName[];
   replyTo?: EmailName[];
-  attachments?: File[];
+  attachments?: CreateFileRequest[];
   snippet?: string;
   subject?: string;
   threadId?: string;
@@ -23,6 +23,7 @@ export interface BaseMessage extends BaseCreateMessage {
   date: number;
   createdAt: number;
   folders: string[];
+  attachments?: File[];
 }
 
 export interface Message extends BaseMessage {
