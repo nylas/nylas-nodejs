@@ -49,6 +49,28 @@ export enum MessageFields {
   INCLUDE_HEADERS = 'include_headers',
 }
 
+export interface ScheduledMessage {
+  scheduleId: number;
+  status: ScheduledMessageStatus;
+  closeTime?: number;
+}
+
+export interface ScheduledMessagesList {
+  schedules: ScheduledMessage[];
+}
+
+export interface ScheduledMessageStatus {
+  code: string;
+  description: string;
+}
+
+export interface DeleteMessageResponse {
+  requestId: string;
+  data?: {
+    message: string;
+  };
+}
+
 export interface ListMessagesQueryParams extends ListQueryParams {
   subject?: string;
   anyEmail?: string[];

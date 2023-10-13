@@ -1,8 +1,11 @@
 import { AsyncListResponse, Resource } from './resource.js';
 import {
+  DeleteMessageResponse,
   FindMessageQueryParams,
   ListMessagesQueryParams,
   Message,
+  ScheduledMessage,
+  ScheduledMessagesList,
   UpdateMessageRequest,
 } from '../models/messages.js';
 import { Overrides } from '../config.js';
@@ -46,6 +49,15 @@ interface SendMessageParams {
   requestBody: CreateDraftRequest;
 }
 
+interface ListScheduledMessageParams {
+  identifier: string;
+}
+
+interface FindScheduledMessageParams {
+  identifier: string;
+  scheduleId: string;
+}
+
 export class Messages extends Resource {
   /**
    * Return all Messages
@@ -73,7 +85,7 @@ export class Messages extends Resource {
     identifier,
     messageId,
     overrides,
-  }: FindMessageParams & Overrides): Promise<NylasResponse<FindMessageParams>> {
+  }: FindMessageParams & Overrides): Promise<NylasResponse<Message>> {
     return super._find({
       path: `/v3/grants/${identifier}/messages/${messageId}`,
       overrides,
@@ -139,6 +151,44 @@ export class Messages extends Resource {
       method: 'POST',
       path: sendPath,
       form,
+      overrides,
+    });
+  }
+
+  public listScheduledMessages({
+    identifier,
+    overrides,
+  }: ListScheduledMessageParams & Overrides): Promise<
+    NylasResponse<ScheduledMessagesList>
+  > {
+    return super._find({
+      path: `/v3/grants/${identifier}/messages/schedules`,
+      overrides,
+    });
+  }
+
+  public findScheduledMessage({
+    identifier,
+    scheduleId,
+    overrides,
+  }: FindScheduledMessageParams & Overrides): Promise<
+    NylasResponse<ScheduledMessage>
+  > {
+    return super._find({
+      path: `/v3/grants/${identifier}/messages/schedules/${scheduleId}`,
+      overrides,
+    });
+  }
+
+  public destroyScheduledMessage({
+    identifier,
+    scheduleId,
+    overrides,
+  }: FindScheduledMessageParams & Overrides): Promise<
+    NylasResponse<DeleteMessageResponse>
+  > {
+    return super._destroy({
+      path: `/v3/grants/${identifier}/messages/schedules/${scheduleId}`,
       overrides,
     });
   }
