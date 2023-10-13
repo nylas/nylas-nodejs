@@ -21,41 +21,84 @@ import { objKeysToSnakeCase } from '../utils.js';
 import { SmartCompose } from './smartCompose.js';
 import APIClient from '../apiClient.js';
 
+/**
+ * The parameters for the {@link Messages.list} method
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ */
 interface ListMessagesParams {
   identifier: string;
   queryParams?: ListMessagesQueryParams;
 }
 
+/**
+ * The parameters for the {@link Messages.find} method
+ * @property identifier The identifier of the grant to act upon
+ * @property messageId The id of the message to retrieve.
+ * @property queryParams The query parameters to include in the request
+ */
 interface FindMessageParams {
   identifier: string;
   messageId: string;
   queryParams?: FindMessageQueryParams;
 }
 
+/**
+ * The parameters for the {@link Messages.update} method
+ * @property identifier The identifier of the grant to act upon
+ * @property messageId The id of the message to update
+ * @property requestBody The values to create the message with
+ */
 interface UpdateMessageParams {
   identifier: string;
   messageId: string;
   requestBody: UpdateMessageRequest;
 }
 
+/**
+ * The parameters for the {@link Messages.destroy} method
+ * @property identifier The identifier of the grant to act upon
+ * @property messageId The id of the message to delete
+ */
 interface DestroyMessageParams {
   identifier: string;
   messageId: string;
 }
 
+/**
+ * The parameters for the {@link Messages.send} method
+ * @property identifier The identifier of the grant to act upon
+ * @property requestBody The message to send
+ */
 interface SendMessageParams {
   identifier: string;
   requestBody: CreateDraftRequest;
 }
 
-interface ListScheduledMessageParams {
+/**
+ * The parameters for the {@link Messages.listScheduledMessages} method
+ * @property identifier The identifier of the grant to act upon
+ */
+interface ListScheduledMessagesParams {
   identifier: string;
 }
 
+/**
+ * The parameters for the {@link Messages.findScheduledMessage} method
+ * @property identifier The identifier of the grant to act upon
+ * @property scheduleId The id of the scheduled message to retrieve.
+ */
 interface FindScheduledMessageParams {
   identifier: string;
   scheduleId: string;
 }
+
+/**
+ * The parameters for the {@link Messages.destroyScheduledMessage} method
+ * @property identifier The identifier of the grant to act upon
+ * @property scheduleId The id of the scheduled message to destroy.
+ */
+export type DestroyScheduledMessageParams = FindScheduledMessageParams;
 
 export class Messages extends Resource {
   public smartCompose: SmartCompose;
@@ -148,7 +191,7 @@ export class Messages extends Resource {
   public listScheduledMessages({
     identifier,
     overrides,
-  }: ListScheduledMessageParams & Overrides): Promise<
+  }: ListScheduledMessagesParams & Overrides): Promise<
     NylasResponse<ScheduledMessagesList>
   > {
     return super._find({
@@ -174,7 +217,7 @@ export class Messages extends Resource {
     identifier,
     scheduleId,
     overrides,
-  }: FindScheduledMessageParams & Overrides): Promise<
+  }: DestroyScheduledMessageParams & Overrides): Promise<
     NylasResponse<DeleteMessageResponse>
   > {
     return super._destroy({
