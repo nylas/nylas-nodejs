@@ -118,48 +118,36 @@ export class Messages extends Resource {
     overrides,
   }: SendMessageParams & Overrides): Promise<NylasResponse<Message>> {
     const sendPath = `/v3/grants/${identifier}/messages/send`;
+    const form = new FormData();
 
-    if (this._useMultipart(requestBody.attachments)) {
-      const form = new FormData();
+    // Split out the message payload from the attachments
+    const messagePayload = {
+      ...requestBody,
+      attachments: undefined,
+    };
+    form.append('message', JSON.stringify(objKeysToSnakeCase(messagePayload)));
 
-      // Split out the message payload from the attachments
-      const messagePayload = {
-        ...requestBody,
-        attachments: undefined,
-      };
-      form.append(
-        'message',
-        JSON.stringify(objKeysToSnakeCase(messagePayload))
-      );
-
-      // Add a separate form field for each attachment
-      requestBody.attachments?.forEach((attachment, index) => {
-        form.append(`file${index}`, attachment.content, {
-          filename: attachment.filename,
-          contentType: attachment.contentType,
-        });
+    // Add a separate form field for each attachment
+    requestBody.attachments?.forEach((attachment, index) => {
+      form.append(`file${index}`, attachment.content, {
+        filename: attachment.filename,
+        contentType: attachment.contentType,
       });
+    });
 
-      return this.apiClient.request({
-        method: 'POST',
-        path: sendPath,
-        form,
-        overrides,
-      });
-    } else {
-      return super._create({
-        path: sendPath,
-        requestBody,
-        overrides,
-      });
-    }
+    return this.apiClient.request({
+      method: 'POST',
+      path: sendPath,
+      form,
+      overrides,
+    });
   }
 
   public createFileRequestBuilder(filePath: string): CreateFileRequest {
     const stats = fs.statSync(filePath);
     const filename = path.basename(filePath);
     const contentType = mime.lookup(filePath) || 'application/octet-stream';
-    const content = fs.readFileSync(filePath).toString('base64');
+    const content = fs.createReadStream(filePath);
 
     return {
       filename,

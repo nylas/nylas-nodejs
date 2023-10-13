@@ -17,7 +17,7 @@ export interface BaseCreateMessage {
   unread?: boolean;
 }
 
-export interface BaseMessage extends BaseCreateMessage {
+export interface BaseMessage extends Omit<BaseCreateMessage, 'attachments'> {
   id: string;
   grantId: string;
   date: number;
