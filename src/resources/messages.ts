@@ -156,17 +156,4 @@ export class Messages extends Resource {
       size: stats.size,
     };
   }
-
-  private _useMultipart(attachments?: CreateFileRequest[]): boolean {
-    if (!attachments || attachments.length == 0) {
-      return false;
-    }
-
-    const totalSize = attachments.reduce((acc, attachment) => {
-      const stats = attachment.size || 0;
-      return acc + stats;
-    }, 0);
-
-    return totalSize > 3 * 1024 * 1024; // 3MB in bytes
-  }
 }
