@@ -21,6 +21,8 @@ import FormData from 'form-data';
 import path from 'path';
 import mime from 'mime-types';
 import { objKeysToSnakeCase } from '../utils.js';
+import { SmartCompose } from './smartCompose.js';
+import APIClient from '../apiClient.js';
 
 interface ListMessagesParams {
   identifier: string;
@@ -59,6 +61,13 @@ interface FindScheduledMessageParams {
 }
 
 export class Messages extends Resource {
+  public smartCompose: SmartCompose;
+
+  constructor(apiClient: APIClient) {
+    super(apiClient);
+    this.smartCompose = new SmartCompose(apiClient);
+  }
+
   /**
    * Return all Messages
    * @return A list of messages
