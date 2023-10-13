@@ -6,6 +6,7 @@ import { Auth } from './resources/auth.js';
 import { Webhooks } from './resources/webhooks.js';
 import { Applications } from './resources/applications.js';
 import { Messages } from './resources/messages.js';
+import { Drafts } from './resources/drafts.js';
 
 /**
  * The entry point to the Node SDK
@@ -26,6 +27,10 @@ export default class Nylas {
    * Access the Calendars API
    */
   public calendars: Calendars;
+  /**
+   * Access the Drafts API
+   */
+  public drafts: Drafts;
   /**
    * Access the Events API
    */
@@ -58,6 +63,7 @@ export default class Nylas {
     this.applications = new Applications(this.apiClient);
     this.auth = new Auth(this.apiClient);
     this.calendars = new Calendars(this.apiClient);
+    this.drafts = new Drafts(this.apiClient);
     this.events = new Events(this.apiClient);
     this.messages = new Messages(this.apiClient);
     this.webhooks = new Webhooks(this.apiClient);
