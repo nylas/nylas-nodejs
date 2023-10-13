@@ -11,6 +11,7 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
+import { Messages } from './messages.js';
 
 interface ListDraftsParams {
   identifier: string;
@@ -81,9 +82,12 @@ export class Drafts extends Resource {
     requestBody,
     overrides,
   }: CreateDraftParams & Overrides): Promise<NylasResponse<Draft>> {
-    return super._create({
+    const form = Messages._buildFormRequest(requestBody);
+
+    return this.apiClient.request({
+      method: 'POST',
       path: `/v3/grants/${identifier}/drafts/${draftId}`,
-      requestBody,
+      form,
       overrides,
     });
   }

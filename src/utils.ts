@@ -1,4 +1,22 @@
 import { camelCase, snakeCase } from 'change-case';
+import { CreateFileRequest } from './models/files.js';
+import * as fs from 'fs';
+import path from 'path';
+import mime from 'mime-types';
+
+export function createFileRequestBuilder(filePath: string): CreateFileRequest {
+  const stats = fs.statSync(filePath);
+  const filename = path.basename(filePath);
+  const contentType = mime.lookup(filePath) || 'application/octet-stream';
+  const content = fs.createReadStream(filePath);
+
+  return {
+    filename,
+    contentType,
+    content,
+    size: stats.size,
+  };
+}
 
 /**
  * The type of function that converts a string to a different casing.

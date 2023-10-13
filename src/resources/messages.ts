@@ -1,5 +1,6 @@
 import { AsyncListResponse, Resource } from './resource.js';
 import {
+  BaseCreateMessage,
   DeleteMessageResponse,
   FindMessageQueryParams,
   ListMessagesQueryParams,
@@ -15,11 +16,7 @@ import {
   NylasResponse,
 } from '../models/response.js';
 import { CreateDraftRequest } from '../models/drafts.js';
-import { CreateFileRequest } from '../models/files.js';
-import * as fs from 'fs';
 import FormData from 'form-data';
-import path from 'path';
-import mime from 'mime-types';
 import { objKeysToSnakeCase } from '../utils.js';
 import { SmartCompose } from './smartCompose.js';
 import APIClient from '../apiClient.js';
@@ -138,27 +135,11 @@ export class Messages extends Resource {
     requestBody,
     overrides,
   }: SendMessageParams & Overrides): Promise<NylasResponse<Message>> {
-    const sendPath = `/v3/grants/${identifier}/messages/send`;
-    const form = new FormData();
-
-    // Split out the message payload from the attachments
-    const messagePayload = {
-      ...requestBody,
-      attachments: undefined,
-    };
-    form.append('message', JSON.stringify(objKeysToSnakeCase(messagePayload)));
-
-    // Add a separate form field for each attachment
-    requestBody.attachments?.forEach((attachment, index) => {
-      form.append(`file${index}`, attachment.content, {
-        filename: attachment.filename,
-        contentType: attachment.contentType,
-      });
-    });
+    const form = Messages._buildFormRequest(requestBody);
 
     return this.apiClient.request({
       method: 'POST',
-      path: sendPath,
+      path: `/v3/grants/${identifier}/messages/send`,
       form,
       overrides,
     });
@@ -202,17 +183,24 @@ export class Messages extends Resource {
     });
   }
 
-  public createFileRequestBuilder(filePath: string): CreateFileRequest {
-    const stats = fs.statSync(filePath);
-    const filename = path.basename(filePath);
-    const contentType = mime.lookup(filePath) || 'application/octet-stream';
-    const content = fs.createReadStream(filePath);
+  static _buildFormRequest(requestBody: BaseCreateMessage): FormData {
+    const form = new FormData();
 
-    return {
-      filename,
-      contentType,
-      content,
-      size: stats.size,
+    // Split out the message payload from the attachments
+    const messagePayload = {
+      ...requestBody,
+      attachments: undefined,
     };
+    form.append('message', JSON.stringify(objKeysToSnakeCase(messagePayload)));
+
+    // Add a separate form field for each attachment
+    requestBody.attachments?.forEach((attachment, index) => {
+      form.append(`file${index}`, attachment.content, {
+        filename: attachment.filename,
+        contentType: attachment.contentType,
+      });
+    });
+
+    return form;
   }
 }
