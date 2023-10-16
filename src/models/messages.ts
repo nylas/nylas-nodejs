@@ -64,11 +64,8 @@ export interface ScheduledMessageStatus {
   description: string;
 }
 
-export interface DeleteMessageResponse {
-  requestId: string;
-  data?: {
-    message: string;
-  };
+export interface StopScheduledMessageResponse {
+  message: string;
 }
 
 export interface ListMessagesQueryParams extends ListQueryParams {

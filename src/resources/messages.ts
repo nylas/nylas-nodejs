@@ -1,12 +1,12 @@
 import { AsyncListResponse, Resource } from './resource.js';
 import {
   BaseCreateMessage,
-  DeleteMessageResponse,
   FindMessageQueryParams,
   ListMessagesQueryParams,
   Message,
   ScheduledMessage,
   ScheduledMessagesList,
+  StopScheduledMessageResponse,
   UpdateMessageRequest,
 } from '../models/messages.js';
 import { Overrides } from '../config.js';
@@ -94,11 +94,11 @@ export interface FindScheduledMessageParams {
 }
 
 /**
- * The parameters for the {@link Messages.destroyScheduledMessage} method
+ * The parameters for the {@link Messages.stopScheduledMessage} method
  * @property identifier The identifier of the grant to act upon
  * @property scheduleId The id of the scheduled message to destroy.
  */
-export type DestroyScheduledMessageParams = FindScheduledMessageParams;
+export type StopScheduledMessageParams = FindScheduledMessageParams;
 
 export class Messages extends Resource {
   public smartCompose: SmartCompose;
@@ -173,6 +173,10 @@ export class Messages extends Resource {
     });
   }
 
+  /**
+   * Send an email
+   * @return The sent message
+   */
   public send({
     identifier,
     requestBody,
@@ -188,6 +192,10 @@ export class Messages extends Resource {
     });
   }
 
+  /**
+   * Retrieve your scheduled messages
+   * @return A list of scheduled messages
+   */
   public listScheduledMessages({
     identifier,
     overrides,
@@ -200,6 +208,10 @@ export class Messages extends Resource {
     });
   }
 
+  /**
+   * Retrieve a scheduled message
+   * @return The scheduled message
+   */
   public findScheduledMessage({
     identifier,
     scheduleId,
@@ -213,12 +225,16 @@ export class Messages extends Resource {
     });
   }
 
-  public destroyScheduledMessage({
+  /**
+   * Stop a scheduled message
+   * @return The confirmation of the stopped scheduled message
+   */
+  public stopScheduledMessage({
     identifier,
     scheduleId,
     overrides,
-  }: DestroyScheduledMessageParams & Overrides): Promise<
-    NylasResponse<DeleteMessageResponse>
+  }: StopScheduledMessageParams & Overrides): Promise<
+    NylasResponse<StopScheduledMessageResponse>
   > {
     return super._destroy({
       path: `/v3/grants/${identifier}/messages/schedules/${scheduleId}`,
