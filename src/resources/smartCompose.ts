@@ -6,11 +6,22 @@ import {
 import { Overrides } from '../config.js';
 import { NylasResponse } from '../models/response.js';
 
+/**
+ * The parameters for the {@link SmartCompose.composeMessage} method
+ * @property identifier The identifier of the grant to act upon
+ * @property requestBody The prompt that smart compose will use to generate a message suggestion
+ */
 export interface ComposeMessageParams {
   identifier: string;
   requestBody: ComposeMessageRequest;
 }
 
+/**
+ * The parameters for the {@link SmartCompose.composeMessageReply} method
+ * @property identifier The identifier of the grant to act upon
+ * @property messageId The id of the message to reply to
+ * @property requestBody The prompt that smart compose will use to generate a reply suggestion
+ */
 export interface ComposeMessageReplyParams {
   identifier: string;
   messageId: string;
@@ -18,6 +29,10 @@ export interface ComposeMessageReplyParams {
 }
 
 export class SmartCompose extends Resource {
+  /**
+   * Compose a message
+   * @return The generated message
+   */
   public composeMessage({
     identifier,
     requestBody,
@@ -32,6 +47,10 @@ export class SmartCompose extends Resource {
     });
   }
 
+  /**
+   * Compose a message reply
+   * @return The generated message reply
+   */
   public composeMessageReply({
     identifier,
     messageId,
