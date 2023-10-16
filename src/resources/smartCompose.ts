@@ -6,12 +6,12 @@ import {
 import { Overrides } from '../config.js';
 import { NylasResponse } from '../models/response.js';
 
-interface ComposeMessageParams {
+export interface ComposeMessageParams {
   identifier: string;
   requestBody: ComposeMessageRequest;
 }
 
-interface ComposeMessageReplyParams {
+export interface ComposeMessageReplyParams {
   identifier: string;
   messageId: string;
   requestBody: ComposeMessageReplyParams;

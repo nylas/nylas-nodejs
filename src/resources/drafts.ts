@@ -13,30 +13,30 @@ import {
 } from '../models/response.js';
 import { Messages } from './messages.js';
 
-interface ListDraftsParams {
+export interface ListDraftsParams {
   identifier: string;
   queryParams?: ListDraftsQueryParams;
 }
 
-interface FindDraftParams {
+export interface FindDraftParams {
   identifier: string;
   draftId: string;
 }
 
-interface CreateDraftParams {
+export interface CreateDraftParams {
   identifier: string;
   draftId: string;
   requestBody: CreateDraftRequest;
 }
 
-interface UpdateDraftParams {
+export interface UpdateDraftParams {
   identifier: string;
   draftId: string;
   requestBody: UpdateDraftRequest;
 }
 
-type DestroyDraftParams = FindDraftParams;
-type SendDraftParams = FindDraftParams;
+export type DestroyDraftParams = FindDraftParams;
+export type SendDraftParams = FindDraftParams;
 
 export class Drafts extends Resource {
   /**

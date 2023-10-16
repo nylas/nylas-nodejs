@@ -26,7 +26,7 @@ import APIClient from '../apiClient.js';
  * @property identifier The identifier of the grant to act upon
  * @property queryParams The query parameters to include in the request
  */
-interface ListMessagesParams {
+export interface ListMessagesParams {
   identifier: string;
   queryParams?: ListMessagesQueryParams;
 }
@@ -37,7 +37,7 @@ interface ListMessagesParams {
  * @property messageId The id of the message to retrieve.
  * @property queryParams The query parameters to include in the request
  */
-interface FindMessageParams {
+export interface FindMessageParams {
   identifier: string;
   messageId: string;
   queryParams?: FindMessageQueryParams;
@@ -49,7 +49,7 @@ interface FindMessageParams {
  * @property messageId The id of the message to update
  * @property requestBody The values to create the message with
  */
-interface UpdateMessageParams {
+export interface UpdateMessageParams {
   identifier: string;
   messageId: string;
   requestBody: UpdateMessageRequest;
@@ -60,7 +60,7 @@ interface UpdateMessageParams {
  * @property identifier The identifier of the grant to act upon
  * @property messageId The id of the message to delete
  */
-interface DestroyMessageParams {
+export interface DestroyMessageParams {
   identifier: string;
   messageId: string;
 }
@@ -70,7 +70,7 @@ interface DestroyMessageParams {
  * @property identifier The identifier of the grant to act upon
  * @property requestBody The message to send
  */
-interface SendMessageParams {
+export interface SendMessageParams {
   identifier: string;
   requestBody: CreateDraftRequest;
 }
@@ -79,7 +79,7 @@ interface SendMessageParams {
  * The parameters for the {@link Messages.listScheduledMessages} method
  * @property identifier The identifier of the grant to act upon
  */
-interface ListScheduledMessagesParams {
+export interface ListScheduledMessagesParams {
   identifier: string;
 }
 
@@ -88,7 +88,7 @@ interface ListScheduledMessagesParams {
  * @property identifier The identifier of the grant to act upon
  * @property scheduleId The id of the scheduled message to retrieve.
  */
-interface FindScheduledMessageParams {
+export interface FindScheduledMessageParams {
   identifier: string;
   scheduleId: string;
 }
