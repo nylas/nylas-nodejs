@@ -65,6 +65,11 @@ export type DestroyDraftParams = FindDraftParams;
  */
 export type SendDraftParams = FindDraftParams;
 
+/**
+ * Nylas Drafts API
+ *
+ * The Nylas Drafts API allows you to list, find, update, delete, and send drafts on user accounts.
+ */
 export class Drafts extends Resource {
   /**
    * Return all Drafts

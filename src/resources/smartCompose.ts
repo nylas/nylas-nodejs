@@ -28,6 +28,11 @@ export interface ComposeMessageReplyParams {
   requestBody: ComposeMessageReplyParams;
 }
 
+/**
+ * A collection of Smart Compose related API endpoints.
+ *
+ * These endpoints allow for the generation of message suggestions.
+ */
 export class SmartCompose extends Resource {
   /**
    * Compose a message

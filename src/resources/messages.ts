@@ -100,6 +100,11 @@ export interface FindScheduledMessageParams {
  */
 export type StopScheduledMessageParams = FindScheduledMessageParams;
 
+/**
+ * Nylas Messages API
+ *
+ * The Nylas Messages API allows you to list, find, update, delete, schedule, and send messages on user accounts.
+ */
 export class Messages extends Resource {
   public smartCompose: SmartCompose;
 
