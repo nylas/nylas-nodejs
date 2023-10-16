@@ -15,7 +15,7 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { CreateDraftRequest } from '../models/drafts.js';
+import { SendMessageRequest } from '../models/drafts.js';
 import FormData from 'form-data';
 import { objKeysToSnakeCase } from '../utils.js';
 import { SmartCompose } from './smartCompose.js';
@@ -72,7 +72,7 @@ export interface DestroyMessageParams {
  */
 export interface SendMessageParams {
   identifier: string;
-  requestBody: CreateDraftRequest;
+  requestBody: SendMessageRequest;
 }
 
 /**
