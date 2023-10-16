@@ -50,7 +50,7 @@ export interface CreateCalenderRequest {
 /**
  * Interface of a Nylas update calendar request
  */
-export interface UpdateCalenderRequest extends CreateCalenderRequest {
+export interface UpdateCalenderRequest extends Partial<CreateCalenderRequest> {
   /**
    * The background color of the calendar in the hexadecimal format (e.g. #0099EE).
    * Empty indicates default color.

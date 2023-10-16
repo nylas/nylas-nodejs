@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import sha256 from 'sha256';
+import { createHash } from 'node:crypto';
 import APIClient from '../apiClient.js';
 import { Resource } from './resource.js';
 import { Grants } from './grants.js';
@@ -99,7 +99,7 @@ export class Auth extends Resource {
     url.searchParams.set('code_challenge_method', 's256');
     const secret = uuid();
     const secretHash = this.hashPKCESecret(secret);
-    url.searchParams.set('code_challenge', secret);
+    url.searchParams.set('code_challenge', secretHash);
     // Return the url with secret & hashed secret
     return { secret, secretHash, url: url.toString() };
   }
@@ -176,9 +176,6 @@ export class Auth extends Resource {
     if (config.prompt) {
       url.searchParams.set('prompt', config.prompt);
     }
-    if (config.metadata) {
-      url.searchParams.set('metadata', config.metadata);
-    }
     if (config.state) {
       url.searchParams.set('state', config.state);
     }
@@ -187,6 +184,12 @@ export class Auth extends Resource {
   }
 
   private hashPKCESecret(secret: string): string {
-    return Buffer.from(sha256(secret)).toString('base64');
+    const hash = createHash('sha256')
+      .update(secret)
+      .digest('hex');
+
+    return Buffer.from(hash)
+      .toString('base64')
+      .replace(/=+$/, '');
   }
 }

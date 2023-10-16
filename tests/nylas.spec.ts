@@ -1,4 +1,4 @@
-import Nylas from '../src/nylas.js';
+import Nylas from '../src/nylas';
 
 describe('Nylas', () => {
   describe('constructor', () => {
@@ -15,6 +15,8 @@ describe('Nylas', () => {
         apiKey: 'test',
       });
 
+      expect(nylas.applications.constructor.name).toBe('Applications');
+      expect(nylas.auth.constructor.name).toBe('Auth');
       expect(nylas.calendars.constructor.name).toBe('Calendars');
       expect(nylas.events.constructor.name).toBe('Events');
       expect(nylas.webhooks.constructor.name).toBe('Webhooks');
@@ -24,20 +26,21 @@ describe('Nylas', () => {
       const nylas = new Nylas({
         apiKey: 'test',
         apiUri: 'https://test.nylas.com',
-        timeout: 30,
+        timeout: 60,
       });
 
       expect(nylas.apiClient.apiKey).toBe('test');
       expect(nylas.apiClient.serverUrl).toBe('https://test.nylas.com');
-      expect(nylas.apiClient.timeout).toBe(30000);
+      expect(nylas.apiClient.timeout).toBe(60000);
     });
 
-    it('should default to the production server', () => {
+    it('should use correct defaults', () => {
       const nylas = new Nylas({
         apiKey: 'test',
       });
 
       expect(nylas.apiClient.serverUrl).toBe('https://api.us.nylas.com');
+      expect(nylas.apiClient.timeout).toBe(30000);
     });
   });
 });

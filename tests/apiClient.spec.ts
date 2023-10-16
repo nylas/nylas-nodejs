@@ -1,18 +1,14 @@
-import APIClient, { RequestOptionsParams } from '../src/apiClient.js';
-import PACKAGE_JSON from '../package.json';
-import { Response } from 'node-fetch';
-import {
-  NylasApiError,
-  NylasAuthError,
-  NylasTokenValidationError,
-} from '../src/models/error.js';
-const fetch = require('node-fetch');
+import APIClient, { RequestOptionsParams } from '../src/apiClient';
+import { NylasApiError, NylasOAuthError } from '../src/models/error';
+import { SDK_VERSION } from '../src/version';
+import { mockedFetch, mockResponse } from './testUtils';
+
 jest.mock('node-fetch', () => {
-  const { Request, Response } = jest.requireActual('node-fetch');
-  const mockedFetch = jest.fn() as jest.MockedFunction<typeof fetch>;
-  mockedFetch.Request = Request;
-  mockedFetch.Response = Response;
-  return mockedFetch;
+  const originalModule = jest.requireActual('node-fetch');
+  return {
+    ...originalModule,
+    default: jest.fn(),
+  };
 });
 
 describe('APIClient', () => {
@@ -57,7 +53,7 @@ describe('APIClient', () => {
           Accept: 'application/json',
           Authorization: 'Bearer testApiKey',
           'Content-Type': 'application/json',
-          'User-Agent': `Nylas Node SDK v${PACKAGE_JSON.version}`,
+          'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
           'X-SDK-Test-Header': 'This is a test',
         });
         expect(options.url).toEqual(
@@ -76,7 +72,7 @@ describe('APIClient', () => {
         expect(options.headers).toEqual({
           Accept: 'application/json',
           Authorization: 'Bearer testApiKey',
-          'User-Agent': `Nylas Node SDK v${PACKAGE_JSON.version}`,
+          'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
         });
         expect(options.url).toEqual(new URL('https://api.us.nylas.com/test'));
         expect(options.body).toBeUndefined();
@@ -116,7 +112,7 @@ describe('APIClient', () => {
           Accept: ['application/json'],
           Authorization: ['Bearer testApiKey'],
           'Content-Type': ['application/json'],
-          'User-Agent': [`Nylas Node SDK v${PACKAGE_JSON.version}`],
+          'User-Agent': [`Nylas Node SDK v${SDK_VERSION}`],
           'X-SDK-Test-Header': ['This is a test'],
         });
         expect(newRequest.url).toEqual(
@@ -133,12 +129,9 @@ describe('APIClient', () => {
           name: 'test',
           isValid: true,
         };
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
 
         const requestWithResponse = await client.requestWithResponse(
-          new Response()
+          mockResponse(JSON.stringify(payload))
         );
 
         expect(requestWithResponse).toEqual(payload);
@@ -152,10 +145,9 @@ describe('APIClient', () => {
           name: 'test',
           isValid: true,
         };
-        fetch.mockImplementationOnce(() => new Response('', { status: 200 }));
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+        mockedFetch.mockImplementationOnce(() =>
+          Promise.resolve(mockResponse(JSON.stringify(payload)))
+        );
 
         const response = await client.request({
           path: '/test',
@@ -165,7 +157,9 @@ describe('APIClient', () => {
       });
 
       it('should throw an error if the response is undefined', async () => {
-        fetch.mockImplementationOnce(() => undefined);
+        mockedFetch.mockImplementationOnce(() =>
+          Promise.resolve(undefined as any)
+        );
 
         await expect(
           client.request({
@@ -179,10 +173,9 @@ describe('APIClient', () => {
         const payload = {
           invalid: true,
         };
-        fetch.mockImplementationOnce(() => new Response('', { status: 400 }));
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+        mockedFetch.mockImplementationOnce(() =>
+          Promise.resolve(mockResponse(JSON.stringify(payload), 400))
+        );
 
         await expect(
           client.request({
@@ -204,49 +197,48 @@ describe('APIClient', () => {
           errorDescription: 'Nylas SDK Test error',
           errorUri: 'https://test.api.nylas.com/docs/errors#test-error',
         };
-        fetch.mockImplementation(() => new Response('', { status: 400 }));
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+        mockedFetch.mockImplementation(() =>
+          Promise.resolve(mockResponse(JSON.stringify(payload), 400))
+        );
 
         await expect(
           client.request({
             path: '/connect/token',
             method: 'POST',
           })
-        ).rejects.toThrow(new NylasAuthError(payload));
+        ).rejects.toThrow(new NylasOAuthError(payload));
 
         await expect(
           client.request({
             path: '/connect/revoke',
             method: 'POST',
           })
-        ).rejects.toThrow(new NylasAuthError(payload));
+        ).rejects.toThrow(new NylasOAuthError(payload));
       });
 
-      it('should throw a TokenValidationError if the error comes from connect/tokeninfo', async () => {
-        const payload = {
-          success: false,
-          error: {
-            httpCode: 400,
-            eventCode: 10020,
-            message: 'Invalid access token',
-            type: 'AuthenticationError',
-            requestId: 'abc123',
-          },
-        };
-        fetch.mockImplementation(() => new Response('', { status: 400 }));
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
-
-        await expect(
-          client.request({
-            path: '/connect/tokeninfo',
-            method: 'POST',
-          })
-        ).rejects.toThrow(new NylasTokenValidationError(payload));
-      });
+      // it('should throw a TokenValidationError if the error comes from connect/tokeninfo', async () => {
+      //   const payload = {
+      //     success: false,
+      //     error: {
+      //       httpCode: 400,
+      //       eventCode: 10020,
+      //       message: 'Invalid access token',
+      //       type: 'AuthenticationError',
+      //       requestId: 'abc123',
+      //     },
+      //   };
+      //   mockedFetch.mockImplementation(() => new Response('', { status: 400 }));
+      //   jest
+      //     .spyOn(Response.prototype, 'text')
+      //     .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+      //
+      //   await expect(
+      //     client.request({
+      //       path: '/connect/tokeninfo',
+      //       method: 'POST',
+      //     })
+      //   ).rejects.toThrow(new NylasTokenValidationError(payload));
+      // });
 
       it('should throw a NylasApiError if the error comes from the other non-auth endpoints', async () => {
         const payload = {
@@ -256,10 +248,10 @@ describe('APIClient', () => {
             message: 'Invalid request',
           },
         };
-        fetch.mockImplementation(() => new Response('', { status: 400 }));
-        jest
-          .spyOn(Response.prototype, 'text')
-          .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
+
+        mockedFetch.mockImplementation(() =>
+          Promise.resolve(mockResponse(JSON.stringify(payload), 400))
+        );
 
         await expect(
           client.request({

@@ -15,6 +15,7 @@ import {
   GetAvailabilityRequest,
   GetAvailabilityResponse,
 } from '../models/availability.js';
+import { GetFreeBusyRequest, GetFreeBusyResponse } from '../models/freeBusy.js';
 
 /**
  * The parameters for the {@link Calendars.find} method
@@ -73,6 +74,16 @@ interface DestroyCalendarParams {
  */
 interface GetAvailabilityParams {
   requestBody: GetAvailabilityRequest;
+}
+
+/**
+ * The parameters for the {@link Calendars.getFreeBusy} method
+ * @property identifier The identifier of the grant to act upon
+ * @property requestBody The free busy request
+ */
+interface GetFreeBusyParams {
+  identifier: string;
+  requestBody: GetFreeBusyRequest;
 }
 
 /**
@@ -170,10 +181,31 @@ export class Calendars extends Resource {
   public getAvailability({
     requestBody,
     overrides,
-  }: GetAvailabilityParams & Overrides): Promise<GetAvailabilityResponse> {
-    return this.apiClient.request<GetAvailabilityResponse>({
+  }: GetAvailabilityParams & Overrides): Promise<
+    NylasResponse<GetAvailabilityResponse>
+  > {
+    return this.apiClient.request<NylasResponse<GetAvailabilityResponse>>({
       method: 'POST',
       path: `/v3/calendars/availability`,
+      body: requestBody,
+      overrides,
+    });
+  }
+
+  /**
+   * Get the free/busy schedule for a list of email addresses
+   * @return The free/busy response
+   */
+  public getFreeBusy({
+    identifier,
+    requestBody,
+    overrides,
+  }: GetFreeBusyParams & Overrides): Promise<
+    NylasResponse<GetFreeBusyResponse[]>
+  > {
+    return this.apiClient.request<NylasResponse<GetFreeBusyResponse[]>>({
+      method: 'POST',
+      path: `/v3/grants/${identifier}/calendars/free-busy`,
       body: requestBody,
       overrides,
     });
