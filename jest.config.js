@@ -1,12 +1,17 @@
 const config = {
   preset: 'ts-jest/presets/js-with-ts',
   transform: {
-    '^.+\\\\.{ts|tsx}?$': [
+    '^.+\\.tsx?$': [
       'ts-jest',
       {
-        tsConfig: 'tsconfig.test.json',
+        tsconfig: 'tsconfig.test.json',
       },
     ],
+  },
+  moduleNameMapper: {
+    '^[../]+src/([^/]+)$': '<rootDir>/lib/esm/$1.js',
+    '^[../]+src/resources/([^/]+)$': '<rootDir>/lib/esm/resources/$1.js',
+    '^[../]+src/models/([^/]+)$': '<rootDir>/lib/esm/models/$1.js',
   },
   coverageThreshold: {
     global: {
