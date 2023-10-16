@@ -13,29 +13,56 @@ import {
 } from '../models/response.js';
 import { Messages } from './messages.js';
 
+/**
+ * The parameters for the {@link Drafts.list} method
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ */
 export interface ListDraftsParams {
   identifier: string;
   queryParams?: ListDraftsQueryParams;
 }
 
+/**
+ * The parameters for the {@link Drafts.find} method
+ * @property identifier The identifier of the grant to act upon
+ * @property draftId The id of the draft to retrieve.
+ */
 export interface FindDraftParams {
   identifier: string;
   draftId: string;
 }
 
+/**
+ * The parameters for the {@link Drafts.create} method
+ * @property identifier The identifier of the grant to act upon
+ * @property requestBody The values to create the message with
+ */
 export interface CreateDraftParams {
   identifier: string;
-  draftId: string;
   requestBody: CreateDraftRequest;
 }
 
+/**
+ * The parameters for the {@link Drafts.update} method
+ * @property identifier The identifier of the grant to act upon
+ * @property draftId The id of the draft to update.
+ * @property requestBody The values to update the draft with
+ */
 export interface UpdateDraftParams {
   identifier: string;
   draftId: string;
   requestBody: UpdateDraftRequest;
 }
 
+/**
+ * The parameters for the {@link Drafts.destroy} method
+ */
 export type DestroyDraftParams = FindDraftParams;
+
+/**
+ * The parameters for the {@link Drafts.send} method
+ */
 export type SendDraftParams = FindDraftParams;
 
 export class Drafts extends Resource {
@@ -78,7 +105,6 @@ export class Drafts extends Resource {
    */
   public create({
     identifier,
-    draftId,
     requestBody,
     overrides,
   }: CreateDraftParams & Overrides): Promise<NylasResponse<Draft>> {
@@ -86,7 +112,7 @@ export class Drafts extends Resource {
 
     return this.apiClient.request({
       method: 'POST',
-      path: `/v3/grants/${identifier}/drafts/${draftId}`,
+      path: `/v3/grants/${identifier}/drafts`,
       form,
       overrides,
     });
@@ -126,7 +152,7 @@ export class Drafts extends Resource {
 
   /**
    * Send a Draft
-   * @return The draft
+   * @return The sent draft
    */
   public send({
     identifier,

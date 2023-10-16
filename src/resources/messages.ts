@@ -47,7 +47,7 @@ export interface FindMessageParams {
  * The parameters for the {@link Messages.update} method
  * @property identifier The identifier of the grant to act upon
  * @property messageId The id of the message to update
- * @property requestBody The values to create the message with
+ * @property requestBody The values to update the message with
  */
 export interface UpdateMessageParams {
   identifier: string;
