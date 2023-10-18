@@ -13,14 +13,14 @@ import {
 /**
  * @property webhookId The ID of the webhook destination to update
  */
-interface FindWebhookParams {
+export interface FindWebhookParams {
   webhookId: string;
 }
 
 /**
  * @property requestBody The webhook destination details
  */
-interface CreateWebhookParams {
+export interface CreateWebhookParams {
   requestBody: CreateWebhookRequest;
 }
 
@@ -28,7 +28,7 @@ interface CreateWebhookParams {
  * @property webhookId The ID of the webhook destination to update
  * @property requestBody The updated webview destination details
  */
-interface UpdateWebhookParams {
+export interface UpdateWebhookParams {
   webhookId: string;
   requestBody: UpdateWebhookRequest;
 }
@@ -36,7 +36,7 @@ interface UpdateWebhookParams {
 /**
  * @property webhookId The ID of the webhook destination to delete
  */
-interface DestroyWebhookParams {
+export interface DestroyWebhookParams {
   webhookId: string;
 }
 
