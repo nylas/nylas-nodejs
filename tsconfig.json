@@ -18,7 +18,8 @@
     "out": "docs",
     "plugin": ["typedoc-plugin-rename-defaults"],
     "excludeExternals": true,
-    "excludePrivate": true
+    "excludePrivate": true,
+    "excludeInternal": true,
   },
   "include": ["src/**/*"],
   "exclude": ["tests", "lib", "scripts"]

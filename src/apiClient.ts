@@ -7,6 +7,7 @@ import {
 } from './models/error.js';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils.js';
 import { SDK_VERSION } from './version.js';
+import * as FormData from 'form-data';
 
 /**
  * Options for a request to the Nylas API
@@ -24,6 +25,7 @@ export interface RequestOptionsParams {
   headers?: Record<string, string>;
   queryParams?: Record<string, any>;
   body?: any;
+  form?: FormData;
   overrides?: OverridableNylasConfig;
 }
 
@@ -42,7 +44,7 @@ interface RequestOptions {
   method: string;
   headers: Record<string, string>;
   url: URL;
-  body?: string;
+  body?: any;
   overrides?: Partial<NylasConfig>;
 }
 
@@ -130,6 +132,14 @@ export default class APIClient {
         objKeysToSnakeCase(optionParams.body)
       );
       requestOptions.headers['Content-Type'] = 'application/json';
+    }
+
+    if (optionParams.form) {
+      requestOptions.body = optionParams.form;
+      requestOptions.headers = {
+        ...requestOptions.headers,
+        ...optionParams.form.getHeaders(),
+      };
     }
 
     return requestOptions;
