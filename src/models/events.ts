@@ -92,7 +92,7 @@ export interface Event {
   /**
    * Organizer of the event.
    */
-  organizer: EmailName;
+  organizer?: EmailName;
   /**
    * An list of RRULE and EXDATE strings.
    * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.8.5">RFC-5545</a>
@@ -205,7 +205,6 @@ export interface ListEventQueryParams extends ListQueryParams {
    * Different providers have different semantics for cancelled events.
    */
   showCancelled?: boolean;
-  eventId?: string;
   /**
    * Specify calendar ID of the event. "primary" is a supported value indicating the user's primary calendar.
    */
