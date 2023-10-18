@@ -25,7 +25,7 @@ export interface ComposeMessageParams {
 export interface ComposeMessageReplyParams {
   identifier: string;
   messageId: string;
-  requestBody: ComposeMessageReplyParams;
+  requestBody: ComposeMessageRequest;
 }
 
 /**
