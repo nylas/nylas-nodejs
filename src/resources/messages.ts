@@ -15,7 +15,7 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { SendMessageRequest } from '../models/drafts.js';
+import { SendMessageRequest, UpdateDraftRequest } from '../models/drafts.js';
 import * as FormData from 'form-data';
 import { objKeysToSnakeCase } from '../utils.js';
 import { SmartCompose } from './smartCompose.js';
@@ -247,7 +247,9 @@ export class Messages extends Resource {
     });
   }
 
-  static _buildFormRequest(requestBody: BaseCreateMessage): FormData {
+  static _buildFormRequest(
+    requestBody: BaseCreateMessage | UpdateDraftRequest
+  ): FormData {
     const form = new FormData();
 
     // Split out the message payload from the attachments

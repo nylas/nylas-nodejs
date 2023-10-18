@@ -133,9 +133,12 @@ export class Drafts extends Resource {
     requestBody,
     overrides,
   }: UpdateDraftParams & Overrides): Promise<NylasResponse<Draft>> {
-    return super._update({
+    const form = Messages._buildFormRequest(requestBody);
+
+    return this.apiClient.request({
+      method: 'PUT',
       path: `/v3/grants/${identifier}/drafts/${draftId}`,
-      requestBody,
+      form,
       overrides,
     });
   }
