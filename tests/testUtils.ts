@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import fetch from 'node-fetch';
 import { Readable } from 'stream';
 
