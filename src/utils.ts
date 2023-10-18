@@ -1,8 +1,8 @@
 import { camelCase, snakeCase } from 'change-case';
 import { CreateFileRequest } from './models/files.js';
 import * as fs from 'fs';
-import path from 'path';
-import mime from 'mime-types';
+import * as path from 'path';
+import * as mime from 'mime-types';
 
 export function createFileRequestBuilder(filePath: string): CreateFileRequest {
   const stats = fs.statSync(filePath);
