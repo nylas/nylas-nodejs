@@ -1,13 +1,8 @@
 import APIClient from '../../src/apiClient';
 import { Drafts } from '../../src/resources/drafts';
 import { CreateFileRequest } from '../../src/models/files';
-import { Readable } from 'stream';
+import { createReadableStream, MockedFormData } from '../testUtils';
 jest.mock('../src/apiClient');
-
-interface MockedFormData {
-  append(key: string, value: any): void;
-  _getAppendedData(): Record<string, any>;
-}
 
 // Mock the FormData constructor
 jest.mock('form-data', () => {
@@ -21,15 +16,6 @@ jest.mock('form-data', () => {
     this._getAppendedData = (): Record<string, any> => appendedData;
   });
 });
-
-function createReadableStream(text: string): NodeJS.ReadableStream {
-  return new Readable({
-    read(): void {
-      this.push(text);
-      this.push(null); // indicates EOF
-    },
-  });
-}
 
 describe('Drafts', () => {
   let apiClient: jest.Mocked<APIClient>;
