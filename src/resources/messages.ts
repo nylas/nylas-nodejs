@@ -16,7 +16,7 @@ import {
   NylasResponse,
 } from '../models/response.js';
 import { SendMessageRequest } from '../models/drafts.js';
-import FormData from 'form-data';
+import * as FormData from 'form-data';
 import { objKeysToSnakeCase } from '../utils.js';
 import { SmartCompose } from './smartCompose.js';
 import APIClient from '../apiClient.js';
