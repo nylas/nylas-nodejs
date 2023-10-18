@@ -13,6 +13,7 @@ import {
   ProviderDetectParams,
   ProviderDetectResponse,
 } from '../models/auth.js';
+import { NylasResponse } from '../models/response';
 
 /**
  * A collection of authentication related API endpoints
@@ -141,8 +142,8 @@ export class Auth extends Resource {
    */
   public async detectProvider(
     params: ProviderDetectParams
-  ): Promise<ProviderDetectResponse> {
-    return this.apiClient.request<ProviderDetectResponse>({
+  ): Promise<NylasResponse<ProviderDetectResponse>> {
+    return this.apiClient.request<NylasResponse<ProviderDetectResponse>>({
       method: 'POST',
       path: `/v3/grants/providers/detect`,
       queryParams: params,
