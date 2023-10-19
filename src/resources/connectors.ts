@@ -12,6 +12,8 @@ import {
   NylasResponse,
 } from '../models/response.js';
 import { Provider } from '../models/auth.js';
+import { Credentials } from './credentials.js';
+import APIClient from '../apiClient.js';
 
 /**
  * The parameters for the {@link Connectors.find} method
@@ -56,6 +58,19 @@ interface DestroyConnectorParams {
 }
 
 export class Connectors extends Resource {
+  /**
+   * Access the Credentials API
+   */
+  public credentials: Credentials;
+
+  /**
+   * @param apiClient client The configured Nylas API client
+   */
+  constructor(apiClient: APIClient) {
+    super(apiClient);
+    this.credentials = new Credentials(apiClient);
+  }
+
   /**
    * Return all connectors
    * @return A list of connectors
