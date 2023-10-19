@@ -81,7 +81,7 @@ describe('Grants', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'POST',
-        path: '/v3/grants',
+        path: '/v3/connect/custom',
         body: {
           provider: 'google',
           settings: {
