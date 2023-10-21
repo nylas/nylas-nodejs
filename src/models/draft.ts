@@ -10,14 +10,14 @@ export type SendCallback = (
 
 export type DraftProperties = MessageProperties & {
   rawMime?: string;
-  replyToMessageId?: string;
+  replyToMessageId?: string | undefined;
   version?: number;
   fileIdsToAttach?: string[];
 };
 
 export default class Draft extends Message implements DraftProperties {
   rawMime?: string;
-  replyToMessageId?: string;
+  replyToMessageId?: string | undefined;
   version?: number;
   fileIdsToAttach?: string[];
   static collectionName = 'drafts';
@@ -78,8 +78,17 @@ export default class Draft extends Message implements DraftProperties {
     if (this.rawMime) {
       throw Error('saveRequestBody() cannot be called for raw MIME drafts');
     }
-    return super.saveRequestBody();
+
+    const requestBody = super.saveRequestBody();
+
+    // Check if replyToMessageId is defined (not undefined)
+    if (this.replyToMessageId !== undefined) {
+      requestBody.replyToMessageId = this.replyToMessageId;
+    }
+
+    return requestBody;
   }
+
 
   deleteRequestBody(
     params: Record<string, unknown> = {}
