@@ -1,6 +1,7 @@
 # Changelog
 
 ### 7.0.0-beta.3 / 2023-10-23
+* Added support for the messages, drafts, and threads endpoints
 * Added support for the free-busy endpoint
 * Added support for native/custom authentication
 * Added support for Connectors & Credentials APIs
