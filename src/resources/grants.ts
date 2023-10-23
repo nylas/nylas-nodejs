@@ -78,7 +78,7 @@ export class Grants extends Resource {
   }
 
   /**
-   * Create a Grant
+   * Create a Grant via Custom Authentication
    * @return The created Grant
    */
   public create({
@@ -86,7 +86,7 @@ export class Grants extends Resource {
     overrides,
   }: CreateGrantParams & Overrides): Promise<NylasResponse<Grant>> {
     return super._create({
-      path: `/v3/grants`,
+      path: `/v3/connect/custom`,
       requestBody,
       overrides,
     });

@@ -2,6 +2,8 @@
 
 ### 7.0.0-beta.3 / TBD
 * Added support for the free-busy endpoint
+* Added support for native/custom authentication
+* Added support for Connectors & Credentials APIs
 * Fix `getAvailability` response type
 * Fix path for destroying a redirect URI
 * Fix model for updating an Event
