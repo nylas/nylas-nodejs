@@ -1,12 +1,13 @@
 # Changelog
 
-### 7.0.0-beta.3 / TBD
+### 7.0.0-beta.3 / 2023-10-23
 * Added support for the free-busy endpoint
 * Added support for native/custom authentication
 * Added support for Connectors & Credentials APIs
 * Fix `getAvailability` response type
 * Fix path for destroying a redirect URI
 * Fix model for updating an Event
+* Fix response type for creating a webhook
 
 ### 7.0.0-beta.2 / 2023-08-21
 * Fix issue with getting the current Nylas SDK package version
