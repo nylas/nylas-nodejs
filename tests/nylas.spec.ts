@@ -20,6 +20,7 @@ describe('Nylas', () => {
       expect(nylas.calendars.constructor.name).toBe('Calendars');
       expect(nylas.events.constructor.name).toBe('Events');
       expect(nylas.webhooks.constructor.name).toBe('Webhooks');
+      expect(nylas.folders.constructor.name).toBe('Folders');
     });
 
     it('should configure the apiClient', () => {
