@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Bump `node-fetch` dependency from 2.6.1 to 2.6.12
+
 ### 6.10.0 / 2023-04-04
 * Add support for verifying webhook signatures
 
