@@ -169,7 +169,7 @@ describe('CalendarRestfulModelCollection', () => {
         openHours: [
           {
             emails: ['swag@nylas.com'],
-            days: [Days.Sunday],
+            days: [Days.Sunday, Days.Thursday],
             timezone: 'America/Chicago',
             start: '10:00',
             end: '14:00',
@@ -200,7 +200,7 @@ describe('CalendarRestfulModelCollection', () => {
           open_hours: [
             {
               emails: ['swag@nylas.com'],
-              days: [0],
+              days: [6, 3],
               timezone: 'America/Chicago',
               start: '10:00',
               end: '14:00',
@@ -306,7 +306,7 @@ describe('CalendarRestfulModelCollection', () => {
             open_hours: [
               {
                 emails: ['jane@email.com', 'swag@nylas.com'],
-                days: [0],
+                days: [6],
                 timezone: 'America/Chicago',
                 start: '10:00',
                 end: '14:00',
