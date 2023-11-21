@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix parsing of Number arrays
+
 ### 6.10.0 / 2023-04-04
 * Add support for verifying webhook signatures
 
