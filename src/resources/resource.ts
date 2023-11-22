@@ -192,6 +192,19 @@ export class Resource {
       overrides,
     });
   }
+
+  protected _getRaw({
+    path,
+    queryParams,
+    overrides,
+  }: FindParams<void>): Promise<Buffer> {
+    return this.apiClient.requestRaw({
+      method: 'GET',
+      path,
+      queryParams,
+      overrides,
+    });
+  }
 }
 
 type ListYieldReturn<T> = T & {

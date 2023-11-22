@@ -208,4 +208,40 @@ export default class APIClient {
 
     return this.requestWithResponse(response);
   }
+
+  async requestRaw(options: RequestOptionsParams): Promise<Buffer> {
+    const req = this.newRequest(options);
+    const controller: AbortController = new AbortController();
+    const timeout = setTimeout(() => {
+      controller.abort();
+      throw new NylasSdkTimeoutError(req.url, this.timeout);
+    }, this.timeout);
+
+    const response = await fetch(req, { signal: controller.signal });
+    clearTimeout(timeout);
+
+    if (typeof response === 'undefined') {
+      throw new Error('Failed to fetch response');
+    }
+
+    // Handle error response
+    if (response.status > 299) {
+      const text = await response.text();
+      let error: Error;
+      try {
+        const parsedError = JSON.parse(text);
+        const camelCaseError = objKeysToCamelCase(parsedError);
+        error = new NylasApiError(camelCaseError, response.status);
+      } catch (e) {
+        throw new Error(
+          `Received an error but could not parse response from the server: ${text}`
+        );
+      }
+
+      throw error;
+    }
+
+    // Return the raw buffer
+    return response.buffer();
+  }
 }
