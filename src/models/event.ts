@@ -419,5 +419,8 @@ export default class Event extends RestfulModel {
         'The number of participants in the event exceeds the set capacity.'
       );
     }
+    if (this.visibility && this.visibility === '') {
+      this.visibility = undefined;
+    }
   }
 }
