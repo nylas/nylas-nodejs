@@ -333,6 +333,9 @@ export default class Event extends RestfulModel {
         participant => delete participant.status
       );
     }
+    if (this.visibility !== undefined && this.visibility === '') {
+      delete json.visibility;
+    }
 
     return json;
   }
@@ -418,9 +421,6 @@ export default class Event extends RestfulModel {
       throw new Error(
         'The number of participants in the event exceeds the set capacity.'
       );
-    }
-    if (this.visibility && this.visibility === '') {
-      this.visibility = undefined;
     }
   }
 }
