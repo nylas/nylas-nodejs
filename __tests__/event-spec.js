@@ -556,6 +556,20 @@ describe('Event', () => {
           done();
         });
       });
+
+      test('should set visibility to undefined if set to an empty string', done => {
+        testContext.event.visibility = '';
+        return testContext.event.save().then(() => {
+          const options = testContext.connection.request.mock.calls[0][0];
+          expect(JSON.parse(options.body)).toEqual({
+            visibility: undefined,
+            calendar_id: '',
+            when: {},
+            participants: [],
+          });
+          done();
+        });
+      });
     });
 
     describe('notification', () => {
