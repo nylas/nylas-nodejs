@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Fix parsing of Number arrays
+* Fix configured timeout not being used
 * Bump `node-fetch` dependency from 2.6.1 to 2.6.12
 
 ### 6.10.0 / 2023-04-04
