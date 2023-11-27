@@ -205,6 +205,19 @@ export class Resource {
       overrides,
     });
   }
+
+  protected _getStream({
+    path,
+    queryParams,
+    overrides,
+  }: FindParams<void>): Promise<NodeJS.ReadableStream> {
+    return this.apiClient.requestStream({
+      method: 'GET',
+      path,
+      queryParams,
+      overrides,
+    });
+  }
 }
 
 type ListYieldReturn<T> = T & {

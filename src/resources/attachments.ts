@@ -62,12 +62,41 @@ export class Attachments extends Resource {
       overrides,
     });
   }
-
+  
   /**
-   * Returns an attachment by ID.
-   * @return The Attachment file in binary format
+   * Download the attachment data
+   *
+   * This method returns a NodeJS.ReadableStream which can be used to stream the attachment data.
+   * This is particularly useful for handling large attachments efficiently, as it avoids loading
+   * the entire file into memory. The stream can be piped to a file stream or used in any other way
+   * that Node.js streams are typically used.
+   * 
+   * @param identifier Grant ID or email account to query
+   * @param attachmentId The id of the attachment to download.
+   * @param queryParams The query parameters to include in the request
+   * @returns {NodeJS.ReadableStream} The ReadableStream containing the file data.
    */
   public download({
+    identifier,
+    attachmentId,
+    queryParams,
+    overrides,
+  }: DownloadAttachmentParams & Overrides): Promise<NodeJS.ReadableStream> {
+    return this._getStream({
+      path: `/v3/grants/${identifier}/attachments/${attachmentId}/download`,
+      queryParams,
+      overrides,
+    });
+  }
+
+  /**
+   * Download the attachment as a byte array
+   * @param identifier Grant ID or email account to query
+   * @param attachmentId The id of the attachment to download.
+   * @param queryParams The query parameters to include in the request
+   * @return The raw file data
+   */
+  public downloadBytes({
     identifier,
     attachmentId,
     queryParams,
