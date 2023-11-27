@@ -62,7 +62,7 @@ export class Attachments extends Resource {
       overrides,
     });
   }
-  
+
   /**
    * Download the attachment data
    *
@@ -70,7 +70,7 @@ export class Attachments extends Resource {
    * This is particularly useful for handling large attachments efficiently, as it avoids loading
    * the entire file into memory. The stream can be piped to a file stream or used in any other way
    * that Node.js streams are typically used.
-   * 
+   *
    * @param identifier Grant ID or email account to query
    * @param attachmentId The id of the attachment to download.
    * @param queryParams The query parameters to include in the request
