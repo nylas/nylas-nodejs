@@ -364,6 +364,37 @@ describe('Draft', () => {
         });
       });
     });
+
+    test('should set reply_to_message_id to undefined if set to an empty string', done => {
+      testContext.draft.replyToMessageId = '';
+      return testContext.draft.save().then(() => {
+        const options = testContext.connection.request.mock.calls[0][0];
+        expect(options.url.toString()).toEqual('https://api.nylas.com/drafts');
+        expect(options.method).toEqual('POST');
+        expect(JSON.parse(options.body)).toEqual({
+          to: [],
+          cc: [],
+          bcc: [],
+          from: [],
+          date: null,
+          body: undefined,
+          events: [],
+          unread: undefined,
+          snippet: undefined,
+          thread_id: undefined,
+          subject: undefined,
+          version: undefined,
+          folder: undefined,
+          starred: undefined,
+          labels: [],
+          file_ids: [],
+          headers: undefined,
+          reply_to: [],
+          reply_to_message_id: undefined,
+        });
+        done();
+      });
+    });
   });
 
   describe('send', () => {
