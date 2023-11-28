@@ -14,6 +14,7 @@ import AccessToken from './models/access-token';
 import ApplicationDetails, {
   ApplicationDetailsProperties,
 } from './models/application-details';
+import LoggingInterface from './models/LoggingInterface';
 
 class Nylas {
   static clientId = '';
@@ -35,6 +36,13 @@ class Nylas {
   // Timeout for outgoing API calls, in milliseconds
   static set timeout(timeout: number) {
     config.setTimeout(timeout);
+  }
+  static get logger(): LoggingInterface | undefined {
+    return config.logger;
+  }
+  // Logger to redirect log messages to your application
+  static set logger(timeout: LoggingInterface | undefined) {
+    config.setLogger(timeout);
   }
   static accounts:
     | ManagementModelCollection<ManagementAccount>
@@ -61,6 +69,9 @@ class Nylas {
       this.apiServer = 'https://api.nylas.com';
     }
     this.timeout = config.timeout || 0;
+    if (config.logger) {
+      this.logger = config.logger;
+    }
 
     const conn = new NylasConnection(this.clientSecret, {
       clientId: this.clientId,

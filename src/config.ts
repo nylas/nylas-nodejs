@@ -1,4 +1,5 @@
 import { WebhookTriggers } from './models/webhook';
+import LoggingInterface from './models/LoggingInterface';
 
 export let apiServer: string | null = null;
 export function setApiServer(newApiServer: string | null) {
@@ -15,6 +16,11 @@ export function setTimeout(newTimeout: number) {
   timeout = newTimeout;
 }
 
+export let logger: LoggingInterface | undefined = undefined;
+export function setLogger(newLogger?: LoggingInterface) {
+  logger = newLogger;
+}
+
 export type NylasConfig = {
   /** Nylas application client ID */
   clientId: string;
@@ -24,6 +30,8 @@ export type NylasConfig = {
   apiServer?: string;
   /** Timeout for outgoing API calls, in milliseconds */
   timeout?: number;
+  /** Logger to redirect log messages to your application. */
+  logger?: LoggingInterface;
 };
 
 export enum ResponseType {
