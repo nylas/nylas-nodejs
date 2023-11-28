@@ -1,10 +1,11 @@
 jest.mock('node-fetch');
 import fetch from 'node-fetch';
-const { Response } = jest.requireActual('node-fetch');
-
 import NylasConnection from '../src/nylas-connection';
 import * as config from '../src/config.ts';
 import PACKAGE_JSON from '../package.json';
+
+const { Response } = jest.requireActual('node-fetch');
+
 const SDK_VERSION = PACKAGE_JSON.version;
 
 describe('NylasConnection', () => {
@@ -157,7 +158,11 @@ describe('NylasConnection', () => {
         });
 
         test('Should handle timeout errors properly', done => {
-          console.warn = jest.fn();
+          config.logger = {
+            warn: jest.fn(),
+            error: jest.fn(),
+          };
+
           const err = new Error();
           err.name = 'AbortError';
           fetch.mockReturnValue(Promise.reject(err));
@@ -168,7 +173,9 @@ describe('NylasConnection', () => {
               method: 'GET',
             })
             .catch(err => {
-              expect(console.warn).toHaveBeenCalledWith('Request timed out');
+              expect(config.logger.warn).toHaveBeenCalledWith(
+                'Request timed out'
+              );
               expect(err.name).toEqual('AbortError');
               done();
             });
