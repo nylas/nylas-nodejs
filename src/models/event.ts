@@ -333,6 +333,9 @@ export default class Event extends RestfulModel {
         participant => delete participant.status
       );
     }
+    if (this.visibility !== undefined && this.visibility === '') {
+      delete json.visibility;
+    }
 
     return json;
   }
