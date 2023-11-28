@@ -41,6 +41,10 @@ describe('Nylas', () => {
         clientSecret: 'newSecret',
         apiServer: 'https://api-staging.nylas.com/',
         timeout: 5000,
+        logger: {
+          warn: jest.fn(),
+          error: jest.fn(),
+        },
       };
 
       Nylas.config(newConfig);
@@ -48,6 +52,7 @@ describe('Nylas', () => {
       expect(Nylas.clientSecret).toBe(newConfig.clientSecret);
       expect(Nylas.apiServer).toBe(newConfig.apiServer);
       expect(Nylas.timeout).toBe(newConfig.timeout);
+      expect(Nylas.logger).toBe(newConfig.logger);
     });
 
     test('should not override existing values unless new values are provided', () => {
@@ -78,16 +83,22 @@ describe('Nylas', () => {
         clientId: 'id',
         clientSecret: 'secret',
       };
+      const logger = {
+        warn: jest.fn(),
+        error: jest.fn(),
+      };
       Nylas.config(newConfig);
       Nylas.clientId = 'newId';
       Nylas.clientSecret = 'newSecret';
       Nylas.apiServer = 'https://new.api.nylas.com';
       Nylas.timeout = 5000;
+      Nylas.logger = logger;
 
       expect(Nylas.clientId).toBe('newId');
       expect(Nylas.clientSecret).toBe('newSecret');
       expect(Nylas.apiServer).toBe('https://new.api.nylas.com');
       expect(Nylas.timeout).toBe(5000);
+      expect(Nylas.logger).toBe(logger);
     });
   });
 
