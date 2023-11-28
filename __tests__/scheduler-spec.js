@@ -146,6 +146,20 @@ describe('Scheduler', () => {
       });
     });
 
+    test('Should not convert null to 0 if SchedulerBooking.intervalMinutes is null', done => {
+      // Cannot be set to 0
+      testContext.scheduler.config = new SchedulerConfig({
+        booking: {
+          intervalMinutes: null,
+        },
+      });
+
+      const value = testContext.scheduler.config.toJSON();
+      expect(value.booking.interval_minutes).toEqual(null);
+
+      done();
+    });
+
     test('Should throw an error if SchedulerBooking.intervalMinutes is invalid', done => {
       // Cannot be set to 0
       testContext.scheduler.config = new SchedulerConfig({
