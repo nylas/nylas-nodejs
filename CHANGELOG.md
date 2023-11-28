@@ -1,6 +1,10 @@
 # Changelog
 
-### Unreleased
+### 6.10.0 / 2023-11-28
+* Add support for logging
+* Nullify replyToMessageId is an empty string
+* Nullify visibility if visibility is an empty string
+* Fix numbers defaulting to 0 instead of null
 * Fix parsing of Number arrays
 * Fix configured timeout not being used
 * Bump `node-fetch` dependency from 2.6.1 to 2.6.12
