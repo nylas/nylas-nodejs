@@ -78,7 +78,11 @@ export default class Draft extends Message implements DraftProperties {
     if (this.rawMime) {
       throw Error('saveRequestBody() cannot be called for raw MIME drafts');
     }
-    return super.saveRequestBody();
+    const json = super.saveRequestBody();
+    if (this.replyToMessageId !== undefined && this.replyToMessageId === '') {
+      delete json.reply_to_message_id;
+    }
+    return json;
   }
 
   deleteRequestBody(
