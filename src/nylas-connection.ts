@@ -26,6 +26,7 @@ import DeltaCollection from './models/delta-collection';
 import Outbox from './models/outbox';
 import JobStatusRestfulModelCollection from './models/job-status-restful-model-collection';
 import RateLimitError from './models/rate-limit-error';
+import { logger } from './config';
 
 const PACKAGE_JSON = require('../package.json');
 const SDK_VERSION = PACKAGE_JSON.version;
@@ -256,7 +257,7 @@ export default class NylasConnection {
             apiVersion
           );
           if (warning) {
-            console.warn(warning);
+            logger?.warn(warning);
           }
 
           if (response.status > 299) {
@@ -330,10 +331,10 @@ export default class NylasConnection {
         })
         .catch((err: Error) => {
           if (err && err.name && err.name === 'AbortError') {
-            console.warn('Request timed out');
+            logger?.warn('Request timed out');
             return reject(err);
           }
-          console.error(`Error encountered during request:\n${err.stack}`);
+          logger?.error(`Error encountered during request:\n${err.stack}`);
           return reject(err);
         })
         .then(() => {
