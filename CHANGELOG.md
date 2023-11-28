@@ -1,6 +1,6 @@
 # Changelog
 
-### 6.10.0 / 2023-11-28
+### 6.11.0 / 2023-11-28
 * Add support for logging
 * Nullify replyToMessageId is an empty string
 * Nullify visibility if visibility is an empty string
