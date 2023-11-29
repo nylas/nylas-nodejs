@@ -63,8 +63,6 @@ For more information about how to use the Nylas Node SDK, [take a look at our qu
 
 Please refer to [Contributing](Contributing.md) for information about how to make contributions to this project. We welcome questions, bug reports, and pull requests.
 
-Taking part in Hacktoberfest 2023 (i.e. issue is tagged with `hacktoberfest`)? Read our [Nylas Hacktoberfest 2023 contribution guidelines](https://github.com/nylas-samples/nylas-hacktoberfest-2023/blob/main/readme.md).
-
 ## 📝 License
 
 This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE.txt) for the full terms. 
