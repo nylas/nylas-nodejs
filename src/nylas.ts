@@ -10,6 +10,7 @@ import { Drafts } from './resources/drafts.js';
 import { Threads } from './resources/threads.js';
 import { Connectors } from './resources/connectors.js';
 import { Folders } from './resources/folders.js';
+import { Contacts } from './resources/contacts.js';
 
 /**
  * The entry point to the Node SDK
@@ -58,6 +59,10 @@ export default class Nylas {
    * Access the Folders API
    */
   public folders: Folders;
+  /**
+   * Access the Contacts API
+   */
+  public contacts: Contacts;
 
   /**
    * The configured API client
@@ -85,6 +90,7 @@ export default class Nylas {
     this.threads = new Threads(this.apiClient);
     this.webhooks = new Webhooks(this.apiClient);
     this.folders = new Folders(this.apiClient);
+    this.contacts = new Contacts(this.apiClient);
 
     return this;
   }
