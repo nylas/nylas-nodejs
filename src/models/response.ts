@@ -1,4 +1,11 @@
 /**
+ * Interface representing a base response to a request.
+ */
+export interface NylasBaseResponse {
+  requestId: string;
+}
+
+/**
  * Interface representation of a Nylas response object
  */
 export interface NylasResponse<T> {
@@ -28,13 +35,6 @@ export interface NylasListResponse<T> {
    * The cursor to use to get the next page of data.
    */
   nextCursor?: string;
-}
-
-/**
- * Interface representing a response to a delete request.
- */
-export interface NylasDeleteResponse {
-  requestId: string;
 }
 
 /**

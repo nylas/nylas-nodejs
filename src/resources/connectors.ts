@@ -7,7 +7,7 @@ import {
 } from '../models/connectors.js';
 import { Overrides } from '../config.js';
 import {
-  NylasDeleteResponse,
+  NylasBaseResponse,
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
@@ -140,7 +140,7 @@ export class Connectors extends Resource {
   public destroy({
     provider,
     overrides,
-  }: DestroyConnectorParams & Overrides): Promise<NylasDeleteResponse> {
+  }: DestroyConnectorParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       path: `/v3/connectors/${provider}`,
       overrides,

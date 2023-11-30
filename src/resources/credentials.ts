@@ -7,7 +7,7 @@ import {
 } from '../models/credentials.js';
 import { Overrides } from '../config.js';
 import {
-  NylasDeleteResponse,
+  NylasBaseResponse,
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
@@ -140,7 +140,7 @@ export class Credentials extends Resource {
     provider,
     credentialsId,
     overrides,
-  }: DestroyCredentialParams & Overrides): Promise<NylasDeleteResponse> {
+  }: DestroyCredentialParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       path: `/v3/credentials/${provider}/creds/${credentialsId}}`,
       overrides,

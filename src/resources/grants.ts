@@ -1,7 +1,7 @@
 import { Resource } from './resource.js';
 import { Overrides } from '../config.js';
 import {
-  NylasDeleteResponse,
+  NylasBaseResponse,
   NylasResponse,
   NylasListResponse,
 } from '../models/response.js';
@@ -115,7 +115,7 @@ export class Grants extends Resource {
   public destroy({
     grantId,
     overrides,
-  }: DestroyGrantParams & Overrides): Promise<NylasDeleteResponse> {
+  }: DestroyGrantParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       path: `/v3/grants/${grantId}`,
       overrides,

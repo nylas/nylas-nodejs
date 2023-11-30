@@ -196,6 +196,13 @@ export interface CreateEventRequest {
 export type UpdateEventRequest = Subset<CreateEventRequest>;
 
 /**
+ * Interface representing a request to send RSVP to an event.
+ */
+export type SendRSVPRequest = {
+  status: RSVPStatus;
+};
+
+/**
  * Interface representing the query parameters for listing events.
  */
 export interface ListEventQueryParams extends ListQueryParams {
@@ -300,9 +307,19 @@ export type UpdateEventQueryParams = CreateEventQueryParams;
 export type DestroyEventQueryParams = CreateEventQueryParams;
 
 /**
+ * Interface representing of the query parameters for sending RSVP to an event.
+ */
+export type SendRSVPQueryParams = FindEventQueryParams;
+
+/**
  * Enum representing the status of an event.
  */
 type Status = 'confirmed' | 'tentative' | 'cancelled';
+
+/**
+ * Enum representing the status of an RSVP response.
+ */
+type RSVPStatus = 'yes' | 'no' | 'maybe';
 
 /**
  * Enum representing the visibility of an event.
