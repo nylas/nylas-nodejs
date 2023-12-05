@@ -120,6 +120,55 @@ export default class APIClient {
     };
   }
 
+  private async sendRequest(options: RequestOptionsParams): Promise<Response> {
+    const req = this.newRequest(options);
+    const controller: AbortController = new AbortController();
+    const timeout = setTimeout(() => {
+      controller.abort();
+      throw new NylasSdkTimeoutError(req.url, this.timeout);
+    }, this.timeout);
+
+    try {
+      const response = await fetch(req, { signal: controller.signal });
+      clearTimeout(timeout);
+
+      if (typeof response === 'undefined') {
+        throw new Error('Failed to fetch response');
+      }
+
+      if (response.status > 299) {
+        const text = await response.text();
+        let error: Error;
+        try {
+          const parsedError = JSON.parse(text);
+          const camelCaseError = objKeysToCamelCase(parsedError);
+
+          // Check if the request is an authentication request
+          const isAuthRequest =
+            options.path.includes('connect/token') ||
+            options.path.includes('connect/revoke');
+
+          if (isAuthRequest) {
+            error = new NylasOAuthError(camelCaseError, response.status);
+          } else {
+            error = new NylasApiError(camelCaseError, response.status);
+          }
+        } catch (e) {
+          throw new Error(
+            `Received an error but could not parse response from the server: ${text}`
+          );
+        }
+
+        throw error;
+      }
+
+      return response;
+    } catch (error) {
+      clearTimeout(timeout);
+      throw error;
+    }
+  }
+
   requestOptions(optionParams: RequestOptionsParams): RequestOptions {
     const requestOptions = {} as RequestOptions;
 
@@ -166,119 +215,19 @@ export default class APIClient {
   }
 
   async request<T>(options: RequestOptionsParams): Promise<T> {
-    const req = this.newRequest(options);
-    const controller: AbortController = new AbortController();
-    const timeout = setTimeout(() => {
-      controller.abort();
-      throw new NylasSdkTimeoutError(req.url, this.timeout);
-    }, this.timeout);
-
-    const response = await fetch(req, { signal: controller.signal });
-    clearTimeout(timeout);
-
-    if (typeof response === 'undefined') {
-      throw new Error('Failed to fetch response');
-    }
-
-    // handle error response
-    if (response.status > 299) {
-      const authErrorResponse =
-        options.path.includes('connect/token') ||
-        options.path.includes('connect/revoke');
-
-      const text = await response.text();
-      let error: Error;
-      try {
-        const parsedError = JSON.parse(text);
-        const camelCaseError = objKeysToCamelCase(parsedError);
-
-        if (authErrorResponse) {
-          error = new NylasOAuthError(camelCaseError, response.status);
-        } else {
-          error = new NylasApiError(camelCaseError, response.status);
-        }
-      } catch (e) {
-        throw new Error(
-          `Received an error but could not parse response from the server: ${text}`
-        );
-      }
-
-      throw error;
-    }
-
+    const response = await this.sendRequest(options);
     return this.requestWithResponse(response);
   }
 
   async requestRaw(options: RequestOptionsParams): Promise<Buffer> {
-    const req = this.newRequest(options);
-    const controller: AbortController = new AbortController();
-    const timeout = setTimeout(() => {
-      controller.abort();
-      throw new NylasSdkTimeoutError(req.url, this.timeout);
-    }, this.timeout);
-
-    const response = await fetch(req, { signal: controller.signal });
-    clearTimeout(timeout);
-
-    if (typeof response === 'undefined') {
-      throw new Error('Failed to fetch response');
-    }
-
-    // Handle error response
-    if (response.status > 299) {
-      const text = await response.text();
-      let error: Error;
-      try {
-        const parsedError = JSON.parse(text);
-        const camelCaseError = objKeysToCamelCase(parsedError);
-        error = new NylasApiError(camelCaseError, response.status);
-      } catch (e) {
-        throw new Error(
-          `Received an error but could not parse response from the server: ${text}`
-        );
-      }
-
-      throw error;
-    }
-
-    // Return the raw buffer
+    const response = await this.sendRequest(options);
     return response.buffer();
   }
 
   async requestStream(
     options: RequestOptionsParams
   ): Promise<NodeJS.ReadableStream> {
-    const req = this.newRequest(options);
-    const controller: AbortController = new AbortController();
-    const timeout = setTimeout(() => {
-      controller.abort();
-      throw new NylasSdkTimeoutError(req.url, this.timeout);
-    }, this.timeout);
-
-    const response = await fetch(req, { signal: controller.signal });
-    clearTimeout(timeout);
-
-    if (typeof response === 'undefined') {
-      throw new Error('Failed to fetch response');
-    }
-
-    // Handle error response
-    if (response.status > 299) {
-      const text = await response.text();
-      let error: Error;
-      try {
-        const parsedError = JSON.parse(text);
-        const camelCaseError = objKeysToCamelCase(parsedError);
-        error = new NylasApiError(camelCaseError, response.status);
-      } catch (e) {
-        throw new Error(
-          `Received an error but could not parse response from the server: ${text}`
-        );
-      }
-
-      throw error;
-    }
-
+    const response = await this.sendRequest(options);
     return response.body;
   }
 }

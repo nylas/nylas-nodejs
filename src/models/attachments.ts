@@ -4,19 +4,16 @@
 export interface Attachment {
   /**
    * A globally unique object identifier.
-   * Constraints: Minimum 1 character.
    */
   id: string;
 
   /**
    * Attachment's name.
-   * Constraints: Minimum 1 character.
    */
   filename: string;
 
   /**
    * Attachment's content type.
-   * Constraints: Minimum 1 character.
    */
   contentType: string;
 
@@ -49,4 +46,4 @@ export interface FindAttachmentQueryParams {
 /**
  * Interface representing of the query parameters for downloading an attachment.
  */
-export type DownloadAttachmentQueryParams = Partial<FindAttachmentQueryParams>;
+export type DownloadAttachmentQueryParams = FindAttachmentQueryParams;
