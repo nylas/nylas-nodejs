@@ -6,8 +6,8 @@ import {
   Event,
   FindEventQueryParams,
   ListEventQueryParams,
-  SendRSVPQueryParams,
-  SendRSVPRequest,
+  SendRsvpQueryParams,
+  SendRsvpRequest,
   UpdateEventQueryParams,
   UpdateEventRequest,
 } from '../models/events.js';
@@ -79,11 +79,11 @@ interface DestroyEventParams {
  * @property queryParams The query parameters to include in the request
  * @property requestBody The values to send the RSVP with
  */
-interface SendRSVPParams {
+interface SendRsvpParams {
   identifier: string;
   eventId: string;
-  queryParams: SendRSVPQueryParams;
-  requestBody: SendRSVPRequest;
+  queryParams: SendRsvpQueryParams;
+  requestBody: SendRsvpRequest;
 }
 
 /**
@@ -183,15 +183,15 @@ export class Events extends Resource {
    * Send RSVP. Allows users to respond to events they have been added to as an attendee.
    * You cannot send RSVP as an event owner/organizer.
    * You cannot directly update events as an invitee, since you are not the owner/organizer.
-   * @return The sendRSVP response
+   * @return The send-rsvp response
    */
-  public sendRSVP({
+  public sendRsvp({
     identifier,
     eventId,
     requestBody,
     queryParams,
     overrides,
-  }: SendRSVPParams & Overrides): Promise<NylasBaseResponse> {
+  }: SendRsvpParams & Overrides): Promise<NylasBaseResponse> {
     return super._create({
       path: `/v3/grants/${identifier}/events/${eventId}/send-rsvp`,
       queryParams,

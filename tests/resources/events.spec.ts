@@ -251,7 +251,7 @@ describe('Events', () => {
 
   describe('send-rsvp', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await events.sendRSVP({
+      await events.sendRsvp({
         identifier: 'id123',
         eventId: 'event123',
         queryParams: {
