@@ -11,6 +11,16 @@ import {
   ProviderDetectParams,
   ProviderDetectResponse,
 } from '../models/auth.js';
+import { Overrides } from '../config.js';
+import { NylasResponse } from '../models/response.js';
+import { CreateGrantRequest, Grant } from '../models/grants.js';
+
+/**
+ * @property requestBody The values to create the Grant with.
+ */
+interface CreateGrantParams {
+  requestBody: CreateGrantRequest;
+}
 
 /**
  * A collection of authentication related API endpoints
@@ -97,6 +107,22 @@ export class Auth extends Resource {
     url.searchParams.set('response_type', 'adminconsent');
     url.searchParams.set('credential_id', config.credentialId);
     return url.toString();
+  }
+
+  /**
+   * Create a grant via Custom Authentication
+   * @return The created grant
+   */
+  public customAuthentication({
+    requestBody,
+    overrides,
+  }: CreateGrantParams & Overrides): Promise<NylasResponse<Grant>> {
+    return this.apiClient.request<NylasResponse<Grant>>({
+      method: 'POST',
+      path: `/v3/connect/custom`,
+      body: requestBody,
+      overrides,
+    });
   }
 
   /**
