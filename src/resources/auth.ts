@@ -1,8 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { createHash } from 'node:crypto';
-import APIClient from '../apiClient.js';
 import { Resource } from './resource.js';
-import { Grants } from './grants.js';
 import {
   URLForAdminConsentConfig,
   URLForAuthenticationConfig,
@@ -21,22 +19,6 @@ import {
  * Also contains the Grants API and collection of provider API endpoints.
  */
 export class Auth extends Resource {
-  /**
-   * Access the Grants API
-   */
-  public grants: Grants;
-
-  apiClient: APIClient;
-
-  /**
-   * @param apiClient The configured Nylas API client
-   */
-  constructor(apiClient: APIClient) {
-    super(apiClient);
-    this.apiClient = apiClient;
-    this.grants = new Grants(apiClient);
-  }
-
   /**
    * Build the URL for authenticating users to your application with OAuth 2.0
    * @param config The configuration for building the URL
