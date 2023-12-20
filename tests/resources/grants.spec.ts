@@ -63,40 +63,6 @@ describe('Grants', () => {
     });
   });
 
-  describe('create', () => {
-    it('should call apiClient.request with the correct params', async () => {
-      await grants.create({
-        requestBody: {
-          provider: 'google',
-          settings: {
-            test_setting: 'abc123',
-          },
-          scope: ['calendar'],
-          state: 'state123',
-        },
-        overrides: {
-          apiUri: 'https://test.api.nylas.com',
-        },
-      });
-
-      expect(apiClient.request).toHaveBeenCalledWith({
-        method: 'POST',
-        path: '/v3/connect/custom',
-        body: {
-          provider: 'google',
-          settings: {
-            test_setting: 'abc123',
-          },
-          scope: ['calendar'],
-          state: 'state123',
-        },
-        overrides: {
-          apiUri: 'https://test.api.nylas.com',
-        },
-      });
-    });
-  });
-
   describe('update', () => {
     it('should call apiClient.request with the correct params', async () => {
       await grants.update({

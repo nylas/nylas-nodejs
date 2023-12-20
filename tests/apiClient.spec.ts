@@ -216,30 +216,6 @@ describe('APIClient', () => {
         ).rejects.toThrow(new NylasOAuthError(payload));
       });
 
-      // it('should throw a TokenValidationError if the error comes from connect/tokeninfo', async () => {
-      //   const payload = {
-      //     success: false,
-      //     error: {
-      //       httpCode: 400,
-      //       eventCode: 10020,
-      //       message: 'Invalid access token',
-      //       type: 'AuthenticationError',
-      //       requestId: 'abc123',
-      //     },
-      //   };
-      //   mockedFetch.mockImplementation(() => new Response('', { status: 400 }));
-      //   jest
-      //     .spyOn(Response.prototype, 'text')
-      //     .mockImplementation(() => Promise.resolve(JSON.stringify(payload)));
-      //
-      //   await expect(
-      //     client.request({
-      //       path: '/connect/tokeninfo',
-      //       method: 'POST',
-      //     })
-      //   ).rejects.toThrow(new NylasTokenValidationError(payload));
-      // });
-
       it('should throw a NylasApiError if the error comes from the other non-auth endpoints', async () => {
         const payload = {
           requestId: 'abc123',

@@ -94,35 +94,39 @@ describe('Auth', () => {
       });
     });
   });
-  // describe('Validating token', () => {
-  //   describe('validateIDToken', () => {
-  //     it('should call apiClient.request with the correct params', async () => {
-  //       await auth.validateIDToken('id123');
-  //
-  //       expect(apiClient.request).toHaveBeenCalledWith({
-  //         method: 'GET',
-  //         path: '/v3/connect/tokeninfo',
-  //         queryParams: {
-  //           idToken: 'id123',
-  //         },
-  //       });
-  //     });
-  //   });
-  //
-  //   describe('validateAccessToken', () => {
-  //     it('should call apiClient.request with the correct params', async () => {
-  //       await auth.validateAccessToken('accessToken123');
-  //
-  //       expect(apiClient.request).toHaveBeenCalledWith({
-  //         method: 'GET',
-  //         path: '/v3/connect/tokeninfo',
-  //         queryParams: {
-  //           accessToken: 'accessToken123',
-  //         },
-  //       });
-  //     });
-  //   });
-  // });
+  describe('customAuthentication', () => {
+    it('should call apiClient.request with the correct params', async () => {
+      await auth.customAuthentication({
+        requestBody: {
+          provider: 'google',
+          settings: {
+            test_setting: 'abc123',
+          },
+          scope: ['calendar'],
+          state: 'state123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/connect/custom',
+        body: {
+          provider: 'google',
+          settings: {
+            test_setting: 'abc123',
+          },
+          scope: ['calendar'],
+          state: 'state123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+        },
+      });
+    });
+  });
   describe('URL building', () => {
     describe('urlForAuthentication', () => {
       it('should build the correct url', () => {
