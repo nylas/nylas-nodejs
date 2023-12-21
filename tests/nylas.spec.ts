@@ -21,6 +21,7 @@ describe('Nylas', () => {
       expect(nylas.events.constructor.name).toBe('Events');
       expect(nylas.webhooks.constructor.name).toBe('Webhooks');
       expect(nylas.folders.constructor.name).toBe('Folders');
+      expect(nylas.attachments.constructor.name).toBe('Attachments');
     });
 
     it('should configure the apiClient', () => {
