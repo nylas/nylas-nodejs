@@ -3,6 +3,7 @@
 ### 7.0.0-beta.4 / TBD
 * **BREAKING CHANGE**: Moved grants API out of `Auth` to `NylasClient`
 * **BREAKING CHANGE**: Moved `Grants.create()` to `Auth.customAuthentication()`
+* Fix issue with form-data not importing correctly for ESM projects
 
 ### 7.0.0-beta.3 / 2023-10-23
 * Added support for the messages, drafts, and threads endpoints

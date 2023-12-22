@@ -6,7 +6,7 @@ import {
   UpdateCalenderRequest,
 } from '../models/calendars.js';
 import {
-  NylasDeleteResponse,
+  NylasBaseResponse,
   NylasResponse,
   NylasListResponse,
 } from '../models/response.js';
@@ -167,7 +167,7 @@ export class Calendars extends Resource {
     identifier,
     calendarId,
     overrides,
-  }: DestroyCalendarParams & Overrides): Promise<NylasDeleteResponse> {
+  }: DestroyCalendarParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/calendars/${calendarId}`,
       overrides,
