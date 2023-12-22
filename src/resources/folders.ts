@@ -5,7 +5,7 @@ import {
   UpdateFolderRequest,
 } from '../models/folders.js';
 import {
-  NylasDeleteResponse,
+  NylasBaseResponse,
   NylasResponse,
   NylasListResponse,
 } from '../models/response.js';
@@ -147,7 +147,7 @@ export class Folders extends Resource {
     identifier,
     folderId,
     overrides,
-  }: DestroyFolderParams & Overrides): Promise<NylasDeleteResponse> {
+  }: DestroyFolderParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/folders/${folderId}`,
       overrides,

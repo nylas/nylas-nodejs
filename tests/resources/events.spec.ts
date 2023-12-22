@@ -248,4 +248,36 @@ describe('Events', () => {
       });
     });
   });
+
+  describe('send-rsvp', () => {
+    it('should call apiClient.request with the correct params', async () => {
+      await events.sendRsvp({
+        identifier: 'id123',
+        eventId: 'event123',
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+        requestBody: {
+          status: 'yes',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/id123/events/event123/send-rsvp',
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+        body: {
+          status: 'yes',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+        },
+      });
+    });
+  });
 });

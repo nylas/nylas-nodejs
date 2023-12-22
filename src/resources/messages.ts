@@ -11,7 +11,7 @@ import {
 } from '../models/messages.js';
 import { Overrides } from '../config.js';
 import {
-  NylasDeleteResponse,
+  NylasBaseResponse,
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
@@ -171,7 +171,7 @@ export class Messages extends Resource {
     identifier,
     messageId,
     overrides,
-  }: DestroyMessageParams & Overrides): Promise<NylasDeleteResponse> {
+  }: DestroyMessageParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/messages/${messageId}`,
       overrides,
