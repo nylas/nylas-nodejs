@@ -11,6 +11,7 @@ import { Threads } from './resources/threads.js';
 import { Connectors } from './resources/connectors.js';
 import { Folders } from './resources/folders.js';
 import { Contacts } from './resources/contacts.js';
+import { Attachments } from './resources/attachments.js';
 
 /**
  * The entry point to the Node SDK
@@ -24,6 +25,10 @@ export default class Nylas {
    */
   public applications: Applications;
   /**
+   * Access the Attachments API
+   */
+  public attachments: Attachments;
+  /**
    * Access the Auth API
    */
   public auth: Auth;
@@ -35,6 +40,10 @@ export default class Nylas {
    * Access the Connectors API
    */
   public connectors: Connectors;
+  /**
+   * Access the Contacts API
+   */
+  public contacts: Contacts;
   /**
    * Access the Drafts API
    */
@@ -59,10 +68,6 @@ export default class Nylas {
    * Access the Folders API
    */
   public folders: Folders;
-  /**
-   * Access the Contacts API
-   */
-  public contacts: Contacts;
 
   /**
    * The configured API client
@@ -91,6 +96,7 @@ export default class Nylas {
     this.webhooks = new Webhooks(this.apiClient);
     this.folders = new Folders(this.apiClient);
     this.contacts = new Contacts(this.apiClient);
+    this.attachments = new Attachments(this.apiClient);
 
     return this;
   }
