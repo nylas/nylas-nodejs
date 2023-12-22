@@ -10,7 +10,7 @@ import {
 import {
   NylasResponse,
   NylasListResponse,
-  NylasDeleteResponse,
+  NylasBaseResponse,
 } from '../models/response.js';
 import { AsyncListResponse, Resource } from './resource.js';
 
@@ -152,7 +152,7 @@ export class Contacts extends Resource {
     identifier,
     contactId,
     overrides,
-  }: DestroyContactParams & Overrides): Promise<NylasDeleteResponse> {
+  }: DestroyContactParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/contacts/${contactId}`,
       overrides,
