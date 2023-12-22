@@ -10,6 +10,7 @@ import { Drafts } from './resources/drafts.js';
 import { Threads } from './resources/threads.js';
 import { Connectors } from './resources/connectors.js';
 import { Folders } from './resources/folders.js';
+import { Grants } from './resources/grants.js';
 import { Contacts } from './resources/contacts.js';
 import { Attachments } from './resources/attachments.js';
 
@@ -53,6 +54,10 @@ export default class Nylas {
    */
   public events: Events;
   /**
+   * Access the Grants API
+   */
+  public grants: Grants;
+  /**
    * Access the Messages API
    */
   public messages: Messages;
@@ -91,6 +96,7 @@ export default class Nylas {
     this.connectors = new Connectors(this.apiClient);
     this.drafts = new Drafts(this.apiClient);
     this.events = new Events(this.apiClient);
+    this.grants = new Grants(this.apiClient);
     this.messages = new Messages(this.apiClient);
     this.threads = new Threads(this.apiClient);
     this.webhooks = new Webhooks(this.apiClient);

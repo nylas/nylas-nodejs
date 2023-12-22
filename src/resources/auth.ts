@@ -1,8 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { createHash } from 'node:crypto';
-import APIClient from '../apiClient.js';
 import { Resource } from './resource.js';
-import { Grants } from './grants.js';
 import {
   URLForAdminConsentConfig,
   URLForAuthenticationConfig,
@@ -13,6 +11,16 @@ import {
   ProviderDetectParams,
   ProviderDetectResponse,
 } from '../models/auth.js';
+import { Overrides } from '../config.js';
+import { NylasResponse } from '../models/response.js';
+import { CreateGrantRequest, Grant } from '../models/grants.js';
+
+/**
+ * @property requestBody The values to create the Grant with.
+ */
+interface CreateGrantParams {
+  requestBody: CreateGrantRequest;
+}
 
 /**
  * A collection of authentication related API endpoints
@@ -21,22 +29,6 @@ import {
  * Also contains the Grants API and collection of provider API endpoints.
  */
 export class Auth extends Resource {
-  /**
-   * Access the Grants API
-   */
-  public grants: Grants;
-
-  apiClient: APIClient;
-
-  /**
-   * @param apiClient The configured Nylas API client
-   */
-  constructor(apiClient: APIClient) {
-    super(apiClient);
-    this.apiClient = apiClient;
-    this.grants = new Grants(apiClient);
-  }
-
   /**
    * Build the URL for authenticating users to your application with OAuth 2.0
    * @param config The configuration for building the URL
@@ -115,6 +107,22 @@ export class Auth extends Resource {
     url.searchParams.set('response_type', 'adminconsent');
     url.searchParams.set('credential_id', config.credentialId);
     return url.toString();
+  }
+
+  /**
+   * Create a grant via Custom Authentication
+   * @return The created grant
+   */
+  public customAuthentication({
+    requestBody,
+    overrides,
+  }: CreateGrantParams & Overrides): Promise<NylasResponse<Grant>> {
+    return this.apiClient.request<NylasResponse<Grant>>({
+      method: 'POST',
+      path: `/v3/connect/custom`,
+      body: requestBody,
+      overrides,
+    });
   }
 
   /**

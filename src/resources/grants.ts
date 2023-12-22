@@ -6,7 +6,6 @@ import {
   NylasListResponse,
 } from '../models/response.js';
 import {
-  CreateGrantRequest,
   Grant,
   ListGrantsQueryParams,
   UpdateGrantRequest,
@@ -17,13 +16,6 @@ import {
  */
 interface FindGrantParams {
   grantId: string;
-}
-
-/**
- * @property requestBody The values to create the Grant with.
- */
-interface CreateGrantParams {
-  requestBody: CreateGrantRequest;
 }
 
 /**
@@ -73,21 +65,6 @@ export class Grants extends Resource {
   }: FindGrantParams & Overrides): Promise<NylasResponse<Grant>> {
     return super._find({
       path: `/v3/grants/${grantId}`,
-      overrides,
-    });
-  }
-
-  /**
-   * Create a Grant via Custom Authentication
-   * @return The created Grant
-   */
-  public create({
-    requestBody,
-    overrides,
-  }: CreateGrantParams & Overrides): Promise<NylasResponse<Grant>> {
-    return super._create({
-      path: `/v3/connect/custom`,
-      requestBody,
       overrides,
     });
   }
