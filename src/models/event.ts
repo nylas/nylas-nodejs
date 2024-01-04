@@ -420,6 +420,12 @@ export default class Event extends RestfulModel {
       });
   }
 
+  fromJSON(json: Record<string, unknown>): this {
+    const model = super.fromJSON(json);
+    model.visibilityIsDirty = false;
+    return model;
+  }
+
   private validate(): void {
     if (
       this.conferencing &&
