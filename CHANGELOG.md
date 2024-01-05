@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix issue where Graph events were returning 400 on update
+
 ### 6.11.0 / 2023-11-28
 * Add support for logging
 * Nullify replyToMessageId is an empty string

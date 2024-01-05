@@ -100,8 +100,9 @@ export default class Event extends RestfulModel {
   organizerEmail?: string;
   organizerName?: string;
   hideParticipants?: boolean;
-  visibility?: string;
   customerEventId?: string;
+  private _visibility?: string;
+  private visibilityIsDirty = false;
   static collectionName = 'events';
   static attributes: Record<string, Attribute> = {
     ...RestfulModel.attributes,
@@ -220,7 +221,8 @@ export default class Event extends RestfulModel {
       jsonKey: 'hide_participants',
     }),
     visibility: Attributes.String({
-      modelKey: 'visibility',
+      modelKey: '_visibility',
+      jsonKey: 'visibility',
     }),
     customerEventId: Attributes.String({
       modelKey: 'customerEventId',
@@ -231,6 +233,7 @@ export default class Event extends RestfulModel {
   constructor(connection: NylasConnection, props?: EventProperties) {
     super(connection, props);
     this.initAttributes(props);
+    this.visibilityIsDirty = false;
   }
 
   get start(): string | number | undefined {
@@ -307,6 +310,18 @@ export default class Event extends RestfulModel {
     }
   }
 
+  get visibility(): string | undefined {
+    return this._visibility;
+  }
+
+  set visibility(val: string | undefined) {
+    if (val !== this._visibility) {
+      this.visibilityIsDirty = true;
+    }
+
+    this._visibility = val;
+  }
+
   deleteRequestQueryString(
     params: Record<string, unknown> = {}
   ): Record<string, unknown> {
@@ -333,7 +348,10 @@ export default class Event extends RestfulModel {
         participant => delete participant.status
       );
     }
-    if (this.visibility !== undefined && this.visibility === '') {
+    if (
+      (this.visibility !== undefined && this.visibility === '') ||
+      !this.visibilityIsDirty
+    ) {
       delete json.visibility;
     }
 
@@ -400,6 +418,12 @@ export default class Event extends RestfulModel {
 
         return response.ics;
       });
+  }
+
+  fromJSON(json: Record<string, unknown>): this {
+    const model = super.fromJSON(json);
+    model.visibilityIsDirty = false;
+    return model;
   }
 
   private validate(): void {
