@@ -6,10 +6,6 @@ import { ListQueryParams } from './listQueryParams.js';
  */
 export interface Connector {
   /**
-   * Custom name of the connector
-   */
-  name: string;
-  /**
    * The provider type
    */
   provider: Provider;
