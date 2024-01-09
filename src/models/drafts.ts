@@ -52,9 +52,9 @@ export type UpdateDraftRequest = Partial<CreateDraftRequest>;
  */
 export interface TrackingOptions {
   label?: string;
-  links?: string;
-  opens?: string;
-  threadReplies?: string;
+  links?: boolean;
+  opens?: boolean;
+  threadReplies?: boolean;
 }
 
 /**
