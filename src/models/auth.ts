@@ -142,6 +142,10 @@ export interface CodeExchangeResponse {
    */
   grantId: string;
   /**
+   * Email address of the grant that is created.
+   */
+  email: string;
+  /**
    * The remaining lifetime of the access token in seconds.
    */
   expiresIn: number;
