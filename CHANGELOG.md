@@ -4,6 +4,7 @@
 * **BREAKING CHANGE**: Moved grants API out of `Auth` to `NylasClient`
 * **BREAKING CHANGE**: Moved `Grants.create()` to `Auth.customAuthentication()`
 * Fix issue with form-data not importing correctly for ESM projects
+* Fix typing errors in TrackingOptions and Connector
 
 ### 7.0.0-beta.3 / 2023-10-23
 * Added support for the messages, drafts, and threads endpoints
