@@ -1,8 +1,13 @@
 # Changelog
 
-### 7.0.0-beta.4 / TBD
+### 7.0.0-beta.4 / 2024-01-12
 * **BREAKING CHANGE**: Moved grants API out of `Auth` to `NylasClient`
 * **BREAKING CHANGE**: Moved `Grants.create()` to `Auth.customAuthentication()`
+* Added support for the folders API
+* Added support for the attachments API
+* Added support for the contacts API
+* Added support for send-RSVP
+* Added email value for CodeExchange response
 * Fix issue with form-data not importing correctly for ESM projects
 * Fix typing errors in TrackingOptions and Connector
 
