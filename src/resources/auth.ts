@@ -152,7 +152,7 @@ export class Auth extends Resource {
   ): Promise<ProviderDetectResponse> {
     return this.apiClient.request<ProviderDetectResponse>({
       method: 'POST',
-      path: `/v3/grants/providers/detect`,
+      path: `/v3/providers/detect`,
       queryParams: params,
     });
   }
