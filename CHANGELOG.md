@@ -1,6 +1,6 @@
 # Changelog
 
-### 7.0.0-beta.4 / TBD
+### 7.0.0-beta.4 / 2024-01-12
 * **BREAKING CHANGE**: Moved grants API out of `Auth` to `NylasClient`
 * **BREAKING CHANGE**: Moved `Grants.create()` to `Auth.customAuthentication()`
 * Added support for the folders API
