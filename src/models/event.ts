@@ -360,7 +360,7 @@ export default class Event extends RestfulModel {
 
   rsvp(
     status: string,
-    comment: string,
+    comment?: string,
     callback?: (error: Error | null, data?: Event) => void
   ): Promise<Event> {
     return this.connection
