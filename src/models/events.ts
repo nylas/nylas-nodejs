@@ -123,7 +123,7 @@ export interface CreateEventRequest {
    * - {@link Time}
    * - {@link Timespan}
    */
-  when: When;
+  when: CreateWhen;
   /**
    * Title of the event.
    */
@@ -357,6 +357,25 @@ type Conferencing = Details | Autocreate;
 type When = Time | Timespan | Date | Datespan;
 
 /**
+ * Type representing the different objects representing time and duration when creating events.
+ */
+type CreateWhen =
+  | Omit<Time, 'type'>
+  | Omit<Timespan, 'type'>
+  | Omit<Date, 'type'>
+  | Omit<Datespan, 'type'>;
+
+/**
+ * Enum representing the different types of when objects.
+ */
+export enum WhenType {
+  Time = 'time',
+  Timespan = 'timespan',
+  Date = 'date',
+  Datespan = 'datespan',
+}
+
+/**
  * Interface of a conferencing details object
  */
 export interface Details {
@@ -427,6 +446,10 @@ export interface Time {
    * @see <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">List of tz database time zones</a>
    */
   timezone: string;
+  /**
+   * The type of 'when' object.
+   */
+  type: WhenType.Time;
 }
 
 /**
@@ -454,6 +477,10 @@ export interface Timespan {
    * @see <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">List of tz database time zones</a>
    */
   endTimezone?: string;
+  /**
+   * The type of 'when' object.
+   */
+  type: WhenType.Timespan;
 }
 
 /**
@@ -466,6 +493,10 @@ export interface Date {
    * @see <a href="https://en.wikipedia.org/wiki/ISO_8601#Calendar_dates">ISO 8601</a>
    */
   date: string;
+  /**
+   * The type of 'when' object.
+   */
+  type: WhenType.Date;
 }
 
 /**
@@ -483,6 +514,10 @@ export interface Datespan {
    * @see <a href="https://en.wikipedia.org/wiki/ISO_8601#Calendar_dates">ISO 8601</a>
    */
   endDate: string;
+  /**
+   * The type of 'when' object.
+   */
+  type: WhenType.Datespan;
 }
 
 /**
