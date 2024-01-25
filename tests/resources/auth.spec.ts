@@ -45,6 +45,27 @@ describe('Auth', () => {
         });
       });
 
+      it('should default clientSecret to the API key', async () => {
+        const payload: CodeExchangeRequest = {
+          clientId: 'clientId',
+          redirectUri: 'https://redirect.uri/path',
+          code: 'code',
+        };
+        await auth.exchangeCodeForToken(payload);
+
+        expect(apiClient.request).toHaveBeenCalledWith({
+          method: 'POST',
+          path: '/v3/connect/token',
+          body: {
+            clientId: 'clientId',
+            clientSecret: 'apiKey',
+            redirectUri: 'https://redirect.uri/path',
+            code: 'code',
+            grantType: 'authorization_code',
+          },
+        });
+      });
+
       it('should set codeVerifier', async () => {
         const payload: CodeExchangeRequest = {
           clientId: 'clientId',
@@ -86,6 +107,27 @@ describe('Auth', () => {
           body: {
             clientId: 'clientId',
             clientSecret: 'clientSecret',
+            redirectUri: 'https://redirect.uri/path',
+            refreshToken: 'refreshToken',
+            grantType: 'refresh_token',
+          },
+        });
+      });
+
+      it('should default clientSecret to the API key', async () => {
+        const payload: TokenExchangeRequest = {
+          clientId: 'clientId',
+          redirectUri: 'https://redirect.uri/path',
+          refreshToken: 'refreshToken',
+        };
+        await auth.refreshAccessToken(payload);
+
+        expect(apiClient.request).toHaveBeenCalledWith({
+          method: 'POST',
+          path: '/v3/connect/token',
+          body: {
+            clientId: 'clientId',
+            clientSecret: 'apiKey',
             redirectUri: 'https://redirect.uri/path',
             refreshToken: 'refreshToken',
             grantType: 'refresh_token',
