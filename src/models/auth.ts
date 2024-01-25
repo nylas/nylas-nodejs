@@ -80,9 +80,9 @@ export interface CodeExchangeRequest {
    */
   clientId: string;
   /**
-   * Client secret of the application.
+   * Client secret of the application. If not provided, the API Key will be used instead.
    */
-  clientSecret: string;
+  clientSecret?: string;
   /**
    * The original plain text code verifier (code_challenge) used in the initial authorization request (PKCE).
    */
@@ -106,9 +106,9 @@ export interface TokenExchangeRequest {
    */
   clientId: string;
   /**
-   * Client secret of the application.
+   * Client secret of the application. If not provided, the API Key will be used instead.
    */
-  clientSecret: string;
+  clientSecret?: string;
 }
 
 /**

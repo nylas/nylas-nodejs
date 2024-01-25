@@ -46,17 +46,17 @@ export class Auth extends Resource {
   public exchangeCodeForToken(
     request: CodeExchangeRequest
   ): Promise<CodeExchangeResponse> {
-    const body: Record<string, unknown> = {
-      ...request,
-      grantType: 'authorization_code',
-    };
-    if (request.codeVerifier) {
-      body.codeVerifier = request.codeVerifier;
+    if (!request.clientSecret) {
+      request.clientSecret = this.apiClient.apiKey;
     }
+
     return this.apiClient.request<CodeExchangeResponse>({
       method: 'POST',
       path: `/v3/connect/token`,
-      body,
+      body: {
+        ...request,
+        grantType: 'authorization_code',
+      },
     });
   }
 
@@ -68,6 +68,10 @@ export class Auth extends Resource {
   public refreshAccessToken(
     request: TokenExchangeRequest
   ): Promise<CodeExchangeResponse> {
+    if (!request.clientSecret) {
+      request.clientSecret = this.apiClient.apiKey;
+    }
+
     return this.apiClient.request<CodeExchangeResponse>({
       method: 'POST',
       path: `/v3/connect/token`,
