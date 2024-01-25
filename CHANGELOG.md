@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix missing `type` field in `Event` model
+
 ### 7.0.0-beta.4 / 2024-01-12
 * **BREAKING CHANGE**: Moved grants API out of `Auth` to `NylasClient`
 * **BREAKING CHANGE**: Moved `Grants.create()` to `Auth.customAuthentication()`
