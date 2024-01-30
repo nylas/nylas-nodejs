@@ -12,6 +12,7 @@ import {
   NylasResponse,
 } from '../models/response.js';
 import { Messages } from './messages.js';
+import { Message } from '../models/messages';
 
 /**
  * The parameters for the {@link Drafts.list} method
@@ -160,13 +161,13 @@ export class Drafts extends Resource {
 
   /**
    * Send a Draft
-   * @return The sent draft
+   * @return The sent message
    */
   public send({
     identifier,
     draftId,
     overrides,
-  }: SendDraftParams & Overrides): Promise<NylasResponse<Draft>> {
+  }: SendDraftParams & Overrides): Promise<NylasResponse<Message>> {
     return super._create({
       path: `/v3/grants/${identifier}/drafts/${draftId}`,
       requestBody: {},
