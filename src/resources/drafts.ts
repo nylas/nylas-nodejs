@@ -1,3 +1,5 @@
+import { Overrides } from '../config.js';
+import { Messages } from './messages.js';
 import { AsyncListResponse, Resource } from './resource.js';
 import {
   CreateDraftRequest,
@@ -5,14 +7,12 @@ import {
   ListDraftsQueryParams,
   UpdateDraftRequest,
 } from '../models/drafts.js';
-import { Overrides } from '../config.js';
+import { Message } from '../models/messages.js';
 import {
   NylasBaseResponse,
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { Messages } from './messages.js';
-import { Message } from '../models/messages';
 
 /**
  * The parameters for the {@link Drafts.list} method
