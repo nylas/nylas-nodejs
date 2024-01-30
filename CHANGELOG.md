@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Changed `clientSecret` to optional for token exchange methods; defaults to API Key now
 * Fix missing `type` field in `Event` model
 
 ### 7.0.0-beta.4 / 2024-01-12
