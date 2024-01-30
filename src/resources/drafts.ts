@@ -7,7 +7,7 @@ import {
 } from '../models/drafts.js';
 import { Overrides } from '../config.js';
 import {
-  NylasDeleteResponse,
+  NylasBaseResponse,
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
@@ -151,7 +151,7 @@ export class Drafts extends Resource {
     identifier,
     draftId,
     overrides,
-  }: DestroyDraftParams & Overrides): Promise<NylasDeleteResponse> {
+  }: DestroyDraftParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/drafts/${draftId}`,
       overrides,

@@ -1,25 +1,26 @@
 import APIClient from '../../src/apiClient';
-import { Grants } from '../../src/resources/grants';
-jest.mock('../src/apiClient');
+import { Folders } from '../../src/resources/folders';
+jest.mock('../../src/apiClient');
 
-describe('Grants', () => {
+describe('Folders', () => {
   let apiClient: jest.Mocked<APIClient>;
-  let grants: Grants;
+  let folders: Folders;
 
   beforeAll(() => {
     apiClient = new APIClient({
       apiKey: 'apiKey',
-      apiUri: 'https://api.nylas.com',
+      apiUri: 'https://test.api.nylas.com',
       timeout: 30,
     }) as jest.Mocked<APIClient>;
 
-    grants = new Grants(apiClient);
+    folders = new Folders(apiClient);
     apiClient.request.mockResolvedValue({});
   });
 
   describe('list', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await grants.list({
+      await folders.list({
+        identifier: 'id123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
         },
@@ -27,27 +28,19 @@ describe('Grants', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'GET',
-        path: '/v3/grants',
+        path: '/v3/grants/id123/folders',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
         },
-      });
-    });
-
-    it('should call apiClient.request even without overrides set', async () => {
-      await grants.list();
-
-      expect(apiClient.request).toHaveBeenCalledWith({
-        method: 'GET',
-        path: '/v3/grants',
       });
     });
   });
 
   describe('find', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await grants.find({
-        grantId: 'grant123',
+      await folders.find({
+        identifier: 'id123',
+        folderId: 'folder123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
         },
@@ -55,7 +48,32 @@ describe('Grants', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'GET',
-        path: '/v3/grants/grant123',
+        path: '/v3/grants/id123/folders/folder123',
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+        },
+      });
+    });
+  });
+
+  describe('create', () => {
+    it('should call apiClient.request with the correct params', async () => {
+      await folders.create({
+        identifier: 'id123',
+        requestBody: {
+          name: 'My Folder',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/id123/folders',
+        body: {
+          name: 'My Folder',
+        },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
         },
@@ -65,13 +83,11 @@ describe('Grants', () => {
 
   describe('update', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await grants.update({
-        grantId: 'grant123',
+      await folders.update({
+        identifier: 'id123',
+        folderId: 'folder123',
         requestBody: {
-          settings: {
-            test_setting: 'abc123',
-          },
-          scope: ['calendar'],
+          name: 'Updated Folder',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -79,13 +95,10 @@ describe('Grants', () => {
       });
 
       expect(apiClient.request).toHaveBeenCalledWith({
-        method: 'PATCH',
-        path: '/v3/grants/grant123',
+        method: 'PUT',
+        path: '/v3/grants/id123/folders/folder123',
         body: {
-          settings: {
-            test_setting: 'abc123',
-          },
-          scope: ['calendar'],
+          name: 'Updated Folder',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -96,8 +109,9 @@ describe('Grants', () => {
 
   describe('destroy', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await grants.destroy({
-        grantId: 'grant123',
+      await folders.destroy({
+        identifier: 'id123',
+        folderId: 'folder123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
         },
@@ -105,7 +119,7 @@ describe('Grants', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'DELETE',
-        path: '/v3/grants/grant123',
+        path: '/v3/grants/id123/folders/folder123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
         },

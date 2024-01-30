@@ -6,7 +6,7 @@ type AccessType = 'online' | 'offline';
 /**
  * Type for the different OAuth providers Nylas supports.
  */
-export type Provider = 'google' | 'imap' | 'microsoft';
+export type Provider = 'google' | 'imap' | 'microsoft' | 'virtual-calendar';
 
 /**
  * Configuration for generating a URL for OAuth 2.0 authentication.
@@ -80,9 +80,9 @@ export interface CodeExchangeRequest {
    */
   clientId: string;
   /**
-   * Client secret of the application.
+   * Client secret of the application. If not provided, the API Key will be used instead.
    */
-  clientSecret: string;
+  clientSecret?: string;
   /**
    * The original plain text code verifier (code_challenge) used in the initial authorization request (PKCE).
    */
@@ -106,9 +106,9 @@ export interface TokenExchangeRequest {
    */
   clientId: string;
   /**
-   * Client secret of the application.
+   * Client secret of the application. If not provided, the API Key will be used instead.
    */
-  clientSecret: string;
+  clientSecret?: string;
 }
 
 /**
@@ -141,6 +141,10 @@ export interface CodeExchangeResponse {
    * Nylas grant ID that is now successfully created.
    */
   grantId: string;
+  /**
+   * Email address of the grant that is created.
+   */
+  email: string;
   /**
    * The remaining lifetime of the access token in seconds.
    */

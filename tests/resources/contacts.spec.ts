@@ -1,10 +1,10 @@
 import APIClient from '../../src/apiClient';
-import { Events } from '../../src/resources/events';
+import { Contacts } from '../../src/resources/contacts';
 jest.mock('../src/apiClient');
 
-describe('Events', () => {
+describe('Contacts', () => {
   let apiClient: jest.Mocked<APIClient>;
-  let events: Events;
+  let contacts: Contacts;
 
   beforeAll(() => {
     apiClient = new APIClient({
@@ -13,16 +13,16 @@ describe('Events', () => {
       timeout: 30,
     }) as jest.Mocked<APIClient>;
 
-    events = new Events(apiClient);
+    contacts = new Contacts(apiClient);
     apiClient.request.mockResolvedValue({});
   });
 
   describe('list', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await events.list({
+      await contacts.list({
         identifier: 'id123',
         queryParams: {
-          calendarId: 'calendar123',
+          email: 'test@email.com',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -31,9 +31,9 @@ describe('Events', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'GET',
-        path: '/v3/grants/id123/events',
+        path: '/v3/grants/id123/contacts',
         queryParams: {
-          calendarId: 'calendar123',
+          email: 'test@email.com',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -52,10 +52,10 @@ describe('Events', () => {
         ],
         nextCursor: 'cursor123',
       });
-      const eventList = await events.list({
+      const contactList = await contacts.list({
         identifier: 'id123',
         queryParams: {
-          calendarId: 'calendar123',
+          email: 'test@email.com',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -70,14 +70,14 @@ describe('Events', () => {
           },
         ],
       });
-      await eventList.next();
+      await contactList.next();
 
       expect(apiClient.request).toBeCalledTimes(2);
       expect(apiClient.request).toHaveBeenLastCalledWith({
         method: 'GET',
-        path: '/v3/grants/id123/events',
+        path: '/v3/grants/id123/contacts',
         queryParams: {
-          calendarId: 'calendar123',
+          email: 'test@email.com',
           pageToken: 'cursor123',
         },
         overrides: {
@@ -96,10 +96,10 @@ describe('Events', () => {
           },
         ],
       });
-      const eventList = await events.list({
+      const contactList = await contacts.list({
         identifier: 'id123',
         queryParams: {
-          calendarId: 'calendar123',
+          email: 'test@email.com',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -114,7 +114,7 @@ describe('Events', () => {
           },
         ],
       });
-      await eventList.next();
+      await contactList.next();
 
       expect(apiClient.request).toBeCalledTimes(1);
     });
@@ -124,11 +124,11 @@ describe('Events', () => {
 
   describe('find', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await events.find({
+      await contacts.find({
         identifier: 'id123',
-        eventId: 'event123',
+        contactId: 'contact123',
         queryParams: {
-          calendarId: 'calendar123',
+          profilePicture: true,
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -137,9 +137,9 @@ describe('Events', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'GET',
-        path: '/v3/grants/id123/events/event123',
+        path: '/v3/grants/id123/contacts/contact123',
         queryParams: {
-          calendarId: 'calendar123',
+          profilePicture: true,
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -150,16 +150,19 @@ describe('Events', () => {
 
   describe('create', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await events.create({
+      await contacts.create({
         identifier: 'id123',
         requestBody: {
-          when: {
-            time: 123,
-            timezone: 'America/Toronto',
-          },
-        },
-        queryParams: {
-          calendarId: 'calendar123',
+          displayName: 'Test',
+          birthday: '1960-12-31',
+          companyName: 'Nylas',
+          emails: [
+            {
+              email: 'test@gmail.com',
+              type: 'home',
+            },
+          ],
+          givenName: 'Test',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -168,15 +171,18 @@ describe('Events', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'POST',
-        path: '/v3/grants/id123/events',
+        path: '/v3/grants/id123/contacts',
         body: {
-          when: {
-            time: 123,
-            timezone: 'America/Toronto',
-          },
-        },
-        queryParams: {
-          calendarId: 'calendar123',
+          displayName: 'Test',
+          birthday: '1960-12-31',
+          companyName: 'Nylas',
+          emails: [
+            {
+              email: 'test@gmail.com',
+              type: 'home',
+            },
+          ],
+          givenName: 'Test',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -187,17 +193,11 @@ describe('Events', () => {
 
   describe('update', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await events.update({
+      await contacts.update({
         identifier: 'id123',
-        eventId: 'event123',
+        contactId: 'contact123',
         requestBody: {
-          when: {
-            time: 123,
-            timezone: 'America/Toronto',
-          },
-        },
-        queryParams: {
-          calendarId: 'calendar123',
+          birthday: '1960-12-31',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -206,15 +206,9 @@ describe('Events', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'PUT',
-        path: '/v3/grants/id123/events/event123',
+        path: '/v3/grants/id123/contacts/contact123',
         body: {
-          when: {
-            time: 123,
-            timezone: 'America/Toronto',
-          },
-        },
-        queryParams: {
-          calendarId: 'calendar123',
+          birthday: '1960-12-31',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -225,12 +219,9 @@ describe('Events', () => {
 
   describe('destroy', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await events.destroy({
+      await contacts.destroy({
         identifier: 'id123',
-        eventId: 'event123',
-        queryParams: {
-          calendarId: 'calendar123',
-        },
+        contactId: 'contact123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
         },
@@ -238,10 +229,7 @@ describe('Events', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'DELETE',
-        path: '/v3/grants/id123/events/event123',
-        queryParams: {
-          calendarId: 'calendar123',
-        },
+        path: '/v3/grants/id123/contacts/contact123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
         },
@@ -249,31 +237,18 @@ describe('Events', () => {
     });
   });
 
-  describe('send-rsvp', () => {
+  describe('contact group', () => {
     it('should call apiClient.request with the correct params', async () => {
-      await events.sendRsvp({
+      await contacts.groups({
         identifier: 'id123',
-        eventId: 'event123',
-        queryParams: {
-          calendarId: 'calendar123',
-        },
-        requestBody: {
-          status: 'yes',
-        },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
         },
       });
 
       expect(apiClient.request).toHaveBeenCalledWith({
-        method: 'POST',
-        path: '/v3/grants/id123/events/event123/send-rsvp',
-        queryParams: {
-          calendarId: 'calendar123',
-        },
-        body: {
-          status: 'yes',
-        },
+        method: 'GET',
+        path: '/v3/grants/id123/contacts/groups',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
         },

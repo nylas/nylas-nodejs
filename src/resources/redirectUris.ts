@@ -1,6 +1,6 @@
 import { AsyncListResponse, Resource } from './resource.js';
 import {
-  NylasDeleteResponse,
+  NylasBaseResponse,
   NylasResponse,
   NylasListResponse,
 } from '../models/response.js';
@@ -117,7 +117,7 @@ export class RedirectUris extends Resource {
     redirectUriId,
     overrides,
   }: DestroyRedirectUrisParams & Overrides): Promise<
-    NylasResponse<NylasDeleteResponse>
+    NylasResponse<NylasBaseResponse>
   > {
     return super._destroy({
       overrides,

@@ -1,10 +1,29 @@
 # Changelog
 
-### 7.0.0-beta.3 / TBD
+### Unreleased
+* Changed `clientSecret` to optional for token exchange methods; defaults to API Key now
+* Fix missing `type` field in `Event` model
+
+### 7.0.0-beta.4 / 2024-01-12
+* **BREAKING CHANGE**: Moved grants API out of `Auth` to `NylasClient`
+* **BREAKING CHANGE**: Moved `Grants.create()` to `Auth.customAuthentication()`
+* Added support for the folders API
+* Added support for the attachments API
+* Added support for the contacts API
+* Added support for send-RSVP
+* Added email value for CodeExchange response
+* Fix issue with form-data not importing correctly for ESM projects
+* Fix typing errors in TrackingOptions and Connector
+
+### 7.0.0-beta.3 / 2023-10-23
+* Added support for the messages, drafts, and threads endpoints
 * Added support for the free-busy endpoint
+* Added support for native/custom authentication
+* Added support for Connectors & Credentials APIs
 * Fix `getAvailability` response type
 * Fix path for destroying a redirect URI
 * Fix model for updating an Event
+* Fix response type for creating a webhook
 
 ### 7.0.0-beta.2 / 2023-08-21
 * Fix issue with getting the current Nylas SDK package version

@@ -1,12 +1,11 @@
 import { Resource } from './resource.js';
 import { Overrides } from '../config.js';
 import {
-  NylasDeleteResponse,
+  NylasBaseResponse,
   NylasResponse,
   NylasListResponse,
 } from '../models/response.js';
 import {
-  CreateGrantRequest,
   Grant,
   ListGrantsQueryParams,
   UpdateGrantRequest,
@@ -17,13 +16,6 @@ import {
  */
 export interface FindGrantParams {
   grantId: string;
-}
-
-/**
- * @property requestBody The values to create the Grant with.
- */
-export interface CreateGrantParams {
-  requestBody: CreateGrantRequest;
 }
 
 /**
@@ -78,21 +70,6 @@ export class Grants extends Resource {
   }
 
   /**
-   * Create a Grant
-   * @return The created Grant
-   */
-  public create({
-    requestBody,
-    overrides,
-  }: CreateGrantParams & Overrides): Promise<NylasResponse<Grant>> {
-    return super._create({
-      path: `/v3/grants`,
-      requestBody,
-      overrides,
-    });
-  }
-
-  /**
    * Update a Grant
    * @return The updated Grant
    */
@@ -115,7 +92,7 @@ export class Grants extends Resource {
   public destroy({
     grantId,
     overrides,
-  }: DestroyGrantParams & Overrides): Promise<NylasDeleteResponse> {
+  }: DestroyGrantParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       path: `/v3/grants/${grantId}`,
       overrides,

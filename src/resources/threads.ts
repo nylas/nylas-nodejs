@@ -6,7 +6,7 @@ import {
 import { AsyncListResponse, Resource } from './resource.js';
 import { Overrides } from '../config.js';
 import {
-  NylasDeleteResponse,
+  NylasBaseResponse,
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
@@ -118,7 +118,7 @@ export class Threads extends Resource {
     identifier,
     threadId,
     overrides,
-  }: DestroyThreadParams & Overrides): Promise<NylasDeleteResponse> {
+  }: DestroyThreadParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       path: `/v3/grants/${identifier}/threads/${threadId}`,
       overrides,

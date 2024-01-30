@@ -123,7 +123,7 @@ export interface CreateEventRequest {
    * - {@link Time}
    * - {@link Timespan}
    */
-  when: When;
+  when: CreateWhen;
   /**
    * Title of the event.
    */
@@ -194,6 +194,13 @@ export interface CreateEventRequest {
  * Interface representing a request to update an event.
  */
 export type UpdateEventRequest = Subset<CreateEventRequest>;
+
+/**
+ * Interface representing a request to send RSVP to an event.
+ */
+export type SendRsvpRequest = {
+  status: RsvpStatus;
+};
 
 /**
  * Interface representing the query parameters for listing events.
@@ -299,9 +306,19 @@ export type UpdateEventQueryParams = CreateEventQueryParams;
 export type DestroyEventQueryParams = CreateEventQueryParams;
 
 /**
+ * Interface representing of the query parameters for sending RSVP to an event.
+ */
+export type SendRsvpQueryParams = FindEventQueryParams;
+
+/**
  * Enum representing the status of an event.
  */
 type Status = 'confirmed' | 'tentative' | 'cancelled';
+
+/**
+ * Enum representing the status of an RSVP response.
+ */
+type RsvpStatus = 'yes' | 'no' | 'maybe';
 
 /**
  * Enum representing the visibility of an event.
@@ -337,6 +354,25 @@ type Conferencing = Details | Autocreate;
  * Type representing the different objects representing time and duration for events.
  */
 type When = Time | Timespan | Date | Datespan;
+
+/**
+ * Type representing the different objects representing time and duration when creating events.
+ */
+type CreateWhen =
+  | Omit<Time, 'type'>
+  | Omit<Timespan, 'type'>
+  | Omit<Date, 'type'>
+  | Omit<Datespan, 'type'>;
+
+/**
+ * Enum representing the different types of when objects.
+ */
+export enum WhenType {
+  Time = 'time',
+  Timespan = 'timespan',
+  Date = 'date',
+  Datespan = 'datespan',
+}
 
 /**
  * Interface of a conferencing details object
@@ -409,6 +445,10 @@ export interface Time {
    * @see <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">List of tz database time zones</a>
    */
   timezone: string;
+  /**
+   * The type of 'when' object.
+   */
+  type: WhenType.Time;
 }
 
 /**
@@ -436,6 +476,10 @@ export interface Timespan {
    * @see <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">List of tz database time zones</a>
    */
   endTimezone?: string;
+  /**
+   * The type of 'when' object.
+   */
+  type: WhenType.Timespan;
 }
 
 /**
@@ -448,6 +492,10 @@ export interface Date {
    * @see <a href="https://en.wikipedia.org/wiki/ISO_8601#Calendar_dates">ISO 8601</a>
    */
   date: string;
+  /**
+   * The type of 'when' object.
+   */
+  type: WhenType.Date;
 }
 
 /**
@@ -465,6 +513,10 @@ export interface Datespan {
    * @see <a href="https://en.wikipedia.org/wiki/ISO_8601#Calendar_dates">ISO 8601</a>
    */
   endDate: string;
+  /**
+   * The type of 'when' object.
+   */
+  type: WhenType.Datespan;
 }
 
 /**

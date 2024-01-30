@@ -1,8 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { createHash } from 'node:crypto';
-import APIClient from '../apiClient.js';
 import { Resource } from './resource.js';
-import { Grants } from './grants.js';
 import {
   URLForAdminConsentConfig,
   URLForAuthenticationConfig,
@@ -13,7 +11,16 @@ import {
   ProviderDetectParams,
   ProviderDetectResponse,
 } from '../models/auth.js';
-import { NylasResponse } from '../models/response';
+import { Overrides } from '../config.js';
+import { NylasResponse } from '../models/response.js';
+import { CreateGrantRequest, Grant } from '../models/grants.js';
+
+/**
+ * @property requestBody The values to create the Grant with.
+ */
+interface CreateGrantParams {
+  requestBody: CreateGrantRequest;
+}
 
 /**
  * A collection of authentication related API endpoints
@@ -22,22 +29,6 @@ import { NylasResponse } from '../models/response';
  * Also contains the Grants API and collection of provider API endpoints.
  */
 export class Auth extends Resource {
-  /**
-   * Access the Grants API
-   */
-  public grants: Grants;
-
-  apiClient: APIClient;
-
-  /**
-   * @param apiClient The configured Nylas API client
-   */
-  constructor(apiClient: APIClient) {
-    super(apiClient);
-    this.apiClient = apiClient;
-    this.grants = new Grants(apiClient);
-  }
-
   /**
    * Build the URL for authenticating users to your application with OAuth 2.0
    * @param config The configuration for building the URL
@@ -55,17 +46,17 @@ export class Auth extends Resource {
   public exchangeCodeForToken(
     request: CodeExchangeRequest
   ): Promise<CodeExchangeResponse> {
-    const body: Record<string, unknown> = {
-      ...request,
-      grantType: 'authorization_code',
-    };
-    if (request.codeVerifier) {
-      body.codeVerifier = request.codeVerifier;
+    if (!request.clientSecret) {
+      request.clientSecret = this.apiClient.apiKey;
     }
+
     return this.apiClient.request<CodeExchangeResponse>({
       method: 'POST',
       path: `/v3/connect/token`,
-      body,
+      body: {
+        ...request,
+        grantType: 'authorization_code',
+      },
     });
   }
 
@@ -77,6 +68,10 @@ export class Auth extends Resource {
   public refreshAccessToken(
     request: TokenExchangeRequest
   ): Promise<CodeExchangeResponse> {
+    if (!request.clientSecret) {
+      request.clientSecret = this.apiClient.apiKey;
+    }
+
     return this.apiClient.request<CodeExchangeResponse>({
       method: 'POST',
       path: `/v3/connect/token`,
@@ -119,6 +114,22 @@ export class Auth extends Resource {
   }
 
   /**
+   * Create a grant via Custom Authentication
+   * @return The created grant
+   */
+  public customAuthentication({
+    requestBody,
+    overrides,
+  }: CreateGrantParams & Overrides): Promise<NylasResponse<Grant>> {
+    return this.apiClient.request<NylasResponse<Grant>>({
+      method: 'POST',
+      path: `/v3/connect/custom`,
+      body: requestBody,
+      overrides,
+    });
+  }
+
+  /**
    * Revoke a token (and the grant attached to the token)
    * @param token The token to revoke
    * @return True if the token was revoked successfully
@@ -145,7 +156,7 @@ export class Auth extends Resource {
   ): Promise<NylasResponse<ProviderDetectResponse>> {
     return this.apiClient.request<NylasResponse<ProviderDetectResponse>>({
       method: 'POST',
-      path: `/v3/grants/providers/detect`,
+      path: `/v3/providers/detect`,
       queryParams: params,
     });
   }
