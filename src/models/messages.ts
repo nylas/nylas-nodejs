@@ -27,19 +27,9 @@ export interface BaseCreateMessage {
    */
   attachments?: CreateFileRequest[];
   /**
-   * A short snippet of the message body.
-   * This is the first 100 characters of the message body, with any HTML tags removed.
-   */
-  snippet?: string;
-  /**
    * The message subject.
    */
   subject?: string;
-  /**
-   * A reference to the parent thread object.
-   * If this is a new draft, the thread will be empty.
-   */
-  threadId?: string;
   /**
    * The full HTML message body.
    * Messages with only plain-text representations are up-converted to HTML.
@@ -49,10 +39,6 @@ export interface BaseCreateMessage {
    * Whether or not the message has been starred by the user.
    */
   starred?: boolean;
-  /**
-   * Whether or not the message has been read by the user.
-   */
-  unread?: boolean;
 }
 
 /**
@@ -88,6 +74,20 @@ export interface BaseMessage extends Omit<BaseCreateMessage, 'attachments'> {
    * An array of files attached to the message.
    */
   attachments?: File[];
+  /**
+   * A short snippet of the message body.
+   * This is the first 100 characters of the message body, with any HTML tags removed.
+   */
+  snippet?: string;
+  /**
+   * A reference to the parent thread object.
+   * If this is a new draft, the thread will be empty.
+   */
+  threadId?: string;
+  /**
+   * Whether or not the message has been read by the user.
+   */
+  unread?: boolean;
 }
 
 /**
