@@ -1,6 +1,6 @@
 import { EmailName } from './events.js';
-import { CreateFileRequest, File } from './files.js';
 import { ListQueryParams } from './listQueryParams.js';
+import { Attachment, CreateAttachmentRequest } from './attachments.js';
 
 /**
  * @internal Internal interface for creating a message.
@@ -25,7 +25,7 @@ export interface BaseCreateMessage {
   /**
    * An array of files to attach to the message.
    */
-  attachments?: CreateFileRequest[];
+  attachments?: CreateAttachmentRequest[];
   /**
    * The message subject.
    */
@@ -73,7 +73,7 @@ export interface BaseMessage extends Omit<BaseCreateMessage, 'attachments'> {
   /**
    * An array of files attached to the message.
    */
-  attachments?: File[];
+  attachments?: Attachment[];
   /**
    * A short snippet of the message body.
    * This is the first 100 characters of the message body, with any HTML tags removed.

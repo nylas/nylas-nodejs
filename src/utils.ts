@@ -1,10 +1,12 @@
 import { camelCase, snakeCase } from 'change-case';
-import { CreateFileRequest } from './models/files.js';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as mime from 'mime-types';
+import { CreateAttachmentRequest } from './models/attachments.js';
 
-export function createFileRequestBuilder(filePath: string): CreateFileRequest {
+export function createFileRequestBuilder(
+  filePath: string
+): CreateAttachmentRequest {
   const stats = fs.statSync(filePath);
   const filename = path.basename(filePath);
   const contentType = mime.lookup(filePath) || 'application/octet-stream';

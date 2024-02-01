@@ -1,7 +1,7 @@
 import APIClient from '../../src/apiClient';
 import { Drafts } from '../../src/resources/drafts';
-import { CreateFileRequest } from '../../src/models/files';
 import { createReadableStream, MockedFormData } from '../testUtils';
+import { CreateAttachmentRequest } from '../../src/models/attachments';
 jest.mock('../src/apiClient');
 
 // Mock the FormData constructor
@@ -103,7 +103,7 @@ describe('Drafts', () => {
         subject: 'This is my test email',
       };
       const fileStream = createReadableStream('This is the text from file 1');
-      const file1: CreateFileRequest = {
+      const file1: CreateAttachmentRequest = {
         filename: 'file1.txt',
         contentType: 'text/plain',
         content: fileStream,
