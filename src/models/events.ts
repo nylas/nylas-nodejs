@@ -99,9 +99,9 @@ export interface Event {
    */
   recurrence?: string[];
   /**
-   * List of reminders for the event.
+   * A list of reminders to send for the event. If left empty or omitted, the event uses the provider defaults.
    */
-  reminders?: Reminder[];
+  reminders?: Reminders;
   /**
    * Status of the event.
    */
@@ -147,14 +147,9 @@ export interface CreateEventRequest {
    */
   conferencing?: Conferencing;
   /**
-   * The number of minutes before the event start time when a user wants a reminder for this event.
-   * Reminder minutes need to be entered in the following format: "[20]".
+   * A list of reminders to send for the event. If left empty or omitted, the event uses the provider defaults.
    */
-  reminderMinutes?: string;
-  /**
-   * Method to remind the user about the event. (Google only).
-   */
-  reminderMethod?: string;
+  reminders?: Reminders;
   /**
    *  A list of key-value pairs storing additional data.
    */
@@ -548,7 +543,22 @@ export interface Participant {
 /**
  * Interface representing the reminders field of an event.
  */
-export interface Reminder {
+export interface Reminders {
+  /**
+   * Whether to use the default reminders for the calendar.
+   * When true, uses the default reminder settings for the calendar
+   */
+  useDefault: boolean;
+  /**
+   * A list of reminders for the event if useDefault is set to false.
+   */
+  overrides: ReminderOverride[];
+}
+
+/**
+ * Interface representing the reminder details for an event.
+ */
+export interface ReminderOverride {
   /**
    * The number of minutes before the event start time when a user wants a reminder for this event.
    * Reminder minutes are in the following format: "[20]".
