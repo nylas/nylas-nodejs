@@ -56,6 +56,10 @@ export interface Event {
    */
   conferencing: Conferencing;
   /**
+   * Visibility of the event, if the event is private or public.
+   */
+  visibility: Visibility;
+  /**
    * Description of the event.
    */
   description?: string;
@@ -106,10 +110,6 @@ export interface Event {
    * Status of the event.
    */
   status?: Status;
-  /**
-   * Visibility of the event, if the event is private or public.
-   */
-  visibility?: Visibility;
 }
 
 /**
@@ -318,7 +318,7 @@ type RsvpStatus = 'yes' | 'no' | 'maybe';
 /**
  * Enum representing the visibility of an event.
  */
-type Visibility = 'public' | 'private';
+type Visibility = 'default' | 'public' | 'private';
 
 /**
  * Enum representing the supported conferencing providers.
