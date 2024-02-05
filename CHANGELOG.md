@@ -1,27 +1,17 @@
 # Changelog
 
-### Unreleased
-* Fix issue where Graph events were returning 400 on update
-
-### 6.11.0 / 2023-11-28
-* Add support for logging
-* Nullify replyToMessageId is an empty string
-* Nullify visibility if visibility is an empty string
-* Fix numbers defaulting to 0 instead of null
-* Fix parsing of Number arrays
-* Fix configured timeout not being used
-* Bump `node-fetch` dependency from 2.6.1 to 2.6.12
-
-### 6.10.0 / 2023-04-04
-* Add support for verifying webhook signatures
-
-### 6.9.0 / 2023-03-14
-* Add missing generic type in `RestfulModelCollection` for better type safety
-* Add 409 to error mapping
-* Add `startTimezone`, `endTimezone` and `timezone` fields to `When`
-* Allow configurable timeout for API calls
-* Bump `minimist` sub-dependency from 1.2.0 to 1.2.6
-* Bump `mkdirp` sub-dependency from 0.5.1 to 0.5.6
+### 7.0.0 / 2024-02-05
+* **BREAKING CHANGE**: Node SDK v7 supports the Nylas API v3 exclusively, dropping support for any endpoints that are not available in v3.
+* **BREAKING CHANGE**: Convert `Nylas` class from a static to a non-static class
+* **BREAKING CHANGE**: Officially support minimum Node 16
+* **BREAKING CHANGE**: Dropped the use of 'Collections' in favor of 'Resources'
+* **BREAKING CHANGE**: Removed all REST calls from models and moved them directly into resources
+* **REMOVED**: Local Webhook development support is removed due to incompatibility
+* Rewrote the majority of SDK to be more modular and efficient
+* Removed the use of custom strings for serialization and deserialization, now automatically converting to camelCase and from the API's snake_case
+* Added support for both ES6 and CommonJS module systems
+* Created models for all API resources and endpoints, for all HTTP methods to reduce confusion on which fields are available for each endpoint
+* Created error classes for the different API errors as well as SDK-specific errors
 
 ### 6.8.0 / 2023-02-03
 * Local webhook testing support

@@ -9,3 +9,7 @@ _SpecRunner.html
 tags
 CTAGS
 .idea
+coverage
+docs
+cjs
+esm

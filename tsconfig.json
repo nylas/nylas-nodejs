@@ -1,11 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "es2021",
     "declaration": true,
-    "outDir": "./lib",
-    "esModuleInterop": true,
+    "declarationDir": "lib/types",
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "strict": true
-  }
+    "moduleResolution": "node",
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true
+  },
+  "typedocOptions": {
+    "entryPointStrategy": "expand",
+    "entryPoints": ["./src"],
+    "exclude": ["src/version.ts"],
+    "out": "docs",
+    "plugin": ["typedoc-plugin-rename-defaults"],
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "excludeInternal": true,
+  },
+  "include": ["src/**/*"],
+  "exclude": ["tests", "lib", "scripts"]
 }

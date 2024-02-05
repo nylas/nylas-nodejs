@@ -1,76 +1,63 @@
-import { WebhookTriggers } from './models/webhook';
-import LoggingInterface from './models/LoggingInterface';
-
-export let apiServer: string | null = null;
-export function setApiServer(newApiServer: string | null) {
-  apiServer = newApiServer;
-}
-
-export let clientSecret = '';
-export function setClientSecret(newClientSecret: string) {
-  clientSecret = newClientSecret;
-}
-
-export let timeout = 0;
-export function setTimeout(newTimeout: number) {
-  timeout = newTimeout;
-}
-
-export let logger: LoggingInterface | undefined = undefined;
-export function setLogger(newLogger?: LoggingInterface) {
-  logger = newLogger;
-}
-
+/**
+ * Configuration options for initializing the Nylas SDK.
+ * @property apiKey The Nylas API key to use for authentication
+ * @property apiUri The URL to use for communicating with the Nylas API
+ * @property timeout The timeout for requests to the Nylas API, in seconds
+ */
 export type NylasConfig = {
-  /** Nylas application client ID */
-  clientId: string;
-  /** Nylas application client secret */
-  clientSecret: string;
-  /** API Server base URL */
-  apiServer?: string;
-  /** Timeout for outgoing API calls, in milliseconds */
+  apiKey: string;
+  apiUri?: string;
   timeout?: number;
-  /** Logger to redirect log messages to your application. */
-  logger?: LoggingInterface;
 };
 
-export enum ResponseType {
-  CODE = 'code',
-  TOKEN = 'token',
+/**
+ * The options that can override the default Nylas API client configuration.
+ */
+export type OverridableNylasConfig = Partial<NylasConfig>;
+
+/**
+ * An object that can be used to override the default Nylas API client configuration on a per-request basis.
+ * @property overrides Overrides to the default Nylas API client configuration
+ */
+export interface Overrides {
+  overrides?: OverridableNylasConfig;
 }
 
-export type AuthenticateUrlConfig = {
-  redirectURI: string;
-  redirectOnError?: boolean;
-  loginHint?: string;
-  state?: string;
-  provider?: string;
-  scopes?: string[];
-  responseType?: ResponseType;
-};
-
+/**
+ * Enum representing the available Nylas API regions.
+ */
 export enum Region {
   Us = 'us',
-  Ireland = 'ireland',
+  Eu = 'eu',
 }
 
+/**
+ * The default Nylas API region.
+ * @default Region.Us
+ */
 export const DEFAULT_REGION = Region.Us;
 
-export const regionConfig = {
+/**
+ * The configuration options for each Nylas API region.
+ */
+type RegionConfig = {
+  nylasAPIUrl: string;
+};
+
+/**
+ * The available preset configuration values for each Nylas API region.
+ */
+export const REGION_CONFIG: Record<Region, RegionConfig> = {
   [Region.Us]: {
-    nylasAPIUrl: 'https://api.nylas.com',
-    dashboardApiUrl: 'https://dashboard-api.nylas.com',
-    callbackDomain: 'cb.nylas.com',
-    websocketDomain: 'tunnel.nylas.com',
-    telemetryApiUrl: 'https://cli.nylas.com',
+    nylasAPIUrl: 'https://api.us.nylas.com',
   },
-  [Region.Ireland]: {
-    nylasAPIUrl: 'https://ireland.api.nylas.com',
-    dashboardApiUrl: 'https://ireland.dashboard.nylas.com',
-    callbackDomain: 'cb.nylas.com',
-    websocketDomain: 'tunnel.nylas.com',
-    telemetryApiUrl: 'https://cli.nylas.com',
+  [Region.Eu]: {
+    nylasAPIUrl: 'https://api.eu.nylas.com',
   },
 };
 
-export const DEFAULT_WEBHOOK_TRIGGERS = Object.values(WebhookTriggers);
+/**
+ * The default Nylas API URL.
+ * @default https://api.us.nylas.com
+ */
+export const DEFAULT_SERVER_URL = REGION_CONFIG[DEFAULT_REGION].nylasAPIUrl;

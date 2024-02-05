@@ -1,9 +1,0 @@
-extends layout
-
-block content
-  h1= '10 Threads'
-  div(class='frame')
-     each thread in threads
-        li= thread.subject
-
-  a(href='/dashboard') Try Another Function
