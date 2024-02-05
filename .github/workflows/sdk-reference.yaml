@@ -3,7 +3,7 @@ name: sdk-reference
 on:
   push:
     branches:
-      - v7.0.0-beta
+      - main
   pull_request:
 
 jobs:
@@ -26,7 +26,7 @@ jobs:
         run: echo "BRANCH=$(echo $GITHUB_REF | cut -d'/' -f 3)" >> $GITHUB_ENV
       - name: Set env CLOUDFLARE_BRANCH
         run: |
-          if [[ $BRANCH == 'v7.0.0-beta' && $GITHUB_EVENT_NAME == 'push' ]]; then
+          if [[ $BRANCH == 'main' && $GITHUB_EVENT_NAME == 'push' ]]; then
               echo "CLOUDFLARE_BRANCH=main" >> "$GITHUB_ENV"
           else
               echo "CLOUDFLARE_BRANCH=$BRANCH" >> "$GITHUB_ENV"

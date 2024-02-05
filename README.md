@@ -4,8 +4,8 @@
 
 # Nylas Node.js SDK  
 
-[![npm](https://img.shields.io/npm/v/nylas%2Fbeta?label=npm%40beta)
-](https://www.npmjs.com/package/nylas/v/beta@)
+[![npm](https://img.shields.io/npm/v/nylas)
+](https://www.npmjs.com/package/nylas)
 [![codecov](https://codecov.io/gh/nylas/nylas-nodejs/branch/main/graph/badge.svg?token=94IMGU4F09)](https://codecov.io/gh/nylas/nylas-nodejs)
 
 This is the GitHub repository for the Nylas Node SDK. This repo is primarily for anyone who wants to make contributions to the SDK, or install it from source. If you are looking to use Node to access the Nylas Email, Calendar, or Contacts API you should refer to our official [Node SDK Quickstart Guide](https://developer.nylas.com/docs/developer-tools/sdk/node-sdk/).
@@ -30,7 +30,7 @@ Here are some resources to help you get started:
 To run the Nylas Node SDK, first install [Node](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/get-npm) on your machine.
 
 Then, head to the nearest command line and run the following:
-`npm install nylas@beta`
+`npm install nylas`
 
 Alternatively, you can use [Yarn](https://yarnpkg.com/en/) to install the Nylas Node SDK by running the `yarn add nylas` command.
 
