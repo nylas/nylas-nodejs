@@ -23,7 +23,7 @@ import { AsyncListResponse, Resource } from './resource.js';
  * @property identifier The identifier of the grant to act upon
  * @property queryParams The query parameters to include in the request
  */
-interface FindEventParams {
+export interface FindEventParams {
   identifier: string;
   eventId: string;
   queryParams: FindEventQueryParams;
@@ -33,7 +33,7 @@ interface FindEventParams {
  * @property identifier The identifier of the grant to act upon
  * @property queryParams The query parameters to include in the request
  */
-interface ListEventParams {
+export interface ListEventParams {
   identifier: string;
   queryParams: ListEventQueryParams;
 }
@@ -43,7 +43,7 @@ interface ListEventParams {
  * @property queryParams The query parameters to include in the request
  * @property requestBody The values to create the Event with
  */
-interface CreateEventParams {
+export interface CreateEventParams {
   identifier: string;
   requestBody: CreateEventRequest;
   queryParams: CreateEventQueryParams;
@@ -55,7 +55,7 @@ interface CreateEventParams {
  * @property requestBody The values to update the Event with
  * @property queryParams The query parameters to include in the request
  */
-interface UpdateEventParams {
+export interface UpdateEventParams {
   identifier: string;
   eventId: string;
   requestBody: UpdateEventRequest;
@@ -67,7 +67,7 @@ interface UpdateEventParams {
  * @property eventId The id of the Event to retrieve.
  * @property queryParams The query parameters to include in the request
  */
-interface DestroyEventParams {
+export interface DestroyEventParams {
   identifier: string;
   eventId: string;
   queryParams: DestroyEventQueryParams;

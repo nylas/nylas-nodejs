@@ -153,8 +153,8 @@ export class Auth extends Resource {
    */
   public async detectProvider(
     params: ProviderDetectParams
-  ): Promise<ProviderDetectResponse> {
-    return this.apiClient.request<ProviderDetectResponse>({
+  ): Promise<NylasResponse<ProviderDetectResponse>> {
+    return this.apiClient.request<NylasResponse<ProviderDetectResponse>>({
       method: 'POST',
       path: `/v3/providers/detect`,
       queryParams: params,

@@ -1,12 +1,7 @@
 /**
  * Interface of an attachment object from Nylas.
  */
-export interface Attachment {
-  /**
-   * A globally unique object identifier.
-   */
-  id: string;
-
+interface BaseAttachment {
   /**
    * Attachment's name.
    */
@@ -18,19 +13,49 @@ export interface Attachment {
   contentType: string;
 
   /**
-   * Grant ID of the Nylas account.
-   */
-  grantId: string;
-
-  /**
    * If it's an inline attachment.
    */
-  isInline: boolean;
+  isInline?: boolean;
 
   /**
    * Attachment's size in bytes.
    */
-  size: number;
+  size?: number;
+
+  /**
+   * Content ID of the attachment.
+   */
+  contentId?: string;
+
+  /**
+   * Content disposition of the attachment.
+   */
+  contentDisposition?: string;
+}
+
+/**
+ * Interface of a create attachment request.
+ */
+export interface CreateAttachmentRequest extends BaseAttachment {
+  /**
+   * Content of the attachment.
+   */
+  content: NodeJS.ReadableStream;
+}
+
+/**
+ * Interface of an attachment object from Nylas.
+ */
+export interface Attachment extends BaseAttachment {
+  /**
+   * Attachment's ID.
+   */
+  id: string;
+
+  /**
+   * Grant ID of the Nylas account.
+   */
+  grantId: string;
 }
 
 /**

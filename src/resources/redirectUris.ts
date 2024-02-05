@@ -14,14 +14,14 @@ import { Overrides } from '../config.js';
 /**
  * @property redirectUriId The id of the Redirect URI to retrieve.
  */
-interface FindRedirectUrisParams {
+export interface FindRedirectUrisParams {
   redirectUriId: string;
 }
 
 /**
  * @property requestBody The values to create the Redirect URI with.
  */
-interface CreateRedirectUrisParams {
+export interface CreateRedirectUrisParams {
   requestBody: CreateRedirectUriRequest;
 }
 
@@ -29,7 +29,7 @@ interface CreateRedirectUrisParams {
  * @property redirectUriId The id of the Redirect URI to update.
  * @property requestBody The values to update the Redirect URI with.
  */
-interface UpdateRedirectUrisParams {
+export interface UpdateRedirectUrisParams {
   redirectUriId: string;
   requestBody: UpdateRedirectUriRequest;
 }
@@ -37,7 +37,7 @@ interface UpdateRedirectUrisParams {
 /**
  * @property redirectUriId The id of the Redirect URI to delete.
  */
-interface DestroyRedirectUrisParams {
+export interface DestroyRedirectUrisParams {
   redirectUriId: string;
 }
 

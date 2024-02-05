@@ -1,3 +1,5 @@
+import { Overrides } from '../config.js';
+import { Messages } from './messages.js';
 import { AsyncListResponse, Resource } from './resource.js';
 import {
   CreateDraftRequest,
@@ -5,13 +7,12 @@ import {
   ListDraftsQueryParams,
   UpdateDraftRequest,
 } from '../models/drafts.js';
-import { Overrides } from '../config.js';
+import { Message } from '../models/messages.js';
 import {
   NylasBaseResponse,
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { Messages } from './messages.js';
 
 /**
  * The parameters for the {@link Drafts.list} method
@@ -160,13 +161,13 @@ export class Drafts extends Resource {
 
   /**
    * Send a Draft
-   * @return The sent draft
+   * @return The sent message
    */
   public send({
     identifier,
     draftId,
     overrides,
-  }: SendDraftParams & Overrides): Promise<NylasResponse<Draft>> {
+  }: SendDraftParams & Overrides): Promise<NylasResponse<Message>> {
     return super._create({
       path: `/v3/grants/${identifier}/drafts/${draftId}`,
       requestBody: {},

@@ -14,7 +14,7 @@ import {
 /**
  * @property grantId The id of the Grant to retrieve.
  */
-interface FindGrantParams {
+export interface FindGrantParams {
   grantId: string;
 }
 
@@ -22,7 +22,7 @@ interface FindGrantParams {
  * @property grantId The id of the Grant to update.
  * @property requestBody The values to update the Grant with.
  */
-interface UpdateGrantParams {
+export interface UpdateGrantParams {
   grantId: string;
   requestBody: UpdateGrantRequest;
 }
@@ -30,7 +30,7 @@ interface UpdateGrantParams {
 /**
  * @property grantId The id of the Grant to delete.
  */
-interface DestroyGrantParams {
+export interface DestroyGrantParams {
   grantId: string;
 }
 

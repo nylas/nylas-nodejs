@@ -22,7 +22,7 @@ import { GetFreeBusyRequest, GetFreeBusyResponse } from '../models/freeBusy.js';
  * @property calendarId The id of the Calendar to retrieve. Use "primary" to refer to the primary calendar associated with grant.
  * @property identifier The identifier of the grant to act upon
  */
-interface FindCalendarParams {
+export interface FindCalendarParams {
   identifier: string;
   calendarId: string;
 }
@@ -32,7 +32,7 @@ interface FindCalendarParams {
  * @property identifier The identifier of the grant to act upon
  * @property queryParams The query parameters to include in the request
  */
-interface ListCalendersParams {
+export interface ListCalendersParams {
   identifier: string;
   queryParams?: ListCalendersQueryParams;
 }
@@ -42,7 +42,7 @@ interface ListCalendersParams {
  * @property identifier The identifier of the grant to act upon
  * @property requestBody The request body to create a calendar
  */
-interface CreateCalendarParams {
+export interface CreateCalendarParams {
   identifier: string;
   requestBody: CreateCalenderRequest;
 }
@@ -52,7 +52,7 @@ interface CreateCalendarParams {
  * @property identifier The identifier of the grant to act upon
  * @property calendarId The id of the Calendar to retrieve. Use "primary" to refer to the primary calendar associated with grant.
  */
-interface UpdateCalendarParams {
+export interface UpdateCalendarParams {
   identifier: string;
   calendarId: string;
   requestBody: UpdateCalenderRequest;
@@ -63,7 +63,7 @@ interface UpdateCalendarParams {
  * @property identifier The identifier of the grant to act upon
  * @property calendarId The id of the Calendar to retrieve. Use "primary" to refer to the primary calendar associated with grant.
  */
-interface DestroyCalendarParams {
+export interface DestroyCalendarParams {
   identifier: string;
   calendarId: string;
 }
@@ -72,7 +72,7 @@ interface DestroyCalendarParams {
  * The parameters for the {@link Calendars.getAvailability} method
  * @property requestBody The availability request
  */
-interface GetAvailabilityParams {
+export interface GetAvailabilityParams {
   requestBody: GetAvailabilityRequest;
 }
 
@@ -81,7 +81,7 @@ interface GetAvailabilityParams {
  * @property identifier The identifier of the grant to act upon
  * @property requestBody The free busy request
  */
-interface GetFreeBusyParams {
+export interface GetFreeBusyParams {
   identifier: string;
   requestBody: GetFreeBusyRequest;
 }

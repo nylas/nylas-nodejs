@@ -45,7 +45,12 @@ export interface Draft
 /**
  * Interface representing a request to update a draft.
  */
-export type UpdateDraftRequest = Partial<CreateDraftRequest>;
+export type UpdateDraftRequest = Partial<CreateDraftRequest> & {
+  /**
+   * Return drafts that are unread.
+   */
+  unread?: boolean;
+};
 
 /**
  * Interface representing the different tracking options for when a message is sent.

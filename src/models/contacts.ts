@@ -33,7 +33,6 @@ export interface Contact {
 /**
  * Custom Types.
  */
-export type ContactType = 'work' | 'home' | 'other';
 export type SourceType = 'address_book' | 'inbox' | 'domain';
 export type GroupType = 'user' | 'system' | 'other';
 
@@ -42,7 +41,7 @@ export type GroupType = 'user' | 'system' | 'other';
  */
 export interface Email {
   email?: string;
-  type?: ContactType;
+  type?: string;
 }
 
 /**
@@ -58,7 +57,7 @@ export interface InstantMessagingAddress {
  */
 export interface PhoneNumber {
   number?: string;
-  type?: ContactType;
+  type?: string;
 }
 
 /**
@@ -71,7 +70,7 @@ export interface PhysicalAddress {
   postalCode?: string;
   state?: string;
   country?: string;
-  type?: ContactType;
+  type?: string;
 }
 
 /**
@@ -79,7 +78,7 @@ export interface PhysicalAddress {
  */
 export interface WebPage {
   url?: string;
-  type?: ContactType;
+  type?: string;
 }
 
 /**

@@ -1,8 +1,13 @@
 # Changelog
 
 ### Unreleased
+* Added `default` event visibility value
 * Changed `clientSecret` to optional for token exchange methods; defaults to API Key now
-* Fix missing `type` field in `Event` model
+* Updated reminders field to match updated API schema
+* Updated all references to `File` to `Attachment` to match API schema
+* Fixes to the `Event` models
+* Fixes to drafts and sending messages
+* Removed `ContactType` enum as the API accepts any string
 
 ### 7.0.0-beta.4 / 2024-01-12
 * **BREAKING CHANGE**: Moved grants API out of `Auth` to `NylasClient`
