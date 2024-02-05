@@ -1,40 +1,6 @@
 # Changelog
 
-### 7.0.0-beta.5 / 2024-02-05
-* Added `default` event visibility value
-* Changed `clientSecret` to optional for token exchange methods; defaults to API Key now
-* Updated reminders field to match updated API schema
-* Updated all references to `File` to `Attachment` to match API schema
-* Fixes to the `Event` models
-* Fixes to drafts and sending messages
-* Removed `ContactType` enum as the API accepts any string
-
-### 7.0.0-beta.4 / 2024-01-12
-* **BREAKING CHANGE**: Moved grants API out of `Auth` to `NylasClient`
-* **BREAKING CHANGE**: Moved `Grants.create()` to `Auth.customAuthentication()`
-* Added support for the folders API
-* Added support for the attachments API
-* Added support for the contacts API
-* Added support for send-RSVP
-* Added email value for CodeExchange response
-* Fix issue with form-data not importing correctly for ESM projects
-* Fix typing errors in TrackingOptions and Connector
-
-### 7.0.0-beta.3 / 2023-10-23
-* Added support for the messages, drafts, and threads endpoints
-* Added support for the free-busy endpoint
-* Added support for native/custom authentication
-* Added support for Connectors & Credentials APIs
-* Fix `getAvailability` response type
-* Fix path for destroying a redirect URI
-* Fix model for updating an Event
-* Fix response type for creating a webhook
-
-### 7.0.0-beta.2 / 2023-08-21
-* Fix issue with getting the current Nylas SDK package version
-* Fix issue with ESM imports not working correctly
-
-### 7.0.0-beta.1 / 2023-08-16
+### 7.0.0 / 2024-02-05
 * **BREAKING CHANGE**: Node SDK v7 supports the Nylas API v3 exclusively, dropping support for any endpoints that are not available in v3.
 * **BREAKING CHANGE**: Convert `Nylas` class from a static to a non-static class
 * **BREAKING CHANGE**: Officially support minimum Node 16
@@ -43,6 +9,7 @@
 * **REMOVED**: Local Webhook development support is removed due to incompatibility
 * Rewrote the majority of SDK to be more modular and efficient
 * Removed the use of custom strings for serialization and deserialization, now automatically converting to camelCase and from the API's snake_case
+* Added support for both ES6 and CommonJS module systems
 * Created models for all API resources and endpoints, for all HTTP methods to reduce confusion on which fields are available for each endpoint
 * Created error classes for the different API errors as well as SDK-specific errors
 
