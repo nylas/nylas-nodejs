@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 7.0.0-beta.5 / 2024-02-05
 * Added `default` event visibility value
 * Changed `clientSecret` to optional for token exchange methods; defaults to API Key now
 * Updated reminders field to match updated API schema
