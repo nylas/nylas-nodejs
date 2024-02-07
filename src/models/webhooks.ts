@@ -13,11 +13,11 @@ export interface Webhook {
   /**
    * The url to send webhooks to.
    */
-  callbackUrl: string;
+  webhookUrl: string;
   /**
    * The status of the new destination.
    */
-  status: 'active' | 'failing' | 'failed' | 'pause';
+  status: WebhookStatus;
   /**
    * The time the status field was last updated, represented as a Unix timestamp in seconds.
    */
@@ -37,7 +37,7 @@ export interface Webhook {
   /**
    * The email addresses that Nylas notifies when a webhook is down for a while.
    */
-  notificationEmailAddress?: string;
+  notificationEmailAddresses?: string[];
 }
 
 /**
@@ -94,7 +94,7 @@ export interface CreateWebhookRequest {
   /**
    * The url to send webhooks to.
    */
-  callbackUrl: string;
+  webhookUrl: string;
   /**
    * A human-readable description of the webhook destination.
    */
@@ -102,7 +102,7 @@ export interface CreateWebhookRequest {
   /**
    * The email addresses that Nylas notifies when a webhook is down for a while.
    */
-  notificationEmailAddress?: string;
+  notificationEmailAddresses?: string[];
 }
 
 /**
@@ -127,3 +127,8 @@ export enum WebhookTriggers {
   MessageSendSuccess = 'message.send_success',
   MessageSendFailed = 'message.send_failed',
 }
+
+/**
+ * Enum representing the available webhook statuses.
+ */
+export type WebhookStatus = 'active' | 'failing' | 'failed' | 'pause';
