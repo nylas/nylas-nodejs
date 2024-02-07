@@ -30,14 +30,6 @@ export interface Event {
    */
   readOnly: boolean;
   /**
-   * Unix timestamp when the event was created.
-   */
-  createdAt: number;
-  /**
-   * Unix timestamp when the event was last updated.
-   */
-  updatedAt: number;
-  /**
    * List of participants invited to the event. Participants may also be rooms or resources.
    */
   participants: Participant[];
@@ -110,6 +102,14 @@ export interface Event {
    * Status of the event.
    */
   status?: Status;
+  /**
+   * Unix timestamp when the event was created.
+   */
+  createdAt?: number;
+  /**
+   * Unix timestamp when the event was last updated.
+   */
+  updatedAt?: number;
 }
 
 /**
