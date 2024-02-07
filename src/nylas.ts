@@ -1,3 +1,5 @@
+export * from './models/index.js';
+
 import APIClient from './apiClient.js';
 import { NylasConfig, DEFAULT_SERVER_URL } from './config.js';
 import { Calendars } from './resources/calendars.js';
