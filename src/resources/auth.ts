@@ -232,8 +232,8 @@ export class Auth extends Resource {
     params: Record<string, any>
   ): Promise<NylasResponse<TokenInfoResponse>> {
     return this.apiClient.request<NylasResponse<TokenInfoResponse>>({
-      method: 'POST',
-      path: `/v3/providers/detect`,
+      method: 'GET',
+      path: `/v3/connect/tokeninfo`,
       queryParams: params,
     });
   }
