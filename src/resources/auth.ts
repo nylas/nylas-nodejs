@@ -10,6 +10,7 @@ import {
   CodeExchangeResponse,
   ProviderDetectParams,
   ProviderDetectResponse,
+  TokenInfoResponse,
 } from '../models/auth.js';
 import { Overrides } from '../config.js';
 import { NylasResponse } from '../models/response.js';
@@ -161,6 +162,28 @@ export class Auth extends Resource {
     });
   }
 
+  /**
+   * Get info about an ID token
+   * @param idToken The ID token to query.
+   * @return The token information
+   */
+  public idTokenInfo(
+    idToken: string
+  ): Promise<NylasResponse<TokenInfoResponse>> {
+    return this.getTokenInfo({ id_token: idToken });
+  }
+
+  /**
+   * Get info about an access token
+   * @param accessToken The access token to query.
+   * @return The token information
+   */
+  public accessTokenInfo(
+    accessToken: string
+  ): Promise<NylasResponse<TokenInfoResponse>> {
+    return this.getTokenInfo({ access_token: accessToken });
+  }
+
   private urlAuthBuilder(config: Record<string, any>): URL {
     const url = new URL(`${this.apiClient.serverUrl}/v3/connect/auth`);
     url.searchParams.set('client_id', config.clientId);
@@ -203,5 +226,15 @@ export class Auth extends Resource {
     return Buffer.from(hash)
       .toString('base64')
       .replace(/=+$/, '');
+  }
+
+  private getTokenInfo(
+    params: Record<string, any>
+  ): Promise<NylasResponse<TokenInfoResponse>> {
+    return this.apiClient.request<NylasResponse<TokenInfoResponse>>({
+      method: 'POST',
+      path: `/v3/providers/detect`,
+      queryParams: params,
+    });
   }
 }
