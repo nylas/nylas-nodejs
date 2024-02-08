@@ -1,6 +1,7 @@
 # Changelog
 
 ### Unreleased
+* Added support for `/v3/connect/tokeninfo` endpoint
 * Models can now directly be imported from the top-level `nylas` package
 
 ### 7.0.0 / 2024-02-05
