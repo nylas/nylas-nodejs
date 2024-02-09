@@ -206,3 +206,33 @@ export interface ProviderDetectResponse {
    */
   type?: string;
 }
+
+/**
+ * Interface representing a Nylas token information response.
+ */
+export interface TokenInfoResponse {
+  /**
+   * The issuer of the token.
+   */
+  iss: string;
+  /**
+   * The token's audience.
+   */
+  aud: string;
+  /**
+   * The time that the token was issued.
+   */
+  iat: number;
+  /**
+   * The time that the token expires.
+   */
+  exp: number;
+  /**
+   * The token's subject.
+   */
+  sub?: string;
+  /**
+   * The email address of the Grant belonging to the user's token.
+   */
+  email?: string;
+}

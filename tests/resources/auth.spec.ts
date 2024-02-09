@@ -265,4 +265,33 @@ describe('Auth', () => {
       });
     });
   });
+  describe('token info', () => {
+    describe('idTokenInfo', () => {
+      it('should call getTokenInfo with the correct params', async () => {
+        await auth.idTokenInfo('idToken123');
+
+        expect(apiClient.request).toHaveBeenCalledWith({
+          method: 'GET',
+          path: '/v3/connect/tokeninfo',
+          queryParams: {
+            id_token: 'idToken123',
+          },
+        });
+      });
+    });
+
+    describe('accessTokenInfo', () => {
+      it('should call getTokenInfo with the correct params', async () => {
+        await auth.accessTokenInfo('accessToken123');
+
+        expect(apiClient.request).toHaveBeenCalledWith({
+          method: 'GET',
+          path: '/v3/connect/tokeninfo',
+          queryParams: {
+            access_token: 'accessToken123',
+          },
+        });
+      });
+    });
+  });
 });
