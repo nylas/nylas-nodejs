@@ -3,6 +3,7 @@
 ### Unreleased
 * Added support for `/v3/connect/tokeninfo` endpoint
 * Models can now directly be imported from the top-level `nylas` package
+* Fixed inaccuracies in event and webhook models
 
 ### 7.0.0 / 2024-02-05
 * **BREAKING CHANGE**: Node SDK v7 supports the Nylas API v3 exclusively, dropping support for any endpoints that are not available in v3.

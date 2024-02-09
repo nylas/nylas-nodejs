@@ -70,9 +70,9 @@ describe('Webhooks', () => {
       await webhooks.create({
         requestBody: {
           triggerTypes: [WebhookTriggers.CalendarCreated],
-          callbackUrl: 'https://test.callback.com',
+          webhookUrl: 'https://test.callback.com',
           description: "My Webhook's Description",
-          notificationEmailAddress: 'notification@example.com',
+          notificationEmailAddresses: ['notification@example.com'],
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -84,9 +84,9 @@ describe('Webhooks', () => {
         path: '/v3/webhooks',
         body: {
           triggerTypes: [WebhookTriggers.CalendarCreated],
-          callbackUrl: 'https://test.callback.com',
+          webhookUrl: 'https://test.callback.com',
           description: "My Webhook's Description",
-          notificationEmailAddress: 'notification@example.com',
+          notificationEmailAddresses: ['notification@example.com'],
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
