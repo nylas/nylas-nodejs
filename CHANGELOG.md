@@ -1,7 +1,8 @@
 # Changelog
 
-### Unreleased
+### 6.11.1 / 2024-02-09
 * Fix issue where Graph events were returning 400 on update
+* Make comment param in rsvp optional
 
 ### 6.11.0 / 2023-11-28
 * Add support for logging
