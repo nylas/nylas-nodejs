@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 7.1.0 / 2024-02-12
 * Added support for `/v3/connect/tokeninfo` endpoint
 * Models can now directly be imported from the top-level `nylas` package
 * Fixed inaccuracies in event and webhook models
