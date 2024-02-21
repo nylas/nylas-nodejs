@@ -139,10 +139,12 @@ export class Messages extends Resource {
     identifier,
     messageId,
     overrides,
+    queryParams,
   }: FindMessageParams & Overrides): Promise<NylasResponse<Message>> {
     return super._find({
       path: `/v3/grants/${identifier}/messages/${messageId}`,
       overrides,
+      queryParams,
     });
   }
 
