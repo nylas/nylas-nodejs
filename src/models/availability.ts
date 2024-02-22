@@ -39,15 +39,24 @@ export interface GetAvailabilityRequest {
    * If you have a meeting starting at 9:59, the API returns times starting at 10:00. 10:00-10:30, 10:15-10:45.
    */
   intervalMinutes?: number;
+
   /**
-   * When set to true, the availability time slots will start at 30 minutes past or on the hour.
-   * For example, a free slot starting at 16:10 is considered available only from 16:30.
+   * The number of minutes to round the time slots to.
+   * This allows for rounding to any multiple of 5 minutes, up to a maximum of 60 minutes.
+   * The default value is set to 15 minutes.
+   * When this variable is assigned a value, it overrides the behavior of the {@link roundTo30Minutes} flag, if it was set.
    */
-  roundTo30Minutes?: boolean;
+  roundTo?: number;
   /**
    * The rules to apply when checking availability.
    */
   availabilityRules?: AvailabilityRules;
+  /**
+   * When set to true, the availability time slots will start at 30 minutes past or on the hour.
+   * For example, a free slot starting at 16:10 is considered available only from 16:30.
+   * @deprecated Use [roundTo] instead.
+   */
+  roundTo30Minutes?: boolean;
 }
 
 /**

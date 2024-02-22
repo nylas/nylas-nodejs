@@ -6,7 +6,12 @@ type AccessType = 'online' | 'offline';
 /**
  * Type for the different OAuth providers Nylas supports.
  */
-export type Provider = 'google' | 'imap' | 'microsoft' | 'virtual-calendar';
+export type Provider =
+  | 'google'
+  | 'imap'
+  | 'microsoft'
+  | 'icloud'
+  | 'virtual-calendar';
 
 /**
  * Configuration for generating a URL for OAuth 2.0 authentication.
@@ -175,10 +180,6 @@ export interface ProviderDetectParams {
    * Email address to detect the provider for.
    */
   email: string;
-  /**
-   * Client ID of the Nylas application.
-   */
-  clientId: string;
   /**
    * Search by all providers regardless of created integrations. If unset, defaults to false.
    */
