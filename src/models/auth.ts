@@ -181,10 +181,6 @@ export interface ProviderDetectParams {
    */
   email: string;
   /**
-   * Client ID of the Nylas application.
-   */
-  clientId: string;
-  /**
    * Search by all providers regardless of created integrations. If unset, defaults to false.
    */
   allProviderTypes?: boolean;

@@ -4,6 +4,7 @@
 * Added support for `roundTo` field in availability response model
 * Added support for `attributes` field in folder model
 * Added support for icloud as an auth provider
+* Removed unnecessary `clientId` from detectProvider params
 
 ### 7.1.0 / 2024-02-12
 * Added support for `/v3/connect/tokeninfo` endpoint
