@@ -1,5 +1,6 @@
 import APIClient from '../../src/apiClient';
 import { Folders } from '../../src/resources/folders';
+import { objKeysToCamelCase } from '../../src/utils';
 jest.mock('../../src/apiClient');
 
 describe('Folders', () => {
@@ -15,6 +16,41 @@ describe('Folders', () => {
 
     folders = new Folders(apiClient);
     apiClient.request.mockResolvedValue({});
+  });
+
+  describe('deserializing', () => {
+    it('should return a folder object as expected', () => {
+      const apiFolder = {
+        id: 'SENT',
+        grant_id: '41009df5-bf11-4c97-aa18-b285b5f2e386',
+        name: 'SENT',
+        system_folder: true,
+        object: 'folder',
+        unread_count: 0,
+        child_count: 0,
+        parent_id: 'ascsf21412',
+        background_color: '#039BE5',
+        text_color: '#039BE5',
+        total_count: 0,
+        attributes: ['\\SENT'],
+      };
+
+      const folder = objKeysToCamelCase(apiFolder);
+      expect(folder).toEqual({
+        id: 'SENT',
+        grantId: '41009df5-bf11-4c97-aa18-b285b5f2e386',
+        name: 'SENT',
+        systemFolder: true,
+        object: 'folder',
+        unreadCount: 0,
+        childCount: 0,
+        parentId: 'ascsf21412',
+        backgroundColor: '#039BE5',
+        textColor: '#039BE5',
+        totalCount: 0,
+        attributes: ['\\SENT'],
+      });
+    });
   });
 
   describe('list', () => {

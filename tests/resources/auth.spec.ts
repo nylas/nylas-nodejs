@@ -247,7 +247,6 @@ describe('Auth', () => {
     it('should call apiClient.request with the correct params', async () => {
       await auth.detectProvider({
         email: 'email@example.com',
-        clientId: 'testClientId',
         allProviderTypes: true,
       });
     });
