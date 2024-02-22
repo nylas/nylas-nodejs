@@ -56,6 +56,14 @@ export interface Folder {
    * The number of unread items inside of a folder.
    */
   unreadCount?: number;
+
+  /**
+   * Common attribute descriptors shared by system folders across providers.
+   * For example, Sent email folders have the `["\\Sent"]` attribute.
+   * For IMAP grants, IMAP providers provide the attributes.
+   * For Google and Microsoft Graph, Nylas matches system folders to a set of common attributes.
+   */
+  attributes?: string[];
 }
 
 /**
