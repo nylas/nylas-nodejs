@@ -1,9 +1,11 @@
 # Changelog
 
-### Unreleased
+### 7.2.0 / 2024-02-27
 * Added support for `roundTo` field in availability response model
 * Added support for `attributes` field in folder model
 * Added support for icloud as an auth provider
+* Fixed query params not showing up in method parameters for finding a message
+* Fixed missing fields in message models
 * Removed unnecessary `clientId` from detectProvider params
 
 ### 7.1.0 / 2024-02-12
