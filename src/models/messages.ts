@@ -7,6 +7,10 @@ import { Attachment, CreateAttachmentRequest } from './attachments.js';
  */
 export interface BaseCreateMessage {
   /**
+   *  An array of name/email address pairs that the message was sent from. This is usually one pair only, but can be many.
+   */
+  from?: EmailName[];
+  /**
    * An array of message recipients.
    */
   to: EmailName[];
@@ -107,6 +111,10 @@ export interface Message extends BaseMessage {
    * A list of key-value pairs storing additional data.
    */
   metadata?: Record<string, unknown>;
+  /**
+   * The unique identifier for the scheduled message.
+   */
+  scheduleId?: string;
 }
 
 /**
