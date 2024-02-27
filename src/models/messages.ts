@@ -101,6 +101,15 @@ export interface Message extends BaseMessage {
    * The unique identifier for the scheduled message.
    */
   scheduleId?: string;
+  /**
+   * Unix timestamp to send the message at.
+   */
+  sendAt?: number;
+  /**
+   * Whether or not to use draft support.
+   * This is primarily used when dealing with large attachments.
+   */
+  useDraft?: boolean;
 }
 
 /**
