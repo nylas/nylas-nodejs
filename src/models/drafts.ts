@@ -63,6 +63,10 @@ export interface CreateDraftRequest {
  */
 export interface SendMessageRequest extends CreateDraftRequest {
   /**
+   * An array of message senders.
+   */
+  from?: EmailName[];
+  /**
    * Whether or not to use draft support.
    * This is primarily used when dealing with large attachments.
    */
