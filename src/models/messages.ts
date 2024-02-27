@@ -1,50 +1,11 @@
 import { EmailName } from './events.js';
 import { ListQueryParams } from './listQueryParams.js';
-import { Attachment, CreateAttachmentRequest } from './attachments.js';
-
-/**
- * @internal Internal interface for creating a message.
- */
-export interface BaseCreateMessage {
-  /**
-   * An array of message recipients.
-   */
-  to: EmailName[];
-  /**
-   * An array of bcc recipients.
-   */
-  bcc?: EmailName[];
-  /**
-   * An array of cc recipients.
-   */
-  cc?: EmailName[];
-  /**
-   * An array of name and email pairs that override the sent reply-to headers.
-   */
-  replyTo?: EmailName[];
-  /**
-   * An array of files to attach to the message.
-   */
-  attachments?: CreateAttachmentRequest[];
-  /**
-   * The message subject.
-   */
-  subject?: string;
-  /**
-   * The full HTML message body.
-   * Messages with only plain-text representations are up-converted to HTML.
-   */
-  body?: string;
-  /**
-   * Whether or not the message has been starred by the user.
-   */
-  starred?: boolean;
-}
+import { Attachment } from './attachments.js';
 
 /**
  * @internal Internal interface for a message.
  */
-export interface BaseMessage extends Omit<BaseCreateMessage, 'attachments'> {
+export interface BaseMessage {
   /**
    * The unique identifier for the message.
    */
@@ -66,6 +27,35 @@ export interface BaseMessage extends Omit<BaseCreateMessage, 'attachments'> {
    * The ID of the folder(s) the message appears in.
    */
   folders: string[];
+  /**
+   * An array of message recipients.
+   */
+  to: EmailName[];
+  /**
+   * An array of bcc recipients.
+   */
+  bcc?: EmailName[];
+  /**
+   * An array of cc recipients.
+   */
+  cc?: EmailName[];
+  /**
+   * An array of name and email pairs that override the sent reply-to headers.
+   */
+  replyTo?: EmailName[];
+  /**
+   * The message subject.
+   */
+  subject?: string;
+  /**
+   * The full HTML message body.
+   * Messages with only plain-text representations are up-converted to HTML.
+   */
+  body?: string;
+  /**
+   * Whether or not the message has been starred by the user.
+   */
+  starred?: boolean;
   /**
    * An array of message senders.
    */
@@ -107,6 +97,19 @@ export interface Message extends BaseMessage {
    * A list of key-value pairs storing additional data.
    */
   metadata?: Record<string, unknown>;
+  /**
+   * The unique identifier for the scheduled message.
+   */
+  scheduleId?: string;
+  /**
+   * Unix timestamp to send the message at.
+   */
+  sendAt?: number;
+  /**
+   * Whether or not to use draft support.
+   * This is primarily used when dealing with large attachments.
+   */
+  useDraft?: boolean;
 }
 
 /**
