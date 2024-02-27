@@ -1,10 +1,49 @@
-import { BaseMessage, BaseCreateMessage } from './messages.js';
+import { BaseMessage } from './messages.js';
 import { ListQueryParams } from './listQueryParams.js';
+import { EmailName } from './events.js';
+import { CreateAttachmentRequest } from './attachments.js';
 
 /**
  * Interface representing a request to create a draft.
  */
-export interface CreateDraftRequest extends BaseCreateMessage {
+export interface CreateDraftRequest {
+  /**
+   *  An array of name/email address pairs that the message was sent from. This is usually one pair only, but can be many.
+   */
+  from?: EmailName[];
+  /**
+   * An array of message recipients.
+   */
+  to: EmailName[];
+  /**
+   * An array of bcc recipients.
+   */
+  bcc?: EmailName[];
+  /**
+   * An array of cc recipients.
+   */
+  cc?: EmailName[];
+  /**
+   * An array of name and email pairs that override the sent reply-to headers.
+   */
+  replyTo?: EmailName[];
+  /**
+   * An array of files to attach to the message.
+   */
+  attachments?: CreateAttachmentRequest[];
+  /**
+   * The message subject.
+   */
+  subject?: string;
+  /**
+   * The full HTML message body.
+   * Messages with only plain-text representations are up-converted to HTML.
+   */
+  body?: string;
+  /**
+   * Whether or not the message has been starred by the user.
+   */
+  starred?: boolean;
   /**
    * Unix timestamp to send the message at.
    */

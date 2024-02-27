@@ -1,6 +1,5 @@
 import { AsyncListResponse, Resource } from './resource.js';
 import {
-  BaseCreateMessage,
   FindMessageQueryParams,
   ListMessagesQueryParams,
   Message,
@@ -15,7 +14,11 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { SendMessageRequest, UpdateDraftRequest } from '../models/drafts.js';
+import {
+  CreateDraftRequest,
+  SendMessageRequest,
+  UpdateDraftRequest,
+} from '../models/drafts.js';
 import * as FormData from 'form-data';
 import { objKeysToSnakeCase } from '../utils.js';
 import { SmartCompose } from './smartCompose.js';
@@ -250,7 +253,7 @@ export class Messages extends Resource {
   }
 
   static _buildFormRequest(
-    requestBody: BaseCreateMessage | UpdateDraftRequest
+    requestBody: CreateDraftRequest | UpdateDraftRequest | SendMessageRequest
   ): FormData {
     let form: FormData;
     // FormData imports are funky, cjs needs to use .default, es6 doesn't
