@@ -13,7 +13,6 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { RequestOptionsParams } from '../apiClient';
 
 /**
  * The parameters for the {@link Drafts.list} method
