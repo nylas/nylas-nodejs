@@ -13,6 +13,7 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
+import { RequestOptionsParams } from '../apiClient';
 
 /**
  * The parameters for the {@link Drafts.list} method
@@ -114,12 +115,28 @@ export class Drafts extends Resource {
     requestBody,
     overrides,
   }: CreateDraftParams & Overrides): Promise<NylasResponse<Draft>> {
-    const form = Messages._buildFormRequest(requestBody);
+    const path = `/v3/grants/${identifier}/drafts`;
 
-    return this.apiClient.request({
-      method: 'POST',
-      path: `/v3/grants/${identifier}/drafts`,
-      form,
+    // Use form data only if the attachment size is greater than 3mb
+    const attachmentSize =
+      requestBody.attachments?.reduce(function(_, attachment) {
+        return attachment.size || 0;
+      }, 0) || 0;
+
+    if (attachmentSize >= Messages.FORM_DATA_ATTACHMENT_SIZE) {
+      const form = Messages._buildFormRequest(requestBody);
+
+      return this.apiClient.request({
+        method: 'POST',
+        path,
+        form,
+        overrides,
+      });
+    }
+
+    return super._create({
+      path,
+      requestBody,
       overrides,
     });
   }

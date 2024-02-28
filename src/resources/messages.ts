@@ -110,6 +110,7 @@ export type StopScheduledMessageParams = FindScheduledMessageParams;
  */
 export class Messages extends Resource {
   public smartCompose: SmartCompose;
+  static FORM_DATA_ATTACHMENT_SIZE = 3 * 1024 * 1024;
 
   constructor(apiClient: APIClient) {
     super(apiClient);
