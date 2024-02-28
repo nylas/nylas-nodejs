@@ -207,8 +207,7 @@ export class Messages extends Resource {
       }, 0) || 0;
 
     if (attachmentSize >= Messages.FORM_DATA_ATTACHMENT_SIZE) {
-      const form = Messages._buildFormRequest(requestBody);
-      requestOptions.form = form;
+      requestOptions.form = Messages._buildFormRequest(requestBody);
     } else {
       requestOptions.body = requestBody;
     }
