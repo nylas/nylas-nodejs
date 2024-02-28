@@ -22,7 +22,7 @@ import {
 import * as FormData from 'form-data';
 import { objKeysToSnakeCase } from '../utils.js';
 import { SmartCompose } from './smartCompose.js';
-import APIClient from '../apiClient.js';
+import APIClient, { RequestOptionsParams } from '../apiClient.js';
 
 /**
  * The parameters for the {@link Messages.list} method
@@ -193,14 +193,27 @@ export class Messages extends Resource {
     requestBody,
     overrides,
   }: SendMessageParams & Overrides): Promise<NylasResponse<Message>> {
-    const form = Messages._buildFormRequest(requestBody);
-
-    return this.apiClient.request({
+    const path = `/v3/grants/${identifier}/messages/send`;
+    const requestOptions: RequestOptionsParams = {
       method: 'POST',
-      path: `/v3/grants/${identifier}/messages/send`,
-      form,
+      path,
       overrides,
-    });
+    };
+
+    // Use form data only if the attachment size is greater than 3mb
+    const attachmentSize =
+      requestBody.attachments?.reduce(function(_, attachment) {
+        return attachment.size || 0;
+      }, 0) || 0;
+
+    if (attachmentSize >= Messages.FORM_DATA_ATTACHMENT_SIZE) {
+      const form = Messages._buildFormRequest(requestBody);
+      requestOptions.form = form;
+    } else {
+      requestOptions.body = requestBody;
+    }
+
+    return this.apiClient.request(requestOptions);
   }
 
   /**
