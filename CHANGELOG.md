@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Improved message sending and draft create/update performance
+
 ### 7.2.0 / 2024-02-27
 * Added support for `roundTo` field in availability response model
 * Added support for `attributes` field in folder model

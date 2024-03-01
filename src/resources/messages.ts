@@ -22,7 +22,7 @@ import {
 import * as FormData from 'form-data';
 import { objKeysToSnakeCase } from '../utils.js';
 import { SmartCompose } from './smartCompose.js';
-import APIClient from '../apiClient.js';
+import APIClient, { RequestOptionsParams } from '../apiClient.js';
 
 /**
  * The parameters for the {@link Messages.list} method
@@ -110,6 +110,8 @@ export type StopScheduledMessageParams = FindScheduledMessageParams;
  */
 export class Messages extends Resource {
   public smartCompose: SmartCompose;
+  // The maximum size of an attachment that can be sent using json
+  static MAXIMUM_JSON_ATTACHMENT_SIZE = 3 * 1024 * 1024;
 
   constructor(apiClient: APIClient) {
     super(apiClient);
@@ -192,14 +194,26 @@ export class Messages extends Resource {
     requestBody,
     overrides,
   }: SendMessageParams & Overrides): Promise<NylasResponse<Message>> {
-    const form = Messages._buildFormRequest(requestBody);
-
-    return this.apiClient.request({
+    const path = `/v3/grants/${identifier}/messages/send`;
+    const requestOptions: RequestOptionsParams = {
       method: 'POST',
-      path: `/v3/grants/${identifier}/messages/send`,
-      form,
+      path,
       overrides,
-    });
+    };
+
+    // Use form data only if the attachment size is greater than 3mb
+    const attachmentSize =
+      requestBody.attachments?.reduce(function(_, attachment) {
+        return attachment.size || 0;
+      }, 0) || 0;
+
+    if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
+      requestOptions.form = Messages._buildFormRequest(requestBody);
+    } else {
+      requestOptions.body = requestBody;
+    }
+
+    return this.apiClient.request(requestOptions);
   }
 
   /**

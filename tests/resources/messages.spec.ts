@@ -136,18 +136,46 @@ describe('Messages', () => {
       });
 
       const capturedRequest = apiClient.request.mock.calls[0][0];
-      const formData = ((capturedRequest.form as any) as MockedFormData)._getAppendedData();
-      expect(formData).toEqual({
-        message: JSON.stringify(jsonBody),
-      });
       expect(capturedRequest.method).toEqual('POST');
       expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+      expect(capturedRequest.body).toEqual(jsonBody);
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
       });
     });
 
-    it('should attach files properly', async () => {
+    it('should attach files less than 3mb', async () => {
+      const fileStream = createReadableStream('This is the text from file 1');
+      const jsonBody = {
+        to: [{ name: 'Test', email: 'test@example.com' }],
+        subject: 'This is my test email',
+        attachments: [
+          {
+            filename: 'file1.txt',
+            contentType: 'text/plain',
+            content: fileStream,
+            size: 100,
+          },
+        ],
+      };
+      await messages.send({
+        identifier: 'id123',
+        requestBody: jsonBody,
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+      expect(capturedRequest.body).toEqual(jsonBody);
+      expect(capturedRequest.overrides).toEqual({
+        apiUri: 'https://test.api.nylas.com',
+      });
+    });
+
+    it('should attach files 3mb+ properly', async () => {
       const messageJson = {
         to: [{ name: 'Test', email: 'test@example.com' }],
         subject: 'This is my test email',
@@ -157,6 +185,7 @@ describe('Messages', () => {
         filename: 'file1.txt',
         contentType: 'text/plain',
         content: fileStream,
+        size: 3 * 1024 * 1024,
       };
 
       await messages.send({
