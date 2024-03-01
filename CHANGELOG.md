@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Improved message sending and draft create/update performance
+* Change default timeout to match API (90 seconds)
 
 ### 7.2.0 / 2024-02-27
 * Added support for `roundTo` field in availability response model

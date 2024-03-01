@@ -42,7 +42,7 @@ describe('Nylas', () => {
       });
 
       expect(nylas.apiClient.serverUrl).toBe('https://api.us.nylas.com');
-      expect(nylas.apiClient.timeout).toBe(30000);
+      expect(nylas.apiClient.timeout).toBe(90000);
     });
   });
 });
