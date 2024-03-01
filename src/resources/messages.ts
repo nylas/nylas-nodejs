@@ -110,7 +110,8 @@ export type StopScheduledMessageParams = FindScheduledMessageParams;
  */
 export class Messages extends Resource {
   public smartCompose: SmartCompose;
-  static FORM_DATA_ATTACHMENT_SIZE = 3 * 1024 * 1024;
+  // The maximum size of an attachment that can be sent using json
+  static MAXIMUM_JSON_ATTACHMENT_SIZE = 3 * 1024 * 1024;
 
   constructor(apiClient: APIClient) {
     super(apiClient);
@@ -206,7 +207,7 @@ export class Messages extends Resource {
         return attachment.size || 0;
       }, 0) || 0;
 
-    if (attachmentSize >= Messages.FORM_DATA_ATTACHMENT_SIZE) {
+    if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
       requestOptions.form = Messages._buildFormRequest(requestBody);
     } else {
       requestOptions.body = requestBody;

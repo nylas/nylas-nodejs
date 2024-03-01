@@ -122,7 +122,7 @@ export class Drafts extends Resource {
         return attachment.size || 0;
       }, 0) || 0;
 
-    if (attachmentSize >= Messages.FORM_DATA_ATTACHMENT_SIZE) {
+    if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
       const form = Messages._buildFormRequest(requestBody);
 
       return this.apiClient.request({
@@ -158,7 +158,7 @@ export class Drafts extends Resource {
         return attachment.size || 0;
       }, 0) || 0;
 
-    if (attachmentSize >= Messages.FORM_DATA_ATTACHMENT_SIZE) {
+    if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
       const form = Messages._buildFormRequest(requestBody);
 
       return this.apiClient.request({
