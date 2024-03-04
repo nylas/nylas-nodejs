@@ -54,7 +54,7 @@ export interface GetAvailabilityRequest {
   /**
    * When set to true, the availability time slots will start at 30 minutes past or on the hour.
    * For example, a free slot starting at 16:10 is considered available only from 16:30.
-   * @deprecated Use [roundTo] instead.
+   * @deprecated Use {@link roundTo} instead.
    */
   roundTo30Minutes?: boolean;
 }

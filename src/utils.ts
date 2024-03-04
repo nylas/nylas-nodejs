@@ -27,6 +27,22 @@ export function createFileRequestBuilder(
 type CasingFunction = (input: string, options?: any) => string;
 
 /**
+ * Applies the casing function and ensures numeric parts are preceded by underscores in snake_case.
+ * @param casingFunction The original casing function.
+ * @param input The string to convert.
+ * @returns The converted string.
+ */
+function applyCasing(casingFunction: CasingFunction, input: string): string {
+  const transformed = casingFunction(input);
+
+  if (casingFunction === snakeCase) {
+    return transformed.replace(/(\d+)/g, '_$1');
+  } else {
+    return transformed.replace(/_+(\d+)/g, (match, p1) => p1);
+  }
+}
+
+/**
  * A utility function that recursively converts all keys in an object to a given case.
  * @param obj The object to convert
  * @param casingFunction The function to use to convert the keys
@@ -44,20 +60,22 @@ function convertCase(
     if (excludeKeys?.includes(key)) {
       newObj[key] = obj[key];
     } else if (Array.isArray(obj[key])) {
-      newObj[casingFunction(key)] = (obj[key] as any[]).map(item => {
-        if (typeof item === 'object') {
-          return convertCase(item, casingFunction);
-        } else {
-          return item;
+      newObj[applyCasing(casingFunction, key)] = (obj[key] as any[]).map(
+        item => {
+          if (typeof item === 'object') {
+            return convertCase(item, casingFunction);
+          } else {
+            return item;
+          }
         }
-      });
+      );
     } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-      newObj[casingFunction(key)] = convertCase(
+      newObj[applyCasing(casingFunction, key)] = convertCase(
         obj[key] as Record<string, unknown>,
         casingFunction
       );
     } else {
-      newObj[casingFunction(key)] = obj[key];
+      newObj[applyCasing(casingFunction, key)] = obj[key];
     }
   }
   return newObj;
