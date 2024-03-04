@@ -156,4 +156,22 @@ describe('convertCase', () => {
       user_age: undefined,
     });
   });
+
+  it('should handle numerical key names in snake_case conversion', () => {
+    const obj = { firstName: 'John', current2024Status: 'confirmed' };
+    const result = objKeysToSnakeCase(obj);
+    expect(result).toEqual({
+      first_name: 'John',
+      current_2024_status: 'confirmed',
+    });
+  });
+
+  it('should handle numerical key names in camelCase conversion', () => {
+    const obj = { first_name: 'John', current_2024_status: 'confirmed' };
+    const result = objKeysToCamelCase(obj);
+    expect(result).toEqual({
+      firstName: 'John',
+      current2024Status: 'confirmed',
+    });
+  });
 });
