@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 7.2.1 / 2024-03-05
 * Improved message sending and draft create/update performance
 * Change default timeout to match API (90 seconds)
 * Fixed serialization/deserialization of keys with numbers in them
