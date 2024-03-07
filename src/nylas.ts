@@ -15,6 +15,7 @@ import ApplicationDetails, {
   ApplicationDetailsProperties,
 } from './models/application-details';
 import LoggingInterface from './models/LoggingInterface';
+import DetectProviderResponse from './models/detect-provider-response';
 
 class Nylas {
   static clientId = '';
@@ -210,6 +211,30 @@ class Nylas {
       url += '&redirect_on_error=true';
     }
     return url;
+  }
+
+  /**
+   * Detect the provider for a given email address
+   * @param email The email address you want to check
+   * @return The response from the API containing the provider, if found
+   */
+  static detectProvider(email: string): Promise<DetectProviderResponse> {
+    const connection = new NylasConnection(null, { clientId: this.clientId });
+
+    return connection
+      .request({
+        method: 'POST',
+        path: '/connect/detect-provider',
+        body: {
+          client_id: this.clientId,
+          client_secret: this.clientSecret,
+          email_address: email,
+        },
+      })
+      .then(res => {
+        return new DetectProviderResponse().fromJSON(res);
+      })
+      .catch(err => Promise.reject(err));
   }
 
   /**
