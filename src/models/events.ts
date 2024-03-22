@@ -443,7 +443,7 @@ export interface Time {
   /**
    * The type of 'when' object.
    */
-  type: WhenType.Time;
+  object: WhenType.Time;
 }
 
 /**
@@ -474,7 +474,7 @@ export interface Timespan {
   /**
    * The type of 'when' object.
    */
-  type: WhenType.Timespan;
+  object: WhenType.Timespan;
 }
 
 /**
@@ -490,7 +490,7 @@ export interface Date {
   /**
    * The type of 'when' object.
    */
-  type: WhenType.Date;
+  object: WhenType.Date;
 }
 
 /**
