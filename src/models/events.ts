@@ -511,7 +511,7 @@ export interface Datespan {
   /**
    * The type of 'when' object.
    */
-  type: WhenType.Datespan;
+  object: WhenType.Datespan;
 }
 
 /**
