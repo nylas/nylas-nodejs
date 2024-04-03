@@ -112,11 +112,16 @@ export default class APIClient {
     headers,
     overrides,
   }: RequestOptionsParams): Record<string, string> {
+    const mergedHeaders: Record<string, string> = {
+      ...headers,
+      ...overrides?.headers,
+    };
+
     return {
       Accept: 'application/json',
       'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
       Authorization: `Bearer ${overrides?.apiKey || this.apiKey}`,
-      ...headers,
+      ...mergedHeaders,
     };
   }
 
