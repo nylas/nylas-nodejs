@@ -11,9 +11,11 @@ export type NylasConfig = {
 };
 
 /**
- * The options that can override the default Nylas API client configuration.
+ * The options that can override defaults for outgoing calls, including the Nylas configuration and headers.
  */
-export type OverridableNylasConfig = Partial<NylasConfig>;
+export type OverridableNylasConfig = Partial<NylasConfig> & {
+  headers?: Record<string, string>;
+};
 
 /**
  * An object that can be used to override the default Nylas API client configuration on a per-request basis.
