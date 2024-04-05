@@ -3,11 +3,13 @@
  * @property apiKey The Nylas API key to use for authentication
  * @property apiUri The URL to use for communicating with the Nylas API
  * @property timeout The timeout for requests to the Nylas API, in seconds
+ * @property headers Additional headers to send with outgoing requests
  */
 export type NylasConfig = {
   apiKey: string;
   apiUri?: string;
   timeout?: number;
+  headers?: Record<string, string>;
 };
 
 /**

@@ -11,6 +11,7 @@ describe('RedirectUris', () => {
       apiKey: 'apiKey',
       apiUri: 'https://api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     redirectUris = new RedirectUris(apiClient);
@@ -22,6 +23,7 @@ describe('RedirectUris', () => {
       await redirectUris.list({
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -30,6 +32,7 @@ describe('RedirectUris', () => {
         path: '/v3/applications/redirect-uris',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -50,6 +53,7 @@ describe('RedirectUris', () => {
         redirectUriId: 'redirect123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -58,6 +62,7 @@ describe('RedirectUris', () => {
         path: '/v3/applications/redirect-uris/redirect123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -80,6 +85,7 @@ describe('RedirectUris', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -100,6 +106,7 @@ describe('RedirectUris', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -123,6 +130,7 @@ describe('RedirectUris', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -143,6 +151,7 @@ describe('RedirectUris', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -154,6 +163,7 @@ describe('RedirectUris', () => {
         redirectUriId: 'redirect123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -162,6 +172,7 @@ describe('RedirectUris', () => {
         path: '/v3/applications/redirect-uris/redirect123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });

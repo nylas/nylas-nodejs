@@ -11,6 +11,7 @@ describe('Grants', () => {
       apiKey: 'apiKey',
       apiUri: 'https://api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     grants = new Grants(apiClient);
@@ -22,6 +23,7 @@ describe('Grants', () => {
       await grants.list({
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -30,6 +32,7 @@ describe('Grants', () => {
         path: '/v3/grants',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -50,6 +53,7 @@ describe('Grants', () => {
         grantId: 'grant123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -58,6 +62,7 @@ describe('Grants', () => {
         path: '/v3/grants/grant123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -75,6 +80,7 @@ describe('Grants', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -89,6 +95,7 @@ describe('Grants', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -100,6 +107,7 @@ describe('Grants', () => {
         grantId: 'grant123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -108,6 +116,7 @@ describe('Grants', () => {
         path: '/v3/grants/grant123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });

@@ -65,11 +65,16 @@ export default class APIClient {
    * The timeout for requests to the Nylas API, in seconds
    */
   timeout: number;
+  /**
+   * Additional headers to send with outgoing requests
+   */
+  headers: Record<string, string>;
 
-  constructor({ apiKey, apiUri, timeout }: Required<NylasConfig>) {
+  constructor({ apiKey, apiUri, timeout, headers }: Required<NylasConfig>) {
     this.apiKey = apiKey;
     this.serverUrl = apiUri;
     this.timeout = timeout * 1000; // fetch timeout uses milliseconds
+    this.headers = headers;
   }
 
   private setRequestUrl({
@@ -112,11 +117,17 @@ export default class APIClient {
     headers,
     overrides,
   }: RequestOptionsParams): Record<string, string> {
+    const mergedHeaders: Record<string, string> = {
+      ...headers,
+      ...this.headers,
+      ...overrides?.headers,
+    };
+
     return {
       Accept: 'application/json',
       'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
       Authorization: `Bearer ${overrides?.apiKey || this.apiKey}`,
-      ...headers,
+      ...mergedHeaders,
     };
   }
 

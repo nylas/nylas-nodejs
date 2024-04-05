@@ -11,6 +11,7 @@ describe('Events', () => {
       apiKey: 'apiKey',
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     events = new Events(apiClient);
@@ -26,6 +27,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -37,6 +39,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -59,6 +62,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
       apiClient.request.mockResolvedValueOnce({
@@ -82,6 +86,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -103,6 +108,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
       apiClient.request.mockResolvedValueOnce({
@@ -132,6 +138,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -143,6 +150,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -163,6 +171,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -180,6 +189,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -201,6 +211,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -218,6 +229,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -233,6 +245,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -244,6 +257,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -262,6 +276,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -276,6 +291,7 @@ describe('Events', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });

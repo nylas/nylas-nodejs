@@ -11,6 +11,7 @@ describe('Applications', () => {
       apiKey: 'apiKey',
       apiUri: 'https://api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     applications = new Applications(apiClient);
@@ -22,6 +23,7 @@ describe('Applications', () => {
       await applications.getDetails({
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -30,6 +32,7 @@ describe('Applications', () => {
         path: '/v3/applications',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });

@@ -26,6 +26,7 @@ describe('Messages', () => {
       apiKey: 'apiKey',
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     messages = new Messages(apiClient);
@@ -38,6 +39,7 @@ describe('Messages', () => {
         identifier: 'id123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -46,6 +48,7 @@ describe('Messages', () => {
         path: '/v3/grants/id123/messages',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -58,6 +61,7 @@ describe('Messages', () => {
         messageId: 'message123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -66,6 +70,7 @@ describe('Messages', () => {
         path: '/v3/grants/id123/messages/message123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -83,6 +88,7 @@ describe('Messages', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -96,6 +102,7 @@ describe('Messages', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -108,6 +115,7 @@ describe('Messages', () => {
         messageId: 'message123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -116,6 +124,7 @@ describe('Messages', () => {
         path: '/v3/grants/id123/messages/message123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -132,6 +141,7 @@ describe('Messages', () => {
         requestBody: jsonBody,
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -141,6 +151,7 @@ describe('Messages', () => {
       expect(capturedRequest.body).toEqual(jsonBody);
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
+        headers: { override: 'bar' },
       });
     });
 
@@ -163,6 +174,7 @@ describe('Messages', () => {
         requestBody: jsonBody,
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -172,6 +184,7 @@ describe('Messages', () => {
       expect(capturedRequest.body).toEqual(jsonBody);
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
+        headers: { override: 'bar' },
       });
     });
 
@@ -196,6 +209,7 @@ describe('Messages', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -207,6 +221,7 @@ describe('Messages', () => {
       expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
+        headers: { override: 'bar' },
       });
     });
   });
@@ -217,6 +232,7 @@ describe('Messages', () => {
         identifier: 'id123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -225,6 +241,7 @@ describe('Messages', () => {
         path: '/v3/grants/id123/messages/schedules',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -235,6 +252,7 @@ describe('Messages', () => {
         scheduleId: 'schedule123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -243,6 +261,7 @@ describe('Messages', () => {
         path: '/v3/grants/id123/messages/schedules/schedule123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -253,6 +272,7 @@ describe('Messages', () => {
         scheduleId: 'schedule123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -261,6 +281,7 @@ describe('Messages', () => {
         path: '/v3/grants/id123/messages/schedules/schedule123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });

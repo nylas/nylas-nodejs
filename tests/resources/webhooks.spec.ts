@@ -13,6 +13,7 @@ describe('Webhooks', () => {
       apiKey: 'apiKey',
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     webhooks = new Webhooks(apiClient);
@@ -33,6 +34,7 @@ describe('Webhooks', () => {
       await webhooks.list({
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -41,6 +43,7 @@ describe('Webhooks', () => {
         path: '/v3/webhooks',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -52,6 +55,7 @@ describe('Webhooks', () => {
         webhookId: 'webhook123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -60,6 +64,7 @@ describe('Webhooks', () => {
         path: '/v3/webhooks/webhook123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -76,6 +81,7 @@ describe('Webhooks', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -90,6 +96,7 @@ describe('Webhooks', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -104,6 +111,7 @@ describe('Webhooks', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -115,6 +123,7 @@ describe('Webhooks', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -126,6 +135,7 @@ describe('Webhooks', () => {
         webhookId: 'webhook123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -134,6 +144,7 @@ describe('Webhooks', () => {
         path: '/v3/webhooks/webhook123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -145,6 +156,7 @@ describe('Webhooks', () => {
         webhookId: 'webhook123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -154,6 +166,7 @@ describe('Webhooks', () => {
         body: {},
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -174,6 +187,7 @@ describe('Webhooks', () => {
       await webhooks.ipAddresses({
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -183,6 +197,7 @@ describe('Webhooks', () => {
         body: undefined,
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });

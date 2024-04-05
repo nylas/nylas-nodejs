@@ -12,6 +12,7 @@ describe('Folders', () => {
       apiKey: 'apiKey',
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     folders = new Folders(apiClient);
@@ -59,6 +60,7 @@ describe('Folders', () => {
         identifier: 'id123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -67,6 +69,7 @@ describe('Folders', () => {
         path: '/v3/grants/id123/folders',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -79,6 +82,7 @@ describe('Folders', () => {
         folderId: 'folder123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -87,6 +91,7 @@ describe('Folders', () => {
         path: '/v3/grants/id123/folders/folder123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -101,6 +106,7 @@ describe('Folders', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -112,6 +118,7 @@ describe('Folders', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -127,6 +134,7 @@ describe('Folders', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -138,6 +146,7 @@ describe('Folders', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -150,6 +159,7 @@ describe('Folders', () => {
         folderId: 'folder123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -158,6 +168,7 @@ describe('Folders', () => {
         path: '/v3/grants/id123/folders/folder123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
