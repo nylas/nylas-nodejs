@@ -24,6 +24,7 @@ describe('Threads', () => {
         identifier: 'id123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -32,6 +33,7 @@ describe('Threads', () => {
         path: '/v3/grants/id123/threads',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -44,6 +46,7 @@ describe('Threads', () => {
         threadId: 'thread123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -52,6 +55,7 @@ describe('Threads', () => {
         path: '/v3/grants/id123/threads/thread123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -69,6 +73,7 @@ describe('Threads', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -82,6 +87,7 @@ describe('Threads', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -94,6 +100,7 @@ describe('Threads', () => {
         threadId: 'thread123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -102,6 +109,7 @@ describe('Threads', () => {
         path: '/v3/grants/id123/threads/thread123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });

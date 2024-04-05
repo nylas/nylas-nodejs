@@ -104,13 +104,20 @@ describe('APIClient', () => {
 
     describe('newRequest', () => {
       it('should set all the fields properly', () => {
+        client.headers = {
+          'global-header': 'global-value',
+        };
+
         const options: RequestOptionsParams = {
           path: '/test',
           method: 'POST',
           headers: { 'X-SDK-Test-Header': 'This is a test' },
           queryParams: { param: 'value' },
           body: { id: 'abc123' },
-          overrides: { apiUri: 'https://override.api.nylas.com' },
+          overrides: {
+            apiUri: 'https://override.api.nylas.com',
+            headers: { override: 'bar' },
+          },
         };
         const newRequest = client.newRequest(options);
 
@@ -121,6 +128,8 @@ describe('APIClient', () => {
           'Content-Type': ['application/json'],
           'User-Agent': [`Nylas Node SDK v${SDK_VERSION}`],
           'X-SDK-Test-Header': ['This is a test'],
+          'global-header': ['global-value'],
+          override: ['bar'],
         });
         expect(newRequest.url).toEqual(
           'https://override.api.nylas.com/test?param=value'

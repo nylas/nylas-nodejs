@@ -25,6 +25,7 @@ describe('Calendars', () => {
         identifier: 'id123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -33,6 +34,7 @@ describe('Calendars', () => {
         path: '/v3/grants/id123/calendars',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -45,6 +47,7 @@ describe('Calendars', () => {
         calendarId: 'calendar123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -53,6 +56,7 @@ describe('Calendars', () => {
         path: '/v3/grants/id123/calendars/calendar123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -68,6 +72,7 @@ describe('Calendars', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -80,6 +85,7 @@ describe('Calendars', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -95,6 +101,7 @@ describe('Calendars', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -106,6 +113,7 @@ describe('Calendars', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -118,6 +126,7 @@ describe('Calendars', () => {
         calendarId: 'calendar123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -126,6 +135,7 @@ describe('Calendars', () => {
         path: '/v3/grants/id123/calendars/calendar123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -161,6 +171,7 @@ describe('Calendars', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -194,6 +205,7 @@ describe('Calendars', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });

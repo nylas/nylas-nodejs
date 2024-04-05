@@ -39,6 +39,7 @@ describe('Drafts', () => {
         identifier: 'id123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -47,6 +48,7 @@ describe('Drafts', () => {
         path: '/v3/grants/id123/drafts',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -59,6 +61,7 @@ describe('Drafts', () => {
         draftId: 'draft123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -67,6 +70,7 @@ describe('Drafts', () => {
         path: '/v3/grants/id123/drafts/draft123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -83,6 +87,7 @@ describe('Drafts', () => {
         requestBody: jsonBody,
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -92,6 +97,7 @@ describe('Drafts', () => {
       expect(capturedRequest.body).toEqual(jsonBody);
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
+        headers: { override: 'bar' },
       });
     });
 
@@ -114,6 +120,7 @@ describe('Drafts', () => {
         requestBody: jsonBody,
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -123,6 +130,7 @@ describe('Drafts', () => {
       expect(capturedRequest.body).toEqual(jsonBody);
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
+        headers: { override: 'bar' },
       });
     });
 
@@ -147,6 +155,7 @@ describe('Drafts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -158,6 +167,7 @@ describe('Drafts', () => {
       expect(capturedRequest.path).toEqual('/v3/grants/id123/drafts');
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
+        headers: { override: 'bar' },
       });
     });
   });
@@ -182,6 +192,7 @@ describe('Drafts', () => {
         requestBody: jsonBody,
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -191,6 +202,7 @@ describe('Drafts', () => {
       expect(capturedRequest.body).toEqual(jsonBody);
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
+        headers: { override: 'bar' },
       });
     });
 
@@ -216,6 +228,7 @@ describe('Drafts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -227,6 +240,7 @@ describe('Drafts', () => {
       expect(capturedRequest.path).toEqual('/v3/grants/id123/drafts/draft123');
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
+        headers: { override: 'bar' },
       });
     });
   });
@@ -238,6 +252,7 @@ describe('Drafts', () => {
         draftId: 'draft123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -246,6 +261,7 @@ describe('Drafts', () => {
         path: '/v3/grants/id123/drafts/draft123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -258,6 +274,7 @@ describe('Drafts', () => {
         draftId: 'draft123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -267,6 +284,7 @@ describe('Drafts', () => {
         body: {},
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });

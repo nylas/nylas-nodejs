@@ -27,6 +27,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -38,6 +39,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -60,6 +62,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
       apiClient.request.mockResolvedValueOnce({
@@ -83,6 +86,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -104,6 +108,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
       apiClient.request.mockResolvedValueOnce({
@@ -133,6 +138,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -144,6 +150,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -167,6 +174,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -187,6 +195,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -202,6 +211,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -213,6 +223,7 @@ describe('Contacts', () => {
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -225,6 +236,7 @@ describe('Contacts', () => {
         contactId: 'contact123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -233,6 +245,7 @@ describe('Contacts', () => {
         path: '/v3/grants/id123/contacts/contact123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
@@ -244,6 +257,7 @@ describe('Contacts', () => {
         identifier: 'id123',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -252,6 +266,7 @@ describe('Contacts', () => {
         path: '/v3/grants/id123/contacts/groups',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
