@@ -3,6 +3,17 @@ import { ListQueryParams } from './listQueryParams.js';
 import { EmailName } from './events.js';
 import { CreateAttachmentRequest } from './attachments.js';
 
+export interface CustomHeader {
+  /**
+   * The name of the custom header.
+   */
+  name: string;
+  /**
+   * The value of the custom header.
+   */
+  value: string;
+}
+
 /**
  * Interface representing a request to create a draft.
  */
@@ -56,6 +67,10 @@ export interface CreateDraftRequest {
    * Options for tracking opens, links, and thread replies.
    */
   trackingOptions?: TrackingOptions;
+  /**
+   * An array of custom headers to add to the message.
+   */
+  customHeaders?: CustomHeader[];
 }
 
 /**
