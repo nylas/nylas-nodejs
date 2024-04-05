@@ -90,6 +90,7 @@ export default class Nylas {
       apiKey: config.apiKey,
       apiUri: config.apiUri || DEFAULT_SERVER_URL,
       timeout: config.timeout || 90,
+      headers: config.headers || {},
     });
 
     this.applications = new Applications(this.apiClient);

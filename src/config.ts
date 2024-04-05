@@ -3,19 +3,19 @@
  * @property apiKey The Nylas API key to use for authentication
  * @property apiUri The URL to use for communicating with the Nylas API
  * @property timeout The timeout for requests to the Nylas API, in seconds
+ * @property headers Additional headers to send with outgoing requests
  */
 export type NylasConfig = {
   apiKey: string;
   apiUri?: string;
   timeout?: number;
+  headers?: Record<string, string>;
 };
 
 /**
- * The options that can override defaults for outgoing calls, including the Nylas configuration and headers.
+ * The options that can override the default Nylas API client configuration.
  */
-export type OverridableNylasConfig = Partial<NylasConfig> & {
-  headers?: Record<string, string>;
-};
+export type OverridableNylasConfig = Partial<NylasConfig>;
 
 /**
  * An object that can be used to override the default Nylas API client configuration on a per-request basis.
