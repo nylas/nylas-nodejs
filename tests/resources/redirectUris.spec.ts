@@ -11,6 +11,7 @@ describe('RedirectUris', () => {
       apiKey: 'apiKey',
       apiUri: 'https://api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     redirectUris = new RedirectUris(apiClient);

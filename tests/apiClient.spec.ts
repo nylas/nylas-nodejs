@@ -18,11 +18,17 @@ describe('APIClient', () => {
         apiKey: 'test',
         apiUri: 'https://test.api.nylas.com',
         timeout: 30,
+        headers: {
+          'X-SDK-Test-Header': 'This is a test',
+        },
       });
 
       expect(client.apiKey).toBe('test');
       expect(client.serverUrl).toBe('https://test.api.nylas.com');
       expect(client.timeout).toBe(30000);
+      expect(client.headers).toEqual({
+        'X-SDK-Test-Header': 'This is a test',
+      });
     });
   });
 
@@ -34,6 +40,7 @@ describe('APIClient', () => {
         apiKey: 'testApiKey',
         apiUri: 'https://api.us.nylas.com',
         timeout: 30,
+        headers: {},
       });
     });
 

@@ -11,6 +11,7 @@ describe('Grants', () => {
       apiKey: 'apiKey',
       apiUri: 'https://api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     grants = new Grants(apiClient);

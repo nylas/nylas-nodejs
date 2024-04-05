@@ -11,6 +11,7 @@ describe('Events', () => {
       apiKey: 'apiKey',
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     events = new Events(apiClient);

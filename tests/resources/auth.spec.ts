@@ -15,6 +15,7 @@ describe('Auth', () => {
       apiKey: 'apiKey',
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
+      headers: {},
     });
 
     auth = new Auth(apiClient);

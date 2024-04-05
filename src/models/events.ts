@@ -354,10 +354,10 @@ type When = Time | Timespan | Date | Datespan;
  * Type representing the different objects representing time and duration when creating events.
  */
 type CreateWhen =
-  | Omit<Time, 'type'>
-  | Omit<Timespan, 'type'>
-  | Omit<Date, 'type'>
-  | Omit<Datespan, 'type'>;
+  | Omit<Time, 'object'>
+  | Omit<Timespan, 'object'>
+  | Omit<Date, 'object'>
+  | Omit<Datespan, 'object'>;
 
 /**
  * Enum representing the different types of when objects.

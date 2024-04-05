@@ -11,6 +11,7 @@ describe('SmartCompose', () => {
       apiKey: 'apiKey',
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
+      headers: {},
     }) as jest.Mocked<APIClient>;
 
     smartCompose = new SmartCompose(apiClient);
