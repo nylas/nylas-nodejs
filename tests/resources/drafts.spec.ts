@@ -2,6 +2,7 @@ import APIClient from '../../src/apiClient';
 import { Drafts } from '../../src/resources/drafts';
 import { createReadableStream, MockedFormData } from '../testUtils';
 import { CreateAttachmentRequest } from '../../src/models/attachments';
+import { objKeysToCamelCase } from '../../src/utils';
 jest.mock('../src/apiClient');
 
 // Mock the FormData constructor
@@ -31,6 +32,100 @@ describe('Drafts', () => {
 
     drafts = new Drafts(apiClient);
     apiClient.request.mockResolvedValue({});
+  });
+
+  describe('deserializing', () => {
+    it('should return a draft object as expected', () => {
+      const apiDraft = {
+        body: 'Hello, I just sent a message using Nylas!',
+        cc: [
+          {
+            email: 'arya.stark@example.com',
+          },
+        ],
+        attachments: [
+          {
+            content_type: 'text/calendar',
+            id: '4kj2jrcoj9ve5j9yxqz5cuv98',
+            size: 1708,
+          },
+        ],
+        folders: ['8l6c4d11y1p4dm4fxj52whyr9', 'd9zkcr2tljpu3m4qpj7l2hbr0'],
+        from: [
+          {
+            name: 'Daenerys Targaryen',
+            email: 'daenerys.t@example.com',
+          },
+        ],
+        grant_id: '41009df5-bf11-4c97-aa18-b285b5f2e386',
+        id: '5d3qmne77v32r8l4phyuksl2x',
+        object: 'draft',
+        reply_to: [
+          {
+            name: 'Daenerys Targaryen',
+            email: 'daenerys.t@example.com',
+          },
+        ],
+        snippet: 'Hello, I just sent a message using Nylas!',
+        starred: true,
+        subject: 'Hello from Nylas!',
+        thread_id: '1t8tv3890q4vgmwq6pmdwm8qgsaer',
+        to: [
+          {
+            name: 'Jon Snow',
+            email: 'j.snow@example.com',
+          },
+        ],
+        date: 1705084742,
+        created_at: 1705084926,
+      };
+
+      const draft = objKeysToCamelCase(apiDraft);
+
+      expect(draft).toEqual({
+        body: 'Hello, I just sent a message using Nylas!',
+        cc: [
+          {
+            email: 'arya.stark@example.com',
+          },
+        ],
+        attachments: [
+          {
+            contentType: 'text/calendar',
+            id: '4kj2jrcoj9ve5j9yxqz5cuv98',
+            size: 1708,
+          },
+        ],
+        folders: ['8l6c4d11y1p4dm4fxj52whyr9', 'd9zkcr2tljpu3m4qpj7l2hbr0'],
+        from: [
+          {
+            name: 'Daenerys Targaryen',
+            email: 'daenerys.t@example.com',
+          },
+        ],
+        grantId: '41009df5-bf11-4c97-aa18-b285b5f2e386',
+        id: '5d3qmne77v32r8l4phyuksl2x',
+        object: 'draft',
+        replyTo: [
+          {
+            name: 'Daenerys Targaryen',
+            email: 'daenerys.t@example.com',
+          },
+        ],
+        snippet: 'Hello, I just sent a message using Nylas!',
+        starred: true,
+        subject: 'Hello from Nylas!',
+        threadId: '1t8tv3890q4vgmwq6pmdwm8qgsaer',
+        to: [
+          {
+            name: 'Jon Snow',
+            email: 'j.snow@example.com',
+          },
+        ],
+        date: 1705084742,
+        createdAt: 1705084926,
+      });
+    });
   });
 
   describe('list', () => {

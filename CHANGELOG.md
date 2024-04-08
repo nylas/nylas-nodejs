@@ -1,5 +1,10 @@
 # Changelog
 
+### Unreleased
+* Add support for adding custom headers to outgoing requests
+* Add support for custom headers field for drafts and messages
+* Rename incorrect `type` field in `When` models to `object`
+
 ### 7.2.1 / 2024-03-05
 * Improved message sending and draft create/update performance
 * Change default timeout to match API (90 seconds)
