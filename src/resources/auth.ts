@@ -198,7 +198,7 @@ export class Auth extends Resource {
     }
     if (config.loginHint) {
       url.searchParams.set('login_hint', config.loginHint);
-      if (config.includeGrantScopes) {
+      if (config.includeGrantScopes!==undefined) {
         url.searchParams.set(
           'include_grant_scopes',
           config.includeGrantScopes.toString()
