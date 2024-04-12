@@ -184,7 +184,7 @@ describe('Auth', () => {
         });
 
         expect(url).toBe(
-          'https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=google&scope=calendar'
+          'https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=google&include_grant_scopes=true&scope=calendar'
         );
       });
 
@@ -222,7 +222,7 @@ describe('Auth', () => {
         expect(pkce).toEqual({
           secret: 'nylas',
           secretHash: codeChallenge,
-          url: `https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=google&scope=calendar&code_challenge_method=s256&code_challenge=${codeChallenge}`,
+          url: `https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=google&include_grant_scopes=true&scope=calendar&code_challenge_method=s256&code_challenge=${codeChallenge}`,
         });
       });
     });
