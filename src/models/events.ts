@@ -1,5 +1,7 @@
 import { ListQueryParams } from './listQueryParams.js';
 import { Subset } from '../utils.js';
+import { NylasBaseResponse } from './response.js';
+import { NylasApiErrorResponseData } from './error.js';
 
 /**
  * Interface representing a Nylas Event object.
@@ -196,6 +198,14 @@ export type UpdateEventRequest = Subset<CreateEventRequest>;
 export type SendRsvpRequest = {
   status: RsvpStatus;
 };
+
+/**
+ * Interface representing the response from sending RSVP to an event.
+ * @property sendIcsError If the send-rsvp request succeeded but the ICS email could not be sent, this will contain the error.
+ */
+export interface SendRsvpResponse extends NylasBaseResponse {
+  sendIcsError?: NylasApiErrorResponseData;
+}
 
 /**
  * Interface representing the query parameters for listing events.
