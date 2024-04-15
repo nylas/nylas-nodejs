@@ -8,6 +8,7 @@ import {
   ListEventQueryParams,
   SendRsvpQueryParams,
   SendRsvpRequest,
+  SendRsvpResponse,
   UpdateEventQueryParams,
   UpdateEventRequest,
 } from '../models/events.js';
@@ -191,7 +192,7 @@ export class Events extends Resource {
     requestBody,
     queryParams,
     overrides,
-  }: SendRsvpParams & Overrides): Promise<NylasBaseResponse> {
+  }: SendRsvpParams & Overrides): Promise<SendRsvpResponse> {
     return super._create({
       path: `/v3/grants/${identifier}/events/${eventId}/send-rsvp`,
       queryParams,
