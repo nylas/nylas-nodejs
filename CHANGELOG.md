@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 7.3.0 / 2024-04-15
 * Add response type to `sendRsvp`
 * Add support for adding custom headers to outgoing requests
 * Add support for custom headers field for drafts and messages
