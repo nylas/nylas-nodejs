@@ -563,7 +563,7 @@ export interface ReminderOverride {
    * The number of minutes before the event start time when a user wants a reminder for this event.
    * Reminder minutes are in the following format: "[20]".
    */
-  reminderMinutes: string;
+  reminderMinutes: number;
   /**
    * Method to remind the user about the event. (Google only).
    */
