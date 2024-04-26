@@ -2,6 +2,7 @@ import { camelCase, snakeCase } from 'change-case';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as mime from 'mime-types';
+import { Readable } from 'stream';
 import { CreateAttachmentRequest } from './models/attachments.js';
 
 export function createFileRequestBuilder(
@@ -48,10 +49,13 @@ function streamToBase64(stream: NodeJS.ReadableStream): Promise<string> {
  */
 export async function encodeAttachmentStreams(
   attachments: CreateAttachmentRequest[]
-): Promise<unknown[]> {
+): Promise<CreateAttachmentRequest[]> {
   return await Promise.all(
     attachments.map(async attachment => {
-      const base64EncodedContent = await streamToBase64(attachment.content);
+      const base64EncodedContent =
+        attachment.content instanceof Readable
+          ? await streamToBase64(attachment.content)
+          : attachment.content;
       return { ...attachment, content: base64EncodedContent }; // Replace the stream with its base64 string
     })
   );

@@ -39,8 +39,9 @@ interface BaseAttachment {
 export interface CreateAttachmentRequest extends BaseAttachment {
   /**
    * Content of the attachment.
+   * It can either be a readable stream or a base64 encoded string.
    */
-  content: NodeJS.ReadableStream;
+  content: NodeJS.ReadableStream | string;
 }
 
 /**
