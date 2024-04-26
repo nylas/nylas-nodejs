@@ -282,14 +282,27 @@ describe('Drafts', () => {
 
   describe('update', () => {
     it('should call apiClient.request with the correct params', async () => {
-      const fileStream = createReadableStream('This is the text from file 1');
-      const jsonBody = {
+      const baseJson = {
         subject: 'updated subject',
+      };
+      const jsonBody = {
+        ...baseJson,
         attachments: [
           {
             filename: 'file1.txt',
             contentType: 'text/plain',
-            content: fileStream,
+            content: createReadableStream('This is the text from file 1'),
+            size: 100,
+          },
+        ],
+      };
+      const expectedJson = {
+        ...baseJson,
+        attachments: [
+          {
+            filename: 'file1.txt',
+            contentType: 'text/plain',
+            content: 'VGhpcyBpcyB0aGUgdGV4dCBmcm9tIGZpbGUgMQ==',
             size: 100,
           },
         ],
@@ -307,7 +320,7 @@ describe('Drafts', () => {
       const capturedRequest = apiClient.request.mock.calls[0][0];
       expect(capturedRequest.method).toEqual('PUT');
       expect(capturedRequest.path).toEqual('/v3/grants/id123/drafts/draft123');
-      expect(capturedRequest.body).toEqual(jsonBody);
+      expect(capturedRequest.body).toEqual(expectedJson);
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
         headers: { override: 'bar' },
