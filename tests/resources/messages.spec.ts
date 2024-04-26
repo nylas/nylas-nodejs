@@ -156,15 +156,28 @@ describe('Messages', () => {
     });
 
     it('should attach files less than 3mb', async () => {
-      const fileStream = createReadableStream('This is the text from file 1');
-      const jsonBody = {
+      const baseJson = {
         to: [{ name: 'Test', email: 'test@example.com' }],
         subject: 'This is my test email',
+      };
+      const jsonBody = {
+        ...baseJson,
         attachments: [
           {
             filename: 'file1.txt',
             contentType: 'text/plain',
-            content: fileStream,
+            content: createReadableStream('This is the text from file 1'),
+            size: 100,
+          },
+        ],
+      };
+      const expectedJson = {
+        ...baseJson,
+        attachments: [
+          {
+            filename: 'file1.txt',
+            contentType: 'text/plain',
+            content: 'VGhpcyBpcyB0aGUgdGV4dCBmcm9tIGZpbGUgMQ==',
             size: 100,
           },
         ],
@@ -181,7 +194,7 @@ describe('Messages', () => {
       const capturedRequest = apiClient.request.mock.calls[0][0];
       expect(capturedRequest.method).toEqual('POST');
       expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
-      expect(capturedRequest.body).toEqual(jsonBody);
+      expect(capturedRequest.body).toEqual(expectedJson);
       expect(capturedRequest.overrides).toEqual({
         apiUri: 'https://test.api.nylas.com',
         headers: { override: 'bar' },
