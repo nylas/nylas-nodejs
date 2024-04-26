@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fixed issue where attachments < 3mb were not being encoded correctly
+
 ### 7.3.0 / 2024-04-15
 * Add response type to `sendRsvp`
 * Add support for adding custom headers to outgoing requests
