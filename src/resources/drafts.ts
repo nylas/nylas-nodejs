@@ -13,6 +13,7 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
+import { encodeAttachmentStreams } from '../utils.js';
 
 /**
  * The parameters for the {@link Drafts.list} method
@@ -109,7 +110,7 @@ export class Drafts extends Resource {
    * Return a Draft
    * @return The draft
    */
-  public create({
+  public async create({
     identifier,
     requestBody,
     overrides,
@@ -131,6 +132,15 @@ export class Drafts extends Resource {
         form,
         overrides,
       });
+    } else if (requestBody.attachments) {
+      const processedAttachments = await encodeAttachmentStreams(
+        requestBody.attachments
+      );
+
+      requestBody = {
+        ...requestBody,
+        attachments: processedAttachments,
+      };
     }
 
     return super._create({
@@ -144,7 +154,7 @@ export class Drafts extends Resource {
    * Update a Draft
    * @return The updated draft
    */
-  public update({
+  public async update({
     identifier,
     draftId,
     requestBody,
@@ -167,6 +177,15 @@ export class Drafts extends Resource {
         form,
         overrides,
       });
+    } else if (requestBody.attachments) {
+      const processedAttachments = await encodeAttachmentStreams(
+        requestBody.attachments
+      );
+
+      requestBody = {
+        ...requestBody,
+        attachments: processedAttachments,
+      };
     }
 
     return super._update({

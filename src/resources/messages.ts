@@ -20,7 +20,7 @@ import {
   UpdateDraftRequest,
 } from '../models/drafts.js';
 import * as FormData from 'form-data';
-import { objKeysToSnakeCase } from '../utils.js';
+import { encodeAttachmentStreams, objKeysToSnakeCase } from '../utils.js';
 import { SmartCompose } from './smartCompose.js';
 import APIClient, { RequestOptionsParams } from '../apiClient.js';
 
@@ -189,7 +189,7 @@ export class Messages extends Resource {
    * Send an email
    * @return The sent message
    */
-  public send({
+  public async send({
     identifier,
     requestBody,
     overrides,
@@ -210,7 +210,18 @@ export class Messages extends Resource {
     if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
       requestOptions.form = Messages._buildFormRequest(requestBody);
     } else {
-      requestOptions.body = requestBody;
+      if (requestBody.attachments) {
+        const processedAttachments = await encodeAttachmentStreams(
+          requestBody.attachments
+        );
+
+        requestOptions.body = {
+          ...requestBody,
+          attachments: processedAttachments,
+        };
+      } else {
+        requestOptions.body = requestBody;
+      }
     }
 
     return this.apiClient.request(requestOptions);
