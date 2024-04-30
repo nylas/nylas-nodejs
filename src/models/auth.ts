@@ -170,6 +170,10 @@ export interface CodeExchangeResponse {
    * Currently always Bearer.
    */
   tokenType?: string;
+  /**
+   * The provider that the code was exchanged with.
+   */
+  provider?: Provider;
 }
 
 /**
