@@ -284,3 +284,43 @@ export interface FindMessageQueryParams {
    */
   fields?: MessageFields;
 }
+
+/**
+ * Interface representing the request to clean a message.
+ */
+export interface CleanMessagesRequest {
+  /**
+   * IDs of the email messages to clean.
+   */
+  messageId: string[];
+  /**
+   * If true, removes link-related tags (<a>) from the email message while keeping the text.
+   */
+  ignoreLinks?: boolean;
+  /**
+   * If true, removes images from the email message.
+   */
+  ignoreImages?: boolean;
+  /**
+   * If true, converts images in the email message to Markdown.
+   */
+  imagesAsMarkdown?: boolean;
+  /**
+   * If true, removes table-related tags (<table>, <th>, <td>, <tr>) from the email message while keeping rows.
+   */
+  ignoreTables?: boolean;
+  /**
+   * If true, removes phrases such as "Best" and "Regards" in the email message signature.
+   */
+  removeConclusionPhrases?: boolean;
+}
+
+/**
+ * Interface representing the response after cleaning a message.
+ */
+export interface CleanMessagesResponse extends Message {
+  /**
+   * The cleaned HTML message body.
+   */
+  conversation: string;
+}
