@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Added support for `provider` field in code exchange response
+
 ### 7.3.0 / 2024-04-15
 * Add response type to `sendRsvp`
 * Add support for adding custom headers to outgoing requests
