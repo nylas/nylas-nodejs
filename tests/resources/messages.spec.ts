@@ -299,4 +299,41 @@ describe('Messages', () => {
       });
     });
   });
+
+  describe('cleanMessages', () => {
+    it('should call apiClient.request with the correct params', async () => {
+      await messages.cleanMessages({
+        identifier: 'id123',
+        requestBody: {
+          messageId: ['message123'],
+          ignoreImages: true,
+          ignoreLinks: true,
+          ignoreTables: true,
+          imagesAsMarkdown: true,
+          removeConclusionPhrases: true,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'PUT',
+        path: '/v3/grants/id123/messages/clean',
+        body: {
+          messageId: ['message123'],
+          ignoreImages: true,
+          ignoreLinks: true,
+          ignoreTables: true,
+          imagesAsMarkdown: true,
+          removeConclusionPhrases: true,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+  });
 });

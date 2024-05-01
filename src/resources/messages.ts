@@ -1,5 +1,7 @@
 import { AsyncListResponse, Resource } from './resource.js';
 import {
+  CleanMessagesRequest,
+  CleanMessagesResponse,
   FindMessageQueryParams,
   ListMessagesQueryParams,
   Message,
@@ -102,6 +104,16 @@ export interface FindScheduledMessageParams {
  * @property scheduleId The id of the scheduled message to destroy.
  */
 export type StopScheduledMessageParams = FindScheduledMessageParams;
+
+/**
+ * The parameters for the {@link Messages.cleanMessages} method
+ * @property identifier The identifier of the grant to act upon
+ * @property requestBody The values to clean the message with
+ */
+export interface CleanMessagesParams {
+  identifier: string;
+  requestBody: CleanMessagesRequest;
+}
 
 /**
  * Nylas Messages API
@@ -273,6 +285,25 @@ export class Messages extends Resource {
   > {
     return super._destroy({
       path: `/v3/grants/${identifier}/messages/schedules/${scheduleId}`,
+      overrides,
+    });
+  }
+
+  /**
+   * Remove extra information from a list of messages
+   * @return The list of cleaned messages
+   */
+  public cleanMessages({
+    identifier,
+    requestBody,
+    overrides,
+  }: CleanMessagesParams & Overrides): Promise<
+    NylasListResponse<CleanMessagesResponse>
+  > {
+    return this.apiClient.request<NylasListResponse<CleanMessagesResponse>>({
+      method: 'PUT',
+      path: `/v3/grants/${identifier}/messages/clean`,
+      body: requestBody,
       overrides,
     });
   }
