@@ -1,9 +1,9 @@
 # Changelog
 
-### Unreleased
+### 7.4.0 / 2024-05-01
 * Added support for `provider` field in code exchange response
+* Added clean messages support
 * Fixed issue where attachments < 3mb were not being encoded correctly
-
 
 ### 7.3.0 / 2024-04-15
 * Add response type to `sendRsvp`
