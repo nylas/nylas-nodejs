@@ -2,6 +2,7 @@ import { camelCase, snakeCase } from 'change-case';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as mime from 'mime-types';
+import { Readable } from 'stream';
 import { CreateAttachmentRequest } from './models/attachments.js';
 
 export function createFileRequestBuilder(
@@ -18,6 +19,46 @@ export function createFileRequestBuilder(
     content,
     size: stats.size,
   };
+}
+
+/**
+ * Converts a ReadableStream to a base64 encoded string.
+ * @param stream The ReadableStream containing the binary data.
+ * @returns The stream base64 encoded to a string.
+ */
+function streamToBase64(stream: NodeJS.ReadableStream): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    stream.on('data', (chunk: Buffer) => {
+      chunks.push(chunk);
+    });
+    stream.on('end', () => {
+      const base64 = Buffer.concat(chunks).toString('base64');
+      resolve(base64);
+    });
+    stream.on('error', err => {
+      reject(err);
+    });
+  });
+}
+
+/**
+ * Encodes the content of each attachment stream to base64.
+ * @param attachments The attachments to encode.
+ * @returns The attachments with their content encoded to base64.
+ */
+export async function encodeAttachmentStreams(
+  attachments: CreateAttachmentRequest[]
+): Promise<CreateAttachmentRequest[]> {
+  return await Promise.all(
+    attachments.map(async attachment => {
+      const base64EncodedContent =
+        attachment.content instanceof Readable
+          ? await streamToBase64(attachment.content)
+          : attachment.content;
+      return { ...attachment, content: base64EncodedContent }; // Replace the stream with its base64 string
+    })
+  );
 }
 
 /**
