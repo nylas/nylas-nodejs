@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 7.4.0 / 2024-05-01
 * Added support for `provider` field in code exchange response
 * Added clean messages support
 * Fixed issue where attachments < 3mb were not being encoded correctly
