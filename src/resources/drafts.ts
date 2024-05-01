@@ -119,8 +119,8 @@ export class Drafts extends Resource {
 
     // Use form data only if the attachment size is greater than 3mb
     const attachmentSize =
-      requestBody.attachments?.reduce(function(_, attachment) {
-        return attachment.size || 0;
+      requestBody.attachments?.reduce((total, attachment) => {
+        return total + (attachment.size || 0);
       }, 0) || 0;
 
     if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
@@ -164,8 +164,8 @@ export class Drafts extends Resource {
 
     // Use form data only if the attachment size is greater than 3mb
     const attachmentSize =
-      requestBody.attachments?.reduce(function(_, attachment) {
-        return attachment.size || 0;
+      requestBody.attachments?.reduce((total, attachment) => {
+        return total + (attachment.size || 0);
       }, 0) || 0;
 
     if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
