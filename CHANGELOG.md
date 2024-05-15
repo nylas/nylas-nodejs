@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Added support for filtering by event type when listing events
+
 ### 7.4.0 / 2024-05-01
 * Added support for `provider` field in code exchange response
 * Added clean messages support
