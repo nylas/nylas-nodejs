@@ -3,6 +3,7 @@ import {
   Folder,
   CreateFolderRequest,
   UpdateFolderRequest,
+  ListFolderQueryParams,
 } from '../models/folders.js';
 import {
   NylasBaseResponse,
@@ -14,9 +15,11 @@ import { Resource, AsyncListResponse } from './resource.js';
 /**
  * The parameters for the {@link Folders.list} method
  * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
  */
 interface ListFoldersParams {
   identifier: string;
+  queryParams?: ListFolderQueryParams;
 }
 
 /**
