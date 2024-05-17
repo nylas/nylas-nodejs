@@ -2,6 +2,8 @@
 
 ### Unreleased
 * Added support for filtering by event type when listing events
+* Added support for filtering a list of folders
+* Fixed query parameters not being formatted properly
 
 ### 7.4.0 / 2024-05-01
 * Added support for `provider` field in code exchange response
