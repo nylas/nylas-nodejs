@@ -1,3 +1,5 @@
+import { ListQueryParams } from './listQueryParams.js';
+
 /**
  * Interface of a folder object from Nylas.
  */
@@ -89,6 +91,16 @@ export interface CreateFolderRequest {
    * (Google only) The background color of the folder in the hexadecimal format "#0099EE". See Google Defined Values for more information.
    */
   backgroundColor?: string;
+}
+/**
+ * Interface representing the query parameters for listing folders.
+ */
+
+export interface ListFolderQueryParams extends ListQueryParams {
+  /**
+   * (Microsoft and EWS only.) Use the ID of a folder to find all child folders it contains.
+   */
+  parentId?: string;
 }
 
 export type UpdateFolderRequest = Partial<CreateFolderRequest>;
