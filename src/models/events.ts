@@ -274,6 +274,11 @@ export interface ListEventQueryParams extends ListQueryParams {
    * This value should be taken from the {@link NylasListResponse.nextCursor} response field.
    */
   pageToken?: string;
+  /**
+   * (Google only) Filter events by event type.
+   * You can pass the query parameter multiple times to select or exclude multiple event types.
+   */
+  eventType?: EventType[];
 }
 
 /**
@@ -593,3 +598,12 @@ export interface EmailName {
    */
   name?: string;
 }
+
+/**
+ * Type representing the event type to filter by.
+ */
+export type EventType =
+  | 'default'
+  | 'outOfOffice'
+  | 'focusTime'
+  | 'workingLocation';

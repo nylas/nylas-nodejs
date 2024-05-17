@@ -8,6 +8,7 @@ import {
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils.js';
 import { SDK_VERSION } from './version.js';
 import * as FormData from 'form-data';
+import { snakeCase } from 'change-case';
 
 /**
  * Options for a request to the Nylas API
@@ -92,8 +93,8 @@ export default class APIClient {
     queryParams?: Record<string, unknown>
   ): URL {
     if (queryParams) {
-      const snakeCaseParams = objKeysToSnakeCase(queryParams, ['metadataPair']);
-      for (const [key, value] of Object.entries(snakeCaseParams)) {
+      for (const [key, value] of Object.entries(queryParams)) {
+        const snakeCaseKey = snakeCase(key);
         if (key == 'metadataPair') {
           // The API understands a metadata_pair filter in the form of:
           // <key>:<value>
@@ -104,8 +105,19 @@ export default class APIClient {
             );
           }
           url.searchParams.set('metadata_pair', metadataPair.join(','));
+        } else if (Array.isArray(value)) {
+          for (const item of value) {
+            url.searchParams.append(snakeCaseKey, item as string);
+          }
+        } else if (typeof value === 'object') {
+          for (const item in value) {
+            url.searchParams.append(
+              snakeCaseKey,
+              `${item}:${(value as Record<string, string>)[item]}`
+            );
+          }
         } else {
-          url.searchParams.set(key, value as string);
+          url.searchParams.set(snakeCaseKey, value as string);
         }
       }
     }

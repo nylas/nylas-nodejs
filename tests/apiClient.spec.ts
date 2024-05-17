@@ -100,6 +100,24 @@ describe('APIClient', () => {
           )
         );
       });
+
+      it('should handle all the different types of query params', () => {
+        const options = client.requestOptions({
+          path: '/test',
+          method: 'GET',
+          queryParams: {
+            foo: 'bar',
+            list: ['a', 'b', 'c'],
+            map: { key1: 'value1', key2: 'value2' },
+          },
+        });
+
+        expect(options.url).toEqual(
+          new URL(
+            'https://api.us.nylas.com/test?foo=bar&list=a&list=b&list=c&map=key1%3Avalue1&map=key2%3Avalue2'
+          )
+        );
+      });
     });
 
     describe('newRequest', () => {
