@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 7.5.0 / 2024-05-17
 * Added support for filtering by event type when listing events
 * Added support for filtering a list of folders
 * Fixed query parameters not being formatted properly
