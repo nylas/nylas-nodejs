@@ -84,12 +84,14 @@ export class Folders extends Resource {
    */
   public list({
     identifier,
+    queryParams,
     overrides,
   }: ListFoldersParams & Overrides): AsyncListResponse<
     NylasListResponse<Folder>
   > {
     return super._list<NylasListResponse<Folder>>({
       overrides,
+      queryParams,
       path: `/v3/grants/${identifier}/folders`,
     });
   }
