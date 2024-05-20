@@ -21,8 +21,6 @@ const config = {
     },
   },
   clearMocks: true,
-  collectCoverage: true,
-  coverageReporters: ['text', 'cobertura'],
 };
 
 module.exports = config;
