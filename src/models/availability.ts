@@ -172,4 +172,5 @@ export interface AvailabilityParticipant {
 export enum AvailabilityMethod {
   MaxFairness = 'max-fairness',
   MaxAvailability = 'max-availability',
+  Collective = 'collective',
 }
