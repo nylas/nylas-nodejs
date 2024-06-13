@@ -210,7 +210,7 @@ describe('Calendars', () => {
       });
     });
   });
-  
+
   describe('getCollectiveAvailability', () => {
     it('should call apiClient.request with the correct params', async () => {
       await calendars.getAvailability({
