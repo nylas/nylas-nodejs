@@ -148,7 +148,6 @@ export default class APIClient {
     const controller: AbortController = new AbortController();
     const timeout = setTimeout(() => {
       controller.abort();
-      throw new NylasSdkTimeoutError(req.url, this.timeout);
     }, this.timeout);
 
     try {
@@ -187,6 +186,10 @@ export default class APIClient {
 
       return response;
     } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new NylasSdkTimeoutError(req.url, this.timeout);
+      }
+
       clearTimeout(timeout);
       throw error;
     }
