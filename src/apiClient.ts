@@ -186,7 +186,7 @@ export default class APIClient {
 
       return response;
     } catch (error) {
-      if (error instanceof Error && error.name === "AbortError") {
+      if (error instanceof Error && error.name === 'AbortError') {
         throw new NylasSdkTimeoutError(req.url, this.timeout);
       }
 
