@@ -1,5 +1,10 @@
 # Changelog
 
+### 7.5.1 / 2024-07-09
+* Added collective availability method
+* Fix crash when timeout encountered
+* Bump `braces` sub-dependency from 3.0.2 to 3.0.3
+
 ### 7.5.0 / 2024-05-17
 * Added support for filtering by event type when listing events
 * Added support for filtering a list of folders
