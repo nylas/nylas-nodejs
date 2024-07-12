@@ -204,7 +204,7 @@ export default class APIClient {
 
     if (optionParams.body) {
       requestOptions.body = JSON.stringify(
-        objKeysToSnakeCase(optionParams.body)
+        objKeysToSnakeCase(optionParams.body, ['metadata']) // metadata should remain as is
       );
       requestOptions.headers['Content-Type'] = 'application/json';
     }
