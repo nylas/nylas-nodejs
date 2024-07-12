@@ -118,6 +118,29 @@ describe('APIClient', () => {
           )
         );
       });
+
+      it('should not convert metadata object keys to snake_case', () => {
+        const metadata = {
+          key0: 'value',
+          key1: 'another',
+          camelCase: true,
+          snake_case: false,
+          normal: 'yes',
+        };
+        const expectedBody = JSON.stringify({
+          metadata: metadata,
+        });
+
+        const options = client.requestOptions({
+          path: '/test',
+          method: 'POST',
+          body: {
+            metadata: metadata,
+          },
+        });
+
+        expect(options.body).toEqual(expectedBody);
+      });
     });
 
     describe('newRequest', () => {

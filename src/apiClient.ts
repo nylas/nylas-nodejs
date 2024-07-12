@@ -204,7 +204,7 @@ export default class APIClient {
 
     if (optionParams.body) {
       requestOptions.body = JSON.stringify(
-        objKeysToSnakeCase(optionParams.body)
+        objKeysToSnakeCase(optionParams.body, ['metadata']) // metadata should remain as is
       );
       requestOptions.headers['Content-Type'] = 'application/json';
     }
@@ -234,7 +234,7 @@ export default class APIClient {
 
     try {
       const responseJSON = JSON.parse(text);
-      return objKeysToCamelCase(responseJSON);
+      return objKeysToCamelCase(responseJSON, ['metadata']);
     } catch (e) {
       throw new Error(`Could not parse response from the server: ${text}`);
     }
