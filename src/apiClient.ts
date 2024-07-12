@@ -234,7 +234,7 @@ export default class APIClient {
 
     try {
       const responseJSON = JSON.parse(text);
-      return objKeysToCamelCase(responseJSON);
+      return objKeysToCamelCase(responseJSON, ['metadata']);
     } catch (e) {
       throw new Error(`Could not parse response from the server: ${text}`);
     }
