@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix issue where metadata was being incorrectly modified before being sent to the API
+
 ### 7.5.1 / 2024-07-09
 * Added collective availability method
 * Fix crash when timeout encountered
