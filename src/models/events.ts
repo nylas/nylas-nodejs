@@ -279,6 +279,11 @@ export interface ListEventQueryParams extends ListQueryParams {
    * You can pass the query parameter multiple times to select or exclude multiple event types.
    */
   eventType?: EventType[];
+  /**
+   * Filter for events that include the specified attendees.
+   * Not supported for virtual calendars.
+   */
+  attendees?: string[];
 }
 
 /**
