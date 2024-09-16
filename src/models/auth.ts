@@ -11,7 +11,8 @@ export type Provider =
   | 'imap'
   | 'microsoft'
   | 'icloud'
-  | 'virtual-calendar';
+  | 'virtual-calendar'
+  | 'ews';
 
 /**
  * Configuration for generating a URL for OAuth 2.0 authentication.
