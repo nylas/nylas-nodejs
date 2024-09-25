@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { createHash } from 'node:crypto';
+import { createHash } from 'crypto';
 import { Resource } from './resource.js';
 import {
   URLForAdminConsentConfig,

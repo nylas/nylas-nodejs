@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Add support for filtering events by attendee email
+* Fix issue where crypto import was causing downstream Jest incompatibilities
 
 ### 7.5.2 / 2024-07-12
 * Fix issue where metadata was being incorrectly modified before being sent to the API
