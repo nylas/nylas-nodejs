@@ -39,7 +39,9 @@ interface BaseAttachment {
 export interface CreateAttachmentRequest extends BaseAttachment {
   /**
    * Content of the attachment.
-   * It can either be a readable stream or a base64 encoded string.
+   * It can either be a readable stream, a base64 encoded string, or a buffer.
+   * For attachments less than 3MB, the content can be a readable stream, or a base64 encoded string.
+   * For attachments greater than 3MB, the content must be either a readable stream or a buffer.
    */
   content: NodeJS.ReadableStream | string | Buffer;
 }
