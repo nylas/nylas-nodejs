@@ -2,6 +2,7 @@
 
 ### Unreleased
 * Add support for filtering events by attendee email
+* Add buffer support for file attachments
 * Fix issue where crypto import was causing downstream Jest incompatibilities
 
 ### 7.5.2 / 2024-07-12
