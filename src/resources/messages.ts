@@ -311,13 +311,10 @@ export class Messages extends Resource {
   static _buildFormRequest(
     requestBody: CreateDraftRequest | UpdateDraftRequest | SendMessageRequest
   ): FormData {
-    let form: FormData;
     // FormData imports are funky, cjs needs to use .default, es6 doesn't
-    if (typeof (FormData as any).default !== 'undefined') {
-      form = new (FormData as any).default();
-    } else {
-      form = new FormData();
-    }
+    const FormData = require('form-data');
+    const FormDataConstructor = FormData.default || FormData;
+    const form = new FormDataConstructor();
 
     // Split out the message payload from the attachments
     const messagePayload = {
