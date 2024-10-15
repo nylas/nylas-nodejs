@@ -161,7 +161,7 @@ describe('Webhooks', () => {
       });
 
       expect(apiClient.request).toHaveBeenCalledWith({
-        method: 'PUT',
+        method: 'POST',
         path: '/v3/webhooks/webhook123/rotate-secret',
         body: {},
         overrides: {
