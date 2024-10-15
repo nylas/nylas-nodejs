@@ -114,18 +114,53 @@ export type UpdateWebhookRequest = Partial<CreateWebhookRequest>;
  * Enum representing the available webhook triggers.
  */
 export enum WebhookTriggers {
+  // Calendar triggers
   CalendarCreated = 'calendar.created',
   CalendarUpdated = 'calendar.updated',
   CalendarDeleted = 'calendar.deleted',
+
+  // Event triggers
   EventCreated = 'event.created',
   EventUpdated = 'event.updated',
   EventDeleted = 'event.deleted',
+
+  // Grant triggers
   GrantCreated = 'grant.created',
   GrantUpdated = 'grant.updated',
   GrantDeleted = 'grant.deleted',
   GrantExpired = 'grant.expired',
+
+  // Message triggers
+  MessageCreated = 'message.created',
+  MessageUpdated = 'message.updated',
   MessageSendSuccess = 'message.send_success',
   MessageSendFailed = 'message.send_failed',
+  MessageBounceDetected = 'message.bounce_detected',
+
+  // Message tracking triggers
+  MessageOpened = 'message.opened',
+  MessageLinkClicked = 'message.link_clicked',
+  ThreadReplied = 'thread.replied',
+
+  // ExtractAI triggers
+  MessageIntelligenceOrder = 'message.intelligence.order',
+  MessageIntelligenceTracking = 'message.intelligence.tracking',
+
+  // Folder triggers
+  FolderCreated = 'folder.created',
+  FolderUpdated = 'folder.updated',
+  FolderDeleted = 'folder.deleted',
+
+  // Contact triggers
+  ContactUpdated = 'contact.updated',
+  ContactDeleted = 'contact.deleted',
+
+  // Scheduler triggers
+  BookingCreated = 'booking.created',
+  BookingPending = 'booking.pending',
+  BookingRescheduled = 'booking.rescheduled',
+  BookingCancelled = 'booking.cancelled',
+  BookingReminder = 'booking.reminder',
 }
 
 /**
