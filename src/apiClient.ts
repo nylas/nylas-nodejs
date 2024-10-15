@@ -7,7 +7,7 @@ import {
 } from './models/error.js';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils.js';
 import { SDK_VERSION } from './version.js';
-import * as FormData from 'form-data';
+import FormData from 'form-data';
 import { snakeCase } from 'change-case';
 
 /**
