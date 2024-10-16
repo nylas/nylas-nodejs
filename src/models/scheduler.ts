@@ -88,31 +88,87 @@ export interface SchedulerSettings {
 }
 
 export interface BookingReminder {
+  /**
+   * The reminder type.
+   */
   type: BookingReminderType;
+  /**
+   * The number of minutes before the event to send the reminder.
+   */
   minutesBeforeEvent: number;
+  /**
+   * The recipient of the reminder.
+   */
   recipient?: BookingRecipientType;
+  /**
+   * The subject of the email reminder.
+   */
   emailSubject?: string;
 }
 
 export interface EventBooking {
+  /**
+   * The title of the event.
+   */
   title: string;
+  /**
+   * The description of the event.
+   */
   description?: string;
+  /**
+   * The location of the event.
+   */
   location?: string;
+  /**
+   * The timezone for displaying the times in confirmation email messages and reminders.
+   */
   timezone?: string;
+  /**
+   * The type of booking. If set to booking, Scheduler follows the standard booking flow and instantly creates the event.
+   * If set to organizer-confirmation, Scheduler creates an event marked "Pending" in the organizer's calendar and sends
+   * an confirmation request email to the organizer.
+   * The confirmation request email includes a link to a page where the organizer can confirm or cancel the booking.
+   */
   bookingType?: BookingType;
+  /**
+   * An object that allows you to automatically create a conference or enter conferencing details manually.
+   */
   conferencing?: Conferencing;
+  /**
+   * If true, Nylas doesn't send any email messages when an event is booked, cancelled, or rescheduled.
+   */
   disableEmails?: boolean;
+  /**
+   * The list of reminders to send to participants before the event starts.
+   */
   reminders?: BookingReminder[];
 }
 
 export interface Availability {
+  /**
+   * The total number of minutes the event should last.
+   */
   durationMinutes: number;
+  /**
+   * The interval between meetings in minutes.
+   */
   intervalMinutes?: number;
+  /**
+   * Nylas rounds each time slot to the nearest multiple of this number of minutes.
+   * Must be a multiple of 5.
+   */
   roundTo?: number;
+  /**
+   * Availability rules for the scheduling configuration.
+   * These rules define how Nylas calculates availability for all participants.
+   */
   availabilityRules?: Omit<AvailabilityRules, 'roundRobinEventId'>;
 }
 
 export interface ParticipantBooking {
+  /**
+   * The calendar ID that the event is created in.
+   */
   calendarId: string;
 }
 
@@ -136,23 +192,63 @@ export interface Participant {
    * Participant's email address.
    */
   email: string;
+  /**
+   * The availability data for the participant.
+   * If omitted, the participant is considered to be available at all times.
+   * At least one participant must have availability data.
+   */
   availability: ParticipantAvailability;
+  /**
+   * The booking data for the participant.
+   * If omitted, the participant is not included in the booked event.
+   * At least one participant must have booking data.
+   */
   booking: ParticipantBooking;
   /**
    * Participant's name.
    */
   name?: string;
+  /**
+   * Whether the participant is the organizer of the event.
+   * For non-round-robin meetings, one of the participants must be specified as an organizer.
+   */
   isOrganizer?: boolean;
+  /**
+   * The participant's timezone.
+   * This is used when calculating the participant's open hours and in email notifications.
+   */
   timezone?: string;
 }
 
 export interface Configuration {
+  /**
+   * The list of participants that is included in the scheduled event.
+   * All participants must have a valid Nylas grant.
+   */
   participants: Participant[];
+  /**
+   * The rules that determine the available time slots for the event.
+   */
   availability: Availability;
+  /**
+   * The booking data for the event.
+   */
   eventBooking: EventBooking;
+  /**
+   * The slug of the Configuration object. This is an optional, unique identifier for the Configuration object.
+   */
   slug?: string;
+  /**
+   * If true, the scheduling Availability and Bookings endpoints require a valid session ID to authenticate requests when you use this configuration.
+   */
   requiresSessionAuth?: boolean;
+  /**
+   * The settings for the Scheduler UI.
+   */
   scheduler?: SchedulerSettings;
+  /**
+   * The appearance settings for the Scheduler UI.
+   */
   appearance?: Record<string, string>;
 }
 
@@ -160,15 +256,33 @@ export type CreateConfigurationRequest = Configuration;
 export type UpdateConfigurationRequest = Subset<Configuration>;
 
 export interface CreateSessionRequest {
+  /**
+   * The ID of the Scheduler Configuration object for the session.
+   * If you're using slug, you can omit this field.
+   */
   configurationId?: string;
+  /**
+   * The slug of the Scheduler Configuration object for the session.
+   * If you're using configurationId, you can omit this field.
+   */
   slug?: string;
+  /**
+   * The time to live for the session in minutes.
+   * The maximum value is 30 minutes.
+   */
   timeToLive?: number;
 }
 
 export interface CreateSessionResponse {
+  /**
+   * The ID of the session
+   */
   sessionId: string;
 }
 
+/**
+ * The supported languages for email notifications.
+ */
 export type EmailLanguage =
   | 'en'
   | 'es'
@@ -180,11 +294,20 @@ export type EmailLanguage =
   | 'zh';
 
 export interface BookingGuest {
+  /**
+   * The email address of the guest.
+   */
   email: string;
+  /**
+   * The name of the guest.
+   */
   name: string;
 }
 
 export interface BookingParticipant {
+  /**
+   * The email address of the participant to include in the booking.
+   */
   email: string;
 }
 
@@ -229,7 +352,13 @@ export interface CreateBookingRequest {
 }
 
 export interface BookingOrganizer {
+  /**
+   * The email address of the participant that is designated as the organizer of the event.
+   */
   email: string;
+  /**
+   * The name of the participant that is designated as the organizer of the event.
+   */
   name?: string;
 }
 
