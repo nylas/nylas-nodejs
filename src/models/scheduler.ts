@@ -273,7 +273,7 @@ export interface CreateSessionRequest {
   timeToLive?: number;
 }
 
-export interface CreateSessionResponse {
+export interface Session {
   /**
    * The ID of the session
    */
