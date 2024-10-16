@@ -187,7 +187,7 @@ export interface ParticipantAvailability {
 /**
  * Interface representing a booking participant.
  */
-export interface Participant {
+export interface ConfigParticipant {
   /**
    * Participant's email address.
    */
@@ -225,7 +225,7 @@ export interface Configuration {
    * The list of participants that is included in the scheduled event.
    * All participants must have a valid Nylas grant.
    */
-  participants: Participant[];
+  participants: ConfigParticipant[];
   /**
    * The rules that determine the available time slots for the event.
    */
