@@ -168,3 +168,131 @@ export interface CreateSessionRequest {
 export interface CreateSessionResponse {
   sessionId: string;
 }
+
+export type EmailLanguage =
+  | 'en'
+  | 'es'
+  | 'fr'
+  | 'de'
+  | 'nl'
+  | 'sv'
+  | 'ja'
+  | 'zh';
+
+export interface BookingGuest {
+  email: string;
+  name: string;
+}
+
+export interface BookingParticipant {
+  email: string;
+}
+
+/**
+ * Interface representing a create booking request.
+ */
+export interface CreateBookingRequest {
+  /**
+   * The event's start time, in Unix epoch format.
+   */
+  startTime: string;
+  /**
+   * The event's end time, in Unix epoch format.
+   */
+  endTime: string;
+  /**
+   * Details about the guest that is creating the booking. The guest name and email are required.
+   */
+  guest: BookingGuest;
+  /**
+   * An array of objects that include a list of participant email addresses from the Configuration object to include in the booking.
+   * If not provided, Nylas includes all participants from the Configuration object.
+   */
+  participants?: BookingParticipant[];
+  /**
+   * The guest's timezone that is used in email notifications.
+   * If not provided, Nylas uses the timezone from the Configuration object.
+   */
+  timezone?: string;
+  /**
+   * The language of the guest email notifications.
+   */
+  emailLanguage?: EmailLanguage;
+  /**
+   * An array of objects that include a list of additional guest email addresses to include in the booking.
+   */
+  additionalGuests?: BookingGuest[];
+  /**
+   * A dictionary of additional field keys mapped to the values populated by the guest in the booking form.
+   */
+  additionalFields?: Record<string, string>;
+}
+
+export interface BookingOrganizer {
+  email: string;
+  name?: string;
+}
+
+export type BookingStatus = 'pending' | 'booked' | 'cancelled';
+export type ConfirmBookingStatus = 'confirmed' | 'cancelled';
+
+export interface Booking {
+  /**
+   * The unique ID of the booking
+   */
+  bookingId: string;
+  /**
+   * The unique ID of the event associated with the booking
+   */
+  eventId: string;
+  /**
+   * The title of the event
+   */
+  title: string;
+  /**
+   * The participant that is designated as the organizer of the event
+   */
+  organizer: BookingOrganizer;
+  /**
+   * The current status of the booking
+   */
+  status: BookingStatus;
+  /**
+   * The description of the event
+   */
+  description?: string;
+}
+
+export interface ConfirmBookingRequest {
+  /**
+   * The salt extracted from the booking reference embedded in the organizer confirmation link,
+   * encoded as a URL-safe base64 string (without padding).
+   */
+  salt: string;
+  /**
+   * The action to take on the pending booking
+   */
+  status: ConfirmBookingStatus;
+  /**
+   * The reason that the booking is being cancelled
+   */
+  cancellationReason?: string;
+}
+
+export interface DeleteBookingRequest {
+  /**
+   * The reason that the booking is being cancelled
+   */
+  cancellationReason?: string;
+}
+
+export interface RescheduleBookingRequest {
+  /**
+   * The event's start time, in Unix epoch format.
+   */
+  startTime: string;
+  /**
+   * The event's end time, in Unix epoch format.
+   */
+  endTime: string;
+}
