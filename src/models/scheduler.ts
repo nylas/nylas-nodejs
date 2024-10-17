@@ -425,3 +425,37 @@ export interface RescheduleBookingRequest {
    */
   endTime: string;
 }
+
+export interface CreateBookingQueryParams {
+  /**
+   * The ID of the Configuration object whose settings are used for calculating availability.
+   * If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
+   */
+  configurationId?: string;
+  /**
+   * The slug of the Configuration object whose settings are used for calculating availability.
+   * If you're using session authentication (requires_session_auth is set to true) or using configurationId, slug is not required.
+   */
+  slug?: string;
+  /**
+   * The timezone to use for the booking. If not provided, Nylas uses the timezone from the Configuration object.
+   */
+  timezone?: string;
+}
+
+export interface FindBookingQueryParams {
+  /**
+   * The ID of the Configuration object whose settings are used for calculating availability.
+   * If you're using session authentication (requires_session_auth is set to true), configuration_id is not required.
+   */
+  configurationId?: string;
+  /**
+   * The slug of the Configuration object whose settings are used for calculating availability.
+   * If you're using session authentication (requires_session_auth is set to true) or using configurationId, slug is not required.
+   */
+  slug?: string;
+}
+
+export type ConfirmBookingQueryParams = FindBookingQueryParams;
+export type RescheduleBookingQueryParams = FindBookingQueryParams;
+export type DestroyBookingQueryParams = FindBookingQueryParams;
