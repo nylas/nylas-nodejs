@@ -1,3 +1,5 @@
+import { Scheduler } from './resources/scheduler';
+
 export * from './models/index.js';
 
 import APIClient from './apiClient.js';
@@ -75,6 +77,10 @@ export default class Nylas {
    * Access the Folders API
    */
   public folders: Folders;
+  /**
+   * Access the scheduler API
+   */
+  public scheduler: Scheduler;
 
   /**
    * The configured API client
@@ -106,6 +112,7 @@ export default class Nylas {
     this.folders = new Folders(this.apiClient);
     this.contacts = new Contacts(this.apiClient);
     this.attachments = new Attachments(this.apiClient);
+    this.scheduler = new Scheduler(this.apiClient);
 
     return this;
   }
