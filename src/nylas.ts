@@ -1,5 +1,3 @@
-import { Scheduler } from './resources/scheduler';
-
 export * from './models/index.js';
 
 import APIClient from './apiClient.js';
@@ -17,6 +15,7 @@ import { Folders } from './resources/folders.js';
 import { Grants } from './resources/grants.js';
 import { Contacts } from './resources/contacts.js';
 import { Attachments } from './resources/attachments.js';
+import { Scheduler } from './resources/scheduler.js';
 
 /**
  * The entry point to the Node SDK
