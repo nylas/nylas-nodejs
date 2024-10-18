@@ -20,6 +20,7 @@ describe('APIClient', () => {
         timeout: 30,
         headers: {
           'X-SDK-Test-Header': 'This is a test',
+          'Accept-Encoding': 'gzip',
         },
       });
 
@@ -60,6 +61,7 @@ describe('APIClient', () => {
           Accept: 'application/json',
           Authorization: 'Bearer testApiKey',
           'Content-Type': 'application/json',
+          'Accept-Encoding': 'gzip',
           'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
           'X-SDK-Test-Header': 'This is a test',
         });
@@ -79,6 +81,7 @@ describe('APIClient', () => {
         expect(options.headers).toEqual({
           Accept: 'application/json',
           Authorization: 'Bearer testApiKey',
+          'Accept-Encoding': 'gzip',
           'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
         });
         expect(options.url).toEqual(new URL('https://api.us.nylas.com/test'));
@@ -167,6 +170,7 @@ describe('APIClient', () => {
           Accept: ['application/json'],
           Authorization: ['Bearer testApiKey'],
           'Content-Type': ['application/json'],
+          'Accept-Encoding': ['gzip'],
           'User-Agent': [`Nylas Node SDK v${SDK_VERSION}`],
           'X-SDK-Test-Header': ['This is a test'],
           'global-header': ['global-value'],
