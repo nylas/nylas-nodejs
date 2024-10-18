@@ -29,6 +29,7 @@ describe('APIClient', () => {
       expect(client.timeout).toBe(30000);
       expect(client.headers).toEqual({
         'X-SDK-Test-Header': 'This is a test',
+        'Accept-Encoding': 'gzip',
       });
     });
   });
@@ -78,6 +79,9 @@ describe('APIClient', () => {
         const options = client.requestOptions({
           path: '/test',
           method: 'POST',
+          headers: {
+            'Accept-Encoding': 'gzip',
+          },
         });
 
         expect(options.method).toBe('POST');
