@@ -17,6 +17,7 @@ export * from './listQueryParams.js';
 export * from './messages.js';
 export * from './redirectUri.js';
 export * from './response.js';
+export * from './scheduler.js';
 export * from './smartCompose.js';
 export * from './threads.js';
 export * from './webhooks.js';

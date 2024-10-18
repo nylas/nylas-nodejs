@@ -30,6 +30,7 @@ interface PayloadParams<T> {
 interface DestroyParams {
   path: string;
   queryParams?: Record<string, any>;
+  requestBody?: Record<string, any>;
   overrides?: OverridableNylasConfig;
 }
 
@@ -183,12 +184,14 @@ export class Resource {
   protected _destroy<T>({
     path,
     queryParams,
+    requestBody,
     overrides,
   }: DestroyParams): Promise<T> {
     return this.apiClient.request({
       method: 'DELETE',
       path,
       queryParams,
+      body: requestBody,
       overrides,
     });
   }
