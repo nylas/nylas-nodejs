@@ -20,6 +20,7 @@ describe('APIClient', () => {
         timeout: 30,
         headers: {
           'X-SDK-Test-Header': 'This is a test',
+          'Accept-Encoding': 'gzip',
         },
       });
 
@@ -28,6 +29,7 @@ describe('APIClient', () => {
       expect(client.timeout).toBe(30000);
       expect(client.headers).toEqual({
         'X-SDK-Test-Header': 'This is a test',
+        'Accept-Encoding': 'gzip',
       });
     });
   });
@@ -49,7 +51,10 @@ describe('APIClient', () => {
         const options = client.requestOptions({
           path: '/test',
           method: 'GET',
-          headers: { 'X-SDK-Test-Header': 'This is a test' },
+          headers: {
+            'X-SDK-Test-Header': 'This is a test',
+            'Accept-Encoding': 'gzip',
+          },
           queryParams: { param: 'value' },
           body: { id: 'abc123' },
           overrides: { apiUri: 'https://test.api.nylas.com' },
@@ -60,6 +65,7 @@ describe('APIClient', () => {
           Accept: 'application/json',
           Authorization: 'Bearer testApiKey',
           'Content-Type': 'application/json',
+          'Accept-Encoding': 'gzip',
           'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
           'X-SDK-Test-Header': 'This is a test',
         });
@@ -73,12 +79,16 @@ describe('APIClient', () => {
         const options = client.requestOptions({
           path: '/test',
           method: 'POST',
+          headers: {
+            'Accept-Encoding': 'gzip',
+          },
         });
 
         expect(options.method).toBe('POST');
         expect(options.headers).toEqual({
           Accept: 'application/json',
           Authorization: 'Bearer testApiKey',
+          'Accept-Encoding': 'gzip',
           'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
         });
         expect(options.url).toEqual(new URL('https://api.us.nylas.com/test'));
@@ -167,6 +177,7 @@ describe('APIClient', () => {
           Accept: ['application/json'],
           Authorization: ['Bearer testApiKey'],
           'Content-Type': ['application/json'],
+          'Accept-Encoding': ['gzip'],
           'User-Agent': [`Nylas Node SDK v${SDK_VERSION}`],
           'X-SDK-Test-Header': ['This is a test'],
           'global-header': ['global-value'],
