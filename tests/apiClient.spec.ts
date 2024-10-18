@@ -50,7 +50,10 @@ describe('APIClient', () => {
         const options = client.requestOptions({
           path: '/test',
           method: 'GET',
-          headers: { 'X-SDK-Test-Header': 'This is a test' },
+          headers: {
+            'X-SDK-Test-Header': 'This is a test',
+            'Accept-Encoding': 'gzip',
+          },
           queryParams: { param: 'value' },
           body: { id: 'abc123' },
           overrides: { apiUri: 'https://test.api.nylas.com' },
