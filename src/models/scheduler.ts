@@ -1,6 +1,6 @@
+import { Subset } from '../utils.js';
 import { AvailabilityRules, OpenHours } from './availability.js';
 import { Conferencing } from './events.js';
-import { Subset } from '../utils.js';
 
 export type BookingType = 'booking' | 'organizer-confirmation';
 export type BookingReminderType = 'email' | 'webhook';
@@ -318,11 +318,11 @@ export interface CreateBookingRequest {
   /**
    * The event's start time, in Unix epoch format.
    */
-  startTime: string;
+  startTime: number;
   /**
    * The event's end time, in Unix epoch format.
    */
-  endTime: string;
+  endTime: number;
   /**
    * Details about the guest that is creating the booking. The guest name and email are required.
    */
@@ -419,11 +419,11 @@ export interface RescheduleBookingRequest {
   /**
    * The event's start time, in Unix epoch format.
    */
-  startTime: string;
+  startTime: number;
   /**
    * The event's end time, in Unix epoch format.
    */
-  endTime: string;
+  endTime: number;
 }
 
 export interface CreateBookingQueryParams {

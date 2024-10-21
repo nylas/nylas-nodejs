@@ -70,7 +70,7 @@ export interface RescheduleBookingParams {
  */
 export interface DestroyBookingParams {
   bookingId: string;
-  requestBody: DeleteBookingRequest;
+  requestBody?: DeleteBookingRequest;
   queryParams?: DestroyBookingQueryParams;
 }
 
