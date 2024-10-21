@@ -1,18 +1,18 @@
-import { Resource } from './resource.js';
-import {
-  CreateBookingRequest,
-  RescheduleBookingRequest,
-  ConfirmBookingRequest,
-  Booking,
-  CreateBookingQueryParams,
-  FindBookingQueryParams,
-  ConfirmBookingQueryParams,
-  RescheduleBookingQueryParams,
-  DestroyBookingQueryParams,
-  DeleteBookingRequest,
-} from '../models/scheduler.js';
 import { Overrides } from '../config.js';
 import { NylasBaseResponse, NylasResponse } from '../models/response.js';
+import {
+  Booking,
+  ConfirmBookingQueryParams,
+  ConfirmBookingRequest,
+  CreateBookingQueryParams,
+  CreateBookingRequest,
+  DeleteBookingRequest,
+  DestroyBookingQueryParams,
+  FindBookingQueryParams,
+  RescheduleBookingQueryParams,
+  RescheduleBookingRequest,
+} from '../models/scheduler.js';
+import { Resource } from './resource.js';
 
 /**
  * The parameters for the {@link Bookings.find} method
@@ -21,7 +21,6 @@ import { NylasBaseResponse, NylasResponse } from '../models/response.js';
  * @property queryParams The query parameters to include in the request
  */
 export interface FindBookingParams {
-  identifier: string;
   bookingId: string;
   queryParams?: FindBookingQueryParams;
 }
@@ -33,7 +32,6 @@ export interface FindBookingParams {
  * @property queryParams The query parameters to include in the request
  */
 export interface CreateBookingParams {
-  identifier: string;
   requestBody: CreateBookingRequest;
   queryParams?: CreateBookingQueryParams;
 }
@@ -46,7 +44,6 @@ export interface CreateBookingParams {
  * @property queryParams The query parameters to include in the request
  */
 export interface ConfirmBookingParams {
-  identifier: string;
   bookingId: string;
   requestBody: ConfirmBookingRequest;
   queryParams?: ConfirmBookingQueryParams;
@@ -60,7 +57,6 @@ export interface ConfirmBookingParams {
  * @property queryParams The query parameters to include in the request
  */
 export interface RescheduleBookingParams {
-  identifier: string;
   bookingId: string;
   requestBody: RescheduleBookingRequest;
   queryParams?: RescheduleBookingQueryParams;
@@ -73,7 +69,6 @@ export interface RescheduleBookingParams {
  * @property queryParams The query parameters to include in the request
  */
 export interface DestroyBookingParams {
-  identifier: string;
   bookingId: string;
   requestBody: DeleteBookingRequest;
   queryParams?: DestroyBookingQueryParams;
@@ -85,13 +80,12 @@ export class Bookings extends Resource {
    * @return The booking
    */
   public find({
-    identifier,
     bookingId,
     queryParams,
     overrides,
   }: FindBookingParams & Overrides): Promise<NylasResponse<Booking>> {
     return super._find({
-      path: `/v3/grants/${identifier}/scheduling/bookings/${bookingId}`,
+      path: `/v3/scheduling/bookings/${bookingId}`,
       queryParams,
       overrides,
     });
@@ -102,13 +96,12 @@ export class Bookings extends Resource {
    * @return The created booking
    */
   public create({
-    identifier,
     requestBody,
     queryParams,
     overrides,
   }: CreateBookingParams & Overrides): Promise<NylasResponse<Booking>> {
     return super._create({
-      path: `/v3/grants/${identifier}/scheduling/bookings`,
+      path: `/v3/scheduling/bookings`,
       requestBody,
       queryParams,
       overrides,
@@ -121,13 +114,12 @@ export class Bookings extends Resource {
    */
   public confirm({
     bookingId,
-    identifier,
     requestBody,
     queryParams,
     overrides,
   }: ConfirmBookingParams & Overrides): Promise<NylasResponse<Booking>> {
     return super._update({
-      path: `/v3/grants/${identifier}/scheduling/bookings/${bookingId}`,
+      path: `/v3/scheduling/bookings/${bookingId}`,
       requestBody,
       queryParams,
       overrides,
@@ -140,13 +132,12 @@ export class Bookings extends Resource {
    */
   public reschedule({
     bookingId,
-    identifier,
     requestBody,
     queryParams,
     overrides,
   }: RescheduleBookingParams & Overrides): Promise<NylasResponse<Booking>> {
     return super._updatePatch({
-      path: `/v3/grants/${identifier}/scheduling/bookings/${bookingId}`,
+      path: `/v3/scheduling/bookings/${bookingId}`,
       requestBody,
       queryParams,
       overrides,
@@ -158,14 +149,13 @@ export class Bookings extends Resource {
    * @return The deleted Booking
    */
   public destroy({
-    identifier,
     bookingId,
     requestBody,
     queryParams,
     overrides,
   }: DestroyBookingParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${identifier}/scheduling/bookings/${bookingId}`,
+      path: `/v3/scheduling/bookings/${bookingId}`,
       requestBody,
       queryParams,
       overrides,
