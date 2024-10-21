@@ -1,7 +1,7 @@
-import { Resource } from './resource.js';
-import { CreateSessionRequest, Session } from '../models/scheduler.js';
 import { Overrides } from '../config.js';
 import { NylasBaseResponse, NylasResponse } from '../models/response.js';
+import { CreateSessionRequest, Session } from '../models/scheduler.js';
+import { Resource } from './resource.js';
 
 /**
  * The parameters for the {@link Sessions.create} method
@@ -9,7 +9,6 @@ import { NylasBaseResponse, NylasResponse } from '../models/response.js';
  * @property requestBody The request body to create a session
  */
 export interface CreateSessionParams {
-  identifier: string;
   requestBody: CreateSessionRequest;
 }
 
@@ -19,7 +18,6 @@ export interface CreateSessionParams {
  * @property sessionId The id of the Session to retrieve. Use "primary" to refer to the primary session associated with grant.
  */
 export interface DestroySessionParams {
-  identifier: string;
   sessionId: string;
 }
 
@@ -29,12 +27,11 @@ export class Sessions extends Resource {
    * @return The created session
    */
   public create({
-    identifier,
     requestBody,
     overrides,
   }: CreateSessionParams & Overrides): Promise<NylasResponse<Session>> {
     return super._create({
-      path: `/v3/grants/${identifier}/scheduling/sessions`,
+      path: `/v3/scheduling/sessions`,
       requestBody,
       overrides,
     });
@@ -45,12 +42,11 @@ export class Sessions extends Resource {
    * @return The deleted Session
    */
   public destroy({
-    identifier,
     sessionId,
     overrides,
   }: DestroySessionParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${identifier}/scheduling/sessions/${sessionId}`,
+      path: `/v3/scheduling/sessions/${sessionId}`,
       overrides,
     });
   }
