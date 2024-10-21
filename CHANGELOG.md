@@ -1,12 +1,14 @@
 # Changelog
 
-### Unreleased
+### 7.6.0 / 2024-10-18
 * Add support for filtering events by attendee email
 * Add buffer support for file attachments
 * Add new webhook trigger types
+* Add ews as a provider
 * Change rotate secret endpoint from being a PUT to a POST call
 * Fix issue where crypto import was causing downstream Jest incompatibilities
 * Fix FormData import compatibility issues with ESM
+* Remove eslint-plugin-import from production dependencies
 
 ### 7.5.2 / 2024-07-12
 * Fix issue where metadata was being incorrectly modified before being sent to the API
