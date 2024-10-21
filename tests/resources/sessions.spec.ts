@@ -1,10 +1,10 @@
-import APIClient from "../../src/apiClient";
-import { Sessions } from "../../src/resources/sessions";
-jest.mock('../src/apiClient')
+import APIClient from '../../src/apiClient';
+import { Sessions } from '../../src/resources/sessions';
+jest.mock('../src/apiClient');
 
 describe('Sessions', () => {
-  let apiClient: jest.Mocked<APIClient>
-  let sessions: Sessions
+  let apiClient: jest.Mocked<APIClient>;
+  let sessions: Sessions;
 
   beforeAll(() => {
     apiClient = new APIClient({
@@ -22,29 +22,29 @@ describe('Sessions', () => {
     it('should call apiClient.request with the correct params', async () => {
       await sessions.create({
         requestBody: {
-          "configurationId": "configuration123",
-          "timeToLive": 30
+          configurationId: 'configuration123',
+          timeToLive: 30,
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'foobar' },
         },
-      })
+      });
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'POST',
         path: '/v3/scheduling/sessions',
         body: {
-          "configurationId": "configuration123",
-          "timeToLive": 30
+          configurationId: 'configuration123',
+          timeToLive: 30,
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'foobar' },
-        }
-      })
-    })
-  })
+        },
+      });
+    });
+  });
 
   describe('destroy', () => {
     it('should call apiClient.request with the correct params', async () => {
@@ -53,8 +53,8 @@ describe('Sessions', () => {
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'foobar' },
-        }
-      })
+        },
+      });
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'DELETE',
@@ -62,8 +62,8 @@ describe('Sessions', () => {
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'foobar' },
-        }
-      })
-    })
-  })
-})
+        },
+      });
+    });
+  });
+});
