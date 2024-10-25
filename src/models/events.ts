@@ -285,8 +285,8 @@ export interface ListEventQueryParams extends ListQueryParams {
    */
   attendees?: string[];
   /**
- * Master event id if recurring events.
- */
+   * Master event id if recurring events.
+   */
   masterEventId?: string;
 }
 
