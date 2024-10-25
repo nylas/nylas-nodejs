@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add support for filtering events by masterEventID
+
 ### 7.6.0 / 2024-10-18
 * Add support for filtering events by attendee email
 * Add buffer support for file attachments
