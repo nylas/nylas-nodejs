@@ -1,7 +1,8 @@
 # Changelog
 
-### Unreleased
+### 7.6.1 / 2024-10-30
 * Add support for filtering events by masterEventID
+* Add support for gzip compression
 
 ### 7.6.0 / 2024-10-18
 * Add support for filtering events by attendee email
