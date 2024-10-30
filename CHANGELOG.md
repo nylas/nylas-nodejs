@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix for the webhook rotate secret calling the wrong endpoint
+
 ### 7.6.1 / 2024-10-30
 * Add support for filtering events by masterEventID
 * Add support for gzip compression

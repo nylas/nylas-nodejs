@@ -131,7 +131,7 @@ export class Webhooks extends Resource {
     NylasResponse<WebhookWithSecret>
   > {
     return super._create({
-      path: `/v3/webhooks/${webhookId}/rotate-secret`,
+      path: `/v3/webhooks/rotate-secret/${webhookId}`,
       requestBody: {},
       overrides,
     });
