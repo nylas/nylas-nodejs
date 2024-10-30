@@ -207,7 +207,6 @@ export default class APIClient {
         objKeysToSnakeCase(optionParams.body, ['metadata']) // metadata should remain as is
       );
       requestOptions.headers['Content-Type'] = 'application/json';
-      requestOptions.headers['Accept-Encoding'] = 'gzip';
     }
 
     if (optionParams.form) {
