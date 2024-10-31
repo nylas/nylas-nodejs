@@ -162,7 +162,7 @@ describe('Webhooks', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'POST',
-        path: '/v3/webhooks/webhook123/rotate-secret',
+        path: '/v3/webhooks/rotate-secret/webhook123',
         body: {},
         overrides: {
           apiUri: 'https://test.api.nylas.com',
