@@ -1,4 +1,11 @@
-import { AsyncListResponse, Resource } from './resource.js';
+import FormData from 'form-data';
+import APIClient, { RequestOptionsParams } from '../apiClient.js';
+import { Overrides } from '../config.js';
+import {
+  CreateDraftRequest,
+  SendMessageRequest,
+  UpdateDraftRequest,
+} from '../models/drafts.js';
 import {
   CleanMessagesRequest,
   CleanMessagesResponse,
@@ -10,21 +17,14 @@ import {
   StopScheduledMessageResponse,
   UpdateMessageRequest,
 } from '../models/messages.js';
-import { Overrides } from '../config.js';
 import {
   NylasBaseResponse,
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import {
-  CreateDraftRequest,
-  SendMessageRequest,
-  UpdateDraftRequest,
-} from '../models/drafts.js';
-import FormData from 'form-data';
 import { encodeAttachmentStreams, objKeysToSnakeCase } from '../utils.js';
+import { AsyncListResponse, Resource } from './resource.js';
 import { SmartCompose } from './smartCompose.js';
-import APIClient, { RequestOptionsParams } from '../apiClient.js';
 
 /**
  * The parameters for the {@link Messages.list} method
@@ -325,7 +325,8 @@ export class Messages extends Resource {
 
     // Add a separate form field for each attachment
     requestBody.attachments?.forEach((attachment, index) => {
-      form.append(`file${index}`, attachment.content, {
+      const contentId = attachment.contentId || `file${index}`;
+      form.append(contentId, attachment.content, {
         filename: attachment.filename,
         contentType: attachment.contentType,
       });
