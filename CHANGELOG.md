@@ -1,5 +1,9 @@
 # Changelog
 
+### Unreleased
+* Add missing `select` field on query params
+* Add missing `name` field on grant model
+
 ### 7.6.1 / 2024-10-30
 * Add support for filtering events by masterEventID
 * Add support for gzip compression
