@@ -1,7 +1,7 @@
-import { ListQueryParams } from './listQueryParams.js';
 import { Subset } from '../utils.js';
-import { NylasBaseResponse } from './response.js';
 import { NylasApiErrorResponseData } from './error.js';
+import { ListQueryParams } from './listQueryParams.js';
+import { NylasBaseResponse } from './response.js';
 
 /**
  * Interface representing a Nylas Event object.
@@ -284,6 +284,10 @@ export interface ListEventQueryParams extends ListQueryParams {
    * Not supported for virtual calendars.
    */
   attendees?: string[];
+  /**
+   * Master event id if recurring events.
+   */
+  masterEventId?: string;
 }
 
 /**
