@@ -29,6 +29,10 @@ export interface Grant {
    */
   email?: string;
   /**
+   * Name associated with the grant.
+   */
+  name?: string;
+  /**
    * End user's client user agent.
    */
   userAgent?: string;

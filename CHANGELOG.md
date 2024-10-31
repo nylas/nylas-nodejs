@@ -1,6 +1,8 @@
 # Changelog
 
 ### Unreleased
+* Add missing `select` field on query params
+* Add missing `name` field on grant model
 * Fix for the webhook rotate secret calling the wrong endpoint
 
 ### 7.6.1 / 2024-10-30
