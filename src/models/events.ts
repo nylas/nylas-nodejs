@@ -112,6 +112,10 @@ export interface Event {
    * Unix timestamp when the event was last updated.
    */
   updatedAt?: number;
+  /**
+   * Master event id if recurring events.
+   */
+  masterEventId?: string;
 }
 
 /**

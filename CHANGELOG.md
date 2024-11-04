@@ -1,5 +1,14 @@
 # Changelog
 
+### Unreleased
+* Fix issue where inline attachments > 3Mb were not sent correctly. 
+
+### 7.6.2 / 2024-10-31
+* Add missing `select` field on query params
+* Add missing `name` field on grant model
+* Add missing `masterEventId` on Event model
+* Fix for the webhook rotate secret calling the wrong endpoint
+
 ### 7.6.1 / 2024-10-30
 * Add support for filtering events by masterEventID
 * Add support for gzip compression
