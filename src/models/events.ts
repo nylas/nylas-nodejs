@@ -371,7 +371,7 @@ type ReminderMethod = 'email' | 'popup' | 'sound' | 'display';
 /**
  * Type representing the different conferencing objects.
  */
-type Conferencing = Details | Autocreate;
+export type Conferencing = Details | Autocreate;
 
 /**
  * Type representing the different objects representing time and duration for events.

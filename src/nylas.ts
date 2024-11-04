@@ -15,6 +15,7 @@ import { Folders } from './resources/folders.js';
 import { Grants } from './resources/grants.js';
 import { Contacts } from './resources/contacts.js';
 import { Attachments } from './resources/attachments.js';
+import { Scheduler } from './resources/scheduler.js';
 
 /**
  * The entry point to the Node SDK
@@ -75,6 +76,10 @@ export default class Nylas {
    * Access the Folders API
    */
   public folders: Folders;
+  /**
+   * Access the scheduler API
+   */
+  public scheduler: Scheduler;
 
   /**
    * The configured API client
@@ -106,6 +111,7 @@ export default class Nylas {
     this.folders = new Folders(this.apiClient);
     this.contacts = new Contacts(this.apiClient);
     this.attachments = new Attachments(this.apiClient);
+    this.scheduler = new Scheduler(this.apiClient);
 
     return this;
   }
