@@ -1,6 +1,7 @@
 # Changelog
 
-### Unreleased
+### 7.7.0 / 2024-11-14
+* Add support for Scheduling API.
 * Fix issue where inline attachments > 3Mb were not sent correctly. 
 
 ### 7.6.2 / 2024-10-31
