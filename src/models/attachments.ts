@@ -3,9 +3,9 @@
  */
 interface BaseAttachment {
   /**
-   * Attachment's name.
+   * Attachment's name. The availability of a filename depends on the provider.
    */
-  filename: string;
+  filename?: string;
 
   /**
    * Attachment's content type.
