@@ -114,7 +114,7 @@ describe('APIClient', () => {
 
         expect(options.url).toEqual(
           new URL(
-            'https://api.us.nylas.com/test?foo=bar&list=a&list=b&list=c&map=key1%3Avalue1&map=key2%3Avalue2'
+            'https://api.us.nylas.com/test?foo=bar&list=a%2Cb%2Cc&map=key1%3Avalue1&map=key2%3Avalue2'
           )
         );
       });

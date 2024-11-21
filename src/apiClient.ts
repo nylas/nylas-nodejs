@@ -106,9 +106,7 @@ export default class APIClient {
           }
           url.searchParams.set('metadata_pair', metadataPair.join(','));
         } else if (Array.isArray(value)) {
-          for (const item of value) {
-            url.searchParams.append(snakeCaseKey, item as string);
-          }
+          url.searchParams.append(snakeCaseKey, value.join(','));
         } else if (typeof value === 'object') {
           for (const item in value) {
             url.searchParams.append(
