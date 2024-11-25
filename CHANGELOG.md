@@ -1,5 +1,8 @@
 # Changelog
 
+### 7.7.1 / 2024-11-25
+* Fix query parameters for array values
+
 ### 7.7.0 / 2024-11-14
 * Add support for Scheduling API.
 * Fix issue where inline attachments > 3Mb were not sent correctly. 
