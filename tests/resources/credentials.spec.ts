@@ -17,7 +17,7 @@ describe('Credentials', () => {
 
     credentials = new Credentials(apiClient);
     apiClient.request.mockResolvedValue({});
-  })
+  });
 
   describe('list', () => {
     it('should call apiClient.request with the correct params', async () => {
@@ -35,10 +35,10 @@ describe('Credentials', () => {
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
-        }
-      })
-    })
-  })
+        },
+      });
+    });
+  });
 
   describe('find', () => {
     it('should call apiClient.request with the correct params', async () => {
@@ -48,8 +48,8 @@ describe('Credentials', () => {
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
-        }
-      })
+        },
+      });
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'GET',
@@ -57,47 +57,47 @@ describe('Credentials', () => {
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
-        }
-      })
-    })
-  })
+        },
+      });
+    });
+  });
 
   describe('create', () => {
     it('should call apiClient.request with the correct params', async () => {
       await credentials.create({
         provider: 'microsoft',
         requestBody: {
-          name: "My Microsoft Connector",
+          name: 'My Microsoft Connector',
           credentialType: CredentialType.CONNECTOR,
           credentialData: {
-            clientID: "<CLIENT_ID>",
-            clientSecret: "<CLIENT_SECRET>"
-          }
+            clientID: '<CLIENT_ID>',
+            clientSecret: '<CLIENT_SECRET>',
+          },
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
-        }
-      })
+        },
+      });
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'POST',
         path: '/v3/connectors/microsoft/creds',
         body: {
-          name: "My Microsoft Connector",
+          name: 'My Microsoft Connector',
           credentialType: CredentialType.CONNECTOR,
           credentialData: {
-            clientID: "<CLIENT_ID>",
-            clientSecret: "<CLIENT_SECRET>"
-          }
+            clientID: '<CLIENT_ID>',
+            clientSecret: '<CLIENT_SECRET>',
+          },
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
-        }
-      })
-    })
-  })
+        },
+      });
+    });
+  });
 
   describe('update', () => {
     it('should call apiClient.request with the correct params', async () => {
@@ -105,28 +105,27 @@ describe('Credentials', () => {
         provider: 'microsoft',
         credentialsId: 'microsoft-123',
         requestBody: {
-          name: "Changed Name"
+          name: 'Changed Name',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
-        }
-      })
+        },
+      });
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'PUT',
         path: '/v3/connectors/microsoft/creds/microsoft-123',
         body: {
-          name: "Changed Name"
+          name: 'Changed Name',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
-        }
-      })
-    })
-  })
-
+        },
+      });
+    });
+  });
 
   describe('destroy', () => {
     it('should call apiClient.request with the correct params', async () => {
@@ -136,8 +135,8 @@ describe('Credentials', () => {
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
-        }
-      })
+        },
+      });
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'DELETE',
@@ -145,9 +144,8 @@ describe('Credentials', () => {
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
-        }
-      })
-    })
-  })
-
-})
+        },
+      });
+    });
+  });
+});
