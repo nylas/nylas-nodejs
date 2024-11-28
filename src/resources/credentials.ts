@@ -1,17 +1,17 @@
-import { AsyncListResponse, Resource } from './resource.js';
+import { Overrides } from '../config.js';
+import { Provider } from '../models/auth.js';
 import {
-  Credential,
   CreateCredentialRequest,
+  Credential,
   ListCredentialsQueryParams,
   UpdateCredentialRequest,
 } from '../models/credentials.js';
-import { Overrides } from '../config.js';
 import {
   NylasBaseResponse,
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { Provider } from '../models/auth.js';
+import { AsyncListResponse, Resource } from './resource.js';
 
 /**
  * The parameters for the {@link Credentials.find} method
@@ -80,7 +80,7 @@ export class Credentials extends Resource {
     return super._list<NylasListResponse<Credential>>({
       queryParams,
       overrides,
-      path: `/v3/credentials/${provider}/creds`,
+      path: `/v3/connectors/${provider}/creds`,
     });
   }
 
@@ -94,7 +94,7 @@ export class Credentials extends Resource {
     overrides,
   }: FindCredentialParams & Overrides): Promise<NylasResponse<Credential>> {
     return super._find({
-      path: `/v3/credentials/${provider}/creds/${credentialsId}`,
+      path: `/v3/connectors/${provider}/creds/${credentialsId}`,
       overrides,
     });
   }
@@ -109,7 +109,7 @@ export class Credentials extends Resource {
     overrides,
   }: CreateCredentialParams & Overrides): Promise<NylasResponse<Credential>> {
     return super._create({
-      path: `/v3/credentials/${provider}/creds`,
+      path: `/v3/connectors/${provider}/creds`,
       requestBody,
       overrides,
     });
@@ -126,7 +126,7 @@ export class Credentials extends Resource {
     overrides,
   }: UpdateCredentialParams & Overrides): Promise<NylasResponse<Credential>> {
     return super._update({
-      path: `/v3/credentials/${provider}/creds/${credentialsId}}`,
+      path: `/v3/connectors/${provider}/creds/${credentialsId}`,
       requestBody,
       overrides,
     });
@@ -142,7 +142,7 @@ export class Credentials extends Resource {
     overrides,
   }: DestroyCredentialParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/credentials/${provider}/creds/${credentialsId}}`,
+      path: `/v3/connectors/${provider}/creds/${credentialsId}`,
       overrides,
     });
   }
