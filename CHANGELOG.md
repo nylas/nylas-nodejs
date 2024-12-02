@@ -1,5 +1,8 @@
 # Changelog
 
+### 7.7.2 / 2024-12-02
+* Fix `credentials` resource to use correct endpoint.
+
 ### 7.7.1 / 2024-11-25
 * Fix query parameters for array values
 
