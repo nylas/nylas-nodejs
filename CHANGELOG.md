@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+* Remove `createdAt` field from message model.
+* Change `latestMessageReceivedDate` & `latestMessageSentDate` to be optional on threads model.
+
 ### 7.7.2 / 2024-12-02
 * Fix `credentials` resource to use correct endpoint.
 

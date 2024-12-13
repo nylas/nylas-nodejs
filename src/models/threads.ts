@@ -1,7 +1,7 @@
-import { Message } from './messages.js';
 import { Draft } from './drafts.js';
 import { EmailName } from './events.js';
 import { ListQueryParams } from './listQueryParams.js';
+import { Message } from './messages.js';
 
 /**
  * Interface representing a Nylas thread object.
@@ -42,11 +42,11 @@ export interface Thread {
   /**
    * Unix timestamp of the most recent message received in the thread.
    */
-  latestMessageReceivedDate: number;
+  latestMessageReceivedDate?: number;
   /**
    * Unix timestamp of the most recent message sent in the thread.
    */
-  latestMessageSentDate: number;
+  latestMessageSentDate?: number;
   /**
    * An array of participants in the thread.
    */

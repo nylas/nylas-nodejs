@@ -1,6 +1,6 @@
+import { Attachment } from './attachments.js';
 import { EmailName } from './events.js';
 import { ListQueryParams } from './listQueryParams.js';
-import { Attachment } from './attachments.js';
 
 /**
  * @internal Internal interface for a message.
@@ -19,10 +19,6 @@ export interface BaseMessage {
    * This may be different from the unverified Date header in raw message object.
    */
   date: number;
-  /**
-   * Unix timestamp of when the message was created.
-   */
-  createdAt: number;
   /**
    * The ID of the folder(s) the message appears in.
    */
