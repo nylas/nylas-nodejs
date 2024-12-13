@@ -1,8 +1,8 @@
 import APIClient from '../../src/apiClient';
-import { Drafts } from '../../src/resources/drafts';
-import { createReadableStream, MockedFormData } from '../testUtils';
 import { CreateAttachmentRequest } from '../../src/models/attachments';
+import { Drafts } from '../../src/resources/drafts';
 import { objKeysToCamelCase } from '../../src/utils';
+import { createReadableStream, MockedFormData } from '../testUtils';
 jest.mock('../src/apiClient');
 
 // Mock the FormData constructor
@@ -77,7 +77,6 @@ describe('Drafts', () => {
           },
         ],
         date: 1705084742,
-        created_at: 1705084926,
       };
 
       const draft = objKeysToCamelCase(apiDraft);
@@ -123,7 +122,6 @@ describe('Drafts', () => {
           },
         ],
         date: 1705084742,
-        createdAt: 1705084926,
       });
     });
   });
