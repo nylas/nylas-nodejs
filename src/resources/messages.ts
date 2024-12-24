@@ -1,4 +1,5 @@
 import { FormData, File } from 'formdata-node';
+import { ReadableStream } from 'node:stream/web';
 import APIClient, { RequestOptionsParams } from '../apiClient.js';
 import { Overrides } from '../config.js';
 import {
