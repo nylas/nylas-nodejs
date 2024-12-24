@@ -328,19 +328,19 @@ export class Messages extends Resource {
         // Handle different types of content (Buffer, ReadableStream, string)
         let file;
         if (attachment.content instanceof ReadableStream) {
-          // For ReadableStream, append it directly
-          form.append(contentId, attachment.content);
+          // For ReadableStream, use it directly as the file
+          file = attachment.content;
         } else if (
           attachment.content instanceof Buffer ||
           typeof attachment.content === 'string'
         ) {
-          const file = new File([attachment.content], attachment.filename, {
+          file = new File([attachment.content], attachment.filename, {
             type: attachment.contentType,
           });
-          form.append(contentId, file);
         } else {
           throw new Error('Unsupported attachment content type');
         }
+        form.append(contentId, file);
       }
     }
 
