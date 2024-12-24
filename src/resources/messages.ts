@@ -326,8 +326,13 @@ export class Messages extends Resource {
         const contentId = attachment.contentId || `file${index}`;
         // Handle different types of content (Buffer, ReadableStream, string)
         let file;
-        if (attachment.content instanceof Buffer || typeof attachment.content === 'string') {
-          file = new File([attachment.content], attachment.filename, { type: attachment.contentType });
+        if (
+          attachment.content instanceof Buffer ||
+          typeof attachment.content === 'string'
+        ) {
+          file = new File([attachment.content], attachment.filename, {
+            type: attachment.contentType,
+          });
         } else if (attachment.content instanceof ReadableStream) {
           // For ReadableStream, we need to read it into a buffer first
           const chunks: Buffer[] = [];
@@ -338,7 +343,9 @@ export class Messages extends Resource {
             result = await reader.read();
           }
           const buffer = Buffer.concat(chunks);
-          file = new File([buffer], attachment.filename, { type: attachment.contentType });
+          file = new File([buffer], attachment.filename, {
+            type: attachment.contentType,
+          });
         } else {
           throw new Error('Unsupported attachment content type');
         }

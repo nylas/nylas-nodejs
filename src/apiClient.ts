@@ -213,7 +213,7 @@ export default class APIClient {
       const encoder = new FormDataEncoder(optionParams.form);
       requestOptions.headers = {
         ...requestOptions.headers,
-        'content-type': encoder.contentType
+        'content-type': encoder.contentType,
       };
     }
 

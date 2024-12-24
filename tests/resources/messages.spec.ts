@@ -15,7 +15,7 @@ jest.mock('formdata-node', () => {
       };
 
       this._getAppendedData = (): Record<string, any> => appendedData;
-    })
+    }),
   };
 });
 
