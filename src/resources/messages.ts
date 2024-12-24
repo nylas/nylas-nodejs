@@ -334,18 +334,9 @@ export class Messages extends Resource {
             type: attachment.contentType,
           });
         } else if (attachment.content instanceof ReadableStream) {
-          // For ReadableStream, we need to read it into a buffer first
-          const chunks: Buffer[] = [];
-          const reader = attachment.content.getReader();
-          let result = await reader.read();
-          while (!result.done) {
-            chunks.push(Buffer.from(result.value));
-            result = await reader.read();
-          }
-          const buffer = Buffer.concat(chunks);
-          file = new File([buffer], attachment.filename, {
-            type: attachment.contentType,
-          });
+          // For ReadableStream, append it directly to the form
+          form.append(contentId, attachment.content, attachment.filename);
+          continue;
         } else {
           throw new Error('Unsupported attachment content type');
         }
