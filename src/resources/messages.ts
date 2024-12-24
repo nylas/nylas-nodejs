@@ -1,5 +1,6 @@
 import { FormData, File } from 'formdata-node';
 import { ReadableStream } from 'node:stream/web';
+import { Readable } from 'node:stream';
 import APIClient, { RequestOptionsParams } from '../apiClient.js';
 import { Overrides } from '../config.js';
 import {
@@ -327,8 +328,8 @@ export class Messages extends Resource {
         const contentId = attachment.contentId || `file${index}`;
         // Handle different types of content (Buffer, ReadableStream, string)
         let file;
-        if (attachment.content instanceof ReadableStream) {
-          // For ReadableStream, use it directly as the file
+        if (attachment.content instanceof ReadableStream || attachment.content instanceof Readable) {
+          // For ReadableStream or NodeJS.ReadableStream, use it directly as the file
           file = attachment.content;
         } else if (
           attachment.content instanceof Buffer ||
