@@ -21,7 +21,7 @@ jest.mock('formdata-node', () => {
       this._getAppendedData = () => appendedData;
       // Ensure the form property also has access to _getAppendedData
       (this as any).form = {
-        _getAppendedData: () => appendedData
+        _getAppendedData: () => appendedData,
       };
       return this;
     }),
