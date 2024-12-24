@@ -329,7 +329,11 @@ export class Messages extends Resource {
         let file;
         // Type guard for Node.js streams
         const isNodeStream = (value: unknown): value is { pipe: Function } => {
-          return value !== null && typeof value === 'object' && typeof (value as any).pipe === 'function';
+          return (
+            value !== null &&
+            typeof value === 'object' &&
+            typeof (value as any).pipe === 'function'
+          );
         };
 
         if (attachment.content instanceof ReadableStream) {
