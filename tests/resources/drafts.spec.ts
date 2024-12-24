@@ -10,8 +10,13 @@ jest.mock('formdata-node', () => {
   return {
     FormData: jest.fn().mockImplementation(function(this: MockedFormData) {
       const appendedData: Record<string, any> = {};
-      this.append = (key: string, value: any) => {
-        appendedData[key] = value;
+      this.append = (key: string, value: any, filename?: string) => {
+        if (value && typeof value === 'object' && 'content' in value) {
+          // Handle File objects
+          appendedData[key] = value.content;
+        } else {
+          appendedData[key] = value;
+        }
       };
       this._getAppendedData = () => appendedData;
       return this;
