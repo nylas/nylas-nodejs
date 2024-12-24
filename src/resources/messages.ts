@@ -328,8 +328,14 @@ export class Messages extends Resource {
         const contentId = attachment.contentId || `file${index}`;
         // Handle different types of content (Buffer, ReadableStream, string)
         let file;
-        if (attachment.content instanceof ReadableStream || attachment.content instanceof Readable) {
-          // For ReadableStream or NodeJS.ReadableStream, use it directly as the file
+        if (attachment.content instanceof ReadableStream) {
+          // For web ReadableStream
+          file = attachment.content;
+        } else if (
+          // @ts-ignore - Check for Node.js Readable stream
+          typeof attachment.content?.pipe === 'function'
+        ) {
+          // For Node.js streams (which have pipe method)
           file = attachment.content;
         } else if (
           attachment.content instanceof Buffer ||
