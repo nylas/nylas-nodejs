@@ -327,21 +327,20 @@ export class Messages extends Resource {
         const contentId = attachment.contentId || `file${index}`;
         // Handle different types of content (Buffer, ReadableStream, string)
         let file;
-        if (
+        if (attachment.content instanceof ReadableStream) {
+          // For ReadableStream, append it directly
+          form.append(contentId, attachment.content);
+        } else if (
           attachment.content instanceof Buffer ||
           typeof attachment.content === 'string'
         ) {
-          file = new File([attachment.content], attachment.filename, {
+          const file = new File([attachment.content], attachment.filename, {
             type: attachment.contentType,
           });
-        } else if (attachment.content instanceof ReadableStream) {
-          // For ReadableStream, append it directly to the form
-          form.append(contentId, attachment.content, attachment.filename);
-          continue;
+          form.append(contentId, file);
         } else {
           throw new Error('Unsupported attachment content type');
         }
-        form.append(contentId, file);
       }
     }
 
