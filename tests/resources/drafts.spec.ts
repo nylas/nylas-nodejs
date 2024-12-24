@@ -6,16 +6,22 @@ import { createReadableStream, MockedFormData } from '../testUtils';
 jest.mock('../src/apiClient');
 
 // Mock the FormData constructor
-jest.mock('form-data', () => {
-  return jest.fn().mockImplementation(function(this: MockedFormData) {
-    const appendedData: Record<string, any> = {};
-
-    this.append = (key: string, value: any): void => {
-      appendedData[key] = value;
-    };
-
-    this._getAppendedData = (): Record<string, any> => appendedData;
-  });
+jest.mock('formdata-node', () => {
+  return {
+    FormData: jest.fn().mockImplementation(function(this: MockedFormData) {
+      const appendedData: Record<string, any> = {};
+      this.append = (key: string, value: any) => {
+        appendedData[key] = value;
+      };
+      this._getAppendedData = () => appendedData;
+      return this;
+    }),
+    File: jest.fn().mockImplementation((content: any[], name: string) => ({
+      content,
+      name,
+    })),
+    Blob: jest.fn(),
+  };
 });
 
 describe('Drafts', () => {

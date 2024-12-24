@@ -1,4 +1,4 @@
-import FormData from 'form-data';
+import { FormData, File, Blob } from 'formdata-node';
 import APIClient, { RequestOptionsParams } from '../apiClient.js';
 import { Overrides } from '../config.js';
 import {
@@ -220,7 +220,7 @@ export class Messages extends Resource {
       }, 0) || 0;
 
     if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
-      requestOptions.form = Messages._buildFormRequest(requestBody);
+      requestOptions.form = await Messages._buildFormRequest(requestBody);
     } else {
       if (requestBody.attachments) {
         const processedAttachments = await encodeAttachmentStreams(
@@ -308,13 +308,10 @@ export class Messages extends Resource {
     });
   }
 
-  static _buildFormRequest(
+  static async _buildFormRequest(
     requestBody: CreateDraftRequest | UpdateDraftRequest | SendMessageRequest
-  ): FormData {
-    // FormData imports are funky, cjs needs to use .default, es6 doesn't
-    const FD = require('form-data');
-    const FormDataConstructor = FD.default || FD;
-    const form: FormData = new FormDataConstructor();
+  ): Promise<FormData> {
+    const form = new FormData();
 
     // Split out the message payload from the attachments
     const messagePayload = {
@@ -324,13 +321,30 @@ export class Messages extends Resource {
     form.append('message', JSON.stringify(objKeysToSnakeCase(messagePayload)));
 
     // Add a separate form field for each attachment
-    requestBody.attachments?.forEach((attachment, index) => {
-      const contentId = attachment.contentId || `file${index}`;
-      form.append(contentId, attachment.content, {
-        filename: attachment.filename,
-        contentType: attachment.contentType,
-      });
-    });
+    if (requestBody.attachments) {
+      for (const [index, attachment] of requestBody.attachments.entries()) {
+        const contentId = attachment.contentId || `file${index}`;
+        // Handle different types of content (Buffer, ReadableStream, string)
+        let file;
+        if (attachment.content instanceof Buffer || typeof attachment.content === 'string') {
+          file = new File([attachment.content], attachment.filename, { type: attachment.contentType });
+        } else if (attachment.content instanceof ReadableStream) {
+          // For ReadableStream, we need to read it into a buffer first
+          const chunks: Buffer[] = [];
+          const reader = attachment.content.getReader();
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(Buffer.from(value));
+          }
+          const buffer = Buffer.concat(chunks);
+          file = new File([buffer], attachment.filename, { type: attachment.contentType });
+        } else {
+          throw new Error('Unsupported attachment content type');
+        }
+        form.append(contentId, file);
+      }
+    }
 
     return form;
   }

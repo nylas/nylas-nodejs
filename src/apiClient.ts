@@ -7,7 +7,8 @@ import {
 } from './models/error.js';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils.js';
 import { SDK_VERSION } from './version.js';
-import FormData from 'form-data';
+import { FormData } from 'formdata-node';
+import { FormDataEncoder } from 'form-data-encoder';
 import { snakeCase } from 'change-case';
 
 /**
@@ -26,7 +27,7 @@ export interface RequestOptionsParams {
   headers?: Record<string, string>;
   queryParams?: Record<string, any>;
   body?: any;
-  form?: FormData;
+  form?: FormData | any; // Support both formdata-node and legacy form-data types
   overrides?: OverridableNylasConfig;
 }
 
@@ -209,9 +210,10 @@ export default class APIClient {
 
     if (optionParams.form) {
       requestOptions.body = optionParams.form;
+      const encoder = new FormDataEncoder(optionParams.form);
       requestOptions.headers = {
         ...requestOptions.headers,
-        ...optionParams.form.getHeaders(),
+        'content-type': encoder.contentType
       };
     }
 

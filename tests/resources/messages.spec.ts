@@ -5,16 +5,18 @@ import { CreateAttachmentRequest } from '../../src/models/attachments';
 jest.mock('../src/apiClient');
 
 // Mock the FormData constructor
-jest.mock('form-data', () => {
-  return jest.fn().mockImplementation(function(this: MockedFormData) {
-    const appendedData: Record<string, any> = {};
+jest.mock('formdata-node', () => {
+  return {
+    FormData: jest.fn().mockImplementation(function(this: MockedFormData) {
+      const appendedData: Record<string, any> = {};
 
-    this.append = (key: string, value: any): void => {
-      appendedData[key] = value;
-    };
+      this.append = (key: string, value: any): void => {
+        appendedData[key] = value;
+      };
 
-    this._getAppendedData = (): Record<string, any> => appendedData;
-  });
+      this._getAppendedData = (): Record<string, any> => appendedData;
+    })
+  };
 });
 
 describe('Messages', () => {
