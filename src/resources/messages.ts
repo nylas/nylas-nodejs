@@ -1,4 +1,4 @@
-import { FormData, File, Blob } from 'formdata-node';
+import { FormData, File } from 'formdata-node';
 import APIClient, { RequestOptionsParams } from '../apiClient.js';
 import { Overrides } from '../config.js';
 import {
@@ -332,10 +332,10 @@ export class Messages extends Resource {
           // For ReadableStream, we need to read it into a buffer first
           const chunks: Buffer[] = [];
           const reader = attachment.content.getReader();
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            chunks.push(Buffer.from(value));
+          let result = await reader.read();
+          while (!result.done) {
+            chunks.push(Buffer.from(result.value));
+            result = await reader.read();
           }
           const buffer = Buffer.concat(chunks);
           file = new File([buffer], attachment.filename, { type: attachment.contentType });
