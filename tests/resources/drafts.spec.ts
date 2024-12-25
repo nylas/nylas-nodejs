@@ -33,8 +33,8 @@ jest.mock('formdata-node', () => {
               } else {
                 appendedData[key] = value;
               }
-            }
-          }
+            },
+          },
         };
 
         return formData as MockedFormData;
