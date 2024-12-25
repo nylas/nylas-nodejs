@@ -14,7 +14,7 @@ jest.mock('formdata-node', () => {
       const getAppendedData = () => appendedData;
 
       const createMockFormData = () => {
-        const instance = {
+        const mockInstance: MockedFormData = {
           append(key: string, value: any): void {
             if (value && typeof value === 'object' && 'content' in value) {
               // Handle File objects
@@ -24,16 +24,23 @@ jest.mock('formdata-node', () => {
             }
           },
           _getAppendedData: getAppendedData,
+          form: null as any, // Will be set by proxy
         };
 
-        Object.defineProperty(instance, 'form', {
-          get() {
-            return instance;
-          },
-          enumerable: true,
+        // Create a proxy to ensure all properties are available on both the instance and form
+        const proxy: MockedFormData = new Proxy(mockInstance, {
+          get(target: MockedFormData, prop: string | symbol): any {
+            if (prop === 'form') {
+              return proxy;
+            }
+            return target[prop as keyof MockedFormData];
+          }
         });
 
-        return instance;
+        // Set the form property to point to the proxy itself
+        mockInstance.form = proxy;
+
+        return proxy;
       };
 
       const mockFormData = createMockFormData() as MockedFormData;
