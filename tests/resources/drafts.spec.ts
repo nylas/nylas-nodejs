@@ -10,7 +10,7 @@ jest.mock('formdata-node', () => {
   return {
     FormData: jest.fn().mockImplementation(() => {
       const appendedData: Record<string, any> = {};
-      const formDataInstance = {
+      const formDataMethods = {
         append: (key: string, value: any, _filename?: string) => {
           if (value && typeof value === 'object' && 'content' in value) {
             // Handle File objects
@@ -20,12 +20,23 @@ jest.mock('formdata-node', () => {
           }
         },
         _getAppendedData: () => appendedData,
-        // Make the instance available through .form
-        form: null as any,
       };
-      // Set up circular reference
-      formDataInstance.form = formDataInstance;
-      return formDataInstance;
+
+      // Create a proxy that handles both direct access and form property access
+      const proxy = new Proxy(formDataMethods, {
+        get: (target: any, prop: string | symbol): any => {
+          if (prop === 'form') {
+            // Return a proxy for form property that has all the same methods
+            return new Proxy({}, {
+              get: (_: any, innerProp: string | symbol): any => {
+                return target[innerProp];
+              }
+            });
+          }
+          return target[prop];
+        },
+      });
+      return proxy;
     }),
     File: jest.fn().mockImplementation((content: any[], name: string) => ({
       content,
