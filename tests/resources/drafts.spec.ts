@@ -23,15 +23,20 @@ jest.mock('formdata-node', () => {
       };
 
       // Create a proxy that handles both direct access and form property access
-      return new Proxy(formDataMethods, {
+      const proxy = new Proxy(formDataMethods, {
         get: (target: any, prop: string | symbol): any => {
           if (prop === 'form') {
-            // Return the same proxy for form property access
-            return target;
+            // Return a new proxy for form property access that has the same behavior
+            return new Proxy(target, {
+              get: (innerTarget: any, innerProp: string | symbol): any => {
+                return innerTarget[innerProp];
+              }
+            });
           }
           return target[prop];
         },
       });
+      return proxy;
     }),
     File: jest.fn().mockImplementation((content: any[], name: string) => ({
       content,
