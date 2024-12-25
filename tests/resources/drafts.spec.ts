@@ -13,7 +13,7 @@ jest.mock('formdata-node', () => {
 
       const getAppendedData = () => appendedData;
 
-      const mockFormData: MockedFormData = {
+      const createMockFormData = () => ({
         append(key: string, value: any): void {
           if (value && typeof value === 'object' && 'content' in value) {
             // Handle File objects
@@ -23,21 +23,18 @@ jest.mock('formdata-node', () => {
           }
         },
         _getAppendedData: getAppendedData,
-        form: {
-          append(key: string, value: any): void {
-            if (value && typeof value === 'object' && 'content' in value) {
-              appendedData[key] = value.content;
-            } else {
-              appendedData[key] = value;
-            }
-          },
-          _getAppendedData: getAppendedData,
-          form: null as any,
-        },
-      };
+      });
 
-      // Create circular reference
-      mockFormData.form.form = mockFormData.form;
+      const mockFormData = createMockFormData() as MockedFormData;
+      const formInstance = createMockFormData();
+      Object.defineProperty(mockFormData, 'form', {
+        get: () => formInstance,
+        enumerable: true,
+      });
+      Object.defineProperty(formInstance, 'form', {
+        get: () => formInstance,
+        enumerable: true,
+      });
 
       return mockFormData;
     }),
