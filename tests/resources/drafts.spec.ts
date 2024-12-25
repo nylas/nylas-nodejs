@@ -27,11 +27,14 @@ jest.mock('formdata-node', () => {
         get: (target: any, prop: string | symbol): any => {
           if (prop === 'form') {
             // Return a proxy for form property that has all the same methods
-            return new Proxy({}, {
-              get: (_: any, innerProp: string | symbol): any => {
-                return target[innerProp];
+            return new Proxy(
+              {},
+              {
+                get: (_: any, innerProp: string | symbol): any => {
+                  return target[innerProp];
+                },
               }
-            });
+            );
           }
           return target[prop];
         },
