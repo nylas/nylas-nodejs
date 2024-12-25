@@ -23,19 +23,13 @@ jest.mock('formdata-node', () => {
         _getAppendedData(): Record<string, any> {
           return appendedData;
         },
+        form: null as any, // Will be set to self
       };
 
-      // Create a proxy to handle form property access
-      const proxyHandler: ProxyHandler<MockedFormData> = {
-        get(target: MockedFormData, prop: string | symbol): any {
-          if (prop === 'form') {
-            return target;
-          }
-          return target[prop as keyof MockedFormData];
-        },
-      };
+      // Set form to reference self to handle form property access
+      mockFormData.form = mockFormData;
 
-      return new Proxy(mockFormData, proxyHandler);
+      return mockFormData;
     }),
     File: jest.fn().mockImplementation((content: any[], name: string) => ({
       content,
