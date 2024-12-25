@@ -11,6 +11,8 @@ jest.mock('formdata-node', () => {
     FormData: jest.fn().mockImplementation(() => {
       const appendedData: Record<string, any> = {};
 
+      const getAppendedData = () => appendedData;
+
       const mockFormData: MockedFormData = {
         append(key: string, value: any): void {
           if (value && typeof value === 'object' && 'content' in value) {
@@ -20,14 +22,22 @@ jest.mock('formdata-node', () => {
             appendedData[key] = value;
           }
         },
-        _getAppendedData(): Record<string, any> {
-          return appendedData;
+        _getAppendedData: getAppendedData,
+        form: {
+          append(key: string, value: any): void {
+            if (value && typeof value === 'object' && 'content' in value) {
+              appendedData[key] = value.content;
+            } else {
+              appendedData[key] = value;
+            }
+          },
+          _getAppendedData: getAppendedData,
+          form: null as any,
         },
-        form: null as any, // Will be set to self
       };
 
-      // Set form to reference self to handle form property access
-      mockFormData.form = mockFormData;
+      // Create circular reference
+      mockFormData.form.form = mockFormData.form;
 
       return mockFormData;
     }),

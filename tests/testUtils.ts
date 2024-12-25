@@ -5,7 +5,9 @@ import { Readable } from 'stream';
 export interface MockedFormData {
   append(key: string, value: any): void;
   _getAppendedData(): Record<string, any>;
-  form: MockedFormData;
+  form: MockedFormData & {
+    _getAppendedData(): Record<string, any>;
+  };
 }
 
 export const mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
