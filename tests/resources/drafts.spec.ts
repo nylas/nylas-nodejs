@@ -24,16 +24,10 @@ jest.mock('formdata-node', () => {
             }
           },
           _getAppendedData: getAppendedData,
-        };
-
-        // Create a form property that references the same object
-        Object.defineProperty(formData, 'form', {
-          get() {
-            return formData;
+          get form() {
+            return this;
           },
-          configurable: true,
-          enumerable: true,
-        });
+        };
 
         return formData as MockedFormData;
       };
