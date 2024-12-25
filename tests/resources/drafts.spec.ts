@@ -10,7 +10,7 @@ jest.mock('formdata-node', () => {
   return {
     FormData: jest.fn().mockImplementation(function(this: MockedFormData) {
       const appendedData: Record<string, any> = {};
-      
+
       this.append = (key: string, value: any, _filename?: string) => {
         if (value && typeof value === 'object' && 'content' in value) {
           // Handle File objects
@@ -19,9 +19,9 @@ jest.mock('formdata-node', () => {
           appendedData[key] = value;
         }
       };
-      
+
       this._getAppendedData = () => appendedData;
-      
+
       // Create a proxy to handle both direct access and form property access
       return new Proxy(this, {
         get: (target, prop) => {
@@ -29,7 +29,7 @@ jest.mock('formdata-node', () => {
             return target;
           }
           return target[prop as keyof typeof target];
-        }
+        },
       });
     }),
     File: jest.fn().mockImplementation((content: any[], name: string) => ({
