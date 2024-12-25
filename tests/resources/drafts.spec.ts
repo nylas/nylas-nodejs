@@ -10,8 +10,9 @@ jest.mock('formdata-node', () => {
   return {
     FormData: jest.fn().mockImplementation(() => {
       const appendedData: Record<string, any> = {};
-      const methods = {
-        append: (key: string, value: any, _filename?: string) => {
+      
+      const formData: MockedFormData = {
+        append(key: string, value: any) {
           if (value && typeof value === 'object' && 'content' in value) {
             // Handle File objects
             appendedData[key] = value.content;
@@ -19,22 +20,20 @@ jest.mock('formdata-node', () => {
             appendedData[key] = value;
           }
         },
-        _getAppendedData: () => appendedData,
+        _getAppendedData() {
+          return appendedData;
+        }
       };
 
-      // Create the base object with methods
-      const formData = Object.create(Object.prototype, {
-        ...Object.getOwnPropertyDescriptors(methods),
-        form: {
-          get() {
-            return formData;
-          },
-          configurable: true,
-          enumerable: true,
-        },
+      // Create a proxy to handle form property access
+      return new Proxy(formData, {
+        get(target, prop) {
+          if (prop === 'form') {
+            return target;
+          }
+          return target[prop as keyof typeof target];
+        }
       });
-
-      return formData;
     }),
     File: jest.fn().mockImplementation((content: any[], name: string) => ({
       content,
