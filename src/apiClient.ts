@@ -1,4 +1,5 @@
 import fetch, { Request, Response } from 'node-fetch';
+import type { AbortSignal } from 'node-fetch/externals.js';
 import { NylasConfig, OverridableNylasConfig } from './config.js';
 import {
   NylasApiError,
@@ -144,12 +145,13 @@ export default class APIClient {
   private async sendRequest(options: RequestOptionsParams): Promise<Response> {
     const req = this.newRequest(options);
     const controller: AbortController = new AbortController();
+    const timeoutDuration = options.overrides?.timeout || this.timeout;
     const timeout = setTimeout(() => {
       controller.abort();
-    }, this.timeout);
+    }, timeoutDuration);
 
     try {
-      const response = await fetch(req, { signal: controller.signal });
+      const response = await fetch(req, { signal: controller.signal as AbortSignal });
       clearTimeout(timeout);
 
       if (typeof response === 'undefined') {
