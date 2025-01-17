@@ -1,12 +1,12 @@
 import APIClient from '../../src/apiClient';
 import { Threads } from '../../src/resources/threads';
-jest.mock('../src/apiClient');
+jest.mock('../../src/apiClient');
 
 describe('Threads', () => {
   let apiClient: jest.Mocked<APIClient>;
   let threads: Threads;
 
-  beforeAll(() => {
+  beforeEach(() => {
     apiClient = new APIClient({
       apiKey: 'apiKey',
       apiUri: 'https://test.api.nylas.com',
@@ -34,6 +34,25 @@ describe('Threads', () => {
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
+        },
+      });
+    });
+
+    it('should transform anyEmail array into comma-delimited any_email parameter', async () => {
+      const mockEmails = ['test1@example.com', 'test2@example.com'];
+      await threads.list({
+        identifier: 'id123',
+        queryParams: {
+          anyEmail: mockEmails,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/threads',
+        overrides: undefined,
+        queryParams: {
+          any_email: mockEmails.join(','),
         },
       });
     });
