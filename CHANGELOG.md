@@ -4,6 +4,7 @@
 * Remove `createdAt` field from message model.
 * Change `latestMessageReceivedDate` & `latestMessageSentDate` to be optional on threads model.
 * Fix issue where timeout was not being respected when overriding the timeout in the request options.
+* Fix issue where query params with array values were not being transformed into comma-delimited strings
 
 ### 7.7.2 / 2024-12-02
 * Fix `credentials` resource to use correct endpoint.
