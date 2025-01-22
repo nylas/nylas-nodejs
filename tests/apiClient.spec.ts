@@ -1,5 +1,10 @@
+import { RequestInfo } from 'node-fetch';
 import APIClient, { RequestOptionsParams } from '../src/apiClient';
-import { NylasApiError, NylasOAuthError } from '../src/models/error';
+import {
+  NylasApiError,
+  NylasOAuthError,
+  NylasSdkTimeoutError,
+} from '../src/models/error';
 import { SDK_VERSION } from '../src/version';
 import { mockedFetch, mockResponse } from './testUtils';
 
@@ -308,6 +313,64 @@ describe('APIClient', () => {
             method: 'POST',
           })
         ).rejects.toThrow(new NylasApiError(payload));
+      });
+
+      it('should respect override timeout when provided', async () => {
+        const overrideTimeout = 2; // 2 second timeout
+
+        mockedFetch.mockImplementationOnce((_url: RequestInfo) => {
+          // Immediately throw an AbortError to simulate a timeout
+          const error = new Error('The operation was aborted');
+          error.name = 'AbortError';
+          return Promise.reject(error);
+        });
+
+        await expect(
+          client.request({
+            path: '/test',
+            method: 'GET',
+            overrides: { timeout: overrideTimeout },
+          })
+        ).rejects.toThrow(
+          new NylasSdkTimeoutError(
+            'https://api.us.nylas.com/test',
+            overrideTimeout * 1000
+          )
+        );
+      });
+
+      it('should use default timeout when no override provided', async () => {
+        mockedFetch.mockImplementationOnce((_url: RequestInfo) => {
+          // Immediately throw an AbortError to simulate a timeout
+          const error = new Error('The operation was aborted');
+          error.name = 'AbortError';
+          return Promise.reject(error);
+        });
+
+        await expect(
+          client.request({
+            path: '/test',
+            method: 'GET',
+          })
+        ).rejects.toThrow(
+          new NylasSdkTimeoutError(
+            'https://api.us.nylas.com/test',
+            client.timeout
+          )
+        );
+      });
+
+      it('should complete request within timeout period', async () => {
+        const payload = { data: 'test' };
+        mockedFetch.mockImplementationOnce(() =>
+          Promise.resolve(mockResponse(JSON.stringify(payload)))
+        );
+
+        const result = await client.request({
+          path: '/test',
+          method: 'GET',
+        });
+        expect(result).toEqual(payload);
       });
     });
   });
