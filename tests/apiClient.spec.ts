@@ -1,6 +1,10 @@
 import { RequestInfo } from 'node-fetch';
 import APIClient, { RequestOptionsParams } from '../src/apiClient';
-import { NylasApiError, NylasOAuthError, NylasSdkTimeoutError } from '../src/models/error';
+import {
+  NylasApiError,
+  NylasOAuthError,
+  NylasSdkTimeoutError,
+} from '../src/models/error';
 import { SDK_VERSION } from '../src/version';
 import { mockedFetch, mockResponse } from './testUtils';
 
@@ -327,7 +331,12 @@ describe('APIClient', () => {
             method: 'GET',
             overrides: { timeout: overrideTimeout },
           })
-        ).rejects.toThrow(new NylasSdkTimeoutError('https://api.us.nylas.com/test', overrideTimeout * 1000));
+        ).rejects.toThrow(
+          new NylasSdkTimeoutError(
+            'https://api.us.nylas.com/test',
+            overrideTimeout * 1000
+          )
+        );
       });
 
       it('should use default timeout when no override provided', async () => {
@@ -343,7 +352,12 @@ describe('APIClient', () => {
             path: '/test',
             method: 'GET',
           })
-        ).rejects.toThrow(new NylasSdkTimeoutError('https://api.us.nylas.com/test', client.timeout));
+        ).rejects.toThrow(
+          new NylasSdkTimeoutError(
+            'https://api.us.nylas.com/test',
+            client.timeout
+          )
+        );
       });
 
       it('should complete request within timeout period', async () => {
