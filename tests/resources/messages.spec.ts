@@ -52,6 +52,25 @@ describe('Messages', () => {
         },
       });
     });
+
+    it('should transform anyEmail array into comma-delimited any_email parameter', async () => {
+      const mockEmails = ['test1@example.com', 'test2@example.com'];
+      await messages.list({
+        identifier: 'id123',
+        queryParams: {
+          anyEmail: mockEmails,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/messages',
+        overrides: undefined,
+        queryParams: {
+          any_email: mockEmails.join(','),
+        },
+      });
+    });
   });
 
   describe('find', () => {
