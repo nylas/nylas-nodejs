@@ -141,8 +141,20 @@ export class Messages extends Resource {
   }: ListMessagesParams & Overrides): AsyncListResponse<
     NylasListResponse<Message>
   > {
+    const modifiedQueryParams: Record<string, unknown> | undefined = queryParams
+      ? { ...queryParams }
+      : undefined;
+
+    // Transform some query params that are arrays into comma-delimited strings
+    if (modifiedQueryParams && queryParams) {
+      if (Array.isArray(queryParams?.anyEmail)) {
+        delete modifiedQueryParams.anyEmail;
+        modifiedQueryParams['any_email'] = queryParams.anyEmail.join(',');
+      }
+    }
+
     return super._list<NylasListResponse<Message>>({
-      queryParams,
+      queryParams: modifiedQueryParams,
       overrides,
       path: `/v3/grants/${identifier}/messages`,
     });

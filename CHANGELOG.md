@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Fix: any_email was not transformed to a comma delimited list for messages.list
+
 ### 7.7.3 / 2025-01-23
 * Remove `createdAt` field from message model.
 * Change `latestMessageReceivedDate` & `latestMessageSentDate` to be optional on threads model.
