@@ -1,10 +1,11 @@
 # Changelog
 
-## Unreleased
+### 7.7.3 / 2025-01-23
 * Remove `createdAt` field from message model.
 * Change `latestMessageReceivedDate` & `latestMessageSentDate` to be optional on threads model.
 * Fix issue where timeout was not being respected when overriding the timeout in the request options.
 * Fix issue where query params with array values were not being transformed into comma-delimited strings
+* Fix: transform anyEmail array into comma-delimited any_email parameter in threads list
 
 ### 7.7.2 / 2024-12-02
 * Fix `credentials` resource to use correct endpoint.
@@ -14,7 +15,7 @@
 
 ### 7.7.0 / 2024-11-14
 * Add support for Scheduling API.
-* Fix issue where inline attachments > 3Mb were not sent correctly. 
+* Fix issue where inline attachments > 3Mb were not sent correctly.
 
 ### 7.6.2 / 2024-10-31
 * Add missing `select` field on query params
@@ -205,7 +206,7 @@
 * Introduction of `Enum` types
 
 ### 5.10.3 / 2022-01-04
-* Prevent `Event` objects from sending an empty list of notifications when not set, causing errors for recurring events 
+* Prevent `Event` objects from sending an empty list of notifications when not set, causing errors for recurring events
 
 ### 5.10.3 / 2021-12-16
 * Add missing `provider` option for `urlForAuthentication`
