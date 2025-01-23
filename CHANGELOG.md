@@ -1,6 +1,6 @@
 # Changelog
 
-### Unreleased
+### 7.7.4 / 2025-01-23
 * Fix: any_email was not transformed to a comma delimited list for messages.list
 
 ### 7.7.3 / 2025-01-23
