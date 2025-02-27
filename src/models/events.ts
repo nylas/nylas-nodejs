@@ -336,7 +336,7 @@ export type SendRsvpQueryParams = FindEventQueryParams;
 /**
  * Interface representing the query parameters for importing events.
  */
-export interface ImportEventQueryParams {
+export interface ListImportEventQueryParams {
   /**
    * (Required) Calendar ID to import events from. "primary" is a supported value indicating the user's primary calendar.
    * Note: "primary" is not supported for iCloud.

@@ -5,7 +5,7 @@ import {
   DestroyEventQueryParams,
   Event,
   FindEventQueryParams,
-  ImportEventQueryParams,
+  ListImportEventQueryParams,
   ListEventQueryParams,
   SendRsvpQueryParams,
   SendRsvpRequest,
@@ -81,7 +81,7 @@ export interface DestroyEventParams {
  */
 export interface ListImportEventParams {
   identifier: string;
-  queryParams: ImportEventQueryParams;
+  queryParams: ListImportEventQueryParams;
 }
 
 /**
