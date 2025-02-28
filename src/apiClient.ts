@@ -177,7 +177,7 @@ export default class APIClient {
           const headers = response?.headers?.entries
             ? Object.fromEntries(response.headers.entries())
             : {};
-          const flowId = headers['x-flow-id'];
+          const flowId = headers['x-fastly-id'];
           const requestId = headers['x-request-id'];
 
           if (isAuthRequest) {
@@ -198,7 +198,7 @@ export default class APIClient {
             );
           }
         } catch (e) {
-          const flowId = response?.headers?.get('x-flow-id') || undefined;
+          const flowId = response?.headers?.get('x-fastly-id') || undefined;
           throw new Error(
             `Received an error but could not parse response from the server${
               flowId ? ` with flow ID ${flowId}` : ''
@@ -258,7 +258,7 @@ export default class APIClient {
     const headers = response?.headers?.entries
       ? Object.fromEntries(response.headers.entries())
       : {};
-    const flowId = headers['x-flow-id'];
+    const flowId = headers['x-fastly-id'];
     const text = await response.text();
 
     try {

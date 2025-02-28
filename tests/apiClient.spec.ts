@@ -215,7 +215,7 @@ describe('APIClient', () => {
         };
 
         const mockResp = mockResponse(JSON.stringify(payload));
-        mockResp.headers.set('x-flow-id', mockFlowId);
+        mockResp.headers.set('x-fastly-id', mockFlowId);
         Object.entries(mockHeaders).forEach(([key, value]) => {
           mockResp.headers.set(key, value);
         });
@@ -252,7 +252,7 @@ describe('APIClient', () => {
         };
         
         const mockResp = mockResponse(JSON.stringify(payload));
-        mockResp.headers.set('x-flow-id', mockFlowId);
+        mockResp.headers.set('x-fastly-id', mockFlowId);
         Object.entries(mockHeaders).forEach(([key, value]) => {
           mockResp.headers.set(key, value);
         });
@@ -326,7 +326,7 @@ describe('APIClient', () => {
         };
         
         const mockResp = mockResponse(JSON.stringify(payload), 400);
-        mockResp.headers.set('x-flow-id', mockFlowId);
+        mockResp.headers.set('x-fastly-id', mockFlowId);
         mockResp.headers.set('x-request-id', mockHeaders['x-request-id']);
         mockResp.headers.set('x-nylas-api-version', mockHeaders['x-nylas-api-version']);
         
@@ -373,7 +373,7 @@ describe('APIClient', () => {
         };
 
         const mockResp = mockResponse(JSON.stringify(payload), 400);
-        mockResp.headers.set('x-flow-id', mockFlowId);
+        mockResp.headers.set('x-fastly-id', mockFlowId);
         mockResp.headers.set('x-request-id', mockHeaders['x-request-id']);
         mockResp.headers.set('x-nylas-api-version', mockHeaders['x-nylas-api-version']);
         
@@ -449,7 +449,7 @@ describe('APIClient', () => {
         };
         
         const mockResp = mockResponse(JSON.stringify(payload));
-        mockResp.headers.set('x-flow-id', mockFlowId);
+        mockResp.headers.set('x-fastly-id', mockFlowId);
         Object.entries(mockHeaders).forEach(([key, value]) => {
           mockResp.headers.set(key, value);
         });
