@@ -175,13 +175,28 @@ export default class APIClient {
             options.path.includes('connect/revoke');
 
           if (isAuthRequest) {
-            error = new NylasOAuthError(camelCaseError, response.status);
+            error = new NylasOAuthError(
+              camelCaseError,
+              response.status,
+              response.headers.get('x-request-id') || undefined,
+              response.headers.get('x-flow-id') || undefined,
+              Object.fromEntries(response.headers.entries())
+            );
           } else {
-            error = new NylasApiError(camelCaseError, response.status);
+            error = new NylasApiError(
+              camelCaseError,
+              response.status,
+              response.headers.get('x-request-id') || undefined,
+              response.headers.get('x-flow-id') || undefined,
+              Object.fromEntries(response.headers.entries())
+            );
           }
         } catch (e) {
+          const flowId = response.headers.get('x-flow-id');
           throw new Error(
-            `Received an error but could not parse response from the server: ${text}`
+            `Received an error but could not parse response from the server${
+              flowId ? ` with flow ID ${flowId}` : ''
+            }: ${text}`
           );
         }
 
@@ -234,10 +249,15 @@ export default class APIClient {
   }
 
   async requestWithResponse<T>(response: Response): Promise<T> {
+    const headers = Object.fromEntries(response.headers.entries());
+    const flowId = headers['x-flow-id'];
     const text = await response.text();
 
     try {
       const responseJSON = JSON.parse(text);
+      // Inject the flow ID and headers into the response
+      responseJSON.flowId = flowId;
+      responseJSON.headers = headers;
       return objKeysToCamelCase(responseJSON, ['metadata']);
     } catch (e) {
       throw new Error(`Could not parse response from the server: ${text}`);

@@ -17,6 +17,15 @@ export interface NylasResponse<T> {
    * The request ID
    */
   requestId: string;
+  /**
+   * The flow ID
+   * Provide this t
+   */
+  flowId?: string;
+  /**
+   * The response headers
+   */
+  headers?: Record<string, string>;
 }
 
 /**
