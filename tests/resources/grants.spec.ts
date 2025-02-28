@@ -15,9 +15,9 @@ describe('Grants', () => {
     }) as jest.Mocked<APIClient>;
 
     grants = new Grants(apiClient);
-    
+
     // Create a spy implementation that captures the inputs
-    apiClient.request = jest.fn().mockImplementation((input) => {
+    apiClient.request = jest.fn().mockImplementation(input => {
       // eslint-disable-next-line no-console
       console.log('Request input:', JSON.stringify(input, null, 2));
       return Promise.resolve({
