@@ -12,6 +12,15 @@ import FormData from 'form-data';
 import { snakeCase } from 'change-case';
 
 /**
+ * The header key for the debugging flow ID
+ */
+export const FLOW_ID_HEADER = 'x-fastly-id';
+/**
+ * The header key for the request ID
+ */
+export const REQUEST_ID_HEADER = 'x-request-id';
+
+/**
  * Options for a request to the Nylas API
  * @property path The path to the API endpoint
  * @property method The HTTP method to use
@@ -162,6 +171,12 @@ export default class APIClient {
         throw new Error('Failed to fetch response');
       }
 
+      const headers = response?.headers?.entries
+        ? Object.fromEntries(response.headers.entries())
+        : {};
+      const flowId = headers[FLOW_ID_HEADER];
+      const requestId = headers[REQUEST_ID_HEADER];
+
       if (response.status > 299) {
         const text = await response.text();
         let error: Error;
@@ -173,12 +188,6 @@ export default class APIClient {
           const isAuthRequest =
             options.path.includes('connect/token') ||
             options.path.includes('connect/revoke');
-
-          const headers = response?.headers?.entries
-            ? Object.fromEntries(response.headers.entries())
-            : {};
-          const flowId = headers['x-fastly-id'];
-          const requestId = headers['x-request-id'];
 
           if (isAuthRequest) {
             error = new NylasOAuthError(
@@ -198,7 +207,6 @@ export default class APIClient {
             );
           }
         } catch (e) {
-          const flowId = response?.headers?.get('x-fastly-id') || undefined;
           throw new Error(
             `Received an error but could not parse response from the server${
               flowId ? ` with flow ID ${flowId}` : ''
@@ -258,7 +266,8 @@ export default class APIClient {
     const headers = response?.headers?.entries
       ? Object.fromEntries(response.headers.entries())
       : {};
-    const flowId = headers['x-fastly-id'];
+    const flowId = headers[FLOW_ID_HEADER];
+    const requestId = headers[REQUEST_ID_HEADER];
     const text = await response.text();
 
     try {
