@@ -136,7 +136,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
           start: 1617235200,
           end: 1619827200,
-          max_results: 100,
+          limit: 100,
           select: 'id,name',
         },
         overrides: {
@@ -152,7 +152,7 @@ describe('Events', () => {
           calendarId: 'calendar123',
           start: 1617235200,
           end: 1619827200,
-          max_results: 100,
+          limit: 100,
           select: 'id,name',
         },
         overrides: {

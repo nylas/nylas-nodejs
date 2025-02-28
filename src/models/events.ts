@@ -336,7 +336,7 @@ export type SendRsvpQueryParams = FindEventQueryParams;
 /**
  * Interface representing the query parameters for importing events.
  */
-export interface ListImportEventQueryParams {
+export interface ListImportEventQueryParams extends ListQueryParams  {
   /**
    * (Required) Calendar ID to import events from. "primary" is a supported value indicating the user's primary calendar.
    * Note: "primary" is not supported for iCloud.
@@ -352,20 +352,6 @@ export interface ListImportEventQueryParams {
    * Defaults to one month from the time of the request.
    */
   end?: number;
-  /**
-   * The maximum number of objects to return.
-   * This field defaults to 50. The maximum allowed value is 500.
-   */
-  max_results?: number;
-  /**
-   * An identifier that specifies which page of data to return.
-   * This value should be taken from the next_cursor response field.
-   */
-  page_token?: string;
-  /**
-   * Specify fields that you want Nylas to return, as a comma-separated list.
-   */
-  select?: string;
 }
 
 /**
