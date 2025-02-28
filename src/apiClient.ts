@@ -267,7 +267,6 @@ export default class APIClient {
       ? Object.fromEntries(response.headers.entries())
       : {};
     const flowId = headers[FLOW_ID_HEADER];
-    const requestId = headers[REQUEST_ID_HEADER];
     const text = await response.text();
 
     try {
