@@ -226,13 +226,13 @@ describe('APIClient', () => {
           ...payload,
           flowId: mockFlowId,
           headers: {
-            xFlowId: mockFlowId,
+            xFastlyId: mockFlowId,
             xNylasApiVersion: mockHeaders['x-nylas-api-version'],
             xRequestId: mockHeaders['x-request-id'],
           },
         });
         expect((requestWithResponse as any).flowId).toBe(mockFlowId);
-        expect((requestWithResponse as any).headers['xFlowId']).toBe(
+        expect((requestWithResponse as any).headers['xFastlyId']).toBe(
           mockFlowId
         );
         expect((requestWithResponse as any).headers['xRequestId']).toBe(
@@ -272,13 +272,13 @@ describe('APIClient', () => {
           ...payload,
           flowId: mockFlowId,
           headers: {
-            xFlowId: mockFlowId,
+            xFastlyId: mockFlowId,
             xNylasApiVersion: mockHeaders['x-nylas-api-version'],
             xRequestId: mockHeaders['x-request-id'],
           },
         });
         expect((response as any).flowId).toBe(mockFlowId);
-        expect((response as any).headers['xFlowId']).toBe(mockFlowId);
+        expect((response as any).headers['xFastlyId']).toBe(mockFlowId);
       });
 
       it('should throw an error if the response is undefined', async () => {
@@ -475,13 +475,13 @@ describe('APIClient', () => {
           ...payload,
           flowId: mockFlowId,
           headers: {
-            xFlowId: mockFlowId,
+            xFastlyId: mockFlowId,
             xNylasApiVersion: mockHeaders['x-nylas-api-version'],
             xRequestId: mockHeaders['x-request-id'],
           },
         });
         expect((result as any).flowId).toBe(mockFlowId);
-        expect((result as any).headers['xFlowId']).toBe(mockFlowId);
+        expect((result as any).headers['xFastlyId']).toBe(mockFlowId);
       });
     });
   });
