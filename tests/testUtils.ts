@@ -11,7 +11,7 @@ export const mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 
 export const mockResponse = (body: string, status = 200): any => {
   const headersMap = new Map<string, string>();
-  
+
   const headersObj = {
     entries: () => headersMap.entries(),
     get: (key: string) => headersMap.get(key),
@@ -22,9 +22,9 @@ export const mockResponse = (body: string, status = 200): any => {
         rawHeaders[key] = [value];
       });
       return rawHeaders;
-    }
+    },
   };
-  
+
   return {
     status,
     text: jest.fn().mockResolvedValue(body),

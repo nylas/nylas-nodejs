@@ -205,9 +205,9 @@ describe('APIClient', () => {
         const mockFlowId = 'test-flow-123';
         const mockHeaders = {
           'x-request-id': 'req-123',
-          'x-nylas-api-version': 'v3'
+          'x-nylas-api-version': 'v3',
         };
-        
+
         const payload = {
           id: 123,
           name: 'test',
@@ -219,21 +219,25 @@ describe('APIClient', () => {
         Object.entries(mockHeaders).forEach(([key, value]) => {
           mockResp.headers.set(key, value);
         });
-        
+
         const requestWithResponse = await client.requestWithResponse(mockResp);
 
         expect(requestWithResponse).toEqual({
           ...payload,
           flowId: mockFlowId,
           headers: {
-            'xFlowId': mockFlowId,
-            'xNylasApiVersion': mockHeaders['x-nylas-api-version'],
-            'xRequestId': mockHeaders['x-request-id'],
-          }
+            xFlowId: mockFlowId,
+            xNylasApiVersion: mockHeaders['x-nylas-api-version'],
+            xRequestId: mockHeaders['x-request-id'],
+          },
         });
         expect((requestWithResponse as any).flowId).toBe(mockFlowId);
-        expect((requestWithResponse as any).headers['xFlowId']).toBe(mockFlowId);
-        expect((requestWithResponse as any).headers['xRequestId']).toBe(mockHeaders['x-request-id']);
+        expect((requestWithResponse as any).headers['xFlowId']).toBe(
+          mockFlowId
+        );
+        expect((requestWithResponse as any).headers['xRequestId']).toBe(
+          mockHeaders['x-request-id']
+        );
       });
     });
 
@@ -242,36 +246,36 @@ describe('APIClient', () => {
         const mockFlowId = 'test-flow-abc';
         const mockHeaders = {
           'x-request-id': 'req-abc',
-          'x-nylas-api-version': 'v3'
+          'x-nylas-api-version': 'v3',
         };
-        
+
         const payload = {
           id: 123,
           name: 'test',
           isValid: true,
         };
-        
+
         const mockResp = mockResponse(JSON.stringify(payload));
         mockResp.headers.set('x-fastly-id', mockFlowId);
         Object.entries(mockHeaders).forEach(([key, value]) => {
           mockResp.headers.set(key, value);
         });
-        
+
         mockedFetch.mockImplementationOnce(() => Promise.resolve(mockResp));
 
         const response = await client.request({
           path: '/test',
           method: 'GET',
         });
-        
+
         expect(response).toEqual({
           ...payload,
           flowId: mockFlowId,
           headers: {
-            'xFlowId': mockFlowId,
-            'xNylasApiVersion': mockHeaders['x-nylas-api-version'],
-            'xRequestId': mockHeaders['x-request-id'],
-          }
+            xFlowId: mockFlowId,
+            xNylasApiVersion: mockHeaders['x-nylas-api-version'],
+            xRequestId: mockHeaders['x-request-id'],
+          },
         });
         expect((response as any).flowId).toBe(mockFlowId);
         expect((response as any).headers['xFlowId']).toBe(mockFlowId);
@@ -314,9 +318,9 @@ describe('APIClient', () => {
         const mockFlowId = 'auth-flow-123';
         const mockHeaders = {
           'x-request-id': 'auth-req-123',
-          'x-nylas-api-version': 'v3'
+          'x-nylas-api-version': 'v3',
         };
-        
+
         const payload = {
           requestId: 'abc123',
           error: 'Test error',
@@ -324,12 +328,15 @@ describe('APIClient', () => {
           errorDescription: 'Nylas SDK Test error',
           errorUri: 'https://test.api.nylas.com/docs/errors#test-error',
         };
-        
+
         const mockResp = mockResponse(JSON.stringify(payload), 400);
         mockResp.headers.set('x-fastly-id', mockFlowId);
         mockResp.headers.set('x-request-id', mockHeaders['x-request-id']);
-        mockResp.headers.set('x-nylas-api-version', mockHeaders['x-nylas-api-version']);
-        
+        mockResp.headers.set(
+          'x-nylas-api-version',
+          mockHeaders['x-nylas-api-version']
+        );
+
         mockedFetch.mockImplementation(() => Promise.resolve(mockResp));
 
         try {
@@ -361,9 +368,9 @@ describe('APIClient', () => {
         const mockFlowId = 'api-flow-456';
         const mockHeaders = {
           'x-request-id': 'api-req-456',
-          'x-nylas-api-version': 'v3'
+          'x-nylas-api-version': 'v3',
         };
-        
+
         const payload = {
           requestId: 'abc123',
           error: {
@@ -375,8 +382,11 @@ describe('APIClient', () => {
         const mockResp = mockResponse(JSON.stringify(payload), 400);
         mockResp.headers.set('x-fastly-id', mockFlowId);
         mockResp.headers.set('x-request-id', mockHeaders['x-request-id']);
-        mockResp.headers.set('x-nylas-api-version', mockHeaders['x-nylas-api-version']);
-        
+        mockResp.headers.set(
+          'x-nylas-api-version',
+          mockHeaders['x-nylas-api-version']
+        );
+
         mockedFetch.mockImplementation(() => Promise.resolve(mockResp));
 
         try {
@@ -441,34 +451,34 @@ describe('APIClient', () => {
         const mockFlowId = 'success-flow-789';
         const mockHeaders = {
           'x-request-id': 'success-req-789',
-          'x-nylas-api-version': 'v3'
+          'x-nylas-api-version': 'v3',
         };
-        
-        const payload = { 
+
+        const payload = {
           data: 'test',
         };
-        
+
         const mockResp = mockResponse(JSON.stringify(payload));
         mockResp.headers.set('x-fastly-id', mockFlowId);
         Object.entries(mockHeaders).forEach(([key, value]) => {
           mockResp.headers.set(key, value);
         });
-        
+
         mockedFetch.mockImplementationOnce(() => Promise.resolve(mockResp));
 
         const result = await client.request({
           path: '/test',
           method: 'GET',
         });
-        
+
         expect(result).toEqual({
           ...payload,
           flowId: mockFlowId,
           headers: {
-            'xFlowId': mockFlowId,
-            'xNylasApiVersion': mockHeaders['x-nylas-api-version'],
-            'xRequestId': mockHeaders['x-request-id'],
-          }
+            xFlowId: mockFlowId,
+            xNylasApiVersion: mockHeaders['x-nylas-api-version'],
+            xRequestId: mockHeaders['x-request-id'],
+          },
         });
         expect((result as any).flowId).toBe(mockFlowId);
         expect((result as any).headers['xFlowId']).toBe(mockFlowId);
