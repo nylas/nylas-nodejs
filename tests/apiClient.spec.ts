@@ -206,6 +206,8 @@ describe('APIClient', () => {
           id: 123,
           name: 'test',
           isValid: true,
+          headers: {},
+          flowId: undefined,
         };
 
         const requestWithResponse = await client.requestWithResponse(
@@ -222,6 +224,8 @@ describe('APIClient', () => {
           id: 123,
           name: 'test',
           isValid: true,
+          headers: {},
+          flowId: undefined,
         };
         mockedFetch.mockImplementationOnce(() =>
           Promise.resolve(mockResponse(JSON.stringify(payload)))
@@ -361,7 +365,7 @@ describe('APIClient', () => {
       });
 
       it('should complete request within timeout period', async () => {
-        const payload = { data: 'test' };
+        const payload = { data: 'test', flowId: undefined, headers: {} };
         mockedFetch.mockImplementationOnce(() =>
           Promise.resolve(mockResponse(JSON.stringify(payload)))
         );

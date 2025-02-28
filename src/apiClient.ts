@@ -174,25 +174,31 @@ export default class APIClient {
             options.path.includes('connect/token') ||
             options.path.includes('connect/revoke');
 
+          const headers = response?.headers?.entries
+            ? Object.fromEntries(response.headers.entries())
+            : {};
+          const flowId = headers['x-flow-id'];
+          const requestId = headers['x-request-id'];
+
           if (isAuthRequest) {
             error = new NylasOAuthError(
               camelCaseError,
               response.status,
-              response.headers.get('x-request-id') || undefined,
-              response.headers.get('x-flow-id') || undefined,
-              Object.fromEntries(response.headers.entries())
+              requestId,
+              flowId,
+              headers
             );
           } else {
             error = new NylasApiError(
               camelCaseError,
               response.status,
-              response.headers.get('x-request-id') || undefined,
-              response.headers.get('x-flow-id') || undefined,
-              Object.fromEntries(response.headers.entries())
+              requestId,
+              flowId,
+              headers
             );
           }
         } catch (e) {
-          const flowId = response.headers.get('x-flow-id');
+          const flowId = response?.headers?.get('x-flow-id') || undefined;
           throw new Error(
             `Received an error but could not parse response from the server${
               flowId ? ` with flow ID ${flowId}` : ''
@@ -249,7 +255,9 @@ export default class APIClient {
   }
 
   async requestWithResponse<T>(response: Response): Promise<T> {
-    const headers = Object.fromEntries(response.headers.entries());
+    const headers = response?.headers?.entries
+      ? Object.fromEntries(response.headers.entries())
+      : {};
     const flowId = headers['x-flow-id'];
     const text = await response.text();
 
