@@ -128,7 +128,9 @@ export class Events extends Resource {
     identifier,
     queryParams,
     overrides,
-  }: ListImportEventParams & Overrides): AsyncListResponse<NylasListResponse<Event>> {
+  }: ListImportEventParams & Overrides): AsyncListResponse<
+    NylasListResponse<Event>
+  > {
     return super._list({
       queryParams,
       path: `/v3/grants/${identifier}/events/import`,
