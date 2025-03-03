@@ -128,6 +128,88 @@ describe('Events', () => {
     //TODO::More iterator tests
   });
 
+  describe('listImportEvents', () => {
+    it('should call apiClient.request with the correct params', async () => {
+      await events.listImportEvents({
+        identifier: 'id123',
+        queryParams: {
+          calendarId: 'calendar123',
+          start: 1617235200,
+          end: 1619827200,
+          limit: 100,
+          select: 'id,name',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/events/import',
+        queryParams: {
+          calendarId: 'calendar123',
+          start: 1617235200,
+          end: 1619827200,
+          limit: 100,
+          select: 'id,name',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+
+    it('should paginate correctly with page_token for import events', async () => {
+      apiClient.request.mockResolvedValueOnce({
+        requestId: 'request123',
+        data: [
+          {
+            id: 'id',
+            name: 'name',
+          },
+        ],
+        nextCursor: 'cursor123',
+      });
+      const eventList = await events.listImportEvents({
+        identifier: 'id123',
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+      apiClient.request.mockResolvedValueOnce({
+        requestId: 'request123',
+        data: [
+          {
+            id: 'id',
+            name: 'name',
+          },
+        ],
+      });
+      await eventList.next();
+
+      expect(apiClient.request).toBeCalledTimes(2);
+      expect(apiClient.request).toHaveBeenLastCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/events/import',
+        queryParams: {
+          calendarId: 'calendar123',
+          pageToken: 'cursor123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+  });
+
   describe('find', () => {
     it('should call apiClient.request with the correct params', async () => {
       await events.find({

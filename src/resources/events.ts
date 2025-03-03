@@ -5,6 +5,7 @@ import {
   DestroyEventQueryParams,
   Event,
   FindEventQueryParams,
+  ListImportEventQueryParams,
   ListEventQueryParams,
   SendRsvpQueryParams,
   SendRsvpRequest,
@@ -76,6 +77,15 @@ export interface DestroyEventParams {
 
 /**
  * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ */
+export interface ListImportEventParams {
+  identifier: string;
+  queryParams: ListImportEventQueryParams;
+}
+
+/**
+ * @property identifier The identifier of the grant to act upon
  * @property eventId The id of the Event to update.
  * @property queryParams The query parameters to include in the request
  * @property requestBody The values to send the RSVP with
@@ -105,6 +115,25 @@ export class Events extends Resource {
     return super._list({
       queryParams,
       path: `/v3/grants/${identifier}/events`,
+      overrides,
+    });
+  }
+
+  /**
+   * (Beta) Import events from a calendar within a given time frame
+   * This is useful when you want to import, store, and synchronize events from the time frame to your application
+   * @return The list of imported Events
+   */
+  public listImportEvents({
+    identifier,
+    queryParams,
+    overrides,
+  }: ListImportEventParams & Overrides): AsyncListResponse<
+    NylasListResponse<Event>
+  > {
+    return super._list({
+      queryParams,
+      path: `/v3/grants/${identifier}/events/import`,
       overrides,
     });
   }

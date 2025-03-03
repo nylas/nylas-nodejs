@@ -334,6 +334,27 @@ export type DestroyEventQueryParams = CreateEventQueryParams;
 export type SendRsvpQueryParams = FindEventQueryParams;
 
 /**
+ * Interface representing the query parameters for importing events.
+ */
+export interface ListImportEventQueryParams extends ListQueryParams {
+  /**
+   * (Required) Calendar ID to import events from. "primary" is a supported value indicating the user's primary calendar.
+   * Note: "primary" is not supported for iCloud.
+   */
+  calendarId: string;
+  /**
+   * Filter for events that start at or after the specified time, in Unix timestamp format.
+   * Defaults to the time of the request.
+   */
+  start?: number;
+  /**
+   * Filter for events that end at or before the specified time, in Unix timestamp format.
+   * Defaults to one month from the time of the request.
+   */
+  end?: number;
+}
+
+/**
  * Enum representing the status of an event.
  */
 type Status = 'confirmed' | 'tentative' | 'cancelled';
