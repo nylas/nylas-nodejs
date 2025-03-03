@@ -1,7 +1,9 @@
 # Changelog
 
-### Unreleased
+### 7.5.0 / 2025-03-03
 * Add support for `listImportEvents` method to import events from a specified calendar within a given time frame
+* Add support for returning all response headers in node sdk for error responses 
+* Fixed grants support for queryParams in list method first parameter
 
 ### 7.7.4 / 2025-01-23
 * Fix: any_email was not transformed to a comma delimited list for messages.list
