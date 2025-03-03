@@ -1,5 +1,8 @@
 # Changelog
 
+### Unreleased
+* Add support for `listImportEvents` method to import events from a specified calendar within a given time frame
+
 ### 7.7.4 / 2025-01-23
 * Fix: any_email was not transformed to a comma delimited list for messages.list
 
@@ -91,7 +94,7 @@
 * **BREAKING CHANGE**: Dropped the use of 'Collections' in favor of 'Resources'
 * **BREAKING CHANGE**: Removed all REST calls from models and moved them directly into resources
 * **REMOVED**: Local Webhook development support is removed due to incompatibility
-* Rewrote the majority of SDK to be more modular and efficient
+* Rewritten the majority of SDK to be more modular and efficient
 * Removed the use of custom strings for serialization and deserialization, now automatically converting to camelCase and from the API's snake_case
 * Added support for both ES6 and CommonJS module systems
 * Created models for all API resources and endpoints, for all HTTP methods to reduce confusion on which fields are available for each endpoint
@@ -416,7 +419,7 @@ Note: version 4.2.1 was not released.
 * Added `upgrade()` and `downgrade()` for account management
 * Added `getRaw()` for retrieving raw messages
 * **BREAKING CHANGE**: Changed API for sending raw messages to use `draft.send()` instead of `Message.sendRaw()`
-* Changed `list()` to override default `offset` with user’s
+* Changed `list()` to override default `offset` with user's
 * **BREAKING CHANGE**: Changed models for `Contact`, `Draft`, `Event`, `File`, `Folder`, `Message`, and `Thread` to accurately reflect the attribute that the API returns
 * Return headers correctly for `expanded` view for `Message` objects
 * **BREAKING CHANGE**: Return `Message` object instead of `Draft` object after send
