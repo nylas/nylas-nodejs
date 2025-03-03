@@ -12,6 +12,15 @@ import FormData from 'form-data';
 import { snakeCase } from 'change-case';
 
 /**
+ * The header key for the debugging flow ID
+ */
+export const FLOW_ID_HEADER = 'x-fastly-id';
+/**
+ * The header key for the request ID
+ */
+export const REQUEST_ID_HEADER = 'x-request-id';
+
+/**
  * Options for a request to the Nylas API
  * @property path The path to the API endpoint
  * @property method The HTTP method to use
@@ -162,6 +171,12 @@ export default class APIClient {
         throw new Error('Failed to fetch response');
       }
 
+      const headers = response?.headers?.entries
+        ? Object.fromEntries(response.headers.entries())
+        : {};
+      const flowId = headers[FLOW_ID_HEADER];
+      const requestId = headers[REQUEST_ID_HEADER];
+
       if (response.status > 299) {
         const text = await response.text();
         let error: Error;
@@ -175,13 +190,27 @@ export default class APIClient {
             options.path.includes('connect/revoke');
 
           if (isAuthRequest) {
-            error = new NylasOAuthError(camelCaseError, response.status);
+            error = new NylasOAuthError(
+              camelCaseError,
+              response.status,
+              requestId,
+              flowId,
+              headers
+            );
           } else {
-            error = new NylasApiError(camelCaseError, response.status);
+            error = new NylasApiError(
+              camelCaseError,
+              response.status,
+              requestId,
+              flowId,
+              headers
+            );
           }
         } catch (e) {
           throw new Error(
-            `Received an error but could not parse response from the server: ${text}`
+            `Received an error but could not parse response from the server${
+              flowId ? ` with flow ID ${flowId}` : ''
+            }: ${text}`
           );
         }
 
@@ -234,10 +263,17 @@ export default class APIClient {
   }
 
   async requestWithResponse<T>(response: Response): Promise<T> {
+    const headers = response?.headers?.entries
+      ? Object.fromEntries(response.headers.entries())
+      : {};
+    const flowId = headers[FLOW_ID_HEADER];
     const text = await response.text();
 
     try {
       const responseJSON = JSON.parse(text);
+      // Inject the flow ID and headers into the response
+      responseJSON.flowId = flowId;
+      responseJSON.headers = headers;
       return objKeysToCamelCase(responseJSON, ['metadata']);
     } catch (e) {
       throw new Error(`Could not parse response from the server: ${text}`);
