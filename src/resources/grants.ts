@@ -10,6 +10,14 @@ import {
   ListGrantsQueryParams,
   UpdateGrantRequest,
 } from '../models/grants.js';
+import { ListQueryParams } from '../models/listQueryParams.js';
+
+/**
+ * @property queryParams The query parameters to include in the request
+ */
+export interface ListGrantsParams {
+  queryParams?: ListGrantsQueryParams;
+}
 
 /**
  * @property grantId The id of the Grant to retrieve.
@@ -45,13 +53,16 @@ export class Grants extends Resource {
    * @return The list of Grants
    */
   public async list(
-    { overrides }: Overrides = {},
-    queryParams?: ListGrantsQueryParams
+    { overrides, queryParams }: Overrides & ListGrantsParams = {},
+    /**
+     * @deprecated Use `queryParams` instead.
+     */
+    _queryParams?: ListQueryParams
   ): Promise<NylasListResponse<Grant>> {
     return super._list<NylasListResponse<Grant>>({
-      queryParams,
+      queryParams: queryParams ?? _queryParams ?? undefined,
       path: `/v3/grants`,
-      overrides,
+      overrides: overrides ?? {},
     });
   }
 
