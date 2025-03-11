@@ -1,3 +1,6 @@
+### Unreleased
+* Add support for Notetaker API endpoints
+
 # Changelog
 
 ### 7.8.0 / 2025-03-03
