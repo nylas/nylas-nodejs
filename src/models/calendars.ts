@@ -1,4 +1,58 @@
 import { ListQueryParams } from './listQueryParams.js';
+import { NotetakerMeetingSettings } from './notetakers.js';
+
+/**
+ * Interface for Calendar Notetaker participant filter
+ */
+export interface CalendarNotetakerParticipantFilter {
+  /**
+   * Only have meeting bot join meetings with greater than or equal to this number of participants
+   */
+  participantsGte?: number;
+  /**
+   * Only have meeting bot join meetings with less than or equal to this number of participants
+   */
+  participantsLte?: number;
+}
+
+/**
+ * Interface for Calendar Notetaker rules
+ */
+export interface CalendarNotetakerRules {
+  /**
+   * Types of events to include for notetaking. This is a union of events that should have a Notetaker sent to them.
+   * "internal": Events where the host domain matches all participants' domain names
+   * "external": Events where the host domain differs from any participant's domain name
+   * "own_events": Events where the host is the same as the user's grant
+   * "participant_only": Events where the user's grant is a participant but not the host
+   * "all": When all options are included, all events with meeting links will have Notetakers
+   */
+  eventSelection?: Array<'internal' | 'external' | 'all' | 'ownEvents' | 'participantOnly'>;
+  /**
+   * Filters to apply based on the number of participants. This is an intersection with the event_selection.
+   * When null, there are no restrictions on the number of participants for notetaker events.
+   */
+  participantFilter?: CalendarNotetakerParticipantFilter;
+}
+
+/**
+ * Interface for Calendar Notetaker settings
+ */
+export interface CalendarNotetaker {
+  /**
+   * The display name for the Notetaker bot.
+   * @default "Nylas Notetaker"
+   */
+  name?: string;
+  /**
+   * Notetaker Meeting Settings
+   */
+  meetingSettings?: NotetakerMeetingSettings;
+  /**
+   * Rules for when the Notetaker should join a meeting.
+   */
+  rules?: CalendarNotetakerRules;
+}
 
 /**
  * Interface of the query parameters for listing calendars.
@@ -45,6 +99,10 @@ export interface CreateCalenderRequest {
    *  A list of key-value pairs storing additional data.
    */
   metadata?: Record<string, string>;
+  /**
+   * Notetaker meeting bot settings
+   */
+  notetaker?: CalendarNotetaker;
 }
 
 /**
@@ -122,4 +180,8 @@ export interface Calendar {
    * A list of key-value pairs storing additional data.
    */
   metadata?: Record<string, unknown>;
+  /**
+   * Notetaker meeting bot settings
+   */
+  notetaker?: CalendarNotetaker;
 }

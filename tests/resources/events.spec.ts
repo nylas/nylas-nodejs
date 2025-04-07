@@ -275,6 +275,59 @@ describe('Events', () => {
         },
       });
     });
+
+    it('should call apiClient.request with notetaker settings', async () => {
+      await events.create({
+        identifier: 'id123',
+        requestBody: {
+          when: {
+            time: 123,
+            timezone: 'America/Toronto',
+          },
+          notetaker: {
+            name: 'Custom Notetaker',
+            meetingSettings: {
+              videoRecording: true,
+              audioRecording: true,
+              transcription: true,
+            },
+          },
+        },
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/id123/events',
+        body: {
+          when: {
+            time: 123,
+            timezone: 'America/Toronto',
+          },
+          notetaker: {
+            name: 'Custom Notetaker',
+            meetingSettings: {
+              videoRecording: true,
+              audioRecording: true,
+              transcription: true,
+            },
+          },
+        },
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
   });
 
   describe('update', () => {
