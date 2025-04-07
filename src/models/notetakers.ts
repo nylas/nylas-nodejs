@@ -1,4 +1,4 @@
-import { NylasListResponse } from "./response";
+import { NylasListResponse } from "./response.js";
 import { ListQueryParams } from './listQueryParams.js';
 
 /**
