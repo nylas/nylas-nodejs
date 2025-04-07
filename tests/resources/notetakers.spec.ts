@@ -46,6 +46,96 @@ describe('Notetakers', () => {
         path: '/v3/notetakers',
       });
     });
+
+    it('should support filtering by state', async () => {
+      await notetakers.list({
+        queryParams: {
+          state: 'attending',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/notetakers',
+        queryParams: {
+          state: 'attending',
+        },
+      });
+    });
+
+    it('should support filtering by join time range', async () => {
+      await notetakers.list({
+        queryParams: {
+          joinTimeFrom: 1683936000,
+          joinTimeUntil: 1684022400,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/notetakers',
+        queryParams: {
+          joinTimeFrom: 1683936000,
+          joinTimeUntil: 1684022400,
+        },
+      });
+    });
+
+    it('should support pagination parameters', async () => {
+      apiClient.request.mockResolvedValueOnce({
+        data: [],
+        requestId: 'test-request-id',
+        nextCursor: 'next_cursor',
+        prevCursor: 'prev_cursor',
+      });
+
+      await notetakers.list({
+        queryParams: {
+          limit: 10,
+          pageToken: 'next_page_token',
+          prevPageToken: 'prev_page_token',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/notetakers',
+        queryParams: {
+          limit: 10,
+          pageToken: 'next_page_token',
+          prevPageToken: 'prev_page_token',
+        },
+      });
+    });
+
+    it('should support combining multiple query parameters', async () => {
+      apiClient.request.mockResolvedValueOnce({
+        data: [],
+        requestId: 'test-request-id',
+        nextCursor: 'next_cursor',
+      });
+
+      await notetakers.list({
+        identifier: 'id123',
+        queryParams: {
+          state: 'media_processing',
+          joinTimeFrom: 1683936000,
+          limit: 25,
+          pageToken: 'next_page_token',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/notetakers',
+        queryParams: {
+          state: 'media_processing',
+          joinTimeFrom: 1683936000,
+          limit: 25,
+          pageToken: 'next_page_token',
+        },
+      });
+    });
   });
 
   describe('create', () => {

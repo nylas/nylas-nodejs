@@ -1,4 +1,5 @@
 import { NylasListResponse } from "./response";
+import { ListQueryParams } from './listQueryParams.js';
 
 /**
  * Enum representing the supported meeting providers.
@@ -165,8 +166,6 @@ export interface UpdateNotetakerRequest {
   meetingSettings?: Partial<NotetakerMeetingSettings>;
 }
 
-
-
 export interface ListNotetakersResponse extends NylasListResponse<Notetaker> {
   /**
    * A cursor pointing to the previous page of results for the request.
@@ -177,4 +176,42 @@ export interface ListNotetakersResponse extends NylasListResponse<Notetaker> {
    * A cursor pointing to the next page of results for the request.
    */
   nextCursor?: string;
+}
+
+/**
+ * Interface representing the query parameters for listing notetakers.
+ */
+export interface ListNotetakersQueryParams extends ListQueryParams {
+  /**
+   * Filter for Notetaker bots with the specified meeting state.
+   */
+  state?: NotetakerState;
+
+  /**
+   * Filter for Notetaker bots that are scheduled to join meetings after the specified time, in Unix timestamp format.
+   */
+  joinTimeFrom?: number;
+
+  /**
+   * Filter for Notetaker bots that are scheduled to join meetings until the specified time, in Unix timestamp format.
+   */
+  joinTimeUntil?: number;
+
+  /**
+   * The maximum number of objects to return.
+   * This field defaults to 50. The maximum allowed value is 200.
+   */
+  limit?: number;
+
+  /**
+   * An identifier that specifies which page of data to return.
+   * This value should be taken from the next_cursor response field.
+   */
+  pageToken?: string;
+
+  /**
+   * An identifier that specifies which page of data to return.
+   * This value should be taken from the prev_cursor response field.
+   */
+  prevPageToken?: string;
 }

@@ -5,15 +5,18 @@ import {
   Notetaker,
   NotetakerMedia,
   UpdateNotetakerRequest,
+  ListNotetakersQueryParams,
 } from '../models/notetakers.js';
 import { NylasBaseResponse, NylasResponse } from '../models/response.js';
 import { AsyncListResponse, Resource } from './resource.js';
 
 /**
  * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to filter the list of Notetakers
  */
 export interface ListNotetakersParams {
   identifier?: string;
+  queryParams?: ListNotetakersQueryParams;
 }
 
 /**
@@ -80,14 +83,17 @@ export interface DownloadNotetakerMediaParams {
 export class Notetakers extends Resource {
   /**
    * Return all Notetakers
+   * @param params The parameters to list Notetakers with
    * @return The list of Notetakers
    */
   public list({
     identifier,
+    queryParams,
     overrides,
   }: ListNotetakersParams & Overrides): AsyncListResponse<ListNotetakersResponse> {
     return super._list({
       path: identifier ? `/v3/grants/${identifier}/notetakers` : '/v3/notetakers',
+      queryParams,
       overrides,
     });
   }
