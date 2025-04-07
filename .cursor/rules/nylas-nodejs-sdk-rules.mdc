@@ -1,0 +1,169 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Nylas Node.js SDK Development Rules
+
+## Rule 1: Adding a New API Resource
+
+### Description
+User wants to add support for a completely new Nylas API resource (e.g., /v3/widgets).
+
+### Conditions
+- Matches files: Any file
+- Code selection matches: Case-insensitive phrases like "add new resource", "new endpoint group", etc.
+
+### Instructions
+
+To add support for a new Nylas API resource (let's call it `{{RESOURCE_NAME}}`), follow these steps:
+
+#### 1. Define Models
+- Create a new file `src/models/{{RESOURCE_NAME_LC}}.ts`
+- Define TypeScript interfaces/types for:
+  - The main resource object (e.g., `{{RESOURCE_NAME}}`)
+  - Request bodies (e.g., `Create{{RESOURCE_NAME}}Request`, `Update{{RESOURCE_NAME}}Request`)
+  - Query parameters (e.g., `List{{RESOURCE_NAME}}QueryParams`, `Find{{RESOURCE_NAME}}QueryParams`)
+  - Handle potential response structures (single object `NylasResponse<T>`, list `NylasListResponse<T>`)
+- Export these new types from `src/models/index.ts`
+
+#### 2. Define Resource Class
+- Create a new file `src/resources/{{RESOURCE_NAME_LC}}.ts`
+- Create a class `{{RESOURCE_NAME}}` that extends `Resource` from `src/resources/resource.ts`
+- Import the models you defined
+- Implement public methods for each endpoint (e.g., `list`, `find`, `create`, `update`, `destroy`)
+- Define parameter interfaces for each method
+- Call appropriate protected methods from the base `Resource` class
+
+#### 3. Register Resource
+- Open `src/nylas.ts`
+- Import the new `{{RESOURCE_NAME}}` class
+- Add a property for the resource to the `Nylas` class
+- Instantiate in the `Nylas` constructor
+
+#### 4. Add Tests
+- Create a new test file `tests/resources/{{RESOURCE_NAME_LC}}.test.ts`
+- Write tests for each method in the new resource class
+- Use mocking to simulate `apiClient` behavior
+
+## Rule 2: Adding a New Endpoint to an Existing Resource
+
+### Description
+User wants to add a new endpoint to an existing API resource (e.g., adding 'send RSVP' to Events).
+
+### Conditions
+- Matches files: `src/resources/` or `src/models/` TypeScript files
+- Code selection matches: Case-insensitive phrases like "add endpoint", "new method"
+
+### Instructions
+
+#### 1. Define/Update Models
+- Open `src/models/{{RESOURCE_NAME_LC}}.ts`
+- Add or update TypeScript interfaces/types for:
+  - Request bodies
+  - Query parameters
+  - Response objects (if unique)
+- Ensure types are exported from `src/models/index.ts`
+
+#### 2. Add Method to Resource Class
+- Open `src/resources/{{RESOURCE_NAME_LC}}.ts`
+- Add a new public method to the `{{RESOURCE_NAME}}` class
+- Define a parameter interface
+- Call appropriate base `Resource` class method
+- Provide correct API path, query parameters, and request body
+
+#### 3. Add Tests
+- Open `tests/resources/{{RESOURCE_NAME_LC}}.test.ts`
+- Add new tests for the method
+- Test different scenarios and mock `apiClient`
+
+## Rule 3: Updating an Existing Endpoint
+
+### Description
+User wants to modify an existing API endpoint (e.g., change parameters, update response).
+
+### Conditions
+- Matches files: `src/resources/` or `src/models/` TypeScript files
+- Code selection matches: Case-insensitive phrases like "update", "modify", "change"
+
+### Instructions
+
+#### 1. Update Models
+- Open `src/models/{{RESOURCE_NAME_LC}}.ts`
+- Modify TypeScript interfaces/types for:
+  - Request bodies
+  - Query parameters
+  - Response objects
+- Update exports in `src/models/index.ts`
+
+#### 2. Update Resource Method
+- Open `src/resources/{{RESOURCE_NAME_LC}}.ts`
+- Locate the `{{METHOD_NAME}}` method
+- Update parameter interface
+- Modify base `Resource` method call if needed
+
+#### 3. Update Tests
+- Open `tests/resources/{{RESOURCE_NAME_LC}}.test.ts`
+- Update tests to reflect parameter and response changes
+
+## Rule 4: SDK Code Structure Reference
+
+### Directory Structure
+
+- `src/`: Core source code
+  - `apiClient.ts`: HTTP requests and authentication
+  - `models/`: TypeScript interfaces and types
+  - `resources/`: Resource classes for API endpoints
+  - `resource.ts`: Base resource class
+  - `nylas.ts`: SDK entry point
+  - `config.ts`: SDK configuration
+
+- `tests/`: Unit and integration tests
+  - `resources/`: Tests for resource classes
+
+### Workflow for Adding/Updating Endpoints
+1. Define/update models in `src/models/`
+2. Add/update methods in `src/resources/`
+3. Register new resources in `src/nylas.ts`
+4. Add/update tests in `tests/resources/`
+
+## Model Definitions
+
+### Property Naming
+- Use camelCase for all model properties
+- Ensure property names are descriptive and follow a consistent naming convention
+
+### Type and Interface Guidelines
+- Reuse existing interfaces and types when applicable
+- Prefer optional properties (using `?`) for fields that may not always be present
+- Create clear, focused interfaces that represent a single concept
+
+### Example of a Well-Structured Model
+```typescript
+export interface User {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  createdAt?: number;
+  updatedAt?: number;
+  // Reuse existing types if applicable
+  contacts?: Contact[];
+}
+```
+
+### Best Practices
+- Keep models lean and focused
+- Use type annotations to provide clarity
+- Avoid unnecessary complexity in type definitions
+- Prefer composition over inheritance when defining model types
+
+## Constants and Enums
+- Use UPPER_SNAKE_CASE for constant values
+- Use PascalCase for enum names
+- Use camelCase for enum members when appropriate
+
+## General Coding Guidelines
+- Follow existing patterns in the codebase
+- Maintain consistency with current implementation
+- Prioritize readability and maintainability
