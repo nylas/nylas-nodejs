@@ -90,9 +90,13 @@ export class Notetakers extends Resource {
     identifier,
     queryParams,
     overrides,
-  }: ListNotetakersParams & Overrides): AsyncListResponse<ListNotetakersResponse> {
+  }: ListNotetakersParams & Overrides): AsyncListResponse<
+    ListNotetakersResponse
+  > {
     return super._list({
-      path: identifier ? `/v3/grants/${identifier}/notetakers` : '/v3/notetakers',
+      path: identifier
+        ? `/v3/grants/${identifier}/notetakers`
+        : '/v3/notetakers',
       queryParams,
       overrides,
     });
@@ -109,7 +113,9 @@ export class Notetakers extends Resource {
     overrides,
   }: CreateNotetakerParams & Overrides): Promise<NylasResponse<Notetaker>> {
     return this._create({
-      path: identifier ? `/v3/grants/${identifier}/notetakers` : '/v3/notetakers',
+      path: identifier
+        ? `/v3/grants/${identifier}/notetakers`
+        : '/v3/notetakers',
       requestBody,
       overrides,
     });
@@ -126,7 +132,9 @@ export class Notetakers extends Resource {
     overrides,
   }: FindNotetakerParams & Overrides): Promise<NylasResponse<Notetaker>> {
     return this._find({
-      path: identifier ? `/v3/grants/${identifier}/notetakers/${notetakerId}` : `/v3/notetakers/${notetakerId}`,
+      path: identifier
+        ? `/v3/grants/${identifier}/notetakers/${notetakerId}`
+        : `/v3/notetakers/${notetakerId}`,
       overrides,
     });
   }
@@ -143,7 +151,9 @@ export class Notetakers extends Resource {
     overrides,
   }: UpdateNotetakerParams & Overrides): Promise<NylasResponse<Notetaker>> {
     return this._updatePatch({
-      path: identifier ? `/v3/grants/${identifier}/notetakers/${notetakerId}` : `/v3/notetakers/${notetakerId}`,
+      path: identifier
+        ? `/v3/grants/${identifier}/notetakers/${notetakerId}`
+        : `/v3/notetakers/${notetakerId}`,
       requestBody,
       overrides,
     });
@@ -160,7 +170,9 @@ export class Notetakers extends Resource {
     overrides,
   }: CancelNotetakerParams & Overrides): Promise<NylasBaseResponse> {
     return this._destroy({
-      path: identifier ? `/v3/grants/${identifier}/notetakers/${notetakerId}` : `/v3/notetakers/${notetakerId}`,
+      path: identifier
+        ? `/v3/grants/${identifier}/notetakers/${notetakerId}`
+        : `/v3/notetakers/${notetakerId}`,
       overrides,
     });
   }
@@ -177,7 +189,9 @@ export class Notetakers extends Resource {
   }: LeaveNotetakerParams & Overrides): Promise<NylasBaseResponse> {
     return this.apiClient.request({
       method: 'POST',
-      path: identifier ? `/v3/grants/${identifier}/notetakers/${notetakerId}/leave` : `/v3/notetakers/${notetakerId}/leave`,
+      path: identifier
+        ? `/v3/grants/${identifier}/notetakers/${notetakerId}/leave`
+        : `/v3/notetakers/${notetakerId}/leave`,
       overrides,
     });
   }
@@ -196,7 +210,9 @@ export class Notetakers extends Resource {
   > {
     return this.apiClient.request({
       method: 'GET',
-      path: identifier ? `/v3/grants/${identifier}/notetakers/${notetakerId}/media` : `/v3/notetakers/${notetakerId}/media`,
+      path: identifier
+        ? `/v3/grants/${identifier}/notetakers/${notetakerId}/media`
+        : `/v3/notetakers/${notetakerId}/media`,
       overrides,
     });
   }

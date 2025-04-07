@@ -27,7 +27,9 @@ export interface CalendarNotetakerRules {
    * "participant_only": Events where the user's grant is a participant but not the host
    * "all": When all options are included, all events with meeting links will have Notetakers
    */
-  eventSelection?: Array<'internal' | 'external' | 'all' | 'ownEvents' | 'participantOnly'>;
+  eventSelection?: Array<
+    'internal' | 'external' | 'all' | 'ownEvents' | 'participantOnly'
+  >;
   /**
    * Filters to apply based on the number of participants. This is an intersection with the event_selection.
    * When null, there are no restrictions on the number of participants for notetaker events.

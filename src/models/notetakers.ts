@@ -1,10 +1,13 @@
-import { NylasListResponse } from "./response.js";
+import { NylasListResponse } from './response.js';
 import { ListQueryParams } from './listQueryParams.js';
 
 /**
  * Enum representing the supported meeting providers.
  */
-export type NotetakerMeetingProvider = 'Google Meet' | 'Microsoft Teams' | 'Zoom Meeting';
+export type NotetakerMeetingProvider =
+  | 'Google Meet'
+  | 'Microsoft Teams'
+  | 'Zoom Meeting';
 
 /**
  * Enum representing the current state of the Notetaker bot.
@@ -171,7 +174,7 @@ export interface ListNotetakersResponse extends NylasListResponse<Notetaker> {
    * A cursor pointing to the previous page of results for the request.
    */
   prevCursor?: string;
-  
+
   /**
    * A cursor pointing to the next page of results for the request.
    */
