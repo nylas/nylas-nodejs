@@ -15,6 +15,7 @@ export * from './freeBusy.js';
 export * from './grants.js';
 export * from './listQueryParams.js';
 export * from './messages.js';
+export * from './notetakers.js';
 export * from './redirectUri.js';
 export * from './response.js';
 export * from './scheduler.js';

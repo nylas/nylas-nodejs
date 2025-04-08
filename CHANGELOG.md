@@ -1,3 +1,7 @@
+### Unreleased
+* Add support for Notetaker API endpoints
+* Update calendar and event models with notetaker settings
+
 # Changelog
 
 ### 7.8.0 / 2025-03-03

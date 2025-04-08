@@ -2,6 +2,22 @@ import { Subset } from '../utils.js';
 import { NylasApiErrorResponseData } from './error.js';
 import { ListQueryParams } from './listQueryParams.js';
 import { NylasBaseResponse } from './response.js';
+import { NotetakerMeetingSettings } from './notetakers.js';
+
+/**
+ * Interface representing Notetaker settings
+ */
+export interface NotetakerSettings {
+  /**
+   * The display name for the Notetaker bot.
+   * Default: Nylas Notetaker
+   */
+  name?: string;
+  /**
+   * Notetaker Meeting Settings
+   */
+  meetingSettings?: NotetakerMeetingSettings;
+}
 
 /**
  * Interface representing a Nylas Event object.
@@ -116,6 +132,10 @@ export interface Event {
    * Master event id if recurring events.
    */
   masterEventId?: string;
+  /**
+   * Notetaker meeting bot settings
+   */
+  notetaker?: NotetakerSettings;
 }
 
 /**
@@ -189,6 +209,10 @@ export interface CreateEventRequest {
    * Whether participants of the event should be hidden.
    */
   hideParticipants?: boolean;
+  /**
+   * Notetaker meeting bot settings
+   */
+  notetaker?: NotetakerSettings;
 }
 
 /**

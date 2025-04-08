@@ -89,6 +89,63 @@ describe('Calendars', () => {
         },
       });
     });
+
+    it('should call apiClient.request with notetaker settings', async () => {
+      await calendars.create({
+        identifier: 'id123',
+        requestBody: {
+          name: 'My Calendar',
+          description: "My Calendar's Description",
+          notetaker: {
+            name: 'Custom Notetaker',
+            meetingSettings: {
+              videoRecording: true,
+              audioRecording: true,
+              transcription: true,
+            },
+            rules: {
+              eventSelection: ['internal', 'external'],
+              participantFilter: {
+                participantsGte: 3,
+                participantsLte: 10,
+              },
+            },
+          },
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/id123/calendars',
+        body: {
+          name: 'My Calendar',
+          description: "My Calendar's Description",
+          notetaker: {
+            name: 'Custom Notetaker',
+            meetingSettings: {
+              videoRecording: true,
+              audioRecording: true,
+              transcription: true,
+            },
+            rules: {
+              eventSelection: ['internal', 'external'],
+              participantFilter: {
+                participantsGte: 3,
+                participantsLte: 10,
+              },
+            },
+          },
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
   });
 
   describe('update', () => {
@@ -110,6 +167,58 @@ describe('Calendars', () => {
         path: '/v3/grants/id123/calendars/calendar123',
         body: {
           description: "Updated Calendar's Description",
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+
+    it('should call apiClient.request with updated notetaker settings', async () => {
+      await calendars.update({
+        identifier: 'id123',
+        calendarId: 'calendar123',
+        requestBody: {
+          notetaker: {
+            name: 'Updated Notetaker',
+            meetingSettings: {
+              videoRecording: false,
+              audioRecording: true,
+              transcription: false,
+            },
+            rules: {
+              eventSelection: ['all'],
+              participantFilter: {
+                participantsGte: 5,
+              },
+            },
+          },
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'PUT',
+        path: '/v3/grants/id123/calendars/calendar123',
+        body: {
+          notetaker: {
+            name: 'Updated Notetaker',
+            meetingSettings: {
+              videoRecording: false,
+              audioRecording: true,
+              transcription: false,
+            },
+            rules: {
+              eventSelection: ['all'],
+              participantFilter: {
+                participantsGte: 5,
+              },
+            },
+          },
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
