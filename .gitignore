@@ -13,3 +13,4 @@ coverage
 docs
 cjs
 esm
+.env

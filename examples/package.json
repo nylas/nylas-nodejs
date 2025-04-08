@@ -1,0 +1,21 @@
+{
+  "name": "nylas-examples",
+  "version": "1.0.0",
+  "description": "Examples for the Nylas Node.js SDK",
+  "private": true,
+  "scripts": {
+    "start": "ts-node",
+    "build": "tsc",
+    "notetakers": "ts-node notetakers/notetaker.ts",
+    "calendars": "ts-node calendars/event_with_notetaker.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "nylas": "file:.."
+  },
+  "devDependencies": {
+    "ts-node": "^10.8.0",
+    "typescript": "^5.0.0",
+    "@types/node": "^18.11.9"
+  }
+} 

@@ -16,6 +16,7 @@ import { Grants } from './resources/grants.js';
 import { Contacts } from './resources/contacts.js';
 import { Attachments } from './resources/attachments.js';
 import { Scheduler } from './resources/scheduler.js';
+import { Notetakers } from './resources/notetakers.js';
 
 /**
  * The entry point to the Node SDK
@@ -65,6 +66,10 @@ export default class Nylas {
    */
   public messages: Messages;
   /**
+   * Access the Notetakers API
+   */
+  public notetakers: Notetakers;
+  /**
    * Access the Threads API
    */
   public threads: Threads;
@@ -106,6 +111,7 @@ export default class Nylas {
     this.events = new Events(this.apiClient);
     this.grants = new Grants(this.apiClient);
     this.messages = new Messages(this.apiClient);
+    this.notetakers = new Notetakers(this.apiClient);
     this.threads = new Threads(this.apiClient);
     this.webhooks = new Webhooks(this.apiClient);
     this.folders = new Folders(this.apiClient);

@@ -9,10 +9,6 @@ import { NotetakerMeetingSettings } from './notetakers.js';
  */
 export interface NotetakerSettings {
   /**
-   * The Notetaker bot ID.
-   */
-  id?: string;
-  /**
    * The display name for the Notetaker bot.
    * Default: Nylas Notetaker
    */
