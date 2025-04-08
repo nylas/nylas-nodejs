@@ -6,6 +6,7 @@ import {
   NotetakerMedia,
   UpdateNotetakerRequest,
   ListNotetakersQueryParams,
+  NotetakerLeaveResponse,
 } from '../models/notetakers.js';
 import { NylasBaseResponse, NylasResponse } from '../models/response.js';
 import { AsyncListResponse, Resource } from './resource.js';
@@ -180,13 +181,13 @@ export class Notetakers extends Resource {
   /**
    * Remove a Notetaker from a meeting
    * @param params The parameters to remove the Notetaker from the meeting
-   * @returns Promise resolving to the base response with request ID and message
+   * @returns Promise resolving to a response containing the Notetaker ID and a message
    */
   public leave({
     identifier,
     notetakerId,
     overrides,
-  }: LeaveNotetakerParams & Overrides): Promise<NylasBaseResponse> {
+  }: LeaveNotetakerParams & Overrides): Promise<NylasResponse<NotetakerLeaveResponse>> {
     return this.apiClient.request({
       method: 'POST',
       path: identifier

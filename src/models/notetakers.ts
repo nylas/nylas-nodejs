@@ -218,3 +218,18 @@ export interface ListNotetakersQueryParams extends ListQueryParams {
    */
   prevPageToken?: string;
 }
+
+/**
+ * Interface representing the response from leaving a Notetaker session
+ */
+export interface NotetakerLeaveResponse {
+  /**
+   * The Notetaker ID.
+   */
+  id: string;
+  
+  /**
+   * A message describing the API response.
+   */
+  message: string;
+}
