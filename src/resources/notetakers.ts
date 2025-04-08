@@ -187,7 +187,9 @@ export class Notetakers extends Resource {
     identifier,
     notetakerId,
     overrides,
-  }: LeaveNotetakerParams & Overrides): Promise<NylasResponse<NotetakerLeaveResponse>> {
+  }: LeaveNotetakerParams & Overrides): Promise<
+    NylasResponse<NotetakerLeaveResponse>
+  > {
     return this.apiClient.request({
       method: 'POST',
       path: identifier

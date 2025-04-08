@@ -355,12 +355,12 @@ describe('Notetakers', () => {
         requestId: 'req-123',
         data: {
           id: 'notetaker123',
-          message: 'Notetaker has left the meeting successfully'
-        }
+          message: 'Notetaker has left the meeting successfully',
+        },
       };
-      
+
       apiClient.request.mockResolvedValueOnce(mockResponse);
-      
+
       const response = await notetakers.leave({
         identifier: 'id123',
         notetakerId: 'notetaker123',
@@ -370,10 +370,12 @@ describe('Notetakers', () => {
         method: 'POST',
         path: '/v3/grants/id123/notetakers/notetaker123/leave',
       });
-      
+
       expect(response).toEqual(mockResponse);
       expect(response.data.id).toBe('notetaker123');
-      expect(response.data.message).toBe('Notetaker has left the meeting successfully');
+      expect(response.data.message).toBe(
+        'Notetaker has left the meeting successfully'
+      );
     });
 
     it('should remove a notetaker from a meeting with overrides', async () => {
@@ -381,12 +383,12 @@ describe('Notetakers', () => {
         requestId: 'req-456',
         data: {
           id: 'notetaker123',
-          message: 'Notetaker has left the meeting successfully'
-        }
+          message: 'Notetaker has left the meeting successfully',
+        },
       };
-      
+
       apiClient.request.mockResolvedValueOnce(mockResponse);
-      
+
       const response = await notetakers.leave({
         identifier: 'id123',
         notetakerId: 'notetaker123',
@@ -404,7 +406,7 @@ describe('Notetakers', () => {
           headers: { override: 'bar' },
         },
       });
-      
+
       expect(response).toEqual(mockResponse);
     });
 
@@ -413,12 +415,12 @@ describe('Notetakers', () => {
         requestId: 'req-789',
         data: {
           id: 'notetaker123',
-          message: 'Notetaker has left the meeting successfully'
-        }
+          message: 'Notetaker has left the meeting successfully',
+        },
       };
-      
+
       apiClient.request.mockResolvedValueOnce(mockResponse);
-      
+
       const response = await notetakers.leave({
         notetakerId: 'notetaker123',
       });
@@ -427,7 +429,7 @@ describe('Notetakers', () => {
         method: 'POST',
         path: '/v3/notetakers/notetaker123/leave',
       });
-      
+
       expect(response).toEqual(mockResponse);
     });
   });

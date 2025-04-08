@@ -227,7 +227,7 @@ export interface NotetakerLeaveResponse {
    * The Notetaker ID.
    */
   id: string;
-  
+
   /**
    * A message describing the API response.
    */
