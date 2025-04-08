@@ -1,6 +1,5 @@
 import APIClient from '../../src/apiClient';
 import { Notetakers } from '../../src/resources/notetakers';
-import { NotetakerLeaveResponse } from '../../src/models/notetakers';
 jest.mock('../../src/apiClient');
 
 describe('Notetakers', () => {
