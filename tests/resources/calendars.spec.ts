@@ -318,6 +318,74 @@ describe('Calendars', () => {
         },
       });
     });
+
+    it('should call apiClient.request with tentativeAsBusy parameter', async () => {
+      await calendars.getAvailability({
+        requestBody: {
+          startTime: 123,
+          endTime: 456,
+          participants: [],
+          durationMinutes: 30,
+          intervalMinutes: 15,
+          availabilityRules: {
+            availabilityMethod: AvailabilityMethod.MaxAvailability,
+            buffer: {
+              before: 15,
+              after: 15,
+            },
+            defaultOpenHours: [
+              {
+                days: [0],
+                timezone: 'America/Toronto',
+                start: '09:00',
+                end: '17:00',
+                exdates: ['2020-01-01'],
+              },
+            ],
+            roundRobinEventId: 'event123',
+            tentativeAsBusy: false, // Don't treat tentative events as busy
+          },
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/calendars/availability',
+        body: {
+          startTime: 123,
+          endTime: 456,
+          participants: [],
+          durationMinutes: 30,
+          intervalMinutes: 15,
+          availabilityRules: {
+            availabilityMethod: AvailabilityMethod.MaxAvailability,
+            buffer: {
+              before: 15,
+              after: 15,
+            },
+            defaultOpenHours: [
+              {
+                days: [0],
+                timezone: 'America/Toronto',
+                start: '09:00',
+                end: '17:00',
+                exdates: ['2020-01-01'],
+              },
+            ],
+            roundRobinEventId: 'event123',
+            tentativeAsBusy: false, // Don't treat tentative events as busy
+          },
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
   });
 
   describe('getCollectiveAvailability', () => {

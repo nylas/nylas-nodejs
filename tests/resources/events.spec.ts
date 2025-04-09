@@ -44,6 +44,33 @@ describe('Events', () => {
       });
     });
 
+    it('should call apiClient.request with tentativeAsBusy parameter', async () => {
+      await events.list({
+        identifier: 'id123',
+        queryParams: {
+          calendarId: 'calendar123',
+          tentativeAsBusy: false, // Don't treat tentative events as busy
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/events',
+        queryParams: {
+          calendarId: 'calendar123',
+          tentativeAsBusy: false, // Don't treat tentative events as busy
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+
     it('should paginate correctly if a nextCursor is present', async () => {
       apiClient.request.mockResolvedValueOnce({
         requestId: 'request123',
