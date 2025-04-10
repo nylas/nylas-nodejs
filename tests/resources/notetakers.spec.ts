@@ -436,7 +436,33 @@ describe('Notetakers', () => {
 
   describe('downloadMedia', () => {
     it('should download media with identifier', async () => {
-      await notetakers.downloadMedia({
+      const mockResponse = {
+        requestId: 'req-123',
+        data: {
+          recording: {
+            size: 21550491,
+            name: 'meeting_recording.mp4',
+            type: 'video/mp4',
+            createdAt: 1744222418,
+            expiresAt: 1744481618,
+            url: 'url_for_recording',
+            ttl: 259106,
+          },
+          transcript: {
+            size: 862,
+            name: 'raw_transcript.json',
+            type: 'application/json',
+            createdAt: 1744222418,
+            expiresAt: 1744481618,
+            url: 'url_for_transcript',
+            ttl: 259106,
+          },
+        },
+      };
+
+      apiClient.request.mockResolvedValueOnce(mockResponse);
+
+      const response = await notetakers.downloadMedia({
         identifier: 'id123',
         notetakerId: 'notetaker123',
       });
@@ -445,10 +471,54 @@ describe('Notetakers', () => {
         method: 'GET',
         path: '/v3/grants/id123/notetakers/notetaker123/media',
       });
+
+      expect(response).toEqual(mockResponse);
+
+      expect(response.data.recording.size).toBe(21550491);
+      expect(response.data.recording.name).toBe('meeting_recording.mp4');
+      expect(response.data.recording.type).toBe('video/mp4');
+      expect(response.data.recording.createdAt).toBe(1744222418);
+      expect(response.data.recording.expiresAt).toBe(1744481618);
+      expect(response.data.recording.url).toBe('url_for_recording');
+      expect(response.data.recording.ttl).toBe(259106);
+
+      expect(response.data.transcript.size).toBe(862);
+      expect(response.data.transcript.name).toBe('raw_transcript.json');
+      expect(response.data.transcript.type).toBe('application/json');
+      expect(response.data.transcript.createdAt).toBe(1744222418);
+      expect(response.data.transcript.expiresAt).toBe(1744481618);
+      expect(response.data.transcript.url).toBe('url_for_transcript');
+      expect(response.data.transcript.ttl).toBe(259106);
     });
 
     it('should download media without identifier', async () => {
-      await notetakers.downloadMedia({
+      const mockResponse = {
+        requestId: 'req-456',
+        data: {
+          recording: {
+            size: 21550491,
+            name: 'meeting_recording.mp4',
+            type: 'video/mp4',
+            createdAt: 1744222418,
+            expiresAt: 1744481618,
+            url: 'url_for_recording',
+            ttl: 259106,
+          },
+          transcript: {
+            size: 862,
+            name: 'raw_transcript.json',
+            type: 'application/json',
+            createdAt: 1744222418,
+            expiresAt: 1744481618,
+            url: 'url_for_transcript',
+            ttl: 259106,
+          },
+        },
+      };
+
+      apiClient.request.mockResolvedValueOnce(mockResponse);
+
+      const response = await notetakers.downloadMedia({
         notetakerId: 'notetaker123',
       });
 
@@ -456,6 +526,8 @@ describe('Notetakers', () => {
         method: 'GET',
         path: '/v3/notetakers/notetaker123/media',
       });
+
+      expect(response).toEqual(mockResponse);
     });
   });
 });
