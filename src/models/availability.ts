@@ -100,6 +100,12 @@ export interface AvailabilityRules {
    * This is used for both max-fairness and max-availability methods.
    */
   roundRobinEventId?: string;
+  /**
+   * tentative_as_busy: Controls whether tentative calendar events should be treated as busy time.
+   * When set to false, tentative events will be considered as free in availability calculations.
+   * Defaults to true. Only applicable for Microsoft and EWS calendar providers.
+   */
+  tentativeAsBusy?: boolean;
 }
 
 /**

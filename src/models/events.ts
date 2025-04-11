@@ -316,6 +316,11 @@ export interface ListEventQueryParams extends ListQueryParams {
    * Master event id if recurring events.
    */
   masterEventId?: string;
+  /**
+   * When set to false, treats tentative calendar events as busy:false.
+   * Only applicable for Microsoft and EWS calendar providers. Defaults to true.
+   */
+  tentativeAsBusy?: boolean;
 }
 
 /**
@@ -330,6 +335,11 @@ export interface CreateEventQueryParams {
    * Email notifications containing the calendar event is sent to all event participants.
    */
   notifyParticipants?: boolean;
+  /**
+   * When set to false, treats tentative calendar events as busy:false.
+   * Only applicable for Microsoft and EWS calendar providers. Defaults to true.
+   */
+  tentativeAsBusy?: boolean;
 }
 
 /**
@@ -340,6 +350,11 @@ export interface FindEventQueryParams {
    * Calendar ID to find the event in. "primary" is a supported value indicating the user's primary calendar.
    */
   calendarId: string;
+  /**
+   * When set to false, treats tentative calendar events as busy:false.
+   * Only applicable for Microsoft and EWS calendar providers. Defaults to true.
+   */
+  tentativeAsBusy?: boolean;
 }
 
 /**
