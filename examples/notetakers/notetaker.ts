@@ -108,12 +108,47 @@ async function getNotetakerMedia(notetakerId: string): Promise<NylasResponse<Not
     const media = await nylas.notetakers.downloadMedia({ notetakerId });
     
     if (media.data.recording) {
-      console.log(`Recording URL: ${media.data.recording.url}`);
-      console.log(`Recording Size: ${media.data.recording.size} MB`);
+      const recording = media.data.recording;
+      console.log(`Recording URL: ${recording.url}`);
+      console.log(`Recording Name: ${recording.name}`);
+      console.log(`Recording Type: ${recording.type}`);
+      console.log(`Recording Size: ${recording.size} bytes`);
+      
+      // Handle both snake_case (API) and camelCase (SDK model) property naming
+      const createdAt = 'createdAt' in recording ? recording.createdAt : 
+                     'created_at' in recording ? (recording as any).created_at : undefined;
+      const expiresAt = 'expiresAt' in recording ? recording.expiresAt : 
+                     'expires_at' in recording ? (recording as any).expires_at : undefined;
+                     
+      if (createdAt) {
+        console.log(`Recording Created: ${new Date(createdAt * 1000).toISOString()}`);
+      }
+      if (expiresAt) {
+        console.log(`Recording Expires: ${new Date(expiresAt * 1000).toISOString()}`);
+      }
+      console.log(`Recording TTL: ${recording.ttl} seconds`);
     }
+    
     if (media.data.transcript) {
-      console.log(`Transcript URL: ${media.data.transcript.url}`);
-      console.log(`Transcript Size: ${media.data.transcript.size} MB`);
+      const transcript = media.data.transcript;
+      console.log(`Transcript URL: ${transcript.url}`);
+      console.log(`Transcript Name: ${transcript.name}`);
+      console.log(`Transcript Type: ${transcript.type}`);
+      console.log(`Transcript Size: ${transcript.size} bytes`);
+      
+      // Handle both snake_case (API) and camelCase (SDK model) property naming
+      const createdAt = 'createdAt' in transcript ? transcript.createdAt : 
+                     'created_at' in transcript ? (transcript as any).created_at : undefined;
+      const expiresAt = 'expiresAt' in transcript ? transcript.expiresAt : 
+                     'expires_at' in transcript ? (transcript as any).expires_at : undefined;
+                     
+      if (createdAt) {
+        console.log(`Transcript Created: ${new Date(createdAt * 1000).toISOString()}`);
+      }
+      if (expiresAt) {
+        console.log(`Transcript Expires: ${new Date(expiresAt * 1000).toISOString()}`);
+      }
+      console.log(`Transcript TTL: ${transcript.ttl} seconds`);
     }
     
     return media;

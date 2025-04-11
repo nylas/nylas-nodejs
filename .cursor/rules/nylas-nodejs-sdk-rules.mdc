@@ -21,30 +21,249 @@ To add support for a new Nylas API resource (let's call it `{{RESOURCE_NAME}}`),
 #### 1. Define Models
 - Create a new file `src/models/{{RESOURCE_NAME_LC}}.ts`
 - Define TypeScript interfaces/types for:
-  - The main resource object (e.g., `{{RESOURCE_NAME}}`)
+  - The main resource object (e.g., `{{RESOURCE_NAME}}`) with all properties documented
   - Request bodies (e.g., `Create{{RESOURCE_NAME}}Request`, `Update{{RESOURCE_NAME}}Request`)
   - Query parameters (e.g., `List{{RESOURCE_NAME}}QueryParams`, `Find{{RESOURCE_NAME}}QueryParams`)
-  - Handle potential response structures (single object `NylasResponse<T>`, list `NylasListResponse<T>`)
-- Export these new types from `src/models/index.ts`
+  - Use standard response types from `src/models/response.ts` (`NylasResponse<T>`, `NylasListResponse<T>`)
+  - Use consistent property naming (camelCase) and proper TSDoc annotations
+- Export all types from the new model file
+- Add the export statement to `src/models/index.ts`
+
+Example model structure:
+```typescript
+import { ListQueryParams } from './listQueryParams.js';
+
+/**
+ * Interface representing a Nylas {{RESOURCE_NAME}} object.
+ */
+export interface {{RESOURCE_NAME}} {
+  id: string;
+  grantId: string;
+  object: '{{RESOURCE_NAME_LC}}';
+  // Add all resource properties with appropriate types and optionality
+}
+
+/**
+ * Interface representing the query parameters for listing {{RESOURCE_NAME_LC}}s.
+ */
+export interface List{{RESOURCE_NAME}}QueryParams extends ListQueryParams {
+  // Add specific query parameters
+}
+
+/**
+ * Interface representing the query parameters for retrieving a single {{RESOURCE_NAME_LC}}.
+ */
+export interface Find{{RESOURCE_NAME}}QueryParams {
+  // Add specific query parameters
+}
+
+/**
+ * Interface for creating a {{RESOURCE_NAME_LC}}.
+ */
+export type Create{{RESOURCE_NAME}}Request = {
+  // Add all properties needed for creation
+};
+
+/**
+ * Interface for updating a {{RESOURCE_NAME_LC}}.
+ */
+export type Update{{RESOURCE_NAME}}Request = {
+  // Add all properties needed for updating
+};
+```
 
 #### 2. Define Resource Class
 - Create a new file `src/resources/{{RESOURCE_NAME_LC}}.ts`
 - Create a class `{{RESOURCE_NAME}}` that extends `Resource` from `src/resources/resource.ts`
-- Import the models you defined
+- Import all models defined in the previous step
+- Define interface parameters for each endpoint method
 - Implement public methods for each endpoint (e.g., `list`, `find`, `create`, `update`, `destroy`)
-- Define parameter interfaces for each method
+- Use typed parameters and return values for all methods
 - Call appropriate protected methods from the base `Resource` class
+
+Example resource implementation:
+```typescript
+import { Overrides } from '../config.js';
+import {
+  Create{{RESOURCE_NAME}}Request,
+  {{RESOURCE_NAME}},
+  List{{RESOURCE_NAME}}QueryParams,
+  Find{{RESOURCE_NAME}}QueryParams,
+  Update{{RESOURCE_NAME}}Request,
+} from '../models/{{RESOURCE_NAME_LC}}.js';
+import {
+  NylasResponse,
+  NylasListResponse,
+  NylasBaseResponse,
+} from '../models/response.js';
+import { AsyncListResponse, Resource } from './resource.js';
+
+/**
+ * @property {{RESOURCE_NAME_LC}}Id The id of the {{RESOURCE_NAME}} to retrieve.
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ */
+interface Find{{RESOURCE_NAME}}Params {
+  identifier: string;
+  {{RESOURCE_NAME_LC}}Id: string;
+  queryParams: Find{{RESOURCE_NAME}}QueryParams;
+}
+
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property queryParams The query parameters to include in the request
+ */
+interface List{{RESOURCE_NAME}}Params {
+  identifier: string;
+  queryParams: List{{RESOURCE_NAME}}QueryParams;
+}
+
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property requestBody The values to create the {{RESOURCE_NAME}} with
+ */
+interface Create{{RESOURCE_NAME}}Params {
+  identifier: string;
+  requestBody: Create{{RESOURCE_NAME}}Request;
+}
+
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property {{RESOURCE_NAME_LC}}Id The id of the {{RESOURCE_NAME}} to retrieve.
+ * @property requestBody The values to update the {{RESOURCE_NAME}} with
+ */
+interface Update{{RESOURCE_NAME}}Params {
+  identifier: string;
+  {{RESOURCE_NAME_LC}}Id: string;
+  requestBody: Update{{RESOURCE_NAME}}Request;
+}
+
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property {{RESOURCE_NAME_LC}}Id The id of the {{RESOURCE_NAME}} to retrieve.
+ */
+interface Destroy{{RESOURCE_NAME}}Params {
+  identifier: string;
+  {{RESOURCE_NAME_LC}}Id: string;
+}
+
+/**
+ * Nylas {{RESOURCE_NAME}}s API
+ *
+ * [Add a brief description of the resource]
+ */
+export class {{RESOURCE_NAME}}s extends Resource {
+  /**
+   * Return all {{RESOURCE_NAME}}s
+   * @return The list of {{RESOURCE_NAME}}s
+   */
+  public list({
+    identifier,
+    queryParams,
+    overrides,
+  }: List{{RESOURCE_NAME}}Params & Overrides): AsyncListResponse<
+    NylasListResponse<{{RESOURCE_NAME}}>
+  > {
+    return super._list({
+      queryParams,
+      path: `/v3/grants/${identifier}/{{RESOURCE_NAME_LC}}s`,
+      overrides,
+    });
+  }
+
+  /**
+   * Return a {{RESOURCE_NAME}}
+   * @return The {{RESOURCE_NAME}}
+   */
+  public find({
+    identifier,
+    {{RESOURCE_NAME_LC}}Id,
+    queryParams,
+    overrides,
+  }: Find{{RESOURCE_NAME}}Params & Overrides): Promise<NylasResponse<{{RESOURCE_NAME}}>> {
+    return super._find({
+      path: `/v3/grants/${identifier}/{{RESOURCE_NAME_LC}}s/${{{RESOURCE_NAME_LC}}Id}`,
+      queryParams,
+      overrides,
+    });
+  }
+
+  /**
+   * Create a {{RESOURCE_NAME}}
+   * @return The created {{RESOURCE_NAME}}
+   */
+  public create({
+    identifier,
+    requestBody,
+    overrides,
+  }: Create{{RESOURCE_NAME}}Params & Overrides): Promise<NylasResponse<{{RESOURCE_NAME}}>> {
+    return super._create({
+      path: `/v3/grants/${identifier}/{{RESOURCE_NAME_LC}}s`,
+      requestBody,
+      overrides,
+    });
+  }
+
+  /**
+   * Update a {{RESOURCE_NAME}}
+   * @return The updated {{RESOURCE_NAME}}
+   */
+  public update({
+    identifier,
+    {{RESOURCE_NAME_LC}}Id,
+    requestBody,
+    overrides,
+  }: Update{{RESOURCE_NAME}}Params & Overrides): Promise<NylasResponse<{{RESOURCE_NAME}}>> {
+    return super._update({
+      path: `/v3/grants/${identifier}/{{RESOURCE_NAME_LC}}s/${{{RESOURCE_NAME_LC}}Id}`,
+      requestBody,
+      overrides,
+    });
+  }
+
+  /**
+   * Delete a {{RESOURCE_NAME}}
+   * @return The deletion response
+   */
+  public destroy({
+    identifier,
+    {{RESOURCE_NAME_LC}}Id,
+    overrides,
+  }: Destroy{{RESOURCE_NAME}}Params & Overrides): Promise<NylasBaseResponse> {
+    return super._destroy({
+      path: `/v3/grants/${identifier}/{{RESOURCE_NAME_LC}}s/${{{RESOURCE_NAME_LC}}Id}`,
+      overrides,
+    });
+  }
+}
+```
 
 #### 3. Register Resource
 - Open `src/nylas.ts`
-- Import the new `{{RESOURCE_NAME}}` class
+- Import the new `{{RESOURCE_NAME}}s` class
 - Add a property for the resource to the `Nylas` class
 - Instantiate in the `Nylas` constructor
+
+Example:
+```typescript
+import { {{RESOURCE_NAME}}s } from './resources/{{RESOURCE_NAME_LC}}s.js';
+
+export class Nylas {
+  // ... existing properties
+  public {{RESOURCE_NAME_LC}}s: {{RESOURCE_NAME}}s;
+
+  constructor(config: NylasConfig) {
+    // ... existing code
+    this.{{RESOURCE_NAME_LC}}s = new {{RESOURCE_NAME}}s(this.apiClient);
+  }
+}
+```
 
 #### 4. Add Tests
 - Create a new test file `tests/resources/{{RESOURCE_NAME_LC}}.test.ts`
 - Write tests for each method in the new resource class
 - Use mocking to simulate `apiClient` behavior
+- Test all API endpoints and parameter combinations
 
 ## Rule 2: Adding a New Endpoint to an Existing Resource
 
@@ -60,22 +279,100 @@ User wants to add a new endpoint to an existing API resource (e.g., adding 'send
 #### 1. Define/Update Models
 - Open `src/models/{{RESOURCE_NAME_LC}}.ts`
 - Add or update TypeScript interfaces/types for:
-  - Request bodies
-  - Query parameters
+  - Request bodies with proper types and documentation
+  - Query parameters with proper types and documentation
   - Response objects (if unique)
-- Ensure types are exported from `src/models/index.ts`
+- Examples:
+  ```typescript
+  /**
+   * Interface for the {{NEW_ENDPOINT_NAME}} request
+   */
+  export interface {{RESOURCE_NAME}}{{NEW_ENDPOINT_NAME}}Request {
+    // Add properties needed for this endpoint
+  }
+
+  /**
+   * Interface for the {{NEW_ENDPOINT_NAME}} query parameters
+   */
+  export interface {{RESOURCE_NAME}}{{NEW_ENDPOINT_NAME}}QueryParams {
+    // Add query parameters needed for this endpoint
+  }
+  ```
 
 #### 2. Add Method to Resource Class
 - Open `src/resources/{{RESOURCE_NAME_LC}}.ts`
-- Add a new public method to the `{{RESOURCE_NAME}}` class
-- Define a parameter interface
-- Call appropriate base `Resource` class method
-- Provide correct API path, query parameters, and request body
+- Define an interface for the method parameters:
+  ```typescript
+  /**
+   * @property identifier The identifier of the grant to act upon
+   * @property {{RESOURCE_NAME_LC}}Id The id of the {{RESOURCE_NAME}} to act upon
+   * @property requestBody The request body for the {{NEW_ENDPOINT_NAME}} action
+   * @property queryParams The query parameters for the request
+   */
+  interface {{RESOURCE_NAME}}{{NEW_ENDPOINT_NAME}}Params {
+    identifier: string;
+    {{RESOURCE_NAME_LC}}Id: string;
+    requestBody: {{RESOURCE_NAME}}{{NEW_ENDPOINT_NAME}}Request;
+    queryParams?: {{RESOURCE_NAME}}{{NEW_ENDPOINT_NAME}}QueryParams;
+  }
+  ```
+- Add a new public method to the `{{RESOURCE_NAME}}` class:
+  ```typescript
+  /**
+   * [Description of what the method does]
+   * @return [Description of what the method returns]
+   */
+  public {{NEW_ENDPOINT_NAME}}({
+    identifier,
+    {{RESOURCE_NAME_LC}}Id,
+    requestBody,
+    queryParams,
+    overrides,
+  }: {{RESOURCE_NAME}}{{NEW_ENDPOINT_NAME}}Params & Overrides): Promise<NylasResponse<{{RESPONSE_TYPE}}>> {
+    return super._create({  // or _update, _find, etc. depending on the method
+      path: `/v3/grants/${identifier}/{{RESOURCE_NAME_LC}}s/${{{RESOURCE_NAME_LC}}Id}/{{NEW_ENDPOINT_PATH}}`,
+      requestBody,
+      queryParams,
+      overrides,
+    });
+  }
+  ```
 
 #### 3. Add Tests
 - Open `tests/resources/{{RESOURCE_NAME_LC}}.test.ts`
-- Add new tests for the method
-- Test different scenarios and mock `apiClient`
+- Add new tests for the method:
+  ```typescript
+  describe('{{NEW_ENDPOINT_NAME}}', () => {
+    it('should call the API client with the correct parameters', async () => {
+      // Setup test data
+      const mockResponse = { /* mock response data */ };
+      const requestBody = { /* request body */ };
+      const queryParams = { /* query params */ };
+      
+      // Mock client request
+      (apiClient.request as jest.Mock).mockResolvedValue(mockResponse);
+      
+      // Call the method
+      const result = await {{RESOURCE_NAME_LC}}.{{NEW_ENDPOINT_NAME}}({
+        identifier: 'grant-id',
+        {{RESOURCE_NAME_LC}}Id: '{{RESOURCE_NAME_LC}}-id',
+        requestBody,
+        queryParams,
+      });
+      
+      // Assertions
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST', // or appropriate method
+        path: '/v3/grants/grant-id/{{RESOURCE_NAME_LC}}s/{{RESOURCE_NAME_LC}}-id/{{NEW_ENDPOINT_PATH}}',
+        body: requestBody,
+        queryParams,
+      });
+      expect(result).toEqual(mockResponse);
+    });
+    
+    // Add more test cases for error scenarios, edge cases, etc.
+  });
+  ```
 
 ## Rule 3: Updating an Existing Endpoint
 
@@ -90,80 +387,150 @@ User wants to modify an existing API endpoint (e.g., change parameters, update r
 
 #### 1. Update Models
 - Open `src/models/{{RESOURCE_NAME_LC}}.ts`
-- Modify TypeScript interfaces/types for:
-  - Request bodies
-  - Query parameters
-  - Response objects
-- Update exports in `src/models/index.ts`
+- Identify the interfaces/types that need to be updated:
+  ```typescript
+  // Example: Add new properties or modify existing ones
+  export interface {{RESOURCE_NAME}} {
+    // ... existing properties
+    newProperty?: string; // Add new optional property
+    updatedProperty: NewType; // Change type of an existing property
+  }
+
+  // Example: Add new request parameters or modify existing ones
+  export interface Create{{RESOURCE_NAME}}Request {
+    // ... existing properties
+    newParameter?: string; // Add new parameter
+  }
+  ```
 
 #### 2. Update Resource Method
 - Open `src/resources/{{RESOURCE_NAME_LC}}.ts`
-- Locate the `{{METHOD_NAME}}` method
-- Update parameter interface
-- Modify base `Resource` method call if needed
+- Locate the method that needs to be updated
+- Update parameter interface if needed:
+  ```typescript
+  interface Update{{RESOURCE_NAME}}Params {
+    // ... existing properties
+    newParameter?: string; // Add new parameter if needed
+  }
+  ```
+- Update method implementation if needed:
+  ```typescript
+  public update({
+    identifier,
+    {{RESOURCE_NAME_LC}}Id,
+    requestBody,
+    newParameter, // Add new parameter if needed
+    overrides,
+  }: Update{{RESOURCE_NAME}}Params & Overrides): Promise<NylasResponse<{{RESOURCE_NAME}}>> {
+    // Update implementation if needed
+    return super._update({
+      path: `/v3/grants/${identifier}/{{RESOURCE_NAME_LC}}s/${{{RESOURCE_NAME_LC}}Id}`,
+      requestBody,
+      queryParams: { newQueryParam: newParameter }, // Add if needed
+      overrides,
+    });
+  }
+  ```
 
 #### 3. Update Tests
 - Open `tests/resources/{{RESOURCE_NAME_LC}}.test.ts`
-- Update tests to reflect parameter and response changes
+- Update existing tests to account for changes
+- Add new tests for new functionality:
+  ```typescript
+  it('should handle new parameters correctly', async () => {
+    // Test specific new parameter handling
+    const mockResponse = { /* mock response data */ };
+    const requestBody = { 
+      /* request body with new properties */ 
+      newProperty: 'value',
+    };
+    
+    (apiClient.request as jest.Mock).mockResolvedValue(mockResponse);
+    
+    const result = await {{RESOURCE_NAME_LC}}.update({
+      identifier: 'grant-id',
+      {{RESOURCE_NAME_LC}}Id: '{{RESOURCE_NAME_LC}}-id',
+      requestBody,
+      newParameter: 'value', // New parameter
+    });
+    
+    expect(apiClient.request).toHaveBeenCalledWith({
+      method: 'PUT',
+      path: '/v3/grants/grant-id/{{RESOURCE_NAME_LC}}s/{{RESOURCE_NAME_LC}}-id',
+      body: requestBody,
+      queryParams: { 
+        newQueryParam: 'value', // New query parameter
+      },
+    });
+    expect(result).toEqual(mockResponse);
+  });
+  ```
 
-## Rule 4: SDK Code Structure Reference
+## Rule 4: SDK Model Structure Reference
 
-### Directory Structure
+### Model Organization
 
-- `src/`: Core source code
-  - `apiClient.ts`: HTTP requests and authentication
-  - `models/`: TypeScript interfaces and types
-  - `resources/`: Resource classes for API endpoints
-  - `resource.ts`: Base resource class
-  - `nylas.ts`: SDK entry point
-  - `config.ts`: SDK configuration
+- `src/models/`: Contains all TypeScript interfaces and types for the API
+  - Each resource has its own file (e.g., `contacts.ts`, `events.ts`)
+  - Common response types in `response.ts`
+  - Error types in `error.ts`
+  - Common query parameter types in `listQueryParams.ts`
 
-- `tests/`: Unit and integration tests
-  - `resources/`: Tests for resource classes
+### Standard Model Patterns
 
-### Workflow for Adding/Updating Endpoints
-1. Define/update models in `src/models/`
-2. Add/update methods in `src/resources/`
-3. Register new resources in `src/nylas.ts`
-4. Add/update tests in `tests/resources/`
+#### Resource Models
+- Main resource model named after the resource (`Contact`, `Event`, etc.)
+- Always includes `id`, `grantId`, and `object` properties
+- All models should use proper JSDoc comments
 
-## Model Definitions
-
-### Property Naming
-- Use camelCase for all model properties
-- Ensure property names are descriptive and follow a consistent naming convention
-
-### Type and Interface Guidelines
-- Reuse existing interfaces and types when applicable
-- Prefer optional properties (using `?`) for fields that may not always be present
-- Create clear, focused interfaces that represent a single concept
-
-### Example of a Well-Structured Model
 ```typescript
-export interface User {
+/**
+ * Interface representing a Nylas {{RESOURCE_NAME}} object.
+ */
+export interface {{RESOURCE_NAME}} {
   id: string;
-  firstName?: string;
-  lastName?: string;
-  email: string;
-  createdAt?: number;
-  updatedAt?: number;
-  // Reuse existing types if applicable
-  contacts?: Contact[];
+  grantId: string;
+  object: '{{RESOURCE_NAME_LC}}';
+  // Resource-specific properties
 }
 ```
 
-### Best Practices
-- Keep models lean and focused
-- Use type annotations to provide clarity
-- Avoid unnecessary complexity in type definitions
-- Prefer composition over inheritance when defining model types
+#### Request/Response Models
+- Request models should be suffixed with `Request` (e.g., `CreateContactRequest`)
+- Query parameter models should be suffixed with `QueryParams` (e.g., `ListContactQueryParams`)
+- Response models should use the standard `NylasResponse<T>` or `NylasListResponse<T>` types
 
-## Constants and Enums
-- Use UPPER_SNAKE_CASE for constant values
-- Use PascalCase for enum names
-- Use camelCase for enum members when appropriate
+```typescript
+/**
+ * Interface for creating a {{RESOURCE_NAME_LC}}.
+ */
+export type Create{{RESOURCE_NAME}}Request = {
+  // Properties needed for creation
+};
 
-## General Coding Guidelines
-- Follow existing patterns in the codebase
-- Maintain consistency with current implementation
-- Prioritize readability and maintainability
+/**
+ * Interface representing the query parameters for listing {{RESOURCE_NAME_LC}}s.
+ */
+export interface List{{RESOURCE_NAME}}QueryParams extends ListQueryParams {
+  // Resource-specific query parameters
+}
+```
+
+#### Response Handling
+- For single-item responses: `NylasResponse<{{RESOURCE_NAME}}>`
+- For list responses: `NylasListResponse<{{RESOURCE_NAME}}>`
+- For paginated list responses in resource classes: `AsyncListResponse<NylasListResponse<{{RESOURCE_NAME}}>>`
+- For simple acknowledgement responses: `NylasBaseResponse`
+
+### Best Practices for Models
+
+- Keep models focused and cohesive
+- Use optional properties (`?`) for fields that may not always be present
+- Use proper TypeScript typing (avoid `any` when possible)
+- Document all properties with JSDoc comments
+- For complex structures, compose from smaller interfaces
+- Reuse common patterns and types across resources
+- Export all models from their respective files and from `index.ts`
+- Maintain consistency with existing model patterns
+- Use camelCase for all model properties
+- Group related properties together in interfaces

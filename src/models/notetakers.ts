@@ -85,9 +85,29 @@ export interface NotetakerRecording {
    */
   url: string;
   /**
-   * The size of the file, in MB.
+   * The size of the file, in bytes.
    */
   size: number;
+  /**
+   * The name of the recording file.
+   */
+  name: string;
+  /**
+   * The MIME type of the recording file.
+   */
+  type: string;
+  /**
+   * When the recording file was uploaded to the storage server, in Unix timestamp format.
+   */
+  createdAt: number;
+  /**
+   * When the recording file will be deleted from the storage server, in Unix timestamp format.
+   */
+  expiresAt: number;
+  /**
+   * Time-to-live in seconds until the recording file will be deleted from Nylas' storage server.
+   */
+  ttl: number;
 }
 
 /**
@@ -99,9 +119,29 @@ export interface NotetakerTranscript {
    */
   url: string;
   /**
-   * The size of the file, in MB.
+   * The size of the file, in bytes.
    */
   size: number;
+  /**
+   * The name of the transcript file.
+   */
+  name: string;
+  /**
+   * The MIME type of the transcript file.
+   */
+  type: string;
+  /**
+   * When the transcript file was uploaded to the storage server, in Unix timestamp format.
+   */
+  createdAt: number;
+  /**
+   * When the transcript file will be deleted from the storage server, in Unix timestamp format.
+   */
+  expiresAt: number;
+  /**
+   * Time-to-live in seconds until the transcript file will be deleted from Nylas' storage server.
+   */
+  ttl: number;
 }
 
 /**
