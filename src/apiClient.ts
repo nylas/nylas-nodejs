@@ -156,7 +156,9 @@ export default class APIClient {
   private async sendRequest(options: RequestOptionsParams): Promise<Response> {
     const req = this.newRequest(options);
     const controller: AbortController = new AbortController();
-    const timeoutDuration = options.overrides?.timeout || this.timeout;
+    const timeoutDuration = options.overrides?.timeout 
+      ? options.overrides.timeout * 1000 
+      : this.timeout;
     const timeout = setTimeout(() => {
       controller.abort();
     }, timeoutDuration);
@@ -220,7 +222,8 @@ export default class APIClient {
       return response;
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
-        throw new NylasSdkTimeoutError(req.url, this.timeout);
+        const timeoutInSeconds = options.overrides?.timeout || this.timeout / 1000;
+        throw new NylasSdkTimeoutError(req.url, timeoutInSeconds);
       }
 
       clearTimeout(timeout);

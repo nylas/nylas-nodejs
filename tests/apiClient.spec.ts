@@ -421,7 +421,7 @@ describe('APIClient', () => {
         ).rejects.toThrow(
           new NylasSdkTimeoutError(
             'https://api.us.nylas.com/test',
-            overrideTimeout * 1000
+            overrideTimeout
           )
         );
       });
@@ -482,6 +482,34 @@ describe('APIClient', () => {
         });
         expect((result as any).flowId).toBe(mockFlowId);
         expect((result as any).headers['xFastlyId']).toBe(mockFlowId);
+      });
+
+      it('should convert override timeout from seconds to milliseconds for setTimeout', async () => {
+        // We need to mock setTimeout to verify it's called with the correct duration
+        const originalSetTimeout = global.setTimeout;
+        const mockSetTimeout = jest.fn().mockImplementation(() => 123); // Return a timeout ID
+        global.setTimeout = mockSetTimeout;
+
+        try {
+          // Mock fetch to return a successful response so we can verify setTimeout
+          mockedFetch.mockImplementationOnce(() => 
+            Promise.resolve(mockResponse(JSON.stringify({ data: 'test' })))
+          );
+
+          const overrideTimeout = 7; // 7 seconds
+
+          await client.request({
+            path: '/test',
+            method: 'GET',
+            overrides: { timeout: overrideTimeout },
+          });
+
+          // Verify setTimeout was called with the timeout in milliseconds (7 seconds = 7000ms)
+          expect(mockSetTimeout).toHaveBeenCalledWith(expect.any(Function), overrideTimeout * 1000);
+        } finally {
+          // Restore the original setTimeout
+          global.setTimeout = originalSetTimeout;
+        }
       });
     });
   });
