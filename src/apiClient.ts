@@ -156,9 +156,25 @@ export default class APIClient {
   private async sendRequest(options: RequestOptionsParams): Promise<Response> {
     const req = this.newRequest(options);
     const controller: AbortController = new AbortController();
-    const timeoutDuration = options.overrides?.timeout 
-      ? options.overrides.timeout * 1000 
-      : this.timeout;
+    
+    // Handle timeout backward compatibility
+    let timeoutDuration: number;
+    if (options.overrides?.timeout) {
+      // Determine if the override timeout is likely in milliseconds (≥ 1000)
+      if (options.overrides.timeout >= 1000) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          'DEPRECATED: Providing timeout in milliseconds via request overrides is deprecated and will be removed in the next major release. Please use seconds instead.'
+        );
+        timeoutDuration = options.overrides.timeout; // Keep as milliseconds for backward compatibility
+      } else {
+        // Treat as seconds and convert to milliseconds
+        timeoutDuration = options.overrides.timeout * 1000;
+      }
+    } else {
+      timeoutDuration = this.timeout; // Already in milliseconds from constructor
+    }
+    
     const timeout = setTimeout(() => {
       controller.abort();
     }, timeoutDuration);
@@ -222,7 +238,13 @@ export default class APIClient {
       return response;
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
-        const timeoutInSeconds = options.overrides?.timeout || this.timeout / 1000;
+        // Calculate the timeout in seconds for the error message
+        // If we determined it was milliseconds (≥ 1000), convert to seconds for the error
+        const timeoutInSeconds = options.overrides?.timeout 
+          ? (options.overrides.timeout >= 1000 
+            ? options.overrides.timeout / 1000  // Convert ms to s for error message
+            : options.overrides.timeout)        // Already in seconds
+          : this.timeout / 1000;                // Convert ms to s
         throw new NylasSdkTimeoutError(req.url, timeoutInSeconds);
       }
 
