@@ -66,8 +66,8 @@ describe('Notetakers', () => {
     it('should support filtering by join time range', async () => {
       await notetakers.list({
         queryParams: {
-          joinTimeFrom: 1683936000,
-          joinTimeUntil: 1684022400,
+          joinTimeStart: 1683936000,
+          joinTimeEnd: 1684022400,
         },
       });
 
@@ -75,8 +75,8 @@ describe('Notetakers', () => {
         method: 'GET',
         path: '/v3/notetakers',
         queryParams: {
-          joinTimeFrom: 1683936000,
-          joinTimeUntil: 1684022400,
+          joinTimeStart: 1683936000,
+          joinTimeEnd: 1684022400,
         },
       });
     });
@@ -119,9 +119,11 @@ describe('Notetakers', () => {
         identifier: 'id123',
         queryParams: {
           state: 'media_processing',
-          joinTimeFrom: 1683936000,
+          joinTimeStart: 1683936000,
           limit: 25,
           pageToken: 'next_page_token',
+          orderBy: 'name',
+          orderDirection: 'desc',
         },
       });
 
@@ -130,9 +132,119 @@ describe('Notetakers', () => {
         path: '/v3/grants/id123/notetakers',
         queryParams: {
           state: 'media_processing',
-          joinTimeFrom: 1683936000,
+          joinTimeStart: 1683936000,
           limit: 25,
           pageToken: 'next_page_token',
+          orderBy: 'name',
+          orderDirection: 'desc',
+        },
+      });
+    });
+
+    it('should support ordering by name', async () => {
+      await notetakers.list({
+        queryParams: {
+          orderBy: 'name',
+          orderDirection: 'asc',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/notetakers',
+        queryParams: {
+          orderBy: 'name',
+          orderDirection: 'asc',
+        },
+      });
+    });
+
+    it('should use default order direction when not specified', async () => {
+      await notetakers.list({
+        queryParams: {
+          orderBy: 'name',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/notetakers',
+        queryParams: {
+          orderBy: 'name',
+        },
+      });
+    });
+
+    it('should use default order by when only direction specified', async () => {
+      await notetakers.list({
+        queryParams: {
+          orderDirection: 'desc',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/notetakers',
+        queryParams: {
+          orderDirection: 'desc',
+        },
+      });
+    });
+
+    it('should support ordering by join_time', async () => {
+      await notetakers.list({
+        queryParams: {
+          orderBy: 'join_time',
+          orderDirection: 'asc',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/notetakers',
+        queryParams: {
+          orderBy: 'join_time',
+          orderDirection: 'asc',
+        },
+      });
+    });
+
+    it('should support ordering by created_at', async () => {
+      await notetakers.list({
+        queryParams: {
+          orderBy: 'created_at',
+          orderDirection: 'desc',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/notetakers',
+        queryParams: {
+          orderBy: 'created_at',
+          orderDirection: 'desc',
+        },
+      });
+    });
+
+    it('should support combining ordering with other filters', async () => {
+      await notetakers.list({
+        queryParams: {
+          state: 'attending',
+          joinTimeStart: 1683936000,
+          orderBy: 'name',
+          orderDirection: 'desc',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/notetakers',
+        queryParams: {
+          state: 'attending',
+          joinTimeStart: 1683936000,
+          orderBy: 'name',
+          orderDirection: 'desc',
         },
       });
     });

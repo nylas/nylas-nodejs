@@ -9,7 +9,8 @@ import {
   Notetaker,
   NylasResponse, 
   NylasListResponse,
-  NylasApiError
+  NylasApiError,
+  ListNotetakersQueryParams
 } from 'nylas';
 
 // Load environment variables from .env file
@@ -78,9 +79,15 @@ async function listNotetakers(): Promise<NylasListResponse<Notetaker>> {
   console.log('\n=== Listing All Notetakers ===');
   
   try {
-    const notetakers = await nylas.notetakers.list({});
+    // List notetakers ordered by name in ascending order
+    const notetakers = await nylas.notetakers.list({
+      queryParams: {
+        orderBy: 'name',
+        orderDirection: 'asc'
+      }
+    });
     
-    console.log(`Found ${notetakers.data.length} notetakers:`);
+    console.log(`Found ${notetakers.data.length} notetakers (ordered by name):`);
     for (const notetaker of notetakers.data) {
       console.log(`- ${notetaker.name} (ID: ${notetaker.id}, State: ${notetaker.state})`);
     }
