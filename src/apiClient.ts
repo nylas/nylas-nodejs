@@ -156,7 +156,9 @@ export default class APIClient {
   private async sendRequest(options: RequestOptionsParams): Promise<Response> {
     const req = this.newRequest(options);
     const controller: AbortController = new AbortController();
-    const timeoutDuration = options.overrides?.timeout || this.timeout;
+    const timeoutDuration = options.overrides?.timeout
+      ? options.overrides.timeout * 1000
+      : this.timeout; // timeout is converted to milliseconds in client
     const timeout = setTimeout(() => {
       controller.abort();
     }, timeoutDuration);
