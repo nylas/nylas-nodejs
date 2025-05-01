@@ -427,7 +427,7 @@ describe('APIClient', () => {
       });
 
       it('should respect override timeout when provided in milliseconds (value >= 1000) for backward compatibility', async () => {
-        // Spy on console.warn to check for deprecation warning
+        // We no longer show the console warning since we're using TypeScript annotations instead
         const originalWarn = console.warn;
         console.warn = jest.fn();
 
@@ -454,12 +454,7 @@ describe('APIClient', () => {
             )
           );
 
-          // Check that deprecation warning was shown
-          expect(console.warn).toHaveBeenCalledWith(
-            expect.stringContaining(
-              'DEPRECATED: Providing timeout in milliseconds'
-            )
-          );
+          // No need to check for deprecation warning anymore as we use TypeScript annotations
         } finally {
           console.warn = originalWarn;
         }
@@ -497,7 +492,7 @@ describe('APIClient', () => {
       });
 
       it('should keep override timeout in milliseconds for setTimeout when value >= 1000 (backward compatibility)', async () => {
-        // Spy on console.warn to check for deprecation warning
+        // We no longer show the console warning since we're using TypeScript annotations instead
         const originalWarn = console.warn;
         console.warn = jest.fn();
 
@@ -526,12 +521,7 @@ describe('APIClient', () => {
             overrideTimeoutMs
           );
 
-          // Check that deprecation warning was shown
-          expect(console.warn).toHaveBeenCalledWith(
-            expect.stringContaining(
-              'DEPRECATED: Providing timeout in milliseconds'
-            )
-          );
+          // No need to check for deprecation warning anymore as we use TypeScript annotations
         } finally {
           // Restore the original setTimeout and console.warn
           global.setTimeout = originalSetTimeout;
