@@ -456,7 +456,9 @@ describe('APIClient', () => {
 
           // Check that deprecation warning was shown
           expect(console.warn).toHaveBeenCalledWith(
-            expect.stringContaining('DEPRECATED: Providing timeout in milliseconds')
+            expect.stringContaining(
+              'DEPRECATED: Providing timeout in milliseconds'
+            )
           );
         } finally {
           console.warn = originalWarn;
@@ -471,7 +473,7 @@ describe('APIClient', () => {
 
         try {
           // Mock fetch to return a successful response so we can verify setTimeout
-          mockedFetch.mockImplementationOnce(() => 
+          mockedFetch.mockImplementationOnce(() =>
             Promise.resolve(mockResponse(JSON.stringify({ data: 'test' })))
           );
 
@@ -484,7 +486,10 @@ describe('APIClient', () => {
           });
 
           // Verify setTimeout was called with the timeout in milliseconds (7 seconds = 7000ms)
-          expect(mockSetTimeout).toHaveBeenCalledWith(expect.any(Function), overrideTimeout * 1000);
+          expect(mockSetTimeout).toHaveBeenCalledWith(
+            expect.any(Function),
+            overrideTimeout * 1000
+          );
         } finally {
           // Restore the original setTimeout
           global.setTimeout = originalSetTimeout;
@@ -495,7 +500,7 @@ describe('APIClient', () => {
         // Spy on console.warn to check for deprecation warning
         const originalWarn = console.warn;
         console.warn = jest.fn();
-        
+
         // We need to mock setTimeout to verify it's called with the correct duration
         const originalSetTimeout = global.setTimeout;
         const mockSetTimeout = jest.fn().mockImplementation(() => 123); // Return a timeout ID
@@ -503,7 +508,7 @@ describe('APIClient', () => {
 
         try {
           // Mock fetch to return a successful response so we can verify setTimeout
-          mockedFetch.mockImplementationOnce(() => 
+          mockedFetch.mockImplementationOnce(() =>
             Promise.resolve(mockResponse(JSON.stringify({ data: 'test' })))
           );
 
@@ -516,11 +521,16 @@ describe('APIClient', () => {
           });
 
           // Verify setTimeout was called with the timeout directly in milliseconds
-          expect(mockSetTimeout).toHaveBeenCalledWith(expect.any(Function), overrideTimeoutMs);
-          
+          expect(mockSetTimeout).toHaveBeenCalledWith(
+            expect.any(Function),
+            overrideTimeoutMs
+          );
+
           // Check that deprecation warning was shown
           expect(console.warn).toHaveBeenCalledWith(
-            expect.stringContaining('DEPRECATED: Providing timeout in milliseconds')
+            expect.stringContaining(
+              'DEPRECATED: Providing timeout in milliseconds'
+            )
           );
         } finally {
           // Restore the original setTimeout and console.warn

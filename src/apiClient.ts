@@ -156,7 +156,7 @@ export default class APIClient {
   private async sendRequest(options: RequestOptionsParams): Promise<Response> {
     const req = this.newRequest(options);
     const controller: AbortController = new AbortController();
-    
+
     // Handle timeout
     let timeoutDuration: number;
     if (options.overrides?.timeout) {
@@ -170,7 +170,7 @@ export default class APIClient {
     } else {
       timeoutDuration = this.timeout; // Already in milliseconds from constructor
     }
-    
+
     const timeout = setTimeout(() => {
       controller.abort();
     }, timeoutDuration);
@@ -236,11 +236,11 @@ export default class APIClient {
       if (error instanceof Error && error.name === 'AbortError') {
         // Calculate the timeout in seconds for the error message
         // If we determined it was milliseconds (≥ 1000), convert to seconds for the error
-        const timeoutInSeconds = options.overrides?.timeout 
-          ? (options.overrides.timeout >= 1000 
-            ? options.overrides.timeout / 1000  // Convert ms to s for error message
-            : options.overrides.timeout)        // Already in seconds
-          : this.timeout / 1000;                // Convert ms to s
+        const timeoutInSeconds = options.overrides?.timeout
+          ? options.overrides.timeout >= 1000
+            ? options.overrides.timeout / 1000 // Convert ms to s for error message
+            : options.overrides.timeout // Already in seconds
+          : this.timeout / 1000; // Convert ms to s
         throw new NylasSdkTimeoutError(req.url, timeoutInSeconds);
       }
 
