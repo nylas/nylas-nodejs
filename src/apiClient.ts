@@ -157,15 +157,11 @@ export default class APIClient {
     const req = this.newRequest(options);
     const controller: AbortController = new AbortController();
     
-    // Handle timeout backward compatibility
+    // Handle timeout
     let timeoutDuration: number;
     if (options.overrides?.timeout) {
       // Determine if the override timeout is likely in milliseconds (≥ 1000)
       if (options.overrides.timeout >= 1000) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          'DEPRECATED: Providing timeout in milliseconds via request overrides is deprecated and will be removed in the next major release. Please use seconds instead.'
-        );
         timeoutDuration = options.overrides.timeout; // Keep as milliseconds for backward compatibility
       } else {
         // Treat as seconds and convert to milliseconds
