@@ -15,7 +15,15 @@ export type NylasConfig = {
 /**
  * The options that can override the default Nylas API client configuration.
  */
-export type OverridableNylasConfig = Partial<NylasConfig>;
+export type OverridableNylasConfig = {
+  apiKey?: string;
+  apiUri?: string;
+  /**
+   * @deprecated Providing timeout in milliseconds is deprecated and will be removed in the next major release. Please use seconds instead.
+   */
+  timeout?: number;
+  headers?: Record<string, string>;
+};
 
 /**
  * An object that can be used to override the default Nylas API client configuration on a per-request basis.

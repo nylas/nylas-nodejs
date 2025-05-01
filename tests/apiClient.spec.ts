@@ -402,7 +402,7 @@ describe('APIClient', () => {
         }
       });
 
-      it('should respect override timeout when provided', async () => {
+      it('should respect override timeout when provided in seconds (value < 1000)', async () => {
         const overrideTimeout = 2; // 2 second timeout
 
         mockedFetch.mockImplementationOnce((_url: RequestInfo) => {
@@ -421,9 +421,112 @@ describe('APIClient', () => {
         ).rejects.toThrow(
           new NylasSdkTimeoutError(
             'https://api.us.nylas.com/test',
-            overrideTimeout * 1000
+            overrideTimeout // Should remain as seconds in error
           )
         );
+      });
+
+      it('should respect override timeout when provided in milliseconds (value >= 1000) for backward compatibility', async () => {
+        // We no longer show the console warning since we're using TypeScript annotations instead
+        const originalWarn = console.warn;
+        console.warn = jest.fn();
+
+        try {
+          const overrideTimeoutMs = 2000; // 2000 milliseconds (2 seconds)
+
+          mockedFetch.mockImplementationOnce((_url: RequestInfo) => {
+            // Immediately throw an AbortError to simulate a timeout
+            const error = new Error('The operation was aborted');
+            error.name = 'AbortError';
+            return Promise.reject(error);
+          });
+
+          await expect(
+            client.request({
+              path: '/test',
+              method: 'GET',
+              overrides: { timeout: overrideTimeoutMs },
+            })
+          ).rejects.toThrow(
+            new NylasSdkTimeoutError(
+              'https://api.us.nylas.com/test',
+              overrideTimeoutMs / 1000 // Should be converted to seconds for error
+            )
+          );
+
+          // No need to check for deprecation warning anymore as we use TypeScript annotations
+        } finally {
+          console.warn = originalWarn;
+        }
+      });
+
+      it('should convert override timeout from seconds to milliseconds for setTimeout when value < 1000', async () => {
+        // We need to mock setTimeout to verify it's called with the correct duration
+        const originalSetTimeout = global.setTimeout;
+        const mockSetTimeout = jest.fn().mockImplementation(() => 123); // Return a timeout ID
+        global.setTimeout = (mockSetTimeout as unknown) as typeof setTimeout;
+
+        try {
+          // Mock fetch to return a successful response so we can verify setTimeout
+          mockedFetch.mockImplementationOnce(() =>
+            Promise.resolve(mockResponse(JSON.stringify({ data: 'test' })))
+          );
+
+          const overrideTimeout = 7; // 7 seconds
+
+          await client.request({
+            path: '/test',
+            method: 'GET',
+            overrides: { timeout: overrideTimeout },
+          });
+
+          // Verify setTimeout was called with the timeout in milliseconds (7 seconds = 7000ms)
+          expect(mockSetTimeout).toHaveBeenCalledWith(
+            expect.any(Function),
+            overrideTimeout * 1000
+          );
+        } finally {
+          // Restore the original setTimeout
+          global.setTimeout = originalSetTimeout;
+        }
+      });
+
+      it('should keep override timeout in milliseconds for setTimeout when value >= 1000 (backward compatibility)', async () => {
+        // We no longer show the console warning since we're using TypeScript annotations instead
+        const originalWarn = console.warn;
+        console.warn = jest.fn();
+
+        // We need to mock setTimeout to verify it's called with the correct duration
+        const originalSetTimeout = global.setTimeout;
+        const mockSetTimeout = jest.fn().mockImplementation(() => 123); // Return a timeout ID
+        global.setTimeout = (mockSetTimeout as unknown) as typeof setTimeout;
+
+        try {
+          // Mock fetch to return a successful response so we can verify setTimeout
+          mockedFetch.mockImplementationOnce(() =>
+            Promise.resolve(mockResponse(JSON.stringify({ data: 'test' })))
+          );
+
+          const overrideTimeoutMs = 5000; // 5000 milliseconds (5 seconds)
+
+          await client.request({
+            path: '/test',
+            method: 'GET',
+            overrides: { timeout: overrideTimeoutMs },
+          });
+
+          // Verify setTimeout was called with the timeout directly in milliseconds
+          expect(mockSetTimeout).toHaveBeenCalledWith(
+            expect.any(Function),
+            overrideTimeoutMs
+          );
+
+          // No need to check for deprecation warning anymore as we use TypeScript annotations
+        } finally {
+          // Restore the original setTimeout and console.warn
+          global.setTimeout = originalSetTimeout;
+          console.warn = originalWarn;
+        }
       });
 
       it('should use default timeout when no override provided', async () => {

@@ -3,6 +3,7 @@
 * Add support for Notetaker API endpoints
 * Update calendar and event models with notetaker settings
 * Add support for `tentativeAsBusy` parameter in availability and event listing
+* Deprecated providing timeout in milliseconds via request overrides - please use seconds instead
 
 ### 7.8.0 / 2025-03-03
 * Add support for `listImportEvents` method to import events from a specified calendar within a given time frame
