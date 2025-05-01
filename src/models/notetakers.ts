@@ -231,14 +231,14 @@ export interface ListNotetakersQueryParams extends ListQueryParams {
   state?: NotetakerState;
 
   /**
-   * Filter for Notetaker bots that are scheduled to join meetings after the specified time, in Unix timestamp format.
+   * Filter for Notetaker bots that have join times that start at or after a specific time, in Unix timestamp format.
    */
-  joinTimeFrom?: number;
+  joinTimeStart?: number;
 
   /**
-   * Filter for Notetaker bots that are scheduled to join meetings until the specified time, in Unix timestamp format.
+   * Filter for Notetaker bots that have join times that end at or are before a specific time, in Unix timestamp format.
    */
-  joinTimeUntil?: number;
+  joinTimeEnd?: number;
 
   /**
    * The maximum number of objects to return.
@@ -257,6 +257,18 @@ export interface ListNotetakersQueryParams extends ListQueryParams {
    * This value should be taken from the prev_cursor response field.
    */
   prevPageToken?: string;
+
+  /**
+   * The field to order the Notetaker bots by.
+   * @default created_at
+   */
+  orderBy?: 'name' | 'join_time' | 'created_at';
+
+  /**
+   * The direction to order the Notetaker bots by.
+   * @default asc
+   */
+  orderDirection?: 'asc' | 'desc';
 }
 
 /**
