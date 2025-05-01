@@ -469,7 +469,7 @@ describe('APIClient', () => {
         // We need to mock setTimeout to verify it's called with the correct duration
         const originalSetTimeout = global.setTimeout;
         const mockSetTimeout = jest.fn().mockImplementation(() => 123); // Return a timeout ID
-        global.setTimeout = mockSetTimeout as unknown as typeof setTimeout;
+        global.setTimeout = (mockSetTimeout as unknown) as typeof setTimeout;
 
         try {
           // Mock fetch to return a successful response so we can verify setTimeout
@@ -504,7 +504,7 @@ describe('APIClient', () => {
         // We need to mock setTimeout to verify it's called with the correct duration
         const originalSetTimeout = global.setTimeout;
         const mockSetTimeout = jest.fn().mockImplementation(() => 123); // Return a timeout ID
-        global.setTimeout = mockSetTimeout as unknown as typeof setTimeout;
+        global.setTimeout = (mockSetTimeout as unknown) as typeof setTimeout;
 
         try {
           // Mock fetch to return a successful response so we can verify setTimeout
