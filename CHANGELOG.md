@@ -1,4 +1,8 @@
 # Changelog
+
+### Unreleased
+* Fix: Add missing `/cancel` suffix in Notetaker API endpoint
+
 ### 7.9.0 / 2025-04-30
 * Add support for Notetaker API endpoints
 * Update calendar and event models with notetaker settings
