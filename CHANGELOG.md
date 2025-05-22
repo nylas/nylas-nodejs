@@ -1,4 +1,7 @@
 # Changelog
+### Unreleased
+* Add support for 'zoom' as a provider type in Auth module
+
 ### 7.9.0 / 2025-04-30
 * Add support for Notetaker API endpoints
 * Update calendar and event models with notetaker settings
