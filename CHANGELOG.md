@@ -1,4 +1,7 @@
 # Changelog
+### Unreleased
+* Fix event status type to use 'maybe' instead of 'tentative' in Event interface to match API documentation
+
 ### 7.9.0 / 2025-04-30
 * Add support for Notetaker API endpoints
 * Update calendar and event models with notetaker settings
