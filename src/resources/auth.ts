@@ -15,6 +15,7 @@ import {
 import { Overrides } from '../config.js';
 import { NylasResponse } from '../models/response.js';
 import { CreateGrantRequest, Grant } from '../models/grants.js';
+import { makePathParams } from '../utils.js';
 
 /**
  * @property requestBody The values to create the Grant with.
@@ -53,7 +54,7 @@ export class Auth extends Resource {
 
     return this.apiClient.request<CodeExchangeResponse>({
       method: 'POST',
-      path: `/v3/connect/token`,
+      path: makePathParams('/v3/connect/token', {}),
       body: {
         ...request,
         grantType: 'authorization_code',
@@ -75,7 +76,7 @@ export class Auth extends Resource {
 
     return this.apiClient.request<CodeExchangeResponse>({
       method: 'POST',
-      path: `/v3/connect/token`,
+      path: makePathParams('/v3/connect/token', {}),
       body: {
         ...request,
         grantType: 'refresh_token',
@@ -124,7 +125,7 @@ export class Auth extends Resource {
   }: CreateGrantParams & Overrides): Promise<NylasResponse<Grant>> {
     return this.apiClient.request<NylasResponse<Grant>>({
       method: 'POST',
-      path: `/v3/connect/custom`,
+      path: makePathParams('/v3/connect/custom', {}),
       body: requestBody,
       overrides,
     });
@@ -138,7 +139,7 @@ export class Auth extends Resource {
   public async revoke(token: string): Promise<boolean> {
     await this.apiClient.request<undefined>({
       method: 'POST',
-      path: `/v3/connect/revoke`,
+      path: makePathParams('/v3/connect/revoke', {}),
       queryParams: {
         token,
       },
@@ -157,7 +158,7 @@ export class Auth extends Resource {
   ): Promise<NylasResponse<ProviderDetectResponse>> {
     return this.apiClient.request<NylasResponse<ProviderDetectResponse>>({
       method: 'POST',
-      path: `/v3/providers/detect`,
+      path: makePathParams('/v3/providers/detect', {}),
       queryParams: params,
     });
   }
@@ -219,13 +220,9 @@ export class Auth extends Resource {
   }
 
   private hashPKCESecret(secret: string): string {
-    const hash = createHash('sha256')
-      .update(secret)
-      .digest('hex');
+    const hash = createHash('sha256').update(secret).digest('hex');
 
-    return Buffer.from(hash)
-      .toString('base64')
-      .replace(/=+$/, '');
+    return Buffer.from(hash).toString('base64').replace(/=+$/, '');
   }
 
   private getTokenInfo(
@@ -233,7 +230,7 @@ export class Auth extends Resource {
   ): Promise<NylasResponse<TokenInfoResponse>> {
     return this.apiClient.request<NylasResponse<TokenInfoResponse>>({
       method: 'GET',
-      path: `/v3/connect/tokeninfo`,
+      path: makePathParams('/v3/connect/tokeninfo', {}),
       queryParams: params,
     });
   }

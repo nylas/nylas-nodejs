@@ -49,6 +49,34 @@ describe('Attachments', () => {
         },
       });
     });
+
+    it('should URL encode identifier and attachmentId in find', async () => {
+      await attachments.find({
+        identifier: 'id 123',
+        attachmentId: 'attach/123',
+        queryParams: { messageId: 'message123' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/attachments/attach%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and attachmentId in find', async () => {
+      await attachments.find({
+        identifier: 'id%20123',
+        attachmentId: 'attach%2F123',
+        queryParams: { messageId: 'message123' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/attachments/attach%2F123',
+        })
+      );
+    });
   });
 
   describe('downloadBytes', () => {
@@ -77,6 +105,34 @@ describe('Attachments', () => {
         },
       });
     });
+
+    it('should URL encode identifier and attachmentId in downloadBytes', async () => {
+      await attachments.downloadBytes({
+        identifier: 'id 123',
+        attachmentId: 'attach/123',
+        queryParams: { messageId: 'message123' },
+        overrides: {},
+      });
+      expect(apiClient.requestRaw).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/attachments/attach%2F123/download',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and attachmentId in downloadBytes', async () => {
+      await attachments.downloadBytes({
+        identifier: 'id%20123',
+        attachmentId: 'attach%2F123',
+        queryParams: { messageId: 'message123' },
+        overrides: {},
+      });
+      expect(apiClient.requestRaw).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/attachments/attach%2F123/download',
+        })
+      );
+    });
   });
 
   describe('download', () => {
@@ -104,6 +160,34 @@ describe('Attachments', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should URL encode identifier and attachmentId in download', async () => {
+      await attachments.download({
+        identifier: 'id 123',
+        attachmentId: 'attach/123',
+        queryParams: { messageId: 'message123' },
+        overrides: {},
+      });
+      expect(apiClient.requestStream).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/attachments/attach%2F123/download',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and attachmentId in download', async () => {
+      await attachments.download({
+        identifier: 'id%20123',
+        attachmentId: 'attach%2F123',
+        queryParams: { messageId: 'message123' },
+        overrides: {},
+      });
+      expect(apiClient.requestStream).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/attachments/attach%2F123/download',
+        })
+      );
     });
   });
 });

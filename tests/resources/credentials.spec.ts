@@ -60,6 +60,58 @@ describe('Credentials', () => {
         },
       });
     });
+
+    it('should URL encode provider and credentialsId in find', async () => {
+      await credentials.find({
+        provider: 'microsoft',
+        credentialsId: 'id/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/connectors/microsoft/creds/id%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded provider and credentialsId in find', async () => {
+      await credentials.find({
+        provider: 'microsoft',
+        credentialsId: 'id%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/connectors/microsoft/creds/id%2F123',
+        })
+      );
+    });
+
+    it('should URL encode credentialsId in find', async () => {
+      await credentials.find({
+        provider: 'microsoft',
+        credentialsId: 'id/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/connectors/microsoft/creds/id%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded credentialsId in find', async () => {
+      await credentials.find({
+        provider: 'microsoft',
+        credentialsId: 'id%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/connectors/microsoft/creds/id%2F123',
+        })
+      );
+    });
   });
 
   describe('create', () => {
@@ -125,6 +177,34 @@ describe('Credentials', () => {
         },
       });
     });
+
+    it('should URL encode credentialsId in update', async () => {
+      await credentials.update({
+        provider: 'microsoft',
+        credentialsId: 'id/123',
+        requestBody: { name: 'Changed Name' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/connectors/microsoft/creds/id%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded credentialsId in update', async () => {
+      await credentials.update({
+        provider: 'microsoft',
+        credentialsId: 'id%2F123',
+        requestBody: { name: 'Changed Name' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/connectors/microsoft/creds/id%2F123',
+        })
+      );
+    });
   });
 
   describe('destroy', () => {
@@ -146,6 +226,32 @@ describe('Credentials', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should URL encode credentialsId in destroy', async () => {
+      await credentials.destroy({
+        provider: 'microsoft',
+        credentialsId: 'id/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/connectors/microsoft/creds/id%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded credentialsId in destroy', async () => {
+      await credentials.destroy({
+        provider: 'microsoft',
+        credentialsId: 'id%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/connectors/microsoft/creds/id%2F123',
+        })
+      );
     });
   });
 });

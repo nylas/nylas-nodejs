@@ -11,7 +11,7 @@ import {
   UpdateGrantRequest,
 } from '../models/grants.js';
 import { ListQueryParams } from '../models/listQueryParams.js';
-
+import { makePathParams } from '../utils.js';
 /**
  * @property queryParams The query parameters to include in the request
  */
@@ -61,7 +61,7 @@ export class Grants extends Resource {
   ): Promise<NylasListResponse<Grant>> {
     return super._list<NylasListResponse<Grant>>({
       queryParams: queryParams ?? _queryParams ?? undefined,
-      path: `/v3/grants`,
+      path: makePathParams('/v3/grants', {}),
       overrides: overrides ?? {},
     });
   }
@@ -75,7 +75,7 @@ export class Grants extends Resource {
     overrides,
   }: FindGrantParams & Overrides): Promise<NylasResponse<Grant>> {
     return super._find({
-      path: `/v3/grants/${grantId}`,
+      path: makePathParams('/v3/grants/{grantId}', { grantId }),
       overrides,
     });
   }
@@ -90,7 +90,7 @@ export class Grants extends Resource {
     overrides,
   }: UpdateGrantParams & Overrides): Promise<NylasResponse<Grant>> {
     return super._updatePatch({
-      path: `/v3/grants/${grantId}`,
+      path: makePathParams('/v3/grants/{grantId}', { grantId }),
       requestBody,
       overrides,
     });
@@ -105,7 +105,7 @@ export class Grants extends Resource {
     overrides,
   }: DestroyGrantParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${grantId}`,
+      path: makePathParams('/v3/grants/{grantId}', { grantId }),
       overrides,
     });
   }

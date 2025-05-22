@@ -22,7 +22,11 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { encodeAttachmentStreams, objKeysToSnakeCase } from '../utils.js';
+import {
+  encodeAttachmentStreams,
+  objKeysToSnakeCase,
+  makePathParams,
+} from '../utils.js';
 import { AsyncListResponse, Resource } from './resource.js';
 import { SmartCompose } from './smartCompose.js';
 
@@ -156,7 +160,7 @@ export class Messages extends Resource {
     return super._list<NylasListResponse<Message>>({
       queryParams: modifiedQueryParams,
       overrides,
-      path: `/v3/grants/${identifier}/messages`,
+      path: makePathParams('/v3/grants/{identifier}/messages', { identifier }),
     });
   }
 
@@ -171,7 +175,10 @@ export class Messages extends Resource {
     queryParams,
   }: FindMessageParams & Overrides): Promise<NylasResponse<Message>> {
     return super._find({
-      path: `/v3/grants/${identifier}/messages/${messageId}`,
+      path: makePathParams('/v3/grants/{identifier}/messages/{messageId}', {
+        identifier,
+        messageId,
+      }),
       overrides,
       queryParams,
     });
@@ -188,7 +195,10 @@ export class Messages extends Resource {
     overrides,
   }: UpdateMessageParams & Overrides): Promise<NylasResponse<Message>> {
     return super._update({
-      path: `/v3/grants/${identifier}/messages/${messageId}`,
+      path: makePathParams('/v3/grants/{identifier}/messages/{messageId}', {
+        identifier,
+        messageId,
+      }),
       requestBody,
       overrides,
     });
@@ -204,7 +214,10 @@ export class Messages extends Resource {
     overrides,
   }: DestroyMessageParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${identifier}/messages/${messageId}`,
+      path: makePathParams('/v3/grants/{identifier}/messages/{messageId}', {
+        identifier,
+        messageId,
+      }),
       overrides,
     });
   }
@@ -218,7 +231,9 @@ export class Messages extends Resource {
     requestBody,
     overrides,
   }: SendMessageParams & Overrides): Promise<NylasResponse<Message>> {
-    const path = `/v3/grants/${identifier}/messages/send`;
+    const path = makePathParams('/v3/grants/{identifier}/messages/send', {
+      identifier,
+    });
     const requestOptions: RequestOptionsParams = {
       method: 'POST',
       path,
@@ -262,7 +277,9 @@ export class Messages extends Resource {
     NylasResponse<ScheduledMessagesList>
   > {
     return super._find({
-      path: `/v3/grants/${identifier}/messages/schedules`,
+      path: makePathParams('/v3/grants/{identifier}/messages/schedules', {
+        identifier,
+      }),
       overrides,
     });
   }
@@ -279,7 +296,10 @@ export class Messages extends Resource {
     NylasResponse<ScheduledMessage>
   > {
     return super._find({
-      path: `/v3/grants/${identifier}/messages/schedules/${scheduleId}`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/messages/schedules/{scheduleId}',
+        { identifier, scheduleId }
+      ),
       overrides,
     });
   }
@@ -296,7 +316,10 @@ export class Messages extends Resource {
     NylasResponse<StopScheduledMessageResponse>
   > {
     return super._destroy({
-      path: `/v3/grants/${identifier}/messages/schedules/${scheduleId}`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/messages/schedules/{scheduleId}',
+        { identifier, scheduleId }
+      ),
       overrides,
     });
   }
@@ -314,7 +337,9 @@ export class Messages extends Resource {
   > {
     return this.apiClient.request<NylasListResponse<CleanMessagesResponse>>({
       method: 'PUT',
-      path: `/v3/grants/${identifier}/messages/clean`,
+      path: makePathParams('/v3/grants/{identifier}/messages/clean', {
+        identifier,
+      }),
       body: requestBody,
       overrides,
     });

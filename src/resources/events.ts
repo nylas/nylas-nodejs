@@ -19,6 +19,7 @@ import {
   NylasListResponse,
 } from '../models/response.js';
 import { AsyncListResponse, Resource } from './resource.js';
+import { makePathParams } from '../utils.js';
 
 /**
  * @property eventId The id of the Event to retrieve.
@@ -114,7 +115,7 @@ export class Events extends Resource {
   }: ListEventParams & Overrides): AsyncListResponse<NylasListResponse<Event>> {
     return super._list({
       queryParams,
-      path: `/v3/grants/${identifier}/events`,
+      path: makePathParams('/v3/grants/{identifier}/events', { identifier }),
       overrides,
     });
   }
@@ -133,7 +134,9 @@ export class Events extends Resource {
   > {
     return super._list({
       queryParams,
-      path: `/v3/grants/${identifier}/events/import`,
+      path: makePathParams('/v3/grants/{identifier}/events/import', {
+        identifier,
+      }),
       overrides,
     });
   }
@@ -149,7 +152,10 @@ export class Events extends Resource {
     overrides,
   }: FindEventParams & Overrides): Promise<NylasResponse<Event>> {
     return super._find({
-      path: `/v3/grants/${identifier}/events/${eventId}`,
+      path: makePathParams('/v3/grants/{identifier}/events/{eventId}', {
+        identifier,
+        eventId,
+      }),
       queryParams,
       overrides,
     });
@@ -166,7 +172,7 @@ export class Events extends Resource {
     overrides,
   }: CreateEventParams & Overrides): Promise<NylasResponse<Event>> {
     return super._create({
-      path: `/v3/grants/${identifier}/events`,
+      path: makePathParams('/v3/grants/{identifier}/events', { identifier }),
       queryParams,
       requestBody,
       overrides,
@@ -185,7 +191,10 @@ export class Events extends Resource {
     overrides,
   }: UpdateEventParams & Overrides): Promise<NylasResponse<Event>> {
     return super._update({
-      path: `/v3/grants/${identifier}/events/${eventId}`,
+      path: makePathParams('/v3/grants/{identifier}/events/{eventId}', {
+        identifier,
+        eventId,
+      }),
       queryParams,
       requestBody,
       overrides,
@@ -203,7 +212,10 @@ export class Events extends Resource {
     overrides,
   }: DestroyEventParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${identifier}/events/${eventId}`,
+      path: makePathParams('/v3/grants/{identifier}/events/{eventId}', {
+        identifier,
+        eventId,
+      }),
       queryParams,
       overrides,
     });
@@ -222,10 +234,14 @@ export class Events extends Resource {
     queryParams,
     overrides,
   }: SendRsvpParams & Overrides): Promise<SendRsvpResponse> {
-    return super._create({
-      path: `/v3/grants/${identifier}/events/${eventId}/send-rsvp`,
+    return this.apiClient.request<SendRsvpResponse>({
+      method: 'POST',
+      path: makePathParams(
+        '/v3/grants/{identifier}/events/{eventId}/send-rsvp',
+        { identifier, eventId }
+      ),
       queryParams,
-      requestBody,
+      body: requestBody,
       overrides,
     });
   }

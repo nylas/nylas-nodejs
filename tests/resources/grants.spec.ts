@@ -17,7 +17,7 @@ describe('Grants', () => {
     grants = new Grants(apiClient);
 
     // Create a spy implementation that captures the inputs
-    apiClient.request = jest.fn().mockImplementation(input => {
+    apiClient.request = jest.fn().mockImplementation((input) => {
       // eslint-disable-next-line no-console
       console.log('Request input:', JSON.stringify(input, null, 2));
       return Promise.resolve({
@@ -145,6 +145,30 @@ describe('Grants', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should URL encode grantId in find', async () => {
+      await grants.find({
+        grantId: 'grant/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/grant%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded grantId in find', async () => {
+      await grants.find({
+        grantId: 'grant%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/grant%2F123',
+        })
+      );
     });
   });
 

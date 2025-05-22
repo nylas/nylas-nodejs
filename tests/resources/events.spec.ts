@@ -263,6 +263,34 @@ describe('Events', () => {
         },
       });
     });
+
+    it('should URL encode identifier and eventId in find', async () => {
+      await events.find({
+        identifier: 'id 123',
+        eventId: 'event/123',
+        queryParams: { calendarId: 'calendar123' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/events/event%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and eventId in find', async () => {
+      await events.find({
+        identifier: 'id%20123',
+        eventId: 'event%2F123',
+        queryParams: { calendarId: 'calendar123' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/events/event%2F123',
+        })
+      );
+    });
   });
 
   describe('create', () => {

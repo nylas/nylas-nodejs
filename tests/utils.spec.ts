@@ -2,6 +2,7 @@ import {
   createFileRequestBuilder,
   objKeysToCamelCase,
   objKeysToSnakeCase,
+  makePathParams,
 } from '../src/utils';
 
 jest.mock('fs', () => {
@@ -173,5 +174,104 @@ describe('convertCase', () => {
       firstName: 'John',
       current2024Status: 'confirmed',
     });
+  });
+});
+
+describe('makePathParams and safePath', () => {
+  it('should URL encode path params with special characters', () => {
+    const path = makePathParams(
+      '/v3/grants/{identifier}/contacts/{contactId}',
+      {
+        identifier: 'id 123',
+        contactId: 'contact/123',
+      }
+    );
+    expect(path).toBe('/v3/grants/id%20123/contacts/contact%2F123');
+  });
+
+  it('should not double encode already-encoded params (backwards compatibility)', () => {
+    const path = makePathParams(
+      '/v3/grants/{identifier}/contacts/{contactId}',
+      {
+        identifier: 'id%20123', // already encoded
+        contactId: 'contact%2F123', // already encoded
+      }
+    );
+    expect(path).toBe('/v3/grants/id%20123/contacts/contact%2F123');
+  });
+
+  it('should throw if a required param is missing', () => {
+    expect(() =>
+      makePathParams('/v3/grants/{identifier}/contacts/{contactId}', {
+        identifier: 'id123',
+        // contactId missing
+      } as any)
+    ).toThrow('Missing replacement for contactId');
+  });
+
+  it('should work with no params in the path', () => {
+    const path = makePathParams('/v3/grants', {});
+    expect(path).toBe('/v3/grants');
+  });
+
+  it('should handle params that need no encoding', () => {
+    const path = makePathParams('/v3/grants/{identifier}', {
+      identifier: 'plainid',
+    });
+    expect(path).toBe('/v3/grants/plainid');
+  });
+
+  // Additional tests for the improved safePath implementation
+  it('should handle mixed encoded and unencoded content correctly', () => {
+    const path = makePathParams('/v3/grants/{identifier}', {
+      identifier: 'test%20already encoded', // partially encoded
+    });
+    expect(path).toBe('/v3/grants/test%20already%20encoded');
+  });
+
+  it('should handle malformed percent encoding gracefully', () => {
+    const path = makePathParams('/v3/grants/{identifier}', {
+      identifier: 'test%2 incomplete', // incomplete percent encoding
+    });
+    expect(path).toBe('/v3/grants/test%252%20incomplete');
+  });
+
+  it('should handle unicode characters correctly', () => {
+    const path = makePathParams('/v3/grants/{identifier}', {
+      identifier: 'test 中文 unicode',
+    });
+    expect(path).toBe('/v3/grants/test%20%E4%B8%AD%E6%96%87%20unicode');
+  });
+
+  it('should handle complex URI components with multiple special characters', () => {
+    const path = makePathParams('/v3/grants/{identifier}', {
+      identifier: 'user@domain.com/folder?query=value#anchor',
+    });
+    expect(path).toBe(
+      '/v3/grants/user%40domain.com%2Ffolder%3Fquery%3Dvalue%23anchor'
+    );
+  });
+
+  it('should preserve correctly encoded URIs with complex characters', () => {
+    const path = makePathParams('/v3/grants/{identifier}', {
+      identifier: 'user%40domain.com%2Ffolder%3Fquery%3Dvalue%23anchor', // pre-encoded
+    });
+    expect(path).toBe(
+      '/v3/grants/user%40domain.com%2Ffolder%3Fquery%3Dvalue%23anchor'
+    );
+  });
+
+  it('should handle empty strings', () => {
+    const path = makePathParams('/v3/grants/{identifier}', {
+      identifier: '',
+    });
+    expect(path).toBe('/v3/grants/');
+  });
+
+  it('should handle strings with only special characters', () => {
+    const path = makePathParams('/v3/grants/{identifier}', {
+      identifier: '/@#$%^&*()',
+    });
+    expect(path).toBe('/v3/grants/%2F%40%23%24%25%5E%26*()');
   });
 });
