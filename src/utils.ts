@@ -36,7 +36,7 @@ function streamToBase64(stream: NodeJS.ReadableStream): Promise<string> {
       const base64 = Buffer.concat(chunks).toString('base64');
       resolve(base64);
     });
-    stream.on('error', err => {
+    stream.on('error', (err) => {
       reject(err);
     });
   });
@@ -51,7 +51,7 @@ export async function encodeAttachmentStreams(
   attachments: CreateAttachmentRequest[]
 ): Promise<CreateAttachmentRequest[]> {
   return await Promise.all(
-    attachments.map(async attachment => {
+    attachments.map(async (attachment) => {
       const base64EncodedContent =
         attachment.content instanceof Readable
           ? await streamToBase64(attachment.content)
@@ -102,7 +102,7 @@ function convertCase(
       newObj[key] = obj[key];
     } else if (Array.isArray(obj[key])) {
       newObj[applyCasing(casingFunction, key)] = (obj[key] as any[]).map(
-        item => {
+        (item) => {
           if (typeof item === 'object') {
             return convertCase(item, casingFunction);
           } else {
@@ -157,8 +157,8 @@ export type Subset<K> = {
   [attr in keyof K]?: K[attr] extends object
     ? Subset<K[attr]>
     : K[attr] extends object | null
-    ? Subset<K[attr]> | null
-    : K[attr] extends object | null | undefined
-    ? Subset<K[attr]> | null | undefined
-    : K[attr];
+      ? Subset<K[attr]> | null
+      : K[attr] extends object | null | undefined
+        ? Subset<K[attr]> | null | undefined
+        : K[attr];
 };
