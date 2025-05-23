@@ -12,7 +12,8 @@ export type Provider =
   | 'microsoft'
   | 'icloud'
   | 'virtual-calendar'
-  | 'ews';
+  | 'ews'
+  | 'zoom';
 
 /**
  * Configuration for generating a URL for OAuth 2.0 authentication.
