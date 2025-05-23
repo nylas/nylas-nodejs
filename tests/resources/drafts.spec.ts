@@ -7,7 +7,7 @@ jest.mock('../src/apiClient');
 
 // Mock the FormData constructor
 jest.mock('form-data', () => {
-  return jest.fn().mockImplementation(function(this: MockedFormData) {
+  return jest.fn().mockImplementation(function (this: MockedFormData) {
     const appendedData: Record<string, any> = {};
 
     this.append = (key: string, value: any): void => {
@@ -266,7 +266,9 @@ describe('Drafts', () => {
       });
 
       const capturedRequest = apiClient.request.mock.calls[0][0];
-      const formData = ((capturedRequest.form as any) as MockedFormData)._getAppendedData();
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
       expect(formData.message).toEqual(JSON.stringify(messageJson));
       expect(formData.file0).toEqual(fileStream);
       expect(capturedRequest.method).toEqual('POST');
@@ -352,7 +354,9 @@ describe('Drafts', () => {
       });
 
       const capturedRequest = apiClient.request.mock.calls[0][0];
-      const formData = ((capturedRequest.form as any) as MockedFormData)._getAppendedData();
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
       expect(formData.message).toEqual(JSON.stringify(messageJson));
       expect(formData.file0).toEqual(fileStream);
       expect(capturedRequest.method).toEqual('PUT');

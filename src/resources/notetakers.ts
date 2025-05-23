@@ -91,9 +91,8 @@ export class Notetakers extends Resource {
     identifier,
     queryParams,
     overrides,
-  }: ListNotetakersParams & Overrides): AsyncListResponse<
-    ListNotetakersResponse
-  > {
+  }: ListNotetakersParams &
+    Overrides): AsyncListResponse<ListNotetakersResponse> {
     return super._list({
       path: identifier
         ? `/v3/grants/${identifier}/notetakers`

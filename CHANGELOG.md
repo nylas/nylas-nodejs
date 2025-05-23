@@ -4,6 +4,7 @@
 * Fix event status type to use 'maybe' instead of 'tentative' in Event interface to match API documentation
 * Add support for 'zoom' as a provider type in Auth module
 * Fix Add missing `/cancel` suffix in Notetaker API endpoint
+* Add support for `tentativeAsBusy` parameter in FreeBusy requests to control how tentative events are treated
 
 ### 7.9.0 / 2025-04-30
 * Add support for Notetaker API endpoints

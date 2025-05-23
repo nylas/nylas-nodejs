@@ -219,13 +219,9 @@ export class Auth extends Resource {
   }
 
   private hashPKCESecret(secret: string): string {
-    const hash = createHash('sha256')
-      .update(secret)
-      .digest('hex');
+    const hash = createHash('sha256').update(secret).digest('hex');
 
-    return Buffer.from(hash)
-      .toString('base64')
-      .replace(/=+$/, '');
+    return Buffer.from(hash).toString('base64').replace(/=+$/, '');
   }
 
   private getTokenInfo(

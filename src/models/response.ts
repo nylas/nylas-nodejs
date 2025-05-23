@@ -49,6 +49,5 @@ export interface NylasListResponse<T> {
 /**
  * Helper type for pagination
  */
-export type ListResponseInnerType<T> = T extends NylasListResponse<infer R>
-  ? R
-  : never;
+export type ListResponseInnerType<T> =
+  T extends NylasListResponse<infer R> ? R : never;
