@@ -188,6 +188,20 @@ describe('Auth', () => {
         );
       });
 
+      it('should support zoom as a provider', () => {
+        const url = auth.urlForOAuth2({
+          clientId: 'clientId',
+          redirectUri: 'https://redirect.uri/path',
+          scope: ['calendar'],
+          provider: 'zoom',
+          includeGrantScopes: true,
+        });
+
+        expect(url).toBe(
+          'https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=zoom&include_grant_scopes=true&scope=calendar'
+        );
+      });
+
       it('should build the correct url if all the fields are set', () => {
         const url = auth.urlForOAuth2({
           clientId: 'clientId',

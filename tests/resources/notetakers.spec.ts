@@ -425,7 +425,7 @@ describe('Notetakers', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'DELETE',
-        path: '/v3/grants/id123/notetakers/notetaker123',
+        path: '/v3/grants/id123/notetakers/notetaker123/cancel',
       });
     });
 
@@ -441,7 +441,7 @@ describe('Notetakers', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'DELETE',
-        path: '/v3/grants/id123/notetakers/notetaker123',
+        path: '/v3/grants/id123/notetakers/notetaker123/cancel',
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
@@ -456,7 +456,7 @@ describe('Notetakers', () => {
 
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'DELETE',
-        path: '/v3/notetakers/notetaker123',
+        path: '/v3/notetakers/notetaker123/cancel',
       });
     });
   });
