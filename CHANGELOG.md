@@ -1,9 +1,9 @@
 # Changelog
 
 ### Unreleased
+* Fix event status type to use 'maybe' instead of 'tentative' in Event interface to match API documentation
 * Add support for 'zoom' as a provider type in Auth module
-* Fixed Add missing `/cancel` suffix in Notetaker API endpoint
-
+* Fix Add missing `/cancel` suffix in Notetaker API endpoint
 
 ### 7.9.0 / 2025-04-30
 * Add support for Notetaker API endpoints

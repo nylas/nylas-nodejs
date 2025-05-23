@@ -396,7 +396,7 @@ export interface ListImportEventQueryParams extends ListQueryParams {
 /**
  * Enum representing the status of an event.
  */
-type Status = 'confirmed' | 'tentative' | 'cancelled';
+type Status = 'confirmed' | 'maybe' | 'cancelled';
 
 /**
  * Enum representing the status of an RSVP response.
