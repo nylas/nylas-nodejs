@@ -2,7 +2,7 @@ import { Overrides } from '../config.js';
 import { NylasBaseResponse, NylasResponse } from '../models/response.js';
 import { CreateSessionRequest, Session } from '../models/scheduler.js';
 import { Resource } from './resource.js';
-
+import { makePathParams } from '../utils.js';
 /**
  * The parameters for the {@link Sessions.create} method
  * @property identifier The identifier of the grant to act upon
@@ -31,7 +31,7 @@ export class Sessions extends Resource {
     overrides,
   }: CreateSessionParams & Overrides): Promise<NylasResponse<Session>> {
     return super._create({
-      path: `/v3/scheduling/sessions`,
+      path: makePathParams('/v3/scheduling/sessions', {}),
       requestBody,
       overrides,
     });
@@ -46,7 +46,9 @@ export class Sessions extends Resource {
     overrides,
   }: DestroySessionParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/scheduling/sessions/${sessionId}`,
+      path: makePathParams('/v3/scheduling/sessions/{sessionId}', {
+        sessionId,
+      }),
       overrides,
     });
   }

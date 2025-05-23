@@ -66,6 +66,30 @@ describe('RedirectUris', () => {
         },
       });
     });
+
+    it('should URL encode redirectUriId in find', async () => {
+      await redirectUris.find({
+        redirectUriId: 'redirect/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/applications/redirect-uris/redirect%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded redirectUriId in find', async () => {
+      await redirectUris.find({
+        redirectUriId: 'redirect%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/applications/redirect-uris/redirect%2F123',
+        })
+      );
+    });
   });
 
   describe('create', () => {
@@ -155,6 +179,40 @@ describe('RedirectUris', () => {
         },
       });
     });
+
+    it('should URL encode redirectUriId in update', async () => {
+      await redirectUris.update({
+        redirectUriId: 'redirect/123',
+        requestBody: {
+          url: 'https://test.com',
+          platform: 'google',
+          settings: {},
+        },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/applications/redirect-uris/redirect%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded redirectUriId in update', async () => {
+      await redirectUris.update({
+        redirectUriId: 'redirect%2F123',
+        requestBody: {
+          url: 'https://test.com',
+          platform: 'google',
+          settings: {},
+        },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/applications/redirect-uris/redirect%2F123',
+        })
+      );
+    });
   });
 
   describe('destroy', () => {
@@ -175,6 +233,30 @@ describe('RedirectUris', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should URL encode redirectUriId in destroy', async () => {
+      await redirectUris.destroy({
+        redirectUriId: 'redirect/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/applications/redirect-uris/redirect%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded redirectUriId in destroy', async () => {
+      await redirectUris.destroy({
+        redirectUriId: 'redirect%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/applications/redirect-uris/redirect%2F123',
+        })
+      );
     });
   });
 });

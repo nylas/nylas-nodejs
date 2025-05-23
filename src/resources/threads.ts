@@ -10,6 +10,7 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
+import { makePathParams } from '../utils.js';
 
 /**
  * The parameters for the {@link Threads.list} method
@@ -86,7 +87,7 @@ export class Threads extends Resource {
     return super._list<NylasListResponse<Thread>>({
       queryParams: modifiedQueryParams,
       overrides,
-      path: `/v3/grants/${identifier}/threads`,
+      path: makePathParams('/v3/grants/{identifier}/threads', { identifier }),
     });
   }
 
@@ -100,7 +101,10 @@ export class Threads extends Resource {
     overrides,
   }: FindThreadParams & Overrides): Promise<NylasResponse<Thread>> {
     return super._find({
-      path: `/v3/grants/${identifier}/threads/${threadId}`,
+      path: makePathParams('/v3/grants/{identifier}/threads/{threadId}', {
+        identifier,
+        threadId,
+      }),
       overrides,
     });
   }
@@ -116,7 +120,10 @@ export class Threads extends Resource {
     overrides,
   }: UpdateThreadParams & Overrides): Promise<NylasResponse<Thread>> {
     return super._update({
-      path: `/v3/grants/${identifier}/threads/${threadId}`,
+      path: makePathParams('/v3/grants/{identifier}/threads/{threadId}', {
+        identifier,
+        threadId,
+      }),
       requestBody,
       overrides,
     });
@@ -132,7 +139,10 @@ export class Threads extends Resource {
     overrides,
   }: DestroyThreadParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${identifier}/threads/${threadId}`,
+      path: makePathParams('/v3/grants/{identifier}/threads/{threadId}', {
+        identifier,
+        threadId,
+      }),
       overrides,
     });
   }

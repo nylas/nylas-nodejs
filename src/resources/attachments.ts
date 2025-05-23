@@ -5,6 +5,7 @@ import {
   DownloadAttachmentQueryParams,
 } from '../models/attachments.js';
 import { NylasResponse } from '../models/response.js';
+import { makePathParams } from '../utils.js';
 import { Resource } from './resource.js';
 
 /**
@@ -46,7 +47,10 @@ export class Attachments extends Resource {
     overrides,
   }: FindAttachmentParams & Overrides): Promise<NylasResponse<Attachment>> {
     return super._find({
-      path: `/v3/grants/${identifier}/attachments/${attachmentId}`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/attachments/{attachmentId}',
+        { identifier, attachmentId }
+      ),
       queryParams,
       overrides,
     });
@@ -72,7 +76,10 @@ export class Attachments extends Resource {
     overrides,
   }: DownloadAttachmentParams & Overrides): Promise<NodeJS.ReadableStream> {
     return this._getStream({
-      path: `/v3/grants/${identifier}/attachments/${attachmentId}/download`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/attachments/{attachmentId}/download',
+        { identifier, attachmentId }
+      ),
       queryParams,
       overrides,
     });
@@ -92,7 +99,10 @@ export class Attachments extends Resource {
     overrides,
   }: DownloadAttachmentParams & Overrides): Promise<Buffer> {
     return super._getRaw({
-      path: `/v3/grants/${identifier}/attachments/${attachmentId}/download`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/attachments/{attachmentId}/download',
+        { identifier, attachmentId }
+      ),
       queryParams,
       overrides,
     });

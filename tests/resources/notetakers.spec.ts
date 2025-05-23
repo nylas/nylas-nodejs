@@ -343,6 +343,30 @@ describe('Notetakers', () => {
       });
     });
 
+    it('should URL encode identifier and notetakerId in find', async () => {
+      await notetakers.find({
+        identifier: 'id 123',
+        notetakerId: 'notetaker/123',
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/notetakers/notetaker%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and notetakerId in find', async () => {
+      await notetakers.find({
+        identifier: 'id%20123',
+        notetakerId: 'notetaker%2F123',
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/notetakers/notetaker%2F123',
+        })
+      );
+    });
+
     it('should find a notetaker without identifier', async () => {
       await notetakers.find({
         notetakerId: 'notetaker123',
@@ -414,6 +438,32 @@ describe('Notetakers', () => {
         body: requestBody,
       });
     });
+
+    it('should URL encode identifier and notetakerId in update', async () => {
+      await notetakers.update({
+        identifier: 'id 123',
+        notetakerId: 'notetaker/123',
+        requestBody: { name: 'Updated Notetaker' },
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/notetakers/notetaker%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and notetakerId in update', async () => {
+      await notetakers.update({
+        identifier: 'id%20123',
+        notetakerId: 'notetaker%2F123',
+        requestBody: { name: 'Updated Notetaker' },
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/notetakers/notetaker%2F123',
+        })
+      );
+    });
   });
 
   describe('cancel', () => {
@@ -458,6 +508,30 @@ describe('Notetakers', () => {
         method: 'DELETE',
         path: '/v3/notetakers/notetaker123/cancel',
       });
+    });
+
+    it('should URL encode identifier and notetakerId in cancel', async () => {
+      await notetakers.cancel({
+        identifier: 'id 123',
+        notetakerId: 'notetaker/123',
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/notetakers/notetaker%2F123/cancel',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and notetakerId in cancel', async () => {
+      await notetakers.cancel({
+        identifier: 'id%20123',
+        notetakerId: 'notetaker%2F123',
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/notetakers/notetaker%2F123/cancel',
+        })
+      );
     });
   });
 
@@ -543,6 +617,30 @@ describe('Notetakers', () => {
       });
 
       expect(response).toEqual(mockResponse);
+    });
+
+    it('should URL encode identifier and notetakerId in leave', async () => {
+      await notetakers.leave({
+        identifier: 'id 123',
+        notetakerId: 'notetaker/123',
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/notetakers/notetaker%2F123/leave',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and notetakerId in leave', async () => {
+      await notetakers.leave({
+        identifier: 'id%20123',
+        notetakerId: 'notetaker%2F123',
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/notetakers/notetaker%2F123/leave',
+        })
+      );
     });
   });
 
@@ -640,6 +738,30 @@ describe('Notetakers', () => {
       });
 
       expect(response).toEqual(mockResponse);
+    });
+
+    it('should URL encode identifier and notetakerId in downloadMedia', async () => {
+      await notetakers.downloadMedia({
+        identifier: 'id 123',
+        notetakerId: 'notetaker/123',
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/notetakers/notetaker%2F123/media',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and notetakerId in downloadMedia', async () => {
+      await notetakers.downloadMedia({
+        identifier: 'id%20123',
+        notetakerId: 'notetaker%2F123',
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/notetakers/notetaker%2F123/media',
+        })
+      );
     });
   });
 });

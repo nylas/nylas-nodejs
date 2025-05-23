@@ -280,6 +280,27 @@ describe('Auth', () => {
         },
       });
     });
+
+    it('should encode token in queryParams if needed (revoke)', async () => {
+      await auth.revoke('access token/123');
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          queryParams: expect.objectContaining({
+            token: 'access token/123',
+          }),
+        })
+      );
+    });
+    it('should not double encode already-encoded token in queryParams (revoke)', async () => {
+      await auth.revoke('access%20token%2F123');
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          queryParams: expect.objectContaining({
+            token: 'access%20token%2F123',
+          }),
+        })
+      );
+    });
   });
   describe('token info', () => {
     describe('idTokenInfo', () => {
@@ -294,6 +315,27 @@ describe('Auth', () => {
           },
         });
       });
+
+      it('should encode id_token in queryParams if needed', async () => {
+        await auth.idTokenInfo('id token/123');
+        expect(apiClient.request).toHaveBeenCalledWith(
+          expect.objectContaining({
+            queryParams: expect.objectContaining({
+              id_token: 'id token/123',
+            }),
+          })
+        );
+      });
+      it('should not double encode already-encoded id_token in queryParams', async () => {
+        await auth.idTokenInfo('id%20token%2F123');
+        expect(apiClient.request).toHaveBeenCalledWith(
+          expect.objectContaining({
+            queryParams: expect.objectContaining({
+              id_token: 'id%20token%2F123',
+            }),
+          })
+        );
+      });
     });
 
     describe('accessTokenInfo', () => {
@@ -307,6 +349,27 @@ describe('Auth', () => {
             access_token: 'accessToken123',
           },
         });
+      });
+
+      it('should encode access_token in queryParams if needed', async () => {
+        await auth.accessTokenInfo('access token/123');
+        expect(apiClient.request).toHaveBeenCalledWith(
+          expect.objectContaining({
+            queryParams: expect.objectContaining({
+              access_token: 'access token/123',
+            }),
+          })
+        );
+      });
+      it('should not double encode already-encoded access_token in queryParams', async () => {
+        await auth.accessTokenInfo('access%20token%2F123');
+        expect(apiClient.request).toHaveBeenCalledWith(
+          expect.objectContaining({
+            queryParams: expect.objectContaining({
+              access_token: 'access%20token%2F123',
+            }),
+          })
+        );
       });
     });
   });

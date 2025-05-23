@@ -78,6 +78,32 @@ describe('Threads', () => {
         },
       });
     });
+
+    it('should URL encode identifier and threadId in find', async () => {
+      await threads.find({
+        identifier: 'id 123',
+        threadId: 'thread/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/threads/thread%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and threadId in find', async () => {
+      await threads.find({
+        identifier: 'id%20123',
+        threadId: 'thread%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/threads/thread%2F123',
+        })
+      );
+    });
   });
 
   describe('update', () => {

@@ -95,6 +95,32 @@ describe('Folders', () => {
         },
       });
     });
+
+    it('should URL encode identifier and folderId in find', async () => {
+      await folders.find({
+        identifier: 'id 123',
+        folderId: 'folder/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/folders/folder%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and folderId in find', async () => {
+      await folders.find({
+        identifier: 'id%20123',
+        folderId: 'folder%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/folders/folder%2F123',
+        })
+      );
+    });
   });
 
   describe('create', () => {

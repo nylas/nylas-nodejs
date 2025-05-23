@@ -14,6 +14,7 @@ import {
 import { Provider } from '../models/auth.js';
 import { Credentials } from './credentials.js';
 import APIClient from '../apiClient.js';
+import { makePathParams } from '../utils.js';
 
 /**
  * The parameters for the {@link Connectors.find} method
@@ -84,7 +85,7 @@ export class Connectors extends Resource {
     return super._list<NylasListResponse<Connector>>({
       queryParams,
       overrides,
-      path: `/v3/connectors`,
+      path: makePathParams('/v3/connectors', {}),
     });
   }
 
@@ -97,7 +98,7 @@ export class Connectors extends Resource {
     overrides,
   }: FindConnectorParams & Overrides): Promise<NylasResponse<Connector>> {
     return super._find({
-      path: `/v3/connectors/${provider}`,
+      path: makePathParams('/v3/connectors/{provider}', { provider }),
       overrides,
     });
   }
@@ -111,7 +112,7 @@ export class Connectors extends Resource {
     overrides,
   }: CreateConnectorParams & Overrides): Promise<NylasResponse<Connector>> {
     return super._create({
-      path: `/v3/connectors`,
+      path: makePathParams('/v3/connectors', {}),
       requestBody,
       overrides,
     });
@@ -127,7 +128,7 @@ export class Connectors extends Resource {
     overrides,
   }: UpdateConnectorParams & Overrides): Promise<NylasResponse<Connector>> {
     return super._update({
-      path: `/v3/connectors/${provider}`,
+      path: makePathParams('/v3/connectors/{provider}', { provider }),
       requestBody,
       overrides,
     });
@@ -142,7 +143,7 @@ export class Connectors extends Resource {
     overrides,
   }: DestroyConnectorParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/connectors/${provider}`,
+      path: makePathParams('/v3/connectors/{provider}', { provider }),
       overrides,
     });
   }

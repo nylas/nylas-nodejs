@@ -10,6 +10,7 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
+import { makePathParams } from '../utils.js';
 
 /**
  * The parameters for the {@link Configurations.find} method
@@ -74,7 +75,12 @@ export class Configurations extends Resource {
   > {
     return super._list<NylasListResponse<Configuration>>({
       overrides,
-      path: `/v3/grants/${identifier}/scheduling/configurations`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/scheduling/configurations',
+        {
+          identifier,
+        }
+      ),
     });
   }
 
@@ -90,7 +96,13 @@ export class Configurations extends Resource {
     NylasResponse<Configuration>
   > {
     return super._find({
-      path: `/v3/grants/${identifier}/scheduling/configurations/${configurationId}`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/scheduling/configurations/{configurationId}',
+        {
+          identifier,
+          configurationId,
+        }
+      ),
       overrides,
     });
   }
@@ -107,7 +119,12 @@ export class Configurations extends Resource {
     NylasResponse<Configuration>
   > {
     return super._create({
-      path: `/v3/grants/${identifier}/scheduling/configurations`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/scheduling/configurations',
+        {
+          identifier,
+        }
+      ),
       requestBody,
       overrides,
     });
@@ -126,7 +143,13 @@ export class Configurations extends Resource {
     NylasResponse<Configuration>
   > {
     return super._update({
-      path: `/v3/grants/${identifier}/scheduling/configurations/${configurationId}`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/scheduling/configurations/{configurationId}',
+        {
+          identifier,
+          configurationId,
+        }
+      ),
       requestBody,
       overrides,
     });
@@ -142,7 +165,13 @@ export class Configurations extends Resource {
     overrides,
   }: DestroyConfigurationParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${identifier}/scheduling/configurations/${configurationId}`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/scheduling/configurations/{configurationId}',
+        {
+          identifier,
+          configurationId,
+        }
+      ),
       overrides,
     });
   }

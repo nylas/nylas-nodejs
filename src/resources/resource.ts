@@ -11,7 +11,7 @@ interface ListParams<T> {
   queryParams?: ListQueryParams;
   path: string;
   overrides?: OverridableNylasConfig;
-  useGenerator?: boolean; // Add this line
+  useGenerator?: boolean;
 }
 
 interface FindParams<T> {
@@ -126,11 +126,11 @@ export class Resource {
   ): AsyncListResponse<T> {
     const iterator = this.listIterator(listParams);
     const first = iterator.next().then(
-      res =>
+      (res) =>
         ({
           ...res.value,
           next: iterator.next.bind(iterator),
-        } as ListYieldReturn<T>)
+        }) as ListYieldReturn<T>
     );
 
     return Object.assign(first, {

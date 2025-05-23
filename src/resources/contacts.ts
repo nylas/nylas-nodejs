@@ -13,6 +13,7 @@ import {
   NylasBaseResponse,
 } from '../models/response.js';
 import { AsyncListResponse, Resource } from './resource.js';
+import { makePathParams } from '../utils.js';
 
 /**
  * @property contactId The id of the Contact to retrieve.
@@ -89,7 +90,7 @@ export class Contacts extends Resource {
   > {
     return super._list({
       queryParams,
-      path: `/v3/grants/${identifier}/contacts`,
+      path: makePathParams('/v3/grants/{identifier}/contacts', { identifier }),
       overrides,
     });
   }
@@ -105,7 +106,10 @@ export class Contacts extends Resource {
     overrides,
   }: FindContactParams & Overrides): Promise<NylasResponse<Contact>> {
     return super._find({
-      path: `/v3/grants/${identifier}/contacts/${contactId}`,
+      path: makePathParams('/v3/grants/{identifier}/contacts/{contactId}', {
+        identifier,
+        contactId,
+      }),
       queryParams,
       overrides,
     });
@@ -121,7 +125,7 @@ export class Contacts extends Resource {
     overrides,
   }: CreateContactParams & Overrides): Promise<NylasResponse<Contact>> {
     return super._create({
-      path: `/v3/grants/${identifier}/contacts`,
+      path: makePathParams('/v3/grants/{identifier}/contacts', { identifier }),
       requestBody,
       overrides,
     });
@@ -138,7 +142,10 @@ export class Contacts extends Resource {
     overrides,
   }: UpdateContactParams & Overrides): Promise<NylasResponse<Contact>> {
     return super._update({
-      path: `/v3/grants/${identifier}/contacts/${contactId}`,
+      path: makePathParams('/v3/grants/{identifier}/contacts/{contactId}', {
+        identifier,
+        contactId,
+      }),
       requestBody,
       overrides,
     });
@@ -154,7 +161,10 @@ export class Contacts extends Resource {
     overrides,
   }: DestroyContactParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${identifier}/contacts/${contactId}`,
+      path: makePathParams('/v3/grants/{identifier}/contacts/{contactId}', {
+        identifier,
+        contactId,
+      }),
       overrides,
     });
   }
@@ -170,7 +180,9 @@ export class Contacts extends Resource {
     NylasListResponse<ContactGroup>
   > {
     return super._list({
-      path: `/v3/grants/${identifier}/contacts/groups`,
+      path: makePathParams('/v3/grants/{identifier}/contacts/groups', {
+        identifier,
+      }),
       overrides,
     });
   }

@@ -7,7 +7,7 @@ jest.mock('../src/apiClient');
 
 // Mock the FormData constructor
 jest.mock('form-data', () => {
-  return jest.fn().mockImplementation(function(this: MockedFormData) {
+  return jest.fn().mockImplementation(function (this: MockedFormData) {
     const appendedData: Record<string, any> = {};
 
     this.append = (key: string, value: any): void => {
@@ -167,6 +167,32 @@ describe('Drafts', () => {
         },
       });
     });
+
+    it('should URL encode identifier and draftId in find', async () => {
+      await drafts.find({
+        identifier: 'id 123',
+        draftId: 'draft/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/drafts/draft%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and draftId in find', async () => {
+      await drafts.find({
+        identifier: 'id%20123',
+        draftId: 'draft%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/drafts/draft%2F123',
+        })
+      );
+    });
   });
 
   describe('create', () => {
@@ -266,7 +292,9 @@ describe('Drafts', () => {
       });
 
       const capturedRequest = apiClient.request.mock.calls[0][0];
-      const formData = ((capturedRequest.form as any) as MockedFormData)._getAppendedData();
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
       expect(formData.message).toEqual(JSON.stringify(messageJson));
       expect(formData.file0).toEqual(fileStream);
       expect(capturedRequest.method).toEqual('POST');
@@ -352,7 +380,9 @@ describe('Drafts', () => {
       });
 
       const capturedRequest = apiClient.request.mock.calls[0][0];
-      const formData = ((capturedRequest.form as any) as MockedFormData)._getAppendedData();
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
       expect(formData.message).toEqual(JSON.stringify(messageJson));
       expect(formData.file0).toEqual(fileStream);
       expect(capturedRequest.method).toEqual('PUT');

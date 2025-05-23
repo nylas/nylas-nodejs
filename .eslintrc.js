@@ -6,7 +6,7 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2016,
+    ecmaVersion: 2021,
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint', 'eslint-plugin-import'],
@@ -37,7 +37,7 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['*.spec.ts'],
+      files: ['*.spec.ts', '*.test.ts', 'tests/**/*.ts'],
       rules: {
         'import/extensions': 'off',
       },

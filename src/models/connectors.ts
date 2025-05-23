@@ -104,7 +104,8 @@ export type ImapCreateConnectorRequest = BaseCreateConnectionRequest;
 /**
  * Interface representing the base Nylas connector creation request.
  */
-export type VirtualCalendarsCreateConnectorRequest = BaseCreateConnectionRequest;
+export type VirtualCalendarsCreateConnectorRequest =
+  BaseCreateConnectionRequest;
 
 /**
  * The type of the Nylas connector creation request.
