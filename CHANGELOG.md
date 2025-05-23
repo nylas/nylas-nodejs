@@ -1,6 +1,9 @@
 # Changelog
+
 ### Unreleased
 * Add support for 'zoom' as a provider type in Auth module
+* Fixed Add missing `/cancel` suffix in Notetaker API endpoint
+
 
 ### 7.9.0 / 2025-04-30
 * Add support for Notetaker API endpoints

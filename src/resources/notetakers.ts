@@ -172,8 +172,8 @@ export class Notetakers extends Resource {
   }: CancelNotetakerParams & Overrides): Promise<NylasBaseResponse> {
     return this._destroy({
       path: identifier
-        ? `/v3/grants/${identifier}/notetakers/${notetakerId}`
-        : `/v3/notetakers/${notetakerId}`,
+        ? `/v3/grants/${identifier}/notetakers/${notetakerId}/cancel`
+        : `/v3/notetakers/${notetakerId}/cancel`,
       overrides,
     });
   }
