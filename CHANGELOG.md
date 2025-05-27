@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [7.10.0] - 2025-05-27
 
 ### Added
 - Support for 'zoom' as a provider type in Auth module
@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Missing `/cancel` suffix in Notetaker API endpoint
 - URL encoding for API path components to properly handle special characters
 
-## [7.9.0] - 2024-04-30
+## [7.9.0] - 2025-04-30
 
 ### Added
 - Support for Notetaker API endpoints
@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 - Providing timeout in milliseconds via request overrides - please use seconds instead
 
-## [7.8.0] - 2024-03-03
+## [7.8.0] - 2025-03-03
 
 ### Added
 - Support for `listImportEvents` method to import events from a specified calendar within a given time frame
@@ -35,12 +35,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Grants support for queryParams in list method first parameter
 
-## [7.7.4] - 2024-01-23
+## [7.7.4] - 2025-01-23
 
 ### Fixed
 - `any_email` was not transformed to a comma delimited list for messages.list
 
-## [7.7.3] - 2024-01-23
+## [7.7.3] - 2025-01-23
 
 ### Changed
 - `latestMessageReceivedDate` & `latestMessageSentDate` to be optional on threads model
