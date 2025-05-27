@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Support for 'zoom' as a provider type in Auth module
+- Support for `tentativeAsBusy` parameter in FreeBusy requests to control how tentative events are treated
 
 ### Fixed
 - Event status type to use 'maybe' instead of 'tentative' in Event interface to match API documentation

@@ -32,6 +32,11 @@ export interface GetFreeBusyRequest {
    * A list of email addresses to check the free/busy schedules for.
    */
   emails: string[];
+  /**
+   * When true, Nylas treats tentative events as busy.
+   * @default true
+   */
+  tentativeAsBusy?: boolean;
 }
 
 /**

@@ -483,4 +483,128 @@ describe('Calendars', () => {
       });
     });
   });
+
+  describe('getFreeBusy', () => {
+    it('should call apiClient.request with the correct params', async () => {
+      await calendars.getFreeBusy({
+        identifier: 'id123',
+        requestBody: {
+          startTime: 1609459200,
+          endTime: 1609545600,
+          emails: ['test@example.com', 'test2@example.com'],
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/id123/calendars/free-busy',
+        body: {
+          startTime: 1609459200,
+          endTime: 1609545600,
+          emails: ['test@example.com', 'test2@example.com'],
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+
+    it('should call apiClient.request with tentativeAsBusy set to false', async () => {
+      await calendars.getFreeBusy({
+        identifier: 'id123',
+        requestBody: {
+          startTime: 1609459200,
+          endTime: 1609545600,
+          emails: ['test@example.com'],
+          tentativeAsBusy: false,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/id123/calendars/free-busy',
+        body: {
+          startTime: 1609459200,
+          endTime: 1609545600,
+          emails: ['test@example.com'],
+          tentativeAsBusy: false,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+
+    it('should call apiClient.request with tentativeAsBusy set to true', async () => {
+      await calendars.getFreeBusy({
+        identifier: 'id123',
+        requestBody: {
+          startTime: 1609459200,
+          endTime: 1609545600,
+          emails: ['test@example.com'],
+          tentativeAsBusy: true,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/id123/calendars/free-busy',
+        body: {
+          startTime: 1609459200,
+          endTime: 1609545600,
+          emails: ['test@example.com'],
+          tentativeAsBusy: true,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+
+    it('should handle multiple emails with tentativeAsBusy option', async () => {
+      await calendars.getFreeBusy({
+        identifier: 'grant-123',
+        requestBody: {
+          startTime: 1609459200,
+          endTime: 1609545600,
+          emails: [
+            'user1@example.com',
+            'user2@example.com',
+            'user3@example.com',
+          ],
+          tentativeAsBusy: false,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/grant-123/calendars/free-busy',
+        body: {
+          startTime: 1609459200,
+          endTime: 1609545600,
+          emails: [
+            'user1@example.com',
+            'user2@example.com',
+            'user3@example.com',
+          ],
+          tentativeAsBusy: false,
+        },
+      });
+    });
+  });
 });
