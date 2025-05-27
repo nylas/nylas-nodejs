@@ -4,6 +4,7 @@ import APIClient from '../apiClient.js';
 import { ApplicationDetails } from '../models/applicationDetails.js';
 import { NylasResponse } from '../models/response.js';
 import { Overrides } from '../config.js';
+import { makePathParams } from '../utils.js';
 
 /**
  * Nylas Applications API
@@ -32,7 +33,7 @@ export class Applications extends Resource {
     NylasResponse<ApplicationDetails>
   > {
     return super._find({
-      path: `/v3/applications`,
+      path: makePathParams('/v3/applications', {}),
       overrides,
     });
   }

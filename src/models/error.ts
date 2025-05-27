@@ -29,8 +29,10 @@ export abstract class AbstractNylasSdkError extends Error {}
 /**
  * Class representation of a general Nylas API error.
  */
-export class NylasApiError extends AbstractNylasApiError
-  implements NylasApiErrorResponseData {
+export class NylasApiError
+  extends AbstractNylasApiError
+  implements NylasApiErrorResponseData
+{
   /**
    * Error type.
    */
@@ -60,8 +62,10 @@ export class NylasApiError extends AbstractNylasApiError
 /**
  * Class representing an OAuth error returned by the Nylas API.
  */
-export class NylasOAuthError extends AbstractNylasApiError
-  implements NylasOAuthErrorResponse {
+export class NylasOAuthError
+  extends AbstractNylasApiError
+  implements NylasOAuthErrorResponse
+{
   /**
    * Error type.
    */

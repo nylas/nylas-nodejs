@@ -65,5 +65,29 @@ describe('Sessions', () => {
         },
       });
     });
+
+    it('should URL encode sessionId in destroy', async () => {
+      await sessions.destroy({
+        sessionId: 'session/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/scheduling/sessions/session%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded sessionId in destroy', async () => {
+      await sessions.destroy({
+        sessionId: 'session%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/scheduling/sessions/session%2F123',
+        })
+      );
+    });
   });
 });

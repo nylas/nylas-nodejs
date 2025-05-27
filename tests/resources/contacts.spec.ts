@@ -154,6 +154,34 @@ describe('Contacts', () => {
         },
       });
     });
+
+    it('should URL encode identifier and contactId in find', async () => {
+      await contacts.find({
+        identifier: 'id 123',
+        contactId: 'contact/123',
+        queryParams: {},
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/contacts/contact%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and contactId in find', async () => {
+      await contacts.find({
+        identifier: 'id%20123',
+        contactId: 'contact%2F123',
+        queryParams: {},
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/contacts/contact%2F123',
+        })
+      );
+    });
   });
 
   describe('create', () => {

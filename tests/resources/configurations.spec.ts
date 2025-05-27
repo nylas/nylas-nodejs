@@ -59,6 +59,32 @@ describe('Configurations', () => {
         },
       });
     });
+
+    it('should URL encode identifier and configurationId in find', async () => {
+      await configurations.find({
+        identifier: 'grant 123',
+        configurationId: 'configuration/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/grant%20123/scheduling/configurations/configuration%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and configurationId in find', async () => {
+      await configurations.find({
+        identifier: 'grant%20123',
+        configurationId: 'configuration%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/grant%20123/scheduling/configurations/configuration%2F123',
+        })
+      );
+    });
   });
 
   describe('create', () => {
@@ -154,6 +180,34 @@ describe('Configurations', () => {
         },
       });
     });
+
+    it('should URL encode identifier and configurationId in update', async () => {
+      await configurations.update({
+        identifier: 'grant 123',
+        configurationId: 'configuration/123',
+        requestBody: { eventBooking: { title: 'Changed Title' } },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/grant%20123/scheduling/configurations/configuration%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and configurationId in update', async () => {
+      await configurations.update({
+        identifier: 'grant%20123',
+        configurationId: 'configuration%2F123',
+        requestBody: { eventBooking: { title: 'Changed Title' } },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/grant%20123/scheduling/configurations/configuration%2F123',
+        })
+      );
+    });
   });
 
   describe('destroy', () => {
@@ -175,6 +229,32 @@ describe('Configurations', () => {
           headers: { override: 'foobar' },
         },
       });
+    });
+
+    it('should URL encode identifier and configurationId in destroy', async () => {
+      await configurations.destroy({
+        identifier: 'grant 123',
+        configurationId: 'configuration/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/grant%20123/scheduling/configurations/configuration%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and configurationId in destroy', async () => {
+      await configurations.destroy({
+        identifier: 'grant%20123',
+        configurationId: 'configuration%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/grant%20123/scheduling/configurations/configuration%2F123',
+        })
+      );
     });
   });
 });

@@ -6,7 +6,7 @@ jest.mock('../src/apiClient');
 
 // Mock the FormData constructor
 jest.mock('form-data', () => {
-  return jest.fn().mockImplementation(function(this: MockedFormData) {
+  return jest.fn().mockImplementation(function (this: MockedFormData) {
     const appendedData: Record<string, any> = {};
 
     this.append = (key: string, value: any): void => {
@@ -92,6 +92,32 @@ describe('Messages', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should URL encode identifier and messageId in find', async () => {
+      await messages.find({
+        identifier: 'id 123',
+        messageId: 'message/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/messages/message%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and messageId in find', async () => {
+      await messages.find({
+        identifier: 'id%20123',
+        messageId: 'message%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/messages/message%2F123',
+        })
+      );
     });
   });
 
@@ -246,7 +272,9 @@ describe('Messages', () => {
       });
 
       const capturedRequest = apiClient.request.mock.calls[0][0];
-      const formData = ((capturedRequest.form as any) as MockedFormData)._getAppendedData();
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
       expect(formData.message).toEqual(JSON.stringify(messageJson));
       expect(formData.file0).toEqual(fileStream);
       expect(capturedRequest.method).toEqual('POST');

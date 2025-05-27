@@ -43,6 +43,32 @@ describe('SmartCompose', () => {
         },
       });
     });
+
+    it('should URL encode identifier in composeMessage', async () => {
+      await smartCompose.composeMessage({
+        identifier: 'id 123',
+        requestBody: { prompt: 'Prompt' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/messages/smart-compose',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier in composeMessage', async () => {
+      await smartCompose.composeMessage({
+        identifier: 'id%20123',
+        requestBody: { prompt: 'Prompt' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/messages/smart-compose',
+        })
+      );
+    });
   });
 
   describe('composeMessageReply', () => {
@@ -70,6 +96,34 @@ describe('SmartCompose', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should URL encode identifier and messageId in composeMessageReply', async () => {
+      await smartCompose.composeMessageReply({
+        identifier: 'id 123',
+        messageId: 'message/123',
+        requestBody: { prompt: 'Prompt' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/messages/message%2F123/smart-compose',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and messageId in composeMessageReply', async () => {
+      await smartCompose.composeMessageReply({
+        identifier: 'id%20123',
+        messageId: 'message%2F123',
+        requestBody: { prompt: 'Prompt' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/messages/message%2F123/smart-compose',
+        })
+      );
     });
   });
 });

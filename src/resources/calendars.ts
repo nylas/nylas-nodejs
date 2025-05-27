@@ -16,6 +16,7 @@ import {
   GetAvailabilityResponse,
 } from '../models/availability.js';
 import { GetFreeBusyRequest, GetFreeBusyResponse } from '../models/freeBusy.js';
+import { makePathParams } from '../utils.js';
 
 /**
  * The parameters for the {@link Calendars.find} method
@@ -107,7 +108,7 @@ export class Calendars extends Resource {
     return super._list<NylasListResponse<Calendar>>({
       queryParams,
       overrides,
-      path: `/v3/grants/${identifier}/calendars`,
+      path: makePathParams('/v3/grants/{identifier}/calendars', { identifier }),
     });
   }
 
@@ -121,7 +122,10 @@ export class Calendars extends Resource {
     overrides,
   }: FindCalendarParams & Overrides): Promise<NylasResponse<Calendar>> {
     return super._find({
-      path: `/v3/grants/${identifier}/calendars/${calendarId}`,
+      path: makePathParams('/v3/grants/{identifier}/calendars/{calendarId}', {
+        identifier,
+        calendarId,
+      }),
       overrides,
     });
   }
@@ -136,7 +140,7 @@ export class Calendars extends Resource {
     overrides,
   }: CreateCalendarParams & Overrides): Promise<NylasResponse<Calendar>> {
     return super._create({
-      path: `/v3/grants/${identifier}/calendars`,
+      path: makePathParams('/v3/grants/{identifier}/calendars', { identifier }),
       requestBody,
       overrides,
     });
@@ -153,7 +157,10 @@ export class Calendars extends Resource {
     overrides,
   }: UpdateCalendarParams & Overrides): Promise<NylasResponse<Calendar>> {
     return super._update({
-      path: `/v3/grants/${identifier}/calendars/${calendarId}`,
+      path: makePathParams('/v3/grants/{identifier}/calendars/{calendarId}', {
+        identifier,
+        calendarId,
+      }),
       requestBody,
       overrides,
     });
@@ -169,7 +176,10 @@ export class Calendars extends Resource {
     overrides,
   }: DestroyCalendarParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${identifier}/calendars/${calendarId}`,
+      path: makePathParams('/v3/grants/{identifier}/calendars/{calendarId}', {
+        identifier,
+        calendarId,
+      }),
       overrides,
     });
   }
@@ -186,7 +196,7 @@ export class Calendars extends Resource {
   > {
     return this.apiClient.request<NylasResponse<GetAvailabilityResponse>>({
       method: 'POST',
-      path: `/v3/calendars/availability`,
+      path: makePathParams('/v3/calendars/availability', {}),
       body: requestBody,
       overrides,
     });
@@ -205,7 +215,9 @@ export class Calendars extends Resource {
   > {
     return this.apiClient.request<NylasResponse<GetFreeBusyResponse[]>>({
       method: 'POST',
-      path: `/v3/grants/${identifier}/calendars/free-busy`,
+      path: makePathParams('/v3/grants/{identifier}/calendars/free-busy', {
+        identifier,
+      }),
       body: requestBody,
       overrides,
     });
