@@ -60,6 +60,32 @@ describe('Calendars', () => {
         },
       });
     });
+
+    it('should URL encode identifier and calendarId in find', async () => {
+      await calendars.find({
+        identifier: 'id 123',
+        calendarId: 'calendar/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/calendars/calendar%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and calendarId in find', async () => {
+      await calendars.find({
+        identifier: 'id%20123',
+        calendarId: 'calendar%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/calendars/calendar%2F123',
+        })
+      );
+    });
   });
 
   describe('create', () => {

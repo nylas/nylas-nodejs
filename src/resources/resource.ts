@@ -11,7 +11,7 @@ interface ListParams<T> {
   queryParams?: ListQueryParams;
   path: string;
   overrides?: OverridableNylasConfig;
-  useGenerator?: boolean; // Add this line
+  useGenerator?: boolean;
 }
 
 interface FindParams<T> {

@@ -9,7 +9,7 @@ import {
   WebhookIpAddressesResponse,
   WebhookWithSecret,
 } from '../models/webhooks.js';
-
+import { makePathParams } from '../utils.js';
 /**
  * @property webhookId The ID of the webhook destination to update
  */
@@ -55,7 +55,7 @@ export class Webhooks extends Resource {
   > {
     return super._list<NylasListResponse<Webhook>>({
       overrides,
-      path: `/v3/webhooks`,
+      path: makePathParams('/v3/webhooks', {}),
     });
   }
 
@@ -68,7 +68,7 @@ export class Webhooks extends Resource {
     overrides,
   }: FindWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
     return super._find({
-      path: `/v3/webhooks/${webhookId}`,
+      path: makePathParams('/v3/webhooks/{webhookId}', { webhookId }),
       overrides,
     });
   }
@@ -84,7 +84,7 @@ export class Webhooks extends Resource {
     NylasResponse<WebhookWithSecret>
   > {
     return super._create({
-      path: `/v3/webhooks`,
+      path: makePathParams('/v3/webhooks', {}),
       requestBody,
       overrides,
     });
@@ -100,7 +100,7 @@ export class Webhooks extends Resource {
     overrides,
   }: UpdateWebhookParams & Overrides): Promise<NylasResponse<Webhook>> {
     return super._update({
-      path: `/v3/webhooks/${webhookId}`,
+      path: makePathParams('/v3/webhooks/{webhookId}', { webhookId }),
       requestBody,
       overrides,
     });
@@ -115,7 +115,7 @@ export class Webhooks extends Resource {
     overrides,
   }: DestroyWebhookParams & Overrides): Promise<WebhookDeleteResponse> {
     return super._destroy({
-      path: `/v3/webhooks/${webhookId}`,
+      path: makePathParams('/v3/webhooks/{webhookId}', { webhookId }),
       overrides,
     });
   }
@@ -131,7 +131,9 @@ export class Webhooks extends Resource {
     NylasResponse<WebhookWithSecret>
   > {
     return super._create({
-      path: `/v3/webhooks/rotate-secret/${webhookId}`,
+      path: makePathParams('/v3/webhooks/rotate-secret/{webhookId}', {
+        webhookId,
+      }),
       requestBody: {},
       overrides,
     });
@@ -145,7 +147,7 @@ export class Webhooks extends Resource {
     NylasResponse<WebhookIpAddressesResponse>
   > {
     return super._find({
-      path: `/v3/webhooks/ip-addresses`,
+      path: makePathParams('/v3/webhooks/ip-addresses', {}),
       overrides,
     });
   }

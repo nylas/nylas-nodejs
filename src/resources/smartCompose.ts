@@ -5,7 +5,7 @@ import {
 } from '../models/smartCompose.js';
 import { Overrides } from '../config.js';
 import { NylasResponse } from '../models/response.js';
-
+import { makePathParams } from '../utils.js';
 /**
  * The parameters for the {@link SmartCompose.composeMessage} method
  * @property identifier The identifier of the grant to act upon
@@ -46,7 +46,9 @@ export class SmartCompose extends Resource {
     NylasResponse<ComposeMessageResponse>
   > {
     return super._create({
-      path: `/v3/grants/${identifier}/messages/smart-compose`,
+      path: makePathParams('/v3/grants/{identifier}/messages/smart-compose', {
+        identifier,
+      }),
       requestBody,
       overrides,
     });
@@ -65,7 +67,10 @@ export class SmartCompose extends Resource {
     NylasResponse<ComposeMessageResponse>
   > {
     return super._create({
-      path: `/v3/grants/${identifier}/messages/${messageId}/smart-compose`,
+      path: makePathParams(
+        '/v3/grants/{identifier}/messages/{messageId}/smart-compose',
+        { identifier, messageId }
+      ),
       requestBody,
       overrides,
     });

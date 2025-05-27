@@ -12,6 +12,7 @@ import {
   NylasResponse,
 } from '../models/response.js';
 import { AsyncListResponse, Resource } from './resource.js';
+import { makePathParams } from '../utils.js';
 
 /**
  * The parameters for the {@link Credentials.find} method
@@ -80,7 +81,7 @@ export class Credentials extends Resource {
     return super._list<NylasListResponse<Credential>>({
       queryParams,
       overrides,
-      path: `/v3/connectors/${provider}/creds`,
+      path: makePathParams('/v3/connectors/{provider}/creds', { provider }),
     });
   }
 
@@ -94,7 +95,10 @@ export class Credentials extends Resource {
     overrides,
   }: FindCredentialParams & Overrides): Promise<NylasResponse<Credential>> {
     return super._find({
-      path: `/v3/connectors/${provider}/creds/${credentialsId}`,
+      path: makePathParams('/v3/connectors/{provider}/creds/{credentialsId}', {
+        provider,
+        credentialsId,
+      }),
       overrides,
     });
   }
@@ -109,7 +113,7 @@ export class Credentials extends Resource {
     overrides,
   }: CreateCredentialParams & Overrides): Promise<NylasResponse<Credential>> {
     return super._create({
-      path: `/v3/connectors/${provider}/creds`,
+      path: makePathParams('/v3/connectors/{provider}/creds', { provider }),
       requestBody,
       overrides,
     });
@@ -126,7 +130,10 @@ export class Credentials extends Resource {
     overrides,
   }: UpdateCredentialParams & Overrides): Promise<NylasResponse<Credential>> {
     return super._update({
-      path: `/v3/connectors/${provider}/creds/${credentialsId}`,
+      path: makePathParams('/v3/connectors/{provider}/creds/{credentialsId}', {
+        provider,
+        credentialsId,
+      }),
       requestBody,
       overrides,
     });
@@ -142,7 +149,10 @@ export class Credentials extends Resource {
     overrides,
   }: DestroyCredentialParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/connectors/${provider}/creds/${credentialsId}`,
+      path: makePathParams('/v3/connectors/{provider}/creds/{credentialsId}', {
+        provider,
+        credentialsId,
+      }),
       overrides,
     });
   }

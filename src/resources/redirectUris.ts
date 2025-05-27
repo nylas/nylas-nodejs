@@ -10,7 +10,7 @@ import {
   UpdateRedirectUriRequest,
 } from '../models/redirectUri.js';
 import { Overrides } from '../config.js';
-
+import { makePathParams } from '../utils.js';
 /**
  * @property redirectUriId The id of the Redirect URI to retrieve.
  */
@@ -56,7 +56,7 @@ export class RedirectUris extends Resource {
   > {
     return super._list<NylasListResponse<RedirectUri>>({
       overrides,
-      path: '/v3/applications/redirect-uris',
+      path: makePathParams('/v3/applications/redirect-uris', {}),
     });
   }
 
@@ -70,7 +70,9 @@ export class RedirectUris extends Resource {
   }: FindRedirectUrisParams & Overrides): Promise<NylasResponse<RedirectUri>> {
     return super._find({
       overrides,
-      path: `/v3/applications/redirect-uris/${redirectUriId}`,
+      path: makePathParams('/v3/applications/redirect-uris/{redirectUriId}', {
+        redirectUriId,
+      }),
     });
   }
 
@@ -86,7 +88,7 @@ export class RedirectUris extends Resource {
   > {
     return super._create({
       overrides,
-      path: '/v3/applications/redirect-uris',
+      path: makePathParams('/v3/applications/redirect-uris', {}),
       requestBody,
     });
   }
@@ -104,7 +106,9 @@ export class RedirectUris extends Resource {
   > {
     return super._update({
       overrides,
-      path: `/v3/applications/redirect-uris/${redirectUriId}`,
+      path: makePathParams('/v3/applications/redirect-uris/{redirectUriId}', {
+        redirectUriId,
+      }),
       requestBody,
     });
   }
@@ -121,7 +125,9 @@ export class RedirectUris extends Resource {
   > {
     return super._destroy({
       overrides,
-      path: `/v3/applications/redirect-uris/${redirectUriId}`,
+      path: makePathParams('/v3/applications/redirect-uris/{redirectUriId}', {
+        redirectUriId,
+      }),
     });
   }
 }

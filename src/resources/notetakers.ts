@@ -10,7 +10,7 @@ import {
 } from '../models/notetakers.js';
 import { NylasBaseResponse, NylasResponse } from '../models/response.js';
 import { AsyncListResponse, Resource } from './resource.js';
-
+import { makePathParams } from '../utils.js';
 /**
  * @property identifier The identifier of the grant to act upon
  * @property queryParams The query parameters to filter the list of Notetakers
@@ -95,8 +95,8 @@ export class Notetakers extends Resource {
     Overrides): AsyncListResponse<ListNotetakersResponse> {
     return super._list({
       path: identifier
-        ? `/v3/grants/${identifier}/notetakers`
-        : '/v3/notetakers',
+        ? makePathParams('/v3/grants/{identifier}/notetakers', { identifier })
+        : makePathParams('/v3/notetakers', {}),
       queryParams,
       overrides,
     });
@@ -114,8 +114,8 @@ export class Notetakers extends Resource {
   }: CreateNotetakerParams & Overrides): Promise<NylasResponse<Notetaker>> {
     return this._create({
       path: identifier
-        ? `/v3/grants/${identifier}/notetakers`
-        : '/v3/notetakers',
+        ? makePathParams('/v3/grants/{identifier}/notetakers', { identifier })
+        : makePathParams('/v3/notetakers', {}),
       requestBody,
       overrides,
     });
@@ -133,8 +133,11 @@ export class Notetakers extends Resource {
   }: FindNotetakerParams & Overrides): Promise<NylasResponse<Notetaker>> {
     return this._find({
       path: identifier
-        ? `/v3/grants/${identifier}/notetakers/${notetakerId}`
-        : `/v3/notetakers/${notetakerId}`,
+        ? makePathParams('/v3/grants/{identifier}/notetakers/{notetakerId}', {
+            identifier,
+            notetakerId,
+          })
+        : makePathParams('/v3/notetakers/{notetakerId}', { notetakerId }),
       overrides,
     });
   }
@@ -152,8 +155,11 @@ export class Notetakers extends Resource {
   }: UpdateNotetakerParams & Overrides): Promise<NylasResponse<Notetaker>> {
     return this._updatePatch({
       path: identifier
-        ? `/v3/grants/${identifier}/notetakers/${notetakerId}`
-        : `/v3/notetakers/${notetakerId}`,
+        ? makePathParams('/v3/grants/{identifier}/notetakers/{notetakerId}', {
+            identifier,
+            notetakerId,
+          })
+        : makePathParams('/v3/notetakers/{notetakerId}', { notetakerId }),
       requestBody,
       overrides,
     });
@@ -171,8 +177,16 @@ export class Notetakers extends Resource {
   }: CancelNotetakerParams & Overrides): Promise<NylasBaseResponse> {
     return this._destroy({
       path: identifier
-        ? `/v3/grants/${identifier}/notetakers/${notetakerId}/cancel`
-        : `/v3/notetakers/${notetakerId}/cancel`,
+        ? makePathParams(
+            '/v3/grants/{identifier}/notetakers/{notetakerId}/cancel',
+            {
+              identifier,
+              notetakerId,
+            }
+          )
+        : makePathParams('/v3/notetakers/{notetakerId}/cancel', {
+            notetakerId,
+          }),
       overrides,
     });
   }
@@ -192,8 +206,14 @@ export class Notetakers extends Resource {
     return this.apiClient.request({
       method: 'POST',
       path: identifier
-        ? `/v3/grants/${identifier}/notetakers/${notetakerId}/leave`
-        : `/v3/notetakers/${notetakerId}/leave`,
+        ? makePathParams(
+            '/v3/grants/{identifier}/notetakers/{notetakerId}/leave',
+            {
+              identifier,
+              notetakerId,
+            }
+          )
+        : makePathParams('/v3/notetakers/{notetakerId}/leave', { notetakerId }),
       overrides,
     });
   }
@@ -213,8 +233,14 @@ export class Notetakers extends Resource {
     return this.apiClient.request({
       method: 'GET',
       path: identifier
-        ? `/v3/grants/${identifier}/notetakers/${notetakerId}/media`
-        : `/v3/notetakers/${notetakerId}/media`,
+        ? makePathParams(
+            '/v3/grants/{identifier}/notetakers/{notetakerId}/media',
+            {
+              identifier,
+              notetakerId,
+            }
+          )
+        : makePathParams('/v3/notetakers/{notetakerId}/media', { notetakerId }),
       overrides,
     });
   }

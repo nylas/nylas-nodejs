@@ -12,6 +12,7 @@ import {
   RescheduleBookingQueryParams,
   RescheduleBookingRequest,
 } from '../models/scheduler.js';
+import { makePathParams } from '../utils.js';
 import { Resource } from './resource.js';
 
 /**
@@ -85,7 +86,9 @@ export class Bookings extends Resource {
     overrides,
   }: FindBookingParams & Overrides): Promise<NylasResponse<Booking>> {
     return super._find({
-      path: `/v3/scheduling/bookings/${bookingId}`,
+      path: makePathParams('/v3/scheduling/bookings/{bookingId}', {
+        bookingId,
+      }),
       queryParams,
       overrides,
     });
@@ -101,7 +104,7 @@ export class Bookings extends Resource {
     overrides,
   }: CreateBookingParams & Overrides): Promise<NylasResponse<Booking>> {
     return super._create({
-      path: `/v3/scheduling/bookings`,
+      path: makePathParams('/v3/scheduling/bookings', {}),
       requestBody,
       queryParams,
       overrides,
@@ -119,7 +122,9 @@ export class Bookings extends Resource {
     overrides,
   }: ConfirmBookingParams & Overrides): Promise<NylasResponse<Booking>> {
     return super._update({
-      path: `/v3/scheduling/bookings/${bookingId}`,
+      path: makePathParams('/v3/scheduling/bookings/{bookingId}', {
+        bookingId,
+      }),
       requestBody,
       queryParams,
       overrides,
@@ -137,7 +142,9 @@ export class Bookings extends Resource {
     overrides,
   }: RescheduleBookingParams & Overrides): Promise<NylasResponse<Booking>> {
     return super._updatePatch({
-      path: `/v3/scheduling/bookings/${bookingId}`,
+      path: makePathParams('/v3/scheduling/bookings/{bookingId}', {
+        bookingId,
+      }),
       requestBody,
       queryParams,
       overrides,
@@ -155,7 +162,9 @@ export class Bookings extends Resource {
     overrides,
   }: DestroyBookingParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/scheduling/bookings/${bookingId}`,
+      path: makePathParams('/v3/scheduling/bookings/{bookingId}', {
+        bookingId,
+      }),
       requestBody,
       queryParams,
       overrides,

@@ -14,7 +14,7 @@ import {
   NylasResponse,
 } from '../models/response.js';
 import { encodeAttachmentStreams } from '../utils.js';
-
+import { makePathParams } from '../utils.js';
 /**
  * The parameters for the {@link Drafts.list} method
  * @property identifier The identifier of the grant to act upon
@@ -87,7 +87,7 @@ export class Drafts extends Resource {
     return super._list<NylasListResponse<Draft>>({
       queryParams,
       overrides,
-      path: `/v3/grants/${identifier}/drafts`,
+      path: makePathParams('/v3/grants/{identifier}/drafts', { identifier }),
     });
   }
 
@@ -101,7 +101,10 @@ export class Drafts extends Resource {
     overrides,
   }: FindDraftParams & Overrides): Promise<NylasResponse<Draft>> {
     return super._find({
-      path: `/v3/grants/${identifier}/drafts/${draftId}`,
+      path: makePathParams('/v3/grants/{identifier}/drafts/{draftId}', {
+        identifier,
+        draftId,
+      }),
       overrides,
     });
   }
@@ -115,7 +118,9 @@ export class Drafts extends Resource {
     requestBody,
     overrides,
   }: CreateDraftParams & Overrides): Promise<NylasResponse<Draft>> {
-    const path = `/v3/grants/${identifier}/drafts`;
+    const path = makePathParams('/v3/grants/{identifier}/drafts', {
+      identifier,
+    });
 
     // Use form data only if the attachment size is greater than 3mb
     const attachmentSize =
@@ -160,7 +165,10 @@ export class Drafts extends Resource {
     requestBody,
     overrides,
   }: UpdateDraftParams & Overrides): Promise<NylasResponse<Draft>> {
-    const path = `/v3/grants/${identifier}/drafts/${draftId}`;
+    const path = makePathParams('/v3/grants/{identifier}/drafts/{draftId}', {
+      identifier,
+      draftId,
+    });
 
     // Use form data only if the attachment size is greater than 3mb
     const attachmentSize =
@@ -205,7 +213,10 @@ export class Drafts extends Resource {
     overrides,
   }: DestroyDraftParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${identifier}/drafts/${draftId}`,
+      path: makePathParams('/v3/grants/{identifier}/drafts/{draftId}', {
+        identifier,
+        draftId,
+      }),
       overrides,
     });
   }
@@ -220,7 +231,10 @@ export class Drafts extends Resource {
     overrides,
   }: SendDraftParams & Overrides): Promise<NylasResponse<Message>> {
     return super._create({
-      path: `/v3/grants/${identifier}/drafts/${draftId}`,
+      path: makePathParams('/v3/grants/{identifier}/drafts/{draftId}', {
+        identifier,
+        draftId,
+      }),
       requestBody: {},
       overrides,
     });

@@ -93,6 +93,32 @@ describe('Messages', () => {
         },
       });
     });
+
+    it('should URL encode identifier and messageId in find', async () => {
+      await messages.find({
+        identifier: 'id 123',
+        messageId: 'message/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/messages/message%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and messageId in find', async () => {
+      await messages.find({
+        identifier: 'id%20123',
+        messageId: 'message%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/messages/message%2F123',
+        })
+      );
+    });
   });
 
   describe('update', () => {

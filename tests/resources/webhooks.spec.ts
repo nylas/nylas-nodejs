@@ -68,6 +68,30 @@ describe('Webhooks', () => {
         },
       });
     });
+
+    it('should URL encode webhookId in find', async () => {
+      await webhooks.find({
+        webhookId: 'webhook/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/webhooks/webhook%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded webhookId in find', async () => {
+      await webhooks.find({
+        webhookId: 'webhook%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/webhooks/webhook%2F123',
+        })
+      );
+    });
   });
 
   describe('create', () => {
@@ -127,6 +151,32 @@ describe('Webhooks', () => {
         },
       });
     });
+
+    it('should URL encode webhookId in update', async () => {
+      await webhooks.update({
+        webhookId: 'webhook/123',
+        requestBody: { description: 'desc' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/webhooks/webhook%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded webhookId in update', async () => {
+      await webhooks.update({
+        webhookId: 'webhook%2F123',
+        requestBody: { description: 'desc' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/webhooks/webhook%2F123',
+        })
+      );
+    });
   });
 
   describe('destroy', () => {
@@ -147,6 +197,30 @@ describe('Webhooks', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should URL encode webhookId in destroy', async () => {
+      await webhooks.destroy({
+        webhookId: 'webhook/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/webhooks/webhook%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded webhookId in destroy', async () => {
+      await webhooks.destroy({
+        webhookId: 'webhook%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/webhooks/webhook%2F123',
+        })
+      );
     });
   });
 
@@ -169,6 +243,30 @@ describe('Webhooks', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should URL encode webhookId in rotateSecret', async () => {
+      await webhooks.rotateSecret({
+        webhookId: 'webhook/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/webhooks/rotate-secret/webhook%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded webhookId in rotateSecret', async () => {
+      await webhooks.rotateSecret({
+        webhookId: 'webhook%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/webhooks/rotate-secret/webhook%2F123',
+        })
+      );
     });
   });
 

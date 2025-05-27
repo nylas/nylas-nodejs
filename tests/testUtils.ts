@@ -10,16 +10,27 @@ export interface MockedFormData {
 export const mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 
 export const mockResponse = (body: string, status = 200): any => {
-  const headersMap = new Map<string, string>();
+  const headers: Record<string, string> = {};
 
   const headersObj = {
-    entries: () => headersMap.entries(),
-    get: (key: string) => headersMap.get(key),
-    set: (key: string, value: string) => headersMap.set(key, value),
-    raw: () => {
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    entries() {
+      return Object.entries(headers);
+    },
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    get(key: string) {
+      return headers[key];
+    },
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    set(key: string, value: string) {
+      headers[key] = value;
+      return headers;
+    },
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    raw() {
       const rawHeaders: Record<string, string[]> = {};
-      headersMap.forEach((value, key) => {
-        rawHeaders[key] = [value];
+      Object.keys(headers).forEach((key) => {
+        rawHeaders[key] = [headers[key]];
       });
       return rawHeaders;
     },

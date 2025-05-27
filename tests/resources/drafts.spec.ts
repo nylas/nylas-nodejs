@@ -167,6 +167,32 @@ describe('Drafts', () => {
         },
       });
     });
+
+    it('should URL encode identifier and draftId in find', async () => {
+      await drafts.find({
+        identifier: 'id 123',
+        draftId: 'draft/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/drafts/draft%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded identifier and draftId in find', async () => {
+      await drafts.find({
+        identifier: 'id%20123',
+        draftId: 'draft%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/drafts/draft%2F123',
+        })
+      );
+    });
   });
 
   describe('create', () => {

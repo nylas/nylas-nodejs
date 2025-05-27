@@ -146,6 +146,30 @@ describe('Grants', () => {
         },
       });
     });
+
+    it('should URL encode grantId in find', async () => {
+      await grants.find({
+        grantId: 'grant/123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/grant%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded grantId in find', async () => {
+      await grants.find({
+        grantId: 'grant%2F123',
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/grant%2F123',
+        })
+      );
+    });
   });
 
   describe('update', () => {

@@ -85,6 +85,32 @@ describe('Bookings', () => {
         },
       });
     });
+
+    it('should URL encode bookingId in find', async () => {
+      await bookings.find({
+        bookingId: 'booking/123',
+        queryParams: { configurationId: 'configuration123' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/scheduling/bookings/booking%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded bookingId in find', async () => {
+      await bookings.find({
+        bookingId: 'booking%2F123',
+        queryParams: { configurationId: 'configuration123' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/scheduling/bookings/booking%2F123',
+        })
+      );
+    });
   });
 
   describe('confirm', () => {
@@ -122,6 +148,42 @@ describe('Bookings', () => {
         },
       });
     });
+
+    it('should URL encode bookingId in confirm', async () => {
+      await bookings.confirm({
+        bookingId: 'booking/123',
+        queryParams: { configurationId: 'configuration123' },
+        requestBody: {
+          salt: 'foo',
+          status: 'cancelled',
+          cancellationReason: 'bar',
+        },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/scheduling/bookings/booking%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded bookingId in confirm', async () => {
+      await bookings.confirm({
+        bookingId: 'booking%2F123',
+        queryParams: { configurationId: 'configuration123' },
+        requestBody: {
+          salt: 'foo',
+          status: 'cancelled',
+          cancellationReason: 'bar',
+        },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/scheduling/bookings/booking%2F123',
+        })
+      );
+    });
   });
 
   describe('reschedule', () => {
@@ -157,6 +219,34 @@ describe('Bookings', () => {
         },
       });
     });
+
+    it('should URL encode bookingId in reschedule', async () => {
+      await bookings.reschedule({
+        bookingId: 'booking/123',
+        queryParams: { configurationId: 'configuration123' },
+        requestBody: { startTime: 1, endTime: 2 },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/scheduling/bookings/booking%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded bookingId in reschedule', async () => {
+      await bookings.reschedule({
+        bookingId: 'booking%2F123',
+        queryParams: { configurationId: 'configuration123' },
+        requestBody: { startTime: 1, endTime: 2 },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/scheduling/bookings/booking%2F123',
+        })
+      );
+    });
   });
 
   describe('destroy', () => {
@@ -183,6 +273,32 @@ describe('Bookings', () => {
           headers: { override: 'foobar' },
         },
       });
+    });
+
+    it('should URL encode bookingId in destroy', async () => {
+      await bookings.destroy({
+        bookingId: 'booking/123',
+        queryParams: { configurationId: 'configuration123' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/scheduling/bookings/booking%2F123',
+        })
+      );
+    });
+
+    it('should not double encode already-encoded bookingId in destroy', async () => {
+      await bookings.destroy({
+        bookingId: 'booking%2F123',
+        queryParams: { configurationId: 'configuration123' },
+        overrides: {},
+      });
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/scheduling/bookings/booking%2F123',
+        })
+      );
     });
   });
 });

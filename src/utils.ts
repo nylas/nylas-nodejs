@@ -162,3 +162,51 @@ export type Subset<K> = {
         ? Subset<K[attr]> | null | undefined
         : K[attr];
 };
+
+/**
+ * Safely encodes a path template with replacements.
+ * @param pathTemplate The path template to encode.
+ * @param replacements The replacements to encode.
+ * @returns The encoded path.
+ */
+export function safePath(
+  pathTemplate: string,
+  replacements: Record<string, string>
+): string {
+  return pathTemplate.replace(/\{(\w+)\}/g, (_, key) => {
+    const val = replacements[key];
+    if (val == null) throw new Error(`Missing replacement for ${key}`);
+
+    // Decode first (handles already encoded values), then encode
+    // This prevents double encoding while ensuring everything is properly encoded
+    try {
+      const decoded = decodeURIComponent(val);
+      return encodeURIComponent(decoded);
+    } catch (error) {
+      // If decoding fails, the value wasn't properly encoded, so just encode it
+      return encodeURIComponent(val);
+    }
+  });
+}
+
+// Extracts all {varName} from a string as a union type
+export type ExtractPathParams<S extends string> =
+  S extends `${string}{${infer Param}}${infer Rest}`
+    ? Param | ExtractPathParams<Rest>
+    : never;
+
+// Type-safe path params object
+export interface PathParams<Path extends string> {
+  path: Path;
+  params: Record<ExtractPathParams<Path>, string>;
+  toString(): string;
+  toPath(): string;
+}
+
+// Helper to create PathParams with type safety and runtime interpolation
+export function makePathParams<Path extends string>(
+  path: Path,
+  params: Record<ExtractPathParams<Path>, string>
+): string {
+  return safePath(path, params);
+}

@@ -11,7 +11,7 @@ import {
   NylasListResponse,
 } from '../models/response.js';
 import { Resource, AsyncListResponse } from './resource.js';
-
+import { makePathParams } from '../utils.js';
 /**
  * The parameters for the {@link Folders.list} method
  * @property identifier The identifier of the grant to act upon
@@ -92,7 +92,7 @@ export class Folders extends Resource {
     return super._list<NylasListResponse<Folder>>({
       overrides,
       queryParams,
-      path: `/v3/grants/${identifier}/folders`,
+      path: makePathParams('/v3/grants/{identifier}/folders', { identifier }),
     });
   }
 
@@ -106,7 +106,10 @@ export class Folders extends Resource {
     overrides,
   }: FindFolderParams & Overrides): Promise<NylasResponse<Folder>> {
     return super._find({
-      path: `/v3/grants/${identifier}/folders/${folderId}`,
+      path: makePathParams('/v3/grants/{identifier}/folders/{folderId}', {
+        identifier,
+        folderId,
+      }),
       overrides,
     });
   }
@@ -121,7 +124,7 @@ export class Folders extends Resource {
     overrides,
   }: CreateFolderParams & Overrides): Promise<NylasResponse<Folder>> {
     return super._create({
-      path: `/v3/grants/${identifier}/folders`,
+      path: makePathParams('/v3/grants/{identifier}/folders', { identifier }),
       requestBody,
       overrides,
     });
@@ -138,7 +141,10 @@ export class Folders extends Resource {
     overrides,
   }: UpdateFolderParams & Overrides): Promise<NylasResponse<Folder>> {
     return super._update({
-      path: `/v3/grants/${identifier}/folders/${folderId}`,
+      path: makePathParams('/v3/grants/{identifier}/folders/{folderId}', {
+        identifier,
+        folderId,
+      }),
       requestBody,
       overrides,
     });
@@ -154,7 +160,10 @@ export class Folders extends Resource {
     overrides,
   }: DestroyFolderParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
-      path: `/v3/grants/${identifier}/folders/${folderId}`,
+      path: makePathParams('/v3/grants/{identifier}/folders/{folderId}', {
+        identifier,
+        folderId,
+      }),
       overrides,
     });
   }
