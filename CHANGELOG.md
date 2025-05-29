@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Support for new message `fields` query parameter values: `include_tracking_options` and `raw_mime`
 - Support for `trackingOptions` property in Message responses when using `fields=include_tracking_options`
+- Support for `rawMime` property in Message responses when using `fields=raw_mime`
 - `MessageTrackingOptions` interface for tracking message opens, thread replies, link clicks, and custom labels
 
 ## [7.10.0] - 2025-05-27

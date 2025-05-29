@@ -118,6 +118,12 @@ export interface Message extends BaseMessage {
    */
   trackingOptions?: MessageTrackingOptions;
   /**
+   * A Base64url-encoded string containing the message data (including the body content).
+   * Only present if the 'fields' query parameter is set to raw_mime.
+   * When this field is requested, only grant_id, object, id, and raw_mime fields are returned.
+   */
+  rawMime?: string;
+  /**
    * A list of key-value pairs storing additional data.
    */
   metadata?: Record<string, unknown>;

@@ -532,5 +532,39 @@ describe('Messages', () => {
       expect(message.trackingOptions?.links).toBe(true);
       expect(message.trackingOptions?.label).toBe('Test tracking');
     });
+
+    it('should allow Message interface to include rawMime', () => {
+      const message: Partial<Message> = {
+        id: 'message123',
+        grantId: 'grant123',
+        object: 'message',
+        rawMime: 'base64-encoded-mime-content-example',
+      };
+
+      expect(message.rawMime).toBeDefined();
+      expect(message.rawMime).toBe('base64-encoded-mime-content-example');
+    });
+
+    it('should allow Message interface to include both trackingOptions and rawMime', () => {
+      const message: Partial<Message> = {
+        id: 'message123',
+        grantId: 'grant123',
+        object: 'message',
+        date: 1234567890,
+        folders: ['folder1'],
+        to: [{ name: 'Test User', email: 'test@example.com' }],
+        trackingOptions: {
+          opens: true,
+          threadReplies: false,
+          links: true,
+          label: 'Test tracking',
+        },
+        rawMime: 'base64-encoded-mime-content-example',
+      };
+
+      expect(message.trackingOptions).toBeDefined();
+      expect(message.rawMime).toBeDefined();
+      expect(message.rawMime).toBe('base64-encoded-mime-content-example');
+    });
   });
 });
