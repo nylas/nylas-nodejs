@@ -77,6 +77,29 @@ export interface BaseMessage {
 }
 
 /**
+ * Interface representing message tracking options.
+ */
+export interface MessageTrackingOptions {
+  /**
+   * When true, shows that message open tracking is enabled.
+   */
+  opens: boolean;
+  /**
+   * When true, shows that thread replied tracking is enabled.
+   */
+  threadReplies: boolean;
+  /**
+   * When true, shows that link clicked tracking is enabled.
+   */
+  links: boolean;
+  /**
+   * A label describing the message tracking purpose.
+   * Maximum length: 2048 characters.
+   */
+  label: string;
+}
+
+/**
  * Interface representing a Nylas Message object.
  */
 export interface Message extends BaseMessage {
@@ -89,6 +112,11 @@ export interface Message extends BaseMessage {
    * Only present if the 'fields' query parameter is set to includeHeaders.
    */
   headers?: MessageHeaders[];
+  /**
+   * The message tracking options.
+   * Only present if the 'fields' query parameter is set to include_tracking_options.
+   */
+  trackingOptions?: MessageTrackingOptions;
   /**
    * A list of key-value pairs storing additional data.
    */
@@ -150,6 +178,8 @@ export interface MessageHeaders {
 export enum MessageFields {
   STANDARD = 'standard',
   INCLUDE_HEADERS = 'include_headers',
+  INCLUDE_TRACKING_OPTIONS = 'include_tracking_options',
+  RAW_MIME = 'raw_mime',
 }
 
 /**
