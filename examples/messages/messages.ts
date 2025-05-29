@@ -1,20 +1,15 @@
 import * as dotenv from 'dotenv';
-import * as path from 'path';
-import * as process from 'process';
-import Nylas from 'nylas';
-import { 
+import Nylas, {
+  CleanMessagesRequest,
   Message,
   MessageFields,
-  MessageTrackingOptions,
-  SendMessageRequest,
-  UpdateMessageRequest,
-  CleanMessagesRequest,
-  ScheduledMessage,
-  NylasResponse,
-  NylasListResponse,
   NylasApiError,
-  ListMessagesQueryParams
+  NylasResponse,
+  SendMessageRequest,
+  UpdateMessageRequest
 } from 'nylas';
+import * as path from 'path';
+import * as process from 'process';
 
 // Load environment variables from .env file
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
