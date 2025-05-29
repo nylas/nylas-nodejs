@@ -2,7 +2,11 @@ import APIClient from '../../src/apiClient';
 import { Messages } from '../../src/resources/messages';
 import { createReadableStream, MockedFormData } from '../testUtils';
 import { CreateAttachmentRequest } from '../../src/models/attachments';
-import { MessageFields, Message, MessageTrackingOptions } from '../../src/models/messages';
+import {
+  MessageFields,
+  Message,
+  MessageTrackingOptions,
+} from '../../src/models/messages';
 jest.mock('../src/apiClient');
 
 // Mock the FormData constructor
