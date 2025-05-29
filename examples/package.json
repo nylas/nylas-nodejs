@@ -7,7 +7,8 @@
     "start": "ts-node",
     "build": "tsc",
     "notetakers": "ts-node notetakers/notetaker.ts",
-    "calendars": "ts-node calendars/event_with_notetaker.ts"
+    "calendars": "ts-node calendars/event_with_notetaker.ts",
+    "messages": "ts-node messages/messages.ts"
   },
   "dependencies": {
     "dotenv": "^16.0.0",

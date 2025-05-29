@@ -5,6 +5,7 @@ This directory contains examples of how to use the Nylas Node.js SDK to interact
 ## Examples
 
 - [Notetakers](./notetakers/README.md) - Examples of how to use the Nylas Notetakers API to invite a Notetaker bot to meetings, get recordings and transcripts, and more.
+- [Messages](./messages/README.md) - Examples of how to use the Nylas Messages API to list, find, send, update messages, and work with new features like tracking options and raw MIME data.
 
 ## Running the Examples
 
@@ -31,10 +32,19 @@ To run these examples, you'll need to:
    ```bash
    # Using ts-node
    npx ts-node notetakers/notetaker.ts
+   npx ts-node calendars/event_with_notetaker.ts
+   npx ts-node messages/messages.ts
+   
+   # Or using npm scripts
+   npm run notetakers
+   npm run calendars
+   npm run messages
    
    # Or if you compiled the examples
    npm run build
    node dist/notetakers/notetaker.js
+   node dist/calendars/event_with_notetaker.js
+   node dist/messages/messages.js
    ```
 
 ## Documentation

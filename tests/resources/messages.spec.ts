@@ -2,6 +2,11 @@ import APIClient from '../../src/apiClient';
 import { Messages } from '../../src/resources/messages';
 import { createReadableStream, MockedFormData } from '../testUtils';
 import { CreateAttachmentRequest } from '../../src/models/attachments';
+import {
+  MessageFields,
+  Message,
+  MessageTrackingOptions,
+} from '../../src/models/messages';
 jest.mock('../src/apiClient');
 
 // Mock the FormData constructor
@@ -71,6 +76,42 @@ describe('Messages', () => {
         },
       });
     });
+
+    it('should call apiClient.request with fields=include_headers for list', async () => {
+      await messages.list({
+        identifier: 'id123',
+        queryParams: {
+          fields: MessageFields.INCLUDE_HEADERS,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/messages',
+        overrides: undefined,
+        queryParams: {
+          fields: MessageFields.INCLUDE_HEADERS,
+        },
+      });
+    });
+
+    it('should call apiClient.request with fields=standard for list', async () => {
+      await messages.list({
+        identifier: 'id123',
+        queryParams: {
+          fields: MessageFields.STANDARD,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/messages',
+        overrides: undefined,
+        queryParams: {
+          fields: MessageFields.STANDARD,
+        },
+      });
+    });
   });
 
   describe('find', () => {
@@ -118,6 +159,80 @@ describe('Messages', () => {
           path: '/v3/grants/id%20123/messages/message%2F123',
         })
       );
+    });
+
+    it('should call apiClient.request with fields=include_tracking_options', async () => {
+      await messages.find({
+        identifier: 'id123',
+        messageId: 'message123',
+        queryParams: {
+          fields: MessageFields.INCLUDE_TRACKING_OPTIONS,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/messages/message123',
+        overrides: undefined,
+        queryParams: {
+          fields: MessageFields.INCLUDE_TRACKING_OPTIONS,
+        },
+      });
+    });
+
+    it('should call apiClient.request with fields=raw_mime', async () => {
+      await messages.find({
+        identifier: 'id123',
+        messageId: 'message123',
+        queryParams: {
+          fields: MessageFields.RAW_MIME,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/messages/message123',
+        overrides: undefined,
+        queryParams: {
+          fields: MessageFields.RAW_MIME,
+        },
+      });
+    });
+
+    it('should call apiClient.request with fields=include_headers for list', async () => {
+      await messages.list({
+        identifier: 'id123',
+        queryParams: {
+          fields: MessageFields.INCLUDE_HEADERS,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/messages',
+        overrides: undefined,
+        queryParams: {
+          fields: MessageFields.INCLUDE_HEADERS,
+        },
+      });
+    });
+
+    it('should call apiClient.request with fields=standard for list', async () => {
+      await messages.list({
+        identifier: 'id123',
+        queryParams: {
+          fields: MessageFields.STANDARD,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/messages',
+        overrides: undefined,
+        queryParams: {
+          fields: MessageFields.STANDARD,
+        },
+      });
     });
   });
 
@@ -381,6 +496,79 @@ describe('Messages', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+  });
+
+  describe('MessageTrackingOptions interface', () => {
+    it('should have the correct structure for MessageTrackingOptions', () => {
+      const trackingOptions: MessageTrackingOptions = {
+        opens: true,
+        threadReplies: false,
+        links: true,
+        label: 'Test tracking label',
+      };
+
+      expect(trackingOptions.opens).toBe(true);
+      expect(trackingOptions.threadReplies).toBe(false);
+      expect(trackingOptions.links).toBe(true);
+      expect(trackingOptions.label).toBe('Test tracking label');
+    });
+
+    it('should allow Message interface to include trackingOptions', () => {
+      const message: Partial<Message> = {
+        id: 'message123',
+        grantId: 'grant123',
+        object: 'message',
+        date: 1234567890,
+        folders: ['folder1'],
+        to: [{ name: 'Test User', email: 'test@example.com' }],
+        trackingOptions: {
+          opens: true,
+          threadReplies: false,
+          links: true,
+          label: 'Test tracking',
+        },
+      };
+
+      expect(message.trackingOptions).toBeDefined();
+      expect(message.trackingOptions?.opens).toBe(true);
+      expect(message.trackingOptions?.threadReplies).toBe(false);
+      expect(message.trackingOptions?.links).toBe(true);
+      expect(message.trackingOptions?.label).toBe('Test tracking');
+    });
+
+    it('should allow Message interface to include rawMime', () => {
+      const message: Partial<Message> = {
+        id: 'message123',
+        grantId: 'grant123',
+        object: 'message',
+        rawMime: 'base64-encoded-mime-content-example',
+      };
+
+      expect(message.rawMime).toBeDefined();
+      expect(message.rawMime).toBe('base64-encoded-mime-content-example');
+    });
+
+    it('should allow Message interface to include both trackingOptions and rawMime', () => {
+      const message: Partial<Message> = {
+        id: 'message123',
+        grantId: 'grant123',
+        object: 'message',
+        date: 1234567890,
+        folders: ['folder1'],
+        to: [{ name: 'Test User', email: 'test@example.com' }],
+        trackingOptions: {
+          opens: true,
+          threadReplies: false,
+          links: true,
+          label: 'Test tracking',
+        },
+        rawMime: 'base64-encoded-mime-content-example',
+      };
+
+      expect(message.trackingOptions).toBeDefined();
+      expect(message.rawMime).toBeDefined();
+      expect(message.rawMime).toBe('base64-encoded-mime-content-example');
     });
   });
 });
