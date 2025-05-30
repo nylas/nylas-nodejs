@@ -26,6 +26,7 @@ import {
   encodeAttachmentStreams,
   objKeysToSnakeCase,
   makePathParams,
+  calculateTotalPayloadSize,
 } from '../utils.js';
 import { AsyncListResponse, Resource } from './resource.js';
 import { SmartCompose } from './smartCompose.js';
@@ -240,13 +241,10 @@ export class Messages extends Resource {
       overrides,
     };
 
-    // Use form data only if the attachment size is greater than 3mb
-    const attachmentSize =
-      requestBody.attachments?.reduce((total, attachment) => {
-        return total + (attachment.size || 0);
-      }, 0) || 0;
+    // Use form data if the total payload size (body + attachments) is greater than 3mb
+    const totalPayloadSize = calculateTotalPayloadSize(requestBody);
 
-    if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
+    if (totalPayloadSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
       requestOptions.form = Messages._buildFormRequest(requestBody);
     } else {
       if (requestBody.attachments) {

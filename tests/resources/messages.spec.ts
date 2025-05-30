@@ -399,6 +399,87 @@ describe('Messages', () => {
         headers: { override: 'bar' },
       });
     });
+
+    it('should use multipart when total payload (body + attachments) exceeds 3MB', async () => {
+      // Create a large message body that, combined with small attachments, exceeds 3MB
+      const largeBody = 'A'.repeat(3.5 * 1024 * 1024); // 3.5MB body
+      const messageJson = {
+        to: [{ name: 'Test', email: 'test@example.com' }],
+        subject: 'This is my test email with large content',
+        body: largeBody,
+      };
+
+      const fileStream = createReadableStream('Small attachment content');
+      const smallAttachment: CreateAttachmentRequest = {
+        filename: 'small_file.txt',
+        contentType: 'text/plain',
+        content: fileStream,
+        size: 1000, // 1KB attachment - small but total payload > 3MB
+      };
+
+      await messages.send({
+        identifier: 'id123',
+        requestBody: {
+          ...messageJson,
+          attachments: [smallAttachment],
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+
+      // Should use form data because total payload exceeds 3MB
+      expect(capturedRequest.form).toBeDefined();
+      expect(capturedRequest.body).toBeUndefined();
+
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
+      expect(formData.message).toEqual(JSON.stringify(messageJson));
+      expect(formData.file0).toEqual(fileStream);
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+    });
+
+    it('should use JSON when total payload (body + attachments) is under 3MB', async () => {
+      // Create a message with body + attachments under 3MB
+      const smallBody = 'Small message content';
+      const messageJson = {
+        to: [{ name: 'Test', email: 'test@example.com' }],
+        subject: 'This is my test email',
+        body: smallBody,
+      };
+
+      const smallAttachment: CreateAttachmentRequest = {
+        filename: 'small_file.txt',
+        contentType: 'text/plain',
+        content: createReadableStream('Small attachment content'),
+        size: 1000, // 1KB attachment
+      };
+
+      await messages.send({
+        identifier: 'id123',
+        requestBody: {
+          ...messageJson,
+          attachments: [smallAttachment],
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+
+      // Should use JSON body because total payload is under 3MB
+      expect(capturedRequest.body).toBeDefined();
+      expect(capturedRequest.form).toBeUndefined();
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+    });
   });
 
   describe('scheduledMessages', () => {

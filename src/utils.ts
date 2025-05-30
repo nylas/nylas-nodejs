@@ -210,3 +210,33 @@ export function makePathParams<Path extends string>(
 ): string {
   return safePath(path, params);
 }
+
+/**
+ * Calculates the total payload size for a message request, including body and attachments.
+ * This is used to determine if multipart/form-data should be used instead of JSON.
+ * @param requestBody The message request body
+ * @returns The total estimated payload size in bytes
+ */
+export function calculateTotalPayloadSize(requestBody: any): number {
+  let totalSize = 0;
+
+  // Calculate size of the message body (JSON payload without attachments)
+  const messagePayloadWithoutAttachments = {
+    ...requestBody,
+    attachments: undefined,
+  };
+  const messagePayloadString = JSON.stringify(
+    objKeysToSnakeCase(messagePayloadWithoutAttachments)
+  );
+  totalSize += Buffer.byteLength(messagePayloadString, 'utf8');
+
+  // Add attachment sizes
+  const attachmentSize =
+    requestBody.attachments?.reduce((total: number, attachment: any) => {
+      return total + (attachment.size || 0);
+    }, 0) || 0;
+
+  totalSize += attachmentSize;
+
+  return totalSize;
+}

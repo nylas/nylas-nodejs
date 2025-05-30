@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `rawMime` property in Message responses when using `fields=raw_mime`
 - `MessageTrackingOptions` interface for tracking message opens, thread replies, link clicks, and custom labels
 
+### Fixed
+- Fixed 3MB payload size limit to consider total request size (message body + attachments) instead of just attachment size when determining whether to use multipart/form-data encoding
+
 ## [7.10.0] - 2025-05-27
 
 ### Added
