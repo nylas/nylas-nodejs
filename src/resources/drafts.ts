@@ -13,7 +13,10 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { encodeAttachmentStreams } from '../utils.js';
+import {
+  encodeAttachmentStreams,
+  calculateTotalPayloadSize,
+} from '../utils.js';
 import { makePathParams } from '../utils.js';
 /**
  * The parameters for the {@link Drafts.list} method
@@ -122,13 +125,10 @@ export class Drafts extends Resource {
       identifier,
     });
 
-    // Use form data only if the attachment size is greater than 3mb
-    const attachmentSize =
-      requestBody.attachments?.reduce((total, attachment) => {
-        return total + (attachment.size || 0);
-      }, 0) || 0;
+    // Use form data if the total payload size (body + attachments) is greater than 3mb
+    const totalPayloadSize = calculateTotalPayloadSize(requestBody);
 
-    if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
+    if (totalPayloadSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
       const form = Messages._buildFormRequest(requestBody);
 
       return this.apiClient.request({
@@ -170,13 +170,10 @@ export class Drafts extends Resource {
       draftId,
     });
 
-    // Use form data only if the attachment size is greater than 3mb
-    const attachmentSize =
-      requestBody.attachments?.reduce((total, attachment) => {
-        return total + (attachment.size || 0);
-      }, 0) || 0;
+    // Use form data if the total payload size (body + attachments) is greater than 3mb
+    const totalPayloadSize = calculateTotalPayloadSize(requestBody);
 
-    if (attachmentSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
+    if (totalPayloadSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
       const form = Messages._buildFormRequest(requestBody);
 
       return this.apiClient.request({
