@@ -73,6 +73,50 @@ describe('Folders', () => {
         },
       });
     });
+
+    it('should call apiClient.request with query params including single_level', async () => {
+      await folders.list({
+        identifier: 'id123',
+        queryParams: {
+          singleLevel: true,
+          parentId: 'parent123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/folders',
+        queryParams: {
+          singleLevel: true,
+          parentId: 'parent123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+
+    it('should call apiClient.request with single_level set to false', async () => {
+      await folders.list({
+        identifier: 'id123',
+        queryParams: {
+          singleLevel: false,
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/folders',
+        queryParams: {
+          singleLevel: false,
+        },
+      });
+    });
   });
 
   describe('find', () => {
