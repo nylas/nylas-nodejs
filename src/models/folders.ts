@@ -103,7 +103,7 @@ export interface ListFolderQueryParams extends ListQueryParams {
   parentId?: string;
 
   /**
-   * (Microsoft only) If true, retrieves folders from a single-level hierarchy only. 
+   * (Microsoft only) If true, retrieves folders from a single-level hierarchy only.
    * If false, retrieves folders across a multi-level hierarchy.
    * @default false
    */
