@@ -16,7 +16,7 @@ describe('Folders', () => {
     }) as jest.Mocked<APIClient>;
 
     folders = new Folders(apiClient);
-    apiClient.request.mockResolvedValue({});
+    apiClient.request.mockResolvedValue({ data: [] });
   });
 
   describe('deserializing', () => {
@@ -67,6 +67,62 @@ describe('Folders', () => {
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'GET',
         path: '/v3/grants/id123/folders',
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+
+    it('should call apiClient.request with include_hidden_folders query parameter', async () => {
+      await folders.list({
+        identifier: 'id123',
+        queryParams: {
+          includeHiddenFolders: true,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/folders',
+        queryParams: {
+          includeHiddenFolders: true,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+
+    it('should call apiClient.request with all supported query parameters', async () => {
+      await folders.list({
+        identifier: 'id123',
+        queryParams: {
+          parentId: 'parent123',
+          includeHiddenFolders: false,
+          limit: 10,
+          pageToken: 'token123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/folders',
+        queryParams: {
+          parentId: 'parent123',
+          includeHiddenFolders: false,
+          limit: 10,
+          pageToken: 'token123',
+        },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
