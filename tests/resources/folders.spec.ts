@@ -16,7 +16,7 @@ describe('Folders', () => {
     }) as jest.Mocked<APIClient>;
 
     folders = new Folders(apiClient);
-    apiClient.request.mockResolvedValue({});
+    apiClient.request.mockResolvedValue({ data: [] });
   });
 
   describe('deserializing', () => {
@@ -78,6 +78,7 @@ describe('Folders', () => {
       await folders.list({
         identifier: 'id123',
         queryParams: {
+          includeHiddenFolders: true,
           singleLevel: true,
           parentId: 'parent123',
         },
@@ -91,6 +92,7 @@ describe('Folders', () => {
         method: 'GET',
         path: '/v3/grants/id123/folders',
         queryParams: {
+          includeHiddenFolders: true,
           singleLevel: true,
           parentId: 'parent123',
         },
@@ -101,11 +103,19 @@ describe('Folders', () => {
       });
     });
 
-    it('should call apiClient.request with single_level set to false', async () => {
+    it('should call apiClient.request with all supported query parameters', async () => {
       await folders.list({
         identifier: 'id123',
         queryParams: {
+          parentId: 'parent123',
+          includeHiddenFolders: false,
+          limit: 10,
+          pageToken: 'token123',
           singleLevel: false,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
 
@@ -113,7 +123,15 @@ describe('Folders', () => {
         method: 'GET',
         path: '/v3/grants/id123/folders',
         queryParams: {
+          parentId: 'parent123',
+          includeHiddenFolders: false,
+          limit: 10,
+          pageToken: 'token123',
           singleLevel: false,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
         },
       });
     });
