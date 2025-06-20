@@ -6,6 +6,7 @@ This directory contains examples of how to use the Nylas Node.js SDK to interact
 
 - [Notetakers](./notetakers/README.md) - Examples of how to use the Nylas Notetakers API to invite a Notetaker bot to meetings, get recordings and transcripts, and more.
 - [Messages](./messages/README.md) - Examples of how to use the Nylas Messages API to list, find, send, update messages, and work with new features like tracking options and raw MIME data.
+- [Folders](./folders/README.md) - Examples of how to use the Nylas Folders API, including the new `singleLevel` parameter for Microsoft accounts.
 
 ## Running the Examples
 
