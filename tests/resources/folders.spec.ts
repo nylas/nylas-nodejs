@@ -74,11 +74,13 @@ describe('Folders', () => {
       });
     });
 
-    it('should call apiClient.request with include_hidden_folders query parameter', async () => {
+    it('should call apiClient.request with query params including single_level', async () => {
       await folders.list({
         identifier: 'id123',
         queryParams: {
           includeHiddenFolders: true,
+          singleLevel: true,
+          parentId: 'parent123',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -91,6 +93,8 @@ describe('Folders', () => {
         path: '/v3/grants/id123/folders',
         queryParams: {
           includeHiddenFolders: true,
+          singleLevel: true,
+          parentId: 'parent123',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -107,6 +111,7 @@ describe('Folders', () => {
           includeHiddenFolders: false,
           limit: 10,
           pageToken: 'token123',
+          singleLevel: false,
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -122,6 +127,7 @@ describe('Folders', () => {
           includeHiddenFolders: false,
           limit: 10,
           pageToken: 'token123',
+          singleLevel: false,
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',

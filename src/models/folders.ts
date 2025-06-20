@@ -101,10 +101,18 @@ export interface ListFolderQueryParams extends ListQueryParams {
    * (Microsoft and EWS only.) Use the ID of a folder to find all child folders it contains.
    */
   parentId?: string;
+  
   /**
    * (Microsoft only) When true, Nylas includes hidden folders in its response.
    */
   includeHiddenFolders?: boolean;
+
+  /**
+   * (Microsoft only) If true, retrieves folders from a single-level hierarchy only.
+   * If false, retrieves folders across a multi-level hierarchy.
+   * @default false
+   */
+  singleLevel?: boolean;
 }
 
 export type UpdateFolderRequest = Partial<CreateFolderRequest>;
