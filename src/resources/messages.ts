@@ -291,15 +291,15 @@ export class Messages extends Resource {
     const path = makePathParams('/v3/grants/{identifier}/messages/send', {
       identifier,
     });
-    
+
     // Create FormData for MIME message
     const FD = require('form-data');
     const FormDataConstructor = FD.default || FD;
     const form: FormData = new FormDataConstructor();
-    
+
     // Add MIME content
     form.append('mime', requestBody.mime);
-    
+
     // Add metadata (defaults to empty string if not provided)
     if (requestBody.metadata) {
       form.append('metadata', requestBody.metadata);

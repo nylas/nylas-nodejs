@@ -518,7 +518,9 @@ This is a test MIME message.`;
       });
 
       // Check that form data was created correctly
-      const formData = (capturedRequest.form as any as MockedFormData)._getAppendedData();
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
       expect(formData.mime).toEqual(mimeContent);
       expect(formData.metadata).toEqual('test-metadata');
     });
@@ -543,7 +545,9 @@ This is a test MIME message.`;
       });
 
       const capturedRequest = apiClient.request.mock.calls[0][0];
-      const formData = (capturedRequest.form as any as MockedFormData)._getAppendedData();
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
       expect(formData.mime).toEqual(mimeContent);
       expect(formData.metadata).toEqual('');
     });
@@ -580,7 +584,9 @@ Content-Type: text/html; charset="UTF-8"
       });
 
       const capturedRequest = apiClient.request.mock.calls[0][0];
-      const formData = (capturedRequest.form as any as MockedFormData)._getAppendedData();
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
       expect(formData.mime).toEqual(mimeContent);
       expect(formData.metadata).toEqual('complex-mime-test');
     });
