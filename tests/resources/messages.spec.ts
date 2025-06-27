@@ -482,6 +482,110 @@ describe('Messages', () => {
     });
   });
 
+  describe('sendMime', () => {
+    it('should call apiClient.request with the correct params for MIME message', async () => {
+      const mimeContent = `MIME-Version: 1.0
+Message-ID: <test@example.com>
+Subject: Test MIME Message
+From: sender@example.com
+To: recipient@example.com
+Content-Type: text/plain; charset="UTF-8"
+
+This is a test MIME message.`;
+
+      await messages.sendMime({
+        identifier: 'id123',
+        requestBody: {
+          mime: mimeContent,
+          metadata: 'test-metadata',
+        },
+        queryParams: {
+          type: 'mime',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+      expect(capturedRequest.queryParams).toEqual({ type: 'mime' });
+      expect(capturedRequest.overrides).toEqual({
+        apiUri: 'https://test.api.nylas.com',
+        headers: { override: 'bar' },
+      });
+
+      // Check that form data was created correctly
+      const formData = (capturedRequest.form as any as MockedFormData)._getAppendedData();
+      expect(formData.mime).toEqual(mimeContent);
+      expect(formData.metadata).toEqual('test-metadata');
+    });
+
+    it('should use empty string for metadata when not provided', async () => {
+      const mimeContent = `MIME-Version: 1.0
+Subject: Test MIME Message
+From: sender@example.com
+To: recipient@example.com
+Content-Type: text/plain; charset="UTF-8"
+
+This is a test MIME message.`;
+
+      await messages.sendMime({
+        identifier: 'id123',
+        requestBody: {
+          mime: mimeContent,
+        },
+        queryParams: {
+          type: 'mime',
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      const formData = (capturedRequest.form as any as MockedFormData)._getAppendedData();
+      expect(formData.mime).toEqual(mimeContent);
+      expect(formData.metadata).toEqual('');
+    });
+
+    it('should handle complex MIME content with multipart boundaries', async () => {
+      const mimeContent = `MIME-Version: 1.0
+Message-ID: <complex@example.com>
+Subject: Complex MIME Message
+From: sender@example.com
+To: recipient@example.com
+Content-Type: multipart/alternative; boundary="boundary_123"
+
+--boundary_123
+Content-Type: text/plain; charset="UTF-8"
+
+Plain text content
+
+--boundary_123
+Content-Type: text/html; charset="UTF-8"
+
+<div>HTML content</div>
+
+--boundary_123--`;
+
+      await messages.sendMime({
+        identifier: 'id123',
+        requestBody: {
+          mime: mimeContent,
+          metadata: 'complex-mime-test',
+        },
+        queryParams: {
+          type: 'mime',
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      const formData = (capturedRequest.form as any as MockedFormData)._getAppendedData();
+      expect(formData.mime).toEqual(mimeContent);
+      expect(formData.metadata).toEqual('complex-mime-test');
+    });
+  });
+
   describe('scheduledMessages', () => {
     it('listing should call apiClient.request with the correct params', async () => {
       await messages.listScheduledMessages({
