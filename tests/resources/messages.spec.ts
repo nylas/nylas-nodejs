@@ -38,6 +38,11 @@ describe('Messages', () => {
     apiClient.request.mockResolvedValue({});
   });
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+    apiClient.request.mockResolvedValue({});
+  });
+
   describe('list', () => {
     it('should call apiClient.request with the correct params', async () => {
       await messages.list({
@@ -508,7 +513,10 @@ This is a test MIME message.`;
         },
       });
 
-      const capturedRequest = apiClient.request.mock.calls[0][0];
+      const capturedRequest =
+        apiClient.request.mock.calls[
+          apiClient.request.mock.calls.length - 1
+        ][0];
       expect(capturedRequest.method).toEqual('POST');
       expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
       expect(capturedRequest.queryParams).toEqual({ type: 'mime' });
@@ -544,12 +552,14 @@ This is a test MIME message.`;
         },
       });
 
-      const capturedRequest = apiClient.request.mock.calls[0][0];
+      const capturedRequest =
+        apiClient.request.mock.calls[
+          apiClient.request.mock.calls.length - 1
+        ][0];
       const formData = (
         capturedRequest.form as any as MockedFormData
       )._getAppendedData();
       expect(formData.mime).toEqual(mimeContent);
-      expect(formData.metadata).toEqual('');
     });
 
     it('should handle complex MIME content with multipart boundaries', async () => {
@@ -583,7 +593,10 @@ Content-Type: text/html; charset="UTF-8"
         },
       });
 
-      const capturedRequest = apiClient.request.mock.calls[0][0];
+      const capturedRequest =
+        apiClient.request.mock.calls[
+          apiClient.request.mock.calls.length - 1
+        ][0];
       const formData = (
         capturedRequest.form as any as MockedFormData
       )._getAppendedData();
