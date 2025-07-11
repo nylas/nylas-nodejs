@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Support for dedicated types export via `nylas/types` subpath for third-party developers building extensions
+
 ## [7.11.0] - 2025-06-23
 
 ### Added
