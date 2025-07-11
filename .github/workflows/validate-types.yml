@@ -1,0 +1,78 @@
+# Sample GitHub Actions workflow for validating types in CI/CD
+# This ensures that types are always up-to-date and tests pass
+
+name: Validate Types and Build
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate-types:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Check if types are up-to-date
+      run: npm run check-types-current
+      
+    - name: Run linting
+      run: npm run lint:ci
+      
+    - name: Run tests
+      run: npm test
+      
+    - name: Build project
+      run: npm run build
+      
+    - name: Run test coverage
+      run: npm run test:coverage
+      
+    - name: Validate examples (if they exist)
+      run: |
+        if [ -d "examples" ]; then
+          cd examples
+          npm install
+          npx tsc --noEmit
+        else
+          echo "No examples directory found, skipping validation"
+        fi
+
+  # Optional: Run full release validation on main branch
+  validate-release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: validate-types
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run full release validation
+      run: npm run validate-release 

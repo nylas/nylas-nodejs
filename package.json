@@ -22,13 +22,18 @@
     "export-version": "node scripts/exportVersion.js",
     "generate-lib-package-json": "node scripts/generateLibPackageJson.js",
     "generate-model-index": "node scripts/generateModelIndex.js",
-    "prebuild": "npm run export-version && npm run generate-model-index",
+    "generate-types-index": "node scripts/generateTypesIndex.js",
+    "validate-release": "node scripts/validateRelease.js",
+    "check-types-current": "node scripts/checkTypesUpToDate.js",
+    "prebuild": "npm run export-version && npm run generate-model-index && npm run generate-types-index",
     "build": "rm -rf lib && npm run build-esm && npm run build-cjs && npm run generate-lib-package-json",
     "build-esm": "tsc -p tsconfig.esm.json",
     "build-cjs": "tsc -p tsconfig.cjs.json",
     "prepare": "npm run build",
     "build:docs": "typedoc --out docs",
-    "version": "npm run export-version && git add src/version.ts"
+    "preversion": "npm run validate-release",
+    "version": "npm run export-version && git add src/version.ts",
+    "postversion": "npm run build && echo 'Post-version build successful'"
   },
   "keywords": [
     "email",
