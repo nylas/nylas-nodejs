@@ -104,6 +104,7 @@ class CustomResource extends Resource {
 
 - `simple-example.ts` - Shows basic usage of SDK types for type safety
 - `extension-example.ts` - Shows how to build a custom extension using SDK types (advanced)
+- `async-iteration-test.ts` - Demonstrates the correct async iteration pattern for message lists
 
 ## Running the Examples
 

@@ -43,15 +43,15 @@ class NylasAnalytics {
    * Analyze message patterns for a grant
    */
   async analyzeMessagePatterns(params: ListMessagesParams): Promise<MessageAnalytics> {
-    const messages = await this.nylas.messages.list(params);
+    const messagesIterator = this.nylas.messages.list(params);
     
     let totalMessages = 0;
     let totalSize = 0;
     const senders = new Map<string, number>();
     const subjects = new Map<string, number>();
 
-    // Process each page of messages
-    for await (const page of messages) {
+    // Process each page of messages using async iteration
+    for await (const page of messagesIterator) {
       for (const message of page.data) {
         totalMessages++;
         totalSize += message.body?.length || 0;
@@ -71,7 +71,7 @@ class NylasAnalytics {
 
     return {
       totalMessages,
-      averageSize: totalSize / totalMessages,
+      averageSize: totalMessages > 0 ? totalSize / totalMessages : 0,
       topSenders: Array.from(senders.entries())
         .sort((a, b) => b[1] - a[1])
         .slice(0, 5),
