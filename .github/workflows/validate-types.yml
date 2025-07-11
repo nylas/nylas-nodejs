@@ -1,7 +1,7 @@
-# Sample GitHub Actions workflow for validating types in CI/CD
-# This ensures that types are always up-to-date and tests pass
+# Sample GitHub Actions workflow for CI/CD validation
+# This ensures that tests pass and builds are successful
 
-name: Validate Types and Build
+name: Validate and Build
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  validate-types:
+  validate:
     runs-on: ubuntu-latest
     
     strategy:
@@ -30,8 +30,7 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Check if types are up-to-date
-      run: npm run check-types-current
+
       
     - name: Run linting
       run: npm run lint:ci
@@ -59,7 +58,7 @@ jobs:
   validate-release:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: validate-types
+    needs: validate
     
     steps:
     - name: Checkout code

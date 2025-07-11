@@ -22,10 +22,9 @@
     "export-version": "node scripts/exportVersion.js",
     "generate-lib-package-json": "node scripts/generateLibPackageJson.js",
     "generate-model-index": "node scripts/generateModelIndex.js",
-    "generate-types-index": "node scripts/generateTypesIndex.js",
+    "generate-types-via-api-extractor": "node scripts/generateTypesViaApiExtractor.js",
     "validate-release": "node scripts/validateRelease.js",
-    "check-types-current": "node scripts/checkTypesUpToDate.js",
-    "prebuild": "npm run export-version && npm run generate-model-index && npm run generate-types-index",
+    "prebuild": "npm run export-version && npm run generate-model-index",
     "build": "rm -rf lib && npm run build-esm && npm run build-cjs && npm run generate-lib-package-json",
     "build-esm": "tsc -p tsconfig.esm.json",
     "build-cjs": "tsc -p tsconfig.cjs.json",
@@ -80,11 +79,6 @@
       "import": "./lib/esm/nylas.js",
       "require": "./lib/cjs/nylas.js",
       "types": "./lib/types/nylas.d.ts"
-    },
-    "./types": {
-      "import": "./lib/esm/types.js",
-      "require": "./lib/cjs/types.js",
-      "types": "./lib/types/types.d.ts"
     }
   }
 }
