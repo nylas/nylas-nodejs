@@ -1,0 +1,25 @@
+{
+  "name": "nylas-cloudflare-worker-attachments",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker example for sending email attachments using Nylas SDK",
+  "main": "src/worker.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "tsc && wrangler deploy --dry-run",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": ["cloudflare", "worker", "nylas", "email", "attachments"],
+  "author": "Nylas",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "@types/mime-types": "^2.1.4",
+    "typescript": "^5.3.0",
+    "wrangler": "^3.22.0"
+  },
+  "dependencies": {
+    "nylas": "file:../../",
+    "mime-types": "^2.1.35"
+  }
+} 

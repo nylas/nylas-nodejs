@@ -7,11 +7,11 @@ import {
   Message,
   MessageTrackingOptions,
 } from '../../src/models/messages';
-jest.mock('../src/apiClient');
+jest.mock('../../src/apiClient');
 
 // Mock the FormData constructor
-jest.mock('form-data', () => {
-  return jest.fn().mockImplementation(function (this: MockedFormData) {
+jest.mock('formdata-node', () => ({
+  FormData: jest.fn().mockImplementation(function (this: MockedFormData) {
     const appendedData: Record<string, any> = {};
 
     this.append = (key: string, value: any): void => {
@@ -19,8 +19,23 @@ jest.mock('form-data', () => {
     };
 
     this._getAppendedData = (): Record<string, any> => appendedData;
-  });
-});
+  }),
+  Blob: jest.fn().mockImplementation((parts: any[], options?: any) => ({
+    type: options?.type || '',
+    size: parts.reduce((size, part) => size + (part.length || 0), 0),
+  })),
+  File: jest
+    .fn()
+    .mockImplementation((parts: any[], name: string, options?: any) => ({
+      name,
+      type: options?.type || '',
+      size:
+        options?.size ||
+        parts.reduce((size, part) => size + (part.length || 0), 0),
+      stream: () => parts[0],
+      [Symbol.toStringTag]: 'File',
+    })),
+}));
 
 describe('Messages', () => {
   let apiClient: jest.Mocked<APIClient>;
@@ -391,7 +406,14 @@ describe('Messages', () => {
         capturedRequest.form as any as MockedFormData
       )._getAppendedData();
       expect(formData.message).toEqual(JSON.stringify(messageJson));
-      expect(formData.file0).toEqual(fileStream);
+      // ReadableStream is now wrapped in a file-like object
+      expect(formData.file0).toEqual({
+        type: 'text/plain',
+        name: 'file1.txt',
+        size: 3145728, // 3MB as declared in the attachment
+        stream: expect.any(Function),
+        [Symbol.toStringTag]: 'File',
+      });
       expect(capturedRequest.method).toEqual('POST');
       expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
       expect(capturedRequest.overrides).toEqual({
@@ -439,7 +461,14 @@ describe('Messages', () => {
         capturedRequest.form as any as MockedFormData
       )._getAppendedData();
       expect(formData.message).toEqual(JSON.stringify(messageJson));
-      expect(formData.file0).toEqual(fileStream);
+      // ReadableStream is now wrapped in a file-like object
+      expect(formData.file0).toEqual({
+        type: 'text/plain',
+        name: 'small_file.txt',
+        size: 1000, // 1KB as declared in the attachment
+        stream: expect.any(Function),
+        [Symbol.toStringTag]: 'File',
+      });
       expect(capturedRequest.method).toEqual('POST');
       expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
     });

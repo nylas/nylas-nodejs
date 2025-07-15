@@ -1,6 +1,6 @@
 import APIClient from '../../src/apiClient';
 import { Events } from '../../src/resources/events';
-jest.mock('../src/apiClient');
+jest.mock('../../src/apiClient');
 
 describe('Events', () => {
   let apiClient: jest.Mocked<APIClient>;

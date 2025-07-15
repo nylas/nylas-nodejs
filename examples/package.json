@@ -9,15 +9,22 @@
     "notetakers": "ts-node notetakers/notetaker.ts",
     "calendars": "ts-node calendars/event_with_notetaker.ts",
     "messages": "ts-node messages/messages.ts",
+    "send-attachments": "ts-node messages/send-attachments-cli.ts",
     "folders": "ts-node folders/folders.ts"
   },
   "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
     "dotenv": "^16.0.0",
+    "inquirer": "^9.2.12",
+    "mime-types": "^2.1.35",
     "nylas": "file:.."
   },
   "devDependencies": {
     "ts-node": "^10.8.0",
     "typescript": "^5.0.0",
-    "@types/node": "^18.11.9"
+    "@types/node": "^18.11.9",
+    "@types/inquirer": "^9.0.7",
+    "@types/mime-types": "^2.1.4"
   }
 } 

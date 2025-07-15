@@ -1,6 +1,6 @@
 import APIClient from '../../src/apiClient';
 import { Applications } from '../../src/resources/applications';
-jest.mock('../src/apiClient');
+jest.mock('../../src/apiClient');
 
 describe('Applications', () => {
   let apiClient: jest.Mocked<APIClient>;

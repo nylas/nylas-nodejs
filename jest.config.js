@@ -9,10 +9,19 @@ const config = {
     ],
   },
   moduleNameMapper: {
-    '^[../]+src/([^/]+)$': '<rootDir>/lib/esm/$1.js',
-    '^[../]+src/resources/([^/]+)$': '<rootDir>/lib/esm/resources/$1.js',
-    '^[../]+src/models/([^/]+)$': '<rootDir>/lib/esm/models/$1.js',
+    '^[../]+src/([^/]+)$': '<rootDir>/src/$1.ts',
+    '^[../]+src/resources/([^/]+)$': '<rootDir>/src/resources/$1.ts',
+    '^[../]+src/models/([^/]+)$': '<rootDir>/src/models/$1.ts',
+    // Handle .js imports in TypeScript files for Jest
+    '^(.+)\\.js$': '$1',
   },
+  // Handle ESM modules like node-fetch v3
+  extensionsToTreatAsEsm: ['.ts'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(node-fetch|data-uri-to-buffer|fetch-blob|formdata-polyfill)/)',
+  ],
+  // Set up jest-fetch-mock
+  setupFilesAfterEnv: ['<rootDir>/tests/setupTests.ts'],
   coverageThreshold: {
     global: {
       functions: 80,

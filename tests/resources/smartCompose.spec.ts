@@ -1,6 +1,6 @@
 import APIClient from '../../src/apiClient';
 import { SmartCompose } from '../../src/resources/smartCompose';
-jest.mock('../src/apiClient');
+jest.mock('../../src/apiClient');
 
 describe('SmartCompose', () => {
   let apiClient: jest.Mocked<APIClient>;

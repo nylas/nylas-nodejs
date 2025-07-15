@@ -1,7 +1,7 @@
 import APIClient from '../../src/apiClient';
 import { Attachments } from '../../src/resources/attachments';
 import { Readable } from 'stream';
-jest.mock('../src/apiClient');
+jest.mock('../../src/apiClient');
 
 describe('Attachments', () => {
   let apiClient: jest.Mocked<APIClient>;

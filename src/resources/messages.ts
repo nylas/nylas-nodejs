@@ -1,4 +1,4 @@
-import FormData from 'form-data';
+import { Blob, FormData } from 'formdata-node';
 import APIClient, { RequestOptionsParams } from '../apiClient.js';
 import { Overrides } from '../config.js';
 import {
@@ -23,10 +23,11 @@ import {
   NylasResponse,
 } from '../models/response.js';
 import {
-  encodeAttachmentStreams,
-  objKeysToSnakeCase,
-  makePathParams,
+  attachmentStreamToFile,
   calculateTotalPayloadSize,
+  encodeAttachmentContent,
+  makePathParams,
+  objKeysToSnakeCase,
 } from '../utils.js';
 import { AsyncListResponse, Resource } from './resource.js';
 import { SmartCompose } from './smartCompose.js';
@@ -248,7 +249,7 @@ export class Messages extends Resource {
       requestOptions.form = Messages._buildFormRequest(requestBody);
     } else {
       if (requestBody.attachments) {
-        const processedAttachments = await encodeAttachmentStreams(
+        const processedAttachments = await encodeAttachmentContent(
           requestBody.attachments
         );
 
@@ -346,10 +347,7 @@ export class Messages extends Resource {
   static _buildFormRequest(
     requestBody: CreateDraftRequest | UpdateDraftRequest | SendMessageRequest
   ): FormData {
-    // FormData imports are funky, cjs needs to use .default, es6 doesn't
-    const FD = require('form-data');
-    const FormDataConstructor = FD.default || FD;
-    const form: FormData = new FormDataConstructor();
+    const form = new FormData();
 
     // Split out the message payload from the attachments
     const messagePayload = {
@@ -359,13 +357,28 @@ export class Messages extends Resource {
     form.append('message', JSON.stringify(objKeysToSnakeCase(messagePayload)));
 
     // Add a separate form field for each attachment
-    requestBody.attachments?.forEach((attachment, index) => {
-      const contentId = attachment.contentId || `file${index}`;
-      form.append(contentId, attachment.content, {
-        filename: attachment.filename,
-        contentType: attachment.contentType,
+    if (requestBody.attachments && requestBody.attachments.length > 0) {
+      requestBody.attachments.map((attachment, index) => {
+        const contentId = attachment.contentId || `file${index}`;
+        // Handle different content types for formdata-node
+        if (typeof attachment.content === 'string') {
+          // Base64 string - create a Blob
+          const buffer = Buffer.from(attachment.content, 'base64');
+          const blob = new Blob([buffer], { type: attachment.contentType });
+          form.append(contentId, blob, attachment.filename);
+        } else if (Buffer.isBuffer(attachment.content)) {
+          // Buffer - create a Blob
+          const blob = new Blob([attachment.content], {
+            type: attachment.contentType,
+          });
+          form.append(contentId, blob, attachment.filename);
+        } else {
+          // ReadableStream - create a proper file-like object according to formdata-node docs
+          const file = attachmentStreamToFile(attachment);
+          form.append(contentId, file, attachment.filename);
+        }
       });
-    });
+    }
 
     return form;
   }

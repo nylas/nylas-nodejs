@@ -2,7 +2,7 @@ import APIClient from '../../src/apiClient';
 import { Webhooks } from '../../src/resources/webhooks';
 import { WebhookTriggers } from '../../src/models/webhooks';
 
-jest.mock('../src/apiClient');
+jest.mock('../../src/apiClient');
 
 describe('Webhooks', () => {
   let apiClient: jest.Mocked<APIClient>;

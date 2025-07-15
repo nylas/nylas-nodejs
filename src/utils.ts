@@ -1,8 +1,9 @@
 import { camelCase, snakeCase } from 'change-case';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as mime from 'mime-types';
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
+import { File as _File, Blob as _Blob } from 'formdata-node';
 import { CreateAttachmentRequest } from './models/attachments.js';
 
 export function createFileRequestBuilder(
@@ -43,6 +44,72 @@ function streamToBase64(stream: NodeJS.ReadableStream): Promise<string> {
 }
 
 /**
+ * Converts a ReadableStream to a File-like object that can be used with FormData.
+ * @param attachment The attachment containing the stream and metadata.
+ * @param mimeType The MIME type for the file (optional).
+ * @returns A File-like object that properly handles the stream.
+ */
+export function attachmentStreamToFile(
+  attachment: CreateAttachmentRequest,
+  mimeType?: string
+): any {
+  if (mimeType != null && typeof mimeType !== 'string') {
+    throw new Error('Invalid mimetype, expected string.');
+  }
+  const content = attachment.content;
+  if (typeof content === 'string' || Buffer.isBuffer(content)) {
+    throw new Error('Invalid attachment content, expected ReadableStream.');
+  }
+
+  // Create a file-shaped object that FormData can handle properly
+  const fileObject = {
+    type: mimeType || attachment.contentType,
+    name: attachment.filename,
+    [Symbol.toStringTag]: 'File',
+    stream() {
+      return content;
+    },
+  };
+
+  // Add size if available
+  if (attachment.size !== undefined) {
+    (fileObject as any).size = attachment.size;
+  }
+
+  return fileObject;
+}
+
+/**
+ * Encodes the content of each attachment to base64.
+ * Handles ReadableStream, Buffer, and string content types.
+ * @param attachments The attachments to encode.
+ * @returns The attachments with their content encoded to base64.
+ */
+export async function encodeAttachmentContent(
+  attachments: CreateAttachmentRequest[]
+): Promise<CreateAttachmentRequest[]> {
+  return await Promise.all(
+    attachments.map(async (attachment) => {
+      let base64EncodedContent: string;
+
+      if (attachment.content instanceof Readable) {
+        // ReadableStream -> base64
+        base64EncodedContent = await streamToBase64(attachment.content);
+      } else if (Buffer.isBuffer(attachment.content)) {
+        // Buffer -> base64
+        base64EncodedContent = attachment.content.toString('base64');
+      } else {
+        // string (assumed to already be base64)
+        base64EncodedContent = attachment.content as string;
+      }
+
+      return { ...attachment, content: base64EncodedContent };
+    })
+  );
+}
+
+/**
+ * @deprecated Use encodeAttachmentContent instead. This alias is provided for backwards compatibility.
  * Encodes the content of each attachment stream to base64.
  * @param attachments The attachments to encode.
  * @returns The attachments with their content encoded to base64.
@@ -50,15 +117,7 @@ function streamToBase64(stream: NodeJS.ReadableStream): Promise<string> {
 export async function encodeAttachmentStreams(
   attachments: CreateAttachmentRequest[]
 ): Promise<CreateAttachmentRequest[]> {
-  return await Promise.all(
-    attachments.map(async (attachment) => {
-      const base64EncodedContent =
-        attachment.content instanceof Readable
-          ? await streamToBase64(attachment.content)
-          : attachment.content;
-      return { ...attachment, content: base64EncodedContent }; // Replace the stream with its base64 string
-    })
-  );
+  return encodeAttachmentContent(attachments);
 }
 
 /**

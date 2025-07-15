@@ -1,13 +1,10 @@
 /* istanbul ignore file */
-import fetch from 'node-fetch';
 import { Readable } from 'stream';
 
 export interface MockedFormData {
   append(key: string, value: any): void;
   _getAppendedData(): Record<string, any>;
 }
-
-export const mockedFetch = fetch as jest.MockedFunction<typeof fetch>;
 
 export const mockResponse = (body: string, status = 200): any => {
   const headers: Record<string, string> = {};
@@ -48,7 +45,21 @@ export const createReadableStream = (text: string): NodeJS.ReadableStream => {
   return new Readable({
     read(): void {
       this.push(text);
-      this.push(null); // indicates EOF
+      this.push(null);
     },
   });
 };
+
+export class MockFormData implements MockedFormData {
+  private data: Record<string, any> = {};
+
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  append(key: string, value: any) {
+    this.data[key] = value;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  _getAppendedData() {
+    return this.data;
+  }
+}

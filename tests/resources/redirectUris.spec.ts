@@ -1,6 +1,6 @@
 import APIClient from '../../src/apiClient';
 import { RedirectUris } from '../../src/resources/redirectUris';
-jest.mock('../src/apiClient');
+jest.mock('../../src/apiClient');
 
 describe('RedirectUris', () => {
   let apiClient: jest.Mocked<APIClient>;

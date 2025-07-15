@@ -1,7 +1,7 @@
 import APIClient from '../../src/apiClient';
 import { CredentialType } from '../../src/models/credentials';
 import { Credentials } from '../../src/resources/credentials';
-jest.mock('../src/apiClient');
+jest.mock('../../src/apiClient');
 
 describe('Credentials', () => {
   let apiClient: jest.Mocked<APIClient>;
