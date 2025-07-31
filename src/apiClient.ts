@@ -1,5 +1,5 @@
 import fetch, { Request, Response } from 'node-fetch';
-import { AbortSignal } from 'node-fetch/externals.js';
+import { Readable as _Readable } from 'node:stream';
 import { NylasConfig, OverridableNylasConfig } from './config.js';
 import {
   NylasApiError,
@@ -8,7 +8,8 @@ import {
 } from './models/error.js';
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils.js';
 import { SDK_VERSION } from './version.js';
-import FormData from 'form-data';
+import { FormData } from 'formdata-node';
+import { FormDataEncoder as _FormDataEncoder } from 'form-data-encoder';
 import { snakeCase } from 'change-case';
 
 /**
@@ -265,10 +266,6 @@ export default class APIClient {
 
     if (optionParams.form) {
       requestOptions.body = optionParams.form;
-      requestOptions.headers = {
-        ...requestOptions.headers,
-        ...optionParams.form.getHeaders(),
-      };
     }
 
     return requestOptions;
@@ -315,6 +312,10 @@ export default class APIClient {
     options: RequestOptionsParams
   ): Promise<NodeJS.ReadableStream> {
     const response = await this.sendRequest(options);
+    // TODO: See if we can fix this in a backwards compatible way
+    if (!response.body) {
+      throw new Error('No response body');
+    }
     return response.body;
   }
 }

@@ -1,4 +1,3 @@
-import { RequestInfo } from 'node-fetch';
 import APIClient, { RequestOptionsParams } from '../src/apiClient';
 import {
   NylasApiError,
@@ -6,17 +5,15 @@ import {
   NylasSdkTimeoutError,
 } from '../src/models/error';
 import { SDK_VERSION } from '../src/version';
-import { mockedFetch, mockResponse } from './testUtils';
+import { mockResponse } from './testUtils';
 
-jest.mock('node-fetch', () => {
-  const originalModule = jest.requireActual('node-fetch');
-  return {
-    ...originalModule,
-    default: jest.fn(),
-  };
-});
+import fetchMock from 'jest-fetch-mock';
 
 describe('APIClient', () => {
+  beforeEach(() => {
+    fetchMock.resetMocks();
+  });
+
   describe('constructor', () => {
     it('should initialize all the values', () => {
       const client = new APIClient({
@@ -261,7 +258,7 @@ describe('APIClient', () => {
           mockResp.headers.set(key, value);
         });
 
-        mockedFetch.mockImplementationOnce(() => Promise.resolve(mockResp));
+        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp));
 
         const response = await client.request({
           path: '/test',
@@ -282,7 +279,7 @@ describe('APIClient', () => {
       });
 
       it('should throw an error if the response is undefined', async () => {
-        mockedFetch.mockImplementationOnce(() =>
+        fetchMock.mockImplementationOnce(() =>
           Promise.resolve(undefined as any)
         );
 
@@ -298,7 +295,7 @@ describe('APIClient', () => {
         const payload = {
           invalid: true,
         };
-        mockedFetch.mockImplementationOnce(() =>
+        fetchMock.mockImplementationOnce(() =>
           Promise.resolve(mockResponse(JSON.stringify(payload), 400))
         );
 
@@ -337,7 +334,7 @@ describe('APIClient', () => {
           mockHeaders['x-nylas-api-version']
         );
 
-        mockedFetch.mockImplementation(() => Promise.resolve(mockResp));
+        fetchMock.mockImplementation(() => Promise.resolve(mockResp));
 
         try {
           await client.request({
@@ -387,7 +384,7 @@ describe('APIClient', () => {
           mockHeaders['x-nylas-api-version']
         );
 
-        mockedFetch.mockImplementation(() => Promise.resolve(mockResp));
+        fetchMock.mockImplementation(() => Promise.resolve(mockResp));
 
         try {
           await client.request({
@@ -405,7 +402,7 @@ describe('APIClient', () => {
       it('should respect override timeout when provided in seconds (value < 1000)', async () => {
         const overrideTimeout = 2; // 2 second timeout
 
-        mockedFetch.mockImplementationOnce((_url: RequestInfo) => {
+        fetchMock.mockImplementationOnce(() => {
           // Immediately throw an AbortError to simulate a timeout
           const error = new Error('The operation was aborted');
           error.name = 'AbortError';
@@ -434,7 +431,7 @@ describe('APIClient', () => {
         try {
           const overrideTimeoutMs = 2000; // 2000 milliseconds (2 seconds)
 
-          mockedFetch.mockImplementationOnce((_url: RequestInfo) => {
+          fetchMock.mockImplementationOnce(() => {
             // Immediately throw an AbortError to simulate a timeout
             const error = new Error('The operation was aborted');
             error.name = 'AbortError';
@@ -468,7 +465,7 @@ describe('APIClient', () => {
 
         try {
           // Mock fetch to return a successful response so we can verify setTimeout
-          mockedFetch.mockImplementationOnce(() =>
+          fetchMock.mockImplementationOnce(() =>
             Promise.resolve(mockResponse(JSON.stringify({ data: 'test' })))
           );
 
@@ -503,7 +500,7 @@ describe('APIClient', () => {
 
         try {
           // Mock fetch to return a successful response so we can verify setTimeout
-          mockedFetch.mockImplementationOnce(() =>
+          fetchMock.mockImplementationOnce(() =>
             Promise.resolve(mockResponse(JSON.stringify({ data: 'test' })))
           );
 
@@ -530,7 +527,7 @@ describe('APIClient', () => {
       });
 
       it('should use default timeout when no override provided', async () => {
-        mockedFetch.mockImplementationOnce((_url: RequestInfo) => {
+        fetchMock.mockImplementationOnce(() => {
           // Immediately throw an AbortError to simulate a timeout
           const error = new Error('The operation was aborted');
           error.name = 'AbortError';
@@ -567,7 +564,7 @@ describe('APIClient', () => {
           mockResp.headers.set(key, value);
         });
 
-        mockedFetch.mockImplementationOnce(() => Promise.resolve(mockResp));
+        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp));
 
         const result = await client.request({
           path: '/test',

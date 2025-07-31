@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- Upgraded node-fetch from v2 to v3 for better ESM support and compatibility with edge environments
+
+### Fixed
+- Fixed test expectations for file attachment sizes and content types to match actual implementation behavior
+- Updated Jest configuration to properly handle ESM modules from node-fetch v3
+- Removed incompatible AbortSignal import from node-fetch externals (now uses native Node.js AbortSignal)
+
 ## [7.11.0] - 2025-06-23
 
 ### Added

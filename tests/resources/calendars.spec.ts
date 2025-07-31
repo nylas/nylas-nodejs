@@ -1,7 +1,7 @@
 import APIClient from '../../src/apiClient';
 import { Calendars } from '../../src/resources/calendars';
 import { AvailabilityMethod } from '../../src/models/availability';
-jest.mock('../src/apiClient');
+jest.mock('../../src/apiClient');
 
 describe('Calendars', () => {
   let apiClient: jest.Mocked<APIClient>;

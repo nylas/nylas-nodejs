@@ -3,9 +3,13 @@ import {
   objKeysToCamelCase,
   objKeysToSnakeCase,
   makePathParams,
+  encodeAttachmentContent,
+  encodeAttachmentStreams,
 } from '../src/utils';
+import { Readable } from 'stream';
+import { CreateAttachmentRequest } from '../src/models/attachments';
 
-jest.mock('fs', () => {
+jest.mock('node:fs', () => {
   return {
     statSync: jest.fn(),
     createReadStream: jest.fn(),
@@ -27,8 +31,8 @@ describe('createFileRequestBuilder', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    require('fs').statSync.mockReturnValue(mockedStatSync);
-    require('fs').createReadStream.mockReturnValue(mockedReadStream);
+    require('node:fs').statSync.mockReturnValue(mockedStatSync);
+    require('node:fs').createReadStream.mockReturnValue(mockedReadStream);
   });
 
   it('should return correct file details for a given filePath', () => {
@@ -273,5 +277,213 @@ describe('makePathParams and safePath', () => {
       identifier: '/@#$%^&*()',
     });
     expect(path).toBe('/v3/grants/%2F%40%23%24%25%5E%26*()');
+  });
+});
+
+describe('encodeAttachmentContent', () => {
+  // Helper function to create a readable stream from a string
+  const createReadableStream = (content: string): NodeJS.ReadableStream => {
+    const stream = new Readable();
+    stream.push(content);
+    stream.push(null); // Signal end of stream
+    return stream;
+  };
+
+  it('should encode Buffer content to base64', async () => {
+    const testContent = 'Hello, World!';
+    const buffer = Buffer.from(testContent, 'utf8');
+    const expectedBase64 = buffer.toString('base64');
+
+    const attachments: CreateAttachmentRequest[] = [
+      {
+        filename: 'test.txt',
+        contentType: 'text/plain',
+        content: buffer,
+        size: buffer.length,
+      },
+    ];
+
+    const result = await encodeAttachmentContent(attachments);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].content).toBe(expectedBase64);
+    expect(result[0].filename).toBe('test.txt');
+    expect(result[0].contentType).toBe('text/plain');
+    expect(result[0].size).toBe(buffer.length);
+  });
+
+  it('should encode ReadableStream content to base64', async () => {
+    const testContent = 'Stream content test';
+    const stream = createReadableStream(testContent);
+    const expectedBase64 = Buffer.from(testContent, 'utf8').toString('base64');
+
+    const attachments: CreateAttachmentRequest[] = [
+      {
+        filename: 'stream.txt',
+        contentType: 'text/plain',
+        content: stream,
+        size: testContent.length,
+      },
+    ];
+
+    const result = await encodeAttachmentContent(attachments);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].content).toBe(expectedBase64);
+    expect(result[0].filename).toBe('stream.txt');
+    expect(result[0].contentType).toBe('text/plain');
+  });
+
+  it('should pass through string content unchanged', async () => {
+    const base64Content = 'SGVsbG8sIFdvcmxkIQ=='; // "Hello, World!" in base64
+
+    const attachments: CreateAttachmentRequest[] = [
+      {
+        filename: 'string.txt',
+        contentType: 'text/plain',
+        content: base64Content,
+        size: 13,
+      },
+    ];
+
+    const result = await encodeAttachmentContent(attachments);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].content).toBe(base64Content);
+    expect(result[0].filename).toBe('string.txt');
+    expect(result[0].contentType).toBe('text/plain');
+  });
+
+  it('should handle mixed content types in a single request', async () => {
+    const bufferContent = Buffer.from('Buffer content', 'utf8');
+    const streamContent = createReadableStream('Stream content');
+    const stringContent = 'U3RyaW5nIGNvbnRlbnQ='; // Already base64
+
+    const attachments: CreateAttachmentRequest[] = [
+      {
+        filename: 'buffer.txt',
+        contentType: 'text/plain',
+        content: bufferContent,
+        size: bufferContent.length,
+      },
+      {
+        filename: 'stream.txt',
+        contentType: 'text/plain',
+        content: streamContent,
+        size: 14,
+      },
+      {
+        filename: 'string.txt',
+        contentType: 'text/plain',
+        content: stringContent,
+        size: 13,
+      },
+    ];
+
+    const result = await encodeAttachmentContent(attachments);
+
+    expect(result).toHaveLength(3);
+
+    // Buffer should be converted to base64
+    expect(result[0].content).toBe(bufferContent.toString('base64'));
+    expect(result[0].filename).toBe('buffer.txt');
+
+    // Stream should be converted to base64
+    expect(result[1].content).toBe(
+      Buffer.from('Stream content', 'utf8').toString('base64')
+    );
+    expect(result[1].filename).toBe('stream.txt');
+
+    // String should be passed through
+    expect(result[2].content).toBe(stringContent);
+    expect(result[2].filename).toBe('string.txt');
+  });
+
+  it('should handle binary Buffer content correctly', async () => {
+    // Create a buffer with binary data (some non-text bytes)
+    const binaryData = new Uint8Array([0x00, 0x01, 0x02, 0xff, 0xfe, 0xfd]);
+    const buffer = Buffer.from(binaryData);
+    const expectedBase64 = buffer.toString('base64');
+
+    const attachments: CreateAttachmentRequest[] = [
+      {
+        filename: 'binary.bin',
+        contentType: 'application/octet-stream',
+        content: buffer,
+        size: buffer.length,
+      },
+    ];
+
+    const result = await encodeAttachmentContent(attachments);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].content).toBe(expectedBase64);
+    expect(result[0].filename).toBe('binary.bin');
+    expect(result[0].contentType).toBe('application/octet-stream');
+  });
+
+  it('should handle empty Buffer', async () => {
+    const emptyBuffer = Buffer.alloc(0);
+    const expectedBase64 = emptyBuffer.toString('base64'); // Should be empty string
+
+    const attachments: CreateAttachmentRequest[] = [
+      {
+        filename: 'empty.txt',
+        contentType: 'text/plain',
+        content: emptyBuffer,
+        size: 0,
+      },
+    ];
+
+    const result = await encodeAttachmentContent(attachments);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].content).toBe(expectedBase64);
+    expect(result[0].filename).toBe('empty.txt');
+  });
+
+  it('should handle large Buffer content', async () => {
+    // Create a 1KB buffer with repeating pattern
+    const largeContent = 'A'.repeat(1024);
+    const largeBuffer = Buffer.from(largeContent, 'utf8');
+    const expectedBase64 = largeBuffer.toString('base64');
+
+    const attachments: CreateAttachmentRequest[] = [
+      {
+        filename: 'large.txt',
+        contentType: 'text/plain',
+        content: largeBuffer,
+        size: largeBuffer.length,
+      },
+    ];
+
+    const result = await encodeAttachmentContent(attachments);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].content).toBe(expectedBase64);
+    expect(result[0].filename).toBe('large.txt');
+    expect(result[0].size).toBe(1024);
+  });
+});
+
+describe('encodeAttachmentStreams (backwards compatibility)', () => {
+  it('should work the same as encodeAttachmentContent', async () => {
+    const testContent = 'Backwards compatibility test';
+    const buffer = Buffer.from(testContent, 'utf8');
+
+    const attachments: CreateAttachmentRequest[] = [
+      {
+        filename: 'compat.txt',
+        contentType: 'text/plain',
+        content: buffer,
+        size: buffer.length,
+      },
+    ];
+
+    const newResult = await encodeAttachmentContent(attachments);
+    const oldResult = await encodeAttachmentStreams(attachments);
+
+    expect(oldResult).toEqual(newResult);
+    expect(oldResult[0].content).toBe(buffer.toString('base64'));
   });
 });

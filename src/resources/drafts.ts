@@ -14,7 +14,7 @@ import {
   NylasResponse,
 } from '../models/response.js';
 import {
-  encodeAttachmentStreams,
+  encodeAttachmentContent,
   calculateTotalPayloadSize,
 } from '../utils.js';
 import { makePathParams } from '../utils.js';
@@ -138,7 +138,7 @@ export class Drafts extends Resource {
         overrides,
       });
     } else if (requestBody.attachments) {
-      const processedAttachments = await encodeAttachmentStreams(
+      const processedAttachments = await encodeAttachmentContent(
         requestBody.attachments
       );
 
@@ -183,7 +183,7 @@ export class Drafts extends Resource {
         overrides,
       });
     } else if (requestBody.attachments) {
-      const processedAttachments = await encodeAttachmentStreams(
+      const processedAttachments = await encodeAttachmentContent(
         requestBody.attachments
       );
 
