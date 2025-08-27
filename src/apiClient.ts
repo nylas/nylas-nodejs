@@ -288,11 +288,22 @@ export default class APIClient {
     const text = await response.text();
 
     try {
-      const responseJSON = JSON.parse(text);
-      // Inject the flow ID and headers into the response
-      responseJSON.flowId = flowId;
-      responseJSON.headers = headers;
-      return objKeysToCamelCase(responseJSON, ['metadata']);
+      const parsed = JSON.parse(text);
+      const payload = objKeysToCamelCase(
+        {
+          ...parsed,
+          flowId,
+          // deprecated: headers will be removed in a future release. This is for backwards compatibility.
+          headers,
+        },
+        ['metadata']
+      );
+      // Attach rawHeaders as a non-enumerable property to avoid breaking deep equality
+      Object.defineProperty(payload, 'rawHeaders', {
+        value: headers,
+        enumerable: false,
+      });
+      return payload;
     } catch (e) {
       throw new Error(`Could not parse response from the server: ${text}`);
     }

@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Jest configuration to properly handle ESM modules from node-fetch v3
 - Removed incompatible AbortSignal import from node-fetch externals (now uses native Node.js AbortSignal)
 
+### Added
+- Expose raw response headers on all responses via non-enumerable `rawHeaders` while keeping existing `headers` camelCased
+
 ## [7.11.0] - 2025-06-23
 
 ### Added
