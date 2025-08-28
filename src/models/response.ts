@@ -10,6 +10,7 @@ export interface NylasBaseResponse {
   flowId?: string;
   /**
    * The response headers with camelCased keys (backwards compatible)
+   * @deprecated Use rawHeaders instead
    */
   headers?: Record<string, string>;
   /**
@@ -37,6 +38,7 @@ export interface NylasResponse<T> {
   flowId?: string;
   /**
    * The response headers
+   * @deprecated Use rawHeaders instead
    */
   headers?: Record<string, string>;
   /**
@@ -68,6 +70,7 @@ export interface NylasListResponse<T> {
   flowId?: string;
   /**
    * The response headers with camelCased keys (backwards compatible)
+   * @deprecated Use rawHeaders instead
    */
   headers?: Record<string, string>;
   /**
