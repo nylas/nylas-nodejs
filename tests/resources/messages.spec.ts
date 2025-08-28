@@ -509,6 +509,61 @@ describe('Messages', () => {
       expect(capturedRequest.method).toEqual('POST');
       expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
     });
+
+    it('should include isPlaintext in JSON body when provided', async () => {
+      const jsonBody = {
+        to: [{ name: 'Test', email: 'test@example.com' }],
+        subject: 'Plain text email',
+        body: 'Hello world',
+        isPlaintext: true,
+      };
+
+      await messages.send({
+        identifier: 'id123',
+        requestBody: jsonBody,
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+      expect(capturedRequest.body).toEqual(jsonBody);
+    });
+
+    it('should include isPlaintext in multipart form message when provided', async () => {
+      const messageJson = {
+        to: [{ name: 'Test', email: 'test@example.com' }],
+        subject: 'Plain text email',
+        body: 'Hello world',
+        isPlaintext: true,
+      };
+      const fileStream = createReadableStream('This is the text from file 1');
+      const file1: CreateAttachmentRequest = {
+        filename: 'file1.txt',
+        contentType: 'text/plain',
+        content: fileStream,
+        size: 3 * 1024 * 1024,
+      };
+
+      await messages.send({
+        identifier: 'id123',
+        requestBody: {
+          ...messageJson,
+          attachments: [file1],
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
+      const parsed = JSON.parse(formData.message);
+      expect(parsed.to).toEqual(messageJson.to);
+      expect(parsed.subject).toEqual(messageJson.subject);
+      expect(parsed.body).toEqual(messageJson.body);
+      expect(parsed.is_plaintext).toBe(true);
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+    });
   });
 
   describe('scheduledMessages', () => {

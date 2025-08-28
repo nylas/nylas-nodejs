@@ -71,6 +71,11 @@ export interface CreateDraftRequest {
    * An array of custom headers to add to the message.
    */
   customHeaders?: CustomHeader[];
+  /**
+   * When true, the message body is sent as plain text and the MIME data doesn't include the HTML version of the message.
+   * When false, the message body is sent as HTML. Defaults to false.
+   */
+  isPlaintext?: boolean;
 }
 
 /**
@@ -103,7 +108,10 @@ export interface Draft
 /**
  * Interface representing a request to update a draft.
  */
-export type UpdateDraftRequest = Partial<CreateDraftRequest> & {
+export type UpdateDraftRequest = Omit<
+  Partial<CreateDraftRequest>,
+  'isPlaintext'
+> & {
   /**
    * Return drafts that are unread.
    */

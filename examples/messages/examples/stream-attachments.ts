@@ -21,7 +21,7 @@ const grantId: string = process.env.NYLAS_GRANT_ID || '';
  * Useful when you're working with streams from other sources
  * or need more control over the stream processing.
  */
-export async function sendStreamAttachments(fileManager: TestFileManager, recipientEmail: string, large: boolean = false): Promise<NylasResponse<Message>> {
+export async function sendStreamAttachments(fileManager: TestFileManager, recipientEmail: string, large: boolean = false, isPlaintext: boolean = false): Promise<NylasResponse<Message>> {
   console.log('🌊 Sending attachments using streams...');
   
   let attachments: CreateAttachmentRequest[] = [];
@@ -52,13 +52,16 @@ export async function sendStreamAttachments(fileManager: TestFileManager, recipi
   const requestBody: SendMessageRequest = {
     to: [{ name: 'Test Recipient', email: recipientEmail }],
     subject: `Nylas SDK - Stream Attachments (${sizeDescription})`,
-    body: `
+    body: isPlaintext
+      ? `Stream Attachments Example\nThis demonstrates sending attachments using readable streams.\nAttachment size: ${sizeDescription} (${attachments.length} file${attachments.length > 1 ? 's' : ''})`
+      : `
       <h2>Stream Attachments Example</h2>
       <p>This demonstrates sending attachments using readable streams.</p>
       <p>Useful when you have streams from other sources.</p>
       <p>Attachment size: ${sizeDescription} (${attachments.length} file${attachments.length > 1 ? 's' : ''})</p>
     `,
-    attachments
+    attachments,
+    isPlaintext
   };
   
   // For large files, use a longer timeout (5 minutes)

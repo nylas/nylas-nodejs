@@ -244,6 +244,47 @@ async function demonstrateMessageSending(): Promise<NylasResponse<Message> | nul
 }
 
 /**
+ * Demonstrates sending a plaintext-only message (no attachments)
+ */
+async function demonstratePlaintextMessageSending(): Promise<NylasResponse<Message> | null> {
+  console.log('\n=== Demonstrating Plaintext Message Sending ===');
+  try {
+    const testEmail = process.env.TEST_EMAIL;
+    if (!testEmail) {
+      console.log('TEST_EMAIL environment variable not set. Skipping plaintext message sending demo.');
+      return null;
+    }
+
+    const requestBody: SendMessageRequest = {
+      to: [{ name: 'Plaintext Recipient', email: testEmail }],
+      subject: 'Nylas SDK Messages Example - Plaintext',
+      body: 'This message is sent as plain text only.',
+      isPlaintext: true,
+    };
+
+    const sentMessage = await nylas.messages.send({
+      identifier: grantId,
+      requestBody,
+    });
+
+    console.log('Plaintext message sent successfully!');
+    console.log(`- Message ID: ${sentMessage.data.id}`);
+    console.log(`- Subject: ${sentMessage.data.subject}`);
+    console.log(`- To: ${sentMessage.data.to?.map(t => `${t.name} <${t.email}>`).join(', ')}`);
+
+    return sentMessage;
+  } catch (error) {
+    if (error instanceof NylasApiError) {
+      console.error(`Error sending plaintext message: ${error.message}`);
+      console.error(`Error details: ${JSON.stringify(error, null, 2)}`);
+    } else if (error instanceof Error) {
+      console.error(`Unexpected error in demonstratePlaintextMessageSending: ${error.message}`);
+    }
+    return null;
+  }
+}
+
+/**
  * Demonstrates updating a message
  */
 async function demonstrateMessageUpdate(messageId: string): Promise<void> {
@@ -464,6 +505,7 @@ async function main(): Promise<void> {
     
     // Run all demonstrations
     await demonstrateMessageFields();
+    await demonstratePlaintextMessageSending();
     await demonstrateRawMime();
     await demonstrateMessageQuerying();
     

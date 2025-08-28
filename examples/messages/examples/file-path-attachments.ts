@@ -21,7 +21,7 @@ const grantId: string = process.env.NYLAS_GRANT_ID || '';
  * This is the recommended approach for most use cases.
  * Uses streams internally for memory efficiency.
  */
-export async function sendFilePathAttachments(fileManager: TestFileManager, recipientEmail: string, large: boolean = false): Promise<NylasResponse<Message>> {
+export async function sendFilePathAttachments(fileManager: TestFileManager, recipientEmail: string, large: boolean = false, isPlaintext: boolean = false): Promise<NylasResponse<Message>> {
   console.log('📁 Sending attachments using file paths...');
   
   let attachments;
@@ -42,13 +42,16 @@ export async function sendFilePathAttachments(fileManager: TestFileManager, reci
   const requestBody: SendMessageRequest = {
     to: [{ name: 'Test Recipient', email: recipientEmail }],
     subject: `Nylas SDK - File Path Attachments (${sizeDescription})`,
-    body: `
+    body: isPlaintext
+      ? `File Path Attachments Example\nThis demonstrates sending attachments using file paths.\nAttachment size: ${sizeDescription} (${attachments.length} file${attachments.length > 1 ? 's' : ''})`
+      : `
       <h2>File Path Attachments Example</h2>
       <p>This demonstrates the most common way to send attachments using file paths.</p>
       <p>The SDK uses streams internally for memory efficiency.</p>
       <p>Attachment size: ${sizeDescription} (${attachments.length} file${attachments.length > 1 ? 's' : ''})</p>
     `,
-    attachments
+    attachments,
+    isPlaintext
   };
 
   // For large files, use a longer timeout (5 minutes)

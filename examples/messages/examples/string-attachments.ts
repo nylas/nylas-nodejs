@@ -21,7 +21,7 @@ const grantId: string = process.env.NYLAS_GRANT_ID || '';
  * Perfect for sending existing files as base64 encoded strings.
  * This example pulls the same files used by other examples but encodes them as base64 strings.
  */
-export async function sendStringAttachments(fileManager: TestFileManager, recipientEmail: string, large: boolean = false): Promise<NylasResponse<Message>> {
+export async function sendStringAttachments(fileManager: TestFileManager, recipientEmail: string, large: boolean = false, isPlaintext: boolean = false): Promise<NylasResponse<Message>> {
   console.log('📝 Sending base64 encoded file attachments as strings...');
   
   let stringAttachments: CreateAttachmentRequest[] = [];
@@ -75,7 +75,9 @@ export async function sendStringAttachments(fileManager: TestFileManager, recipi
   const requestBody: SendMessageRequest = {
     to: [{ name: 'Test Recipient', email: recipientEmail }],
     subject: `Nylas SDK - Base64 String Attachments (${sizeDescription})`,
-    body: `
+    body: isPlaintext
+      ? `Base64 String Attachments Example\nThis demonstrates sending existing files as base64 encoded strings.\nAttachment size: ${sizeDescription} (${stringAttachments.length} file${stringAttachments.length > 1 ? 's' : ''})`
+      : `
       <h2>Base64 String Attachments Example</h2>
       <p>This demonstrates sending existing files as base64 encoded strings.</p>
       <p>Files are converted from the same test files used in other examples.</p>
@@ -84,7 +86,8 @@ export async function sendStringAttachments(fileManager: TestFileManager, recipi
         ${stringAttachments.map(att => `<li>${att.filename} (${att.size} bytes base64 encoded)</li>`).join('')}
       </ul>
     `,
-    attachments: stringAttachments
+    attachments: stringAttachments,
+    isPlaintext
   };
   
   // For large files, use a longer timeout (5 minutes)
