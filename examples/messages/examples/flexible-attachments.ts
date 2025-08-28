@@ -18,7 +18,7 @@ const grantId: string = process.env.NYLAS_GRANT_ID || '';
 /**
  * Flexible attachment sending based on format choice
  */
-export async function sendAttachmentsByFormat(fileManager: TestFileManager, format: FileFormat, recipientEmail: string, attachmentSize: 'small' | 'large' = 'small'): Promise<NylasResponse<Message>> {
+export async function sendAttachmentsByFormat(fileManager: TestFileManager, format: FileFormat, recipientEmail: string, attachmentSize: 'small' | 'large' = 'small', isPlaintext: boolean = false): Promise<NylasResponse<Message>> {
   
   let attachments: CreateAttachmentRequest[] = [];
   let subject: string;
@@ -40,7 +40,9 @@ export async function sendAttachmentsByFormat(fileManager: TestFileManager, form
   const requestBody: SendMessageRequest = {
     to: [{ name: 'Test Recipient', email: recipientEmail }],
     subject,
-    body: `
+    body: isPlaintext
+      ? `Attachment Format Test: ${format}\nThis message demonstrates sending attachments using the ${format} format.\nFiles attached: ${attachments.length}`
+      : `
       <h2>Attachment Format Test: ${format}</h2>
       <p>This message demonstrates sending attachments using the ${format} format.</p>
       <p>Files attached: ${attachments.length}</p>
@@ -48,7 +50,8 @@ export async function sendAttachmentsByFormat(fileManager: TestFileManager, form
         ${attachments.map(att => `<li>${att.filename} (${att.size} bytes)</li>`).join('')}
       </ul>
     `,
-    attachments
+    attachments,
+    isPlaintext
   };
   
   // For large files, use a longer timeout (5 minutes)
