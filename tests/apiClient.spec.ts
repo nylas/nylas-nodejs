@@ -236,6 +236,40 @@ describe('APIClient', () => {
           mockHeaders['x-request-id']
         );
       });
+
+      it('should include rawHeaders with dashed lowercase keys', async () => {
+        const mockFlowId = 'test-flow-raw-123';
+        const mockHeaders = {
+          'x-request-id': 'req-raw-123',
+          'x-nylas-api-version': 'v3',
+          'x-rate-limit-limit': '100',
+          'x-rate-limit-remaining': '99',
+        };
+
+        const payload = {
+          id: 456,
+          name: 'raw-test',
+        };
+
+        const mockResp = mockResponse(JSON.stringify(payload));
+        mockResp.headers.set('x-fastly-id', mockFlowId);
+        Object.entries(mockHeaders).forEach(([key, value]) => {
+          mockResp.headers.set(key, value);
+        });
+
+        const result = await client.requestWithResponse(mockResp);
+
+        expect((result as any).rawHeaders).toBeDefined();
+        expect((result as any).rawHeaders['x-fastly-id']).toBe(mockFlowId);
+        expect((result as any).rawHeaders['x-request-id']).toBe(
+          mockHeaders['x-request-id']
+        );
+        expect((result as any).rawHeaders['x-nylas-api-version']).toBe(
+          mockHeaders['x-nylas-api-version']
+        );
+        expect((result as any).rawHeaders['x-rate-limit-limit']).toBe('100');
+        expect((result as any).rawHeaders['x-rate-limit-remaining']).toBe('99');
+      });
     });
 
     describe('request', () => {
@@ -276,6 +310,40 @@ describe('APIClient', () => {
         });
         expect((response as any).flowId).toBe(mockFlowId);
         expect((response as any).headers['xFastlyId']).toBe(mockFlowId);
+      });
+
+      it('should include rawHeaders on standard responses', async () => {
+        const mockFlowId = 'test-flow-raw-abc';
+        const mockHeaders = {
+          'x-request-id': 'req-raw-abc',
+          'x-nylas-api-version': 'v3',
+          'x-rate-limit-limit': '200',
+        };
+
+        const payload = {
+          id: 789,
+          name: 'raw',
+        };
+
+        const mockResp = mockResponse(JSON.stringify(payload));
+        mockResp.headers.set('x-fastly-id', mockFlowId);
+        Object.entries(mockHeaders).forEach(([key, value]) => {
+          mockResp.headers.set(key, value);
+        });
+
+        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp));
+
+        const response = await client.request({ path: '/test', method: 'GET' });
+
+        expect((response as any).rawHeaders).toBeDefined();
+        expect((response as any).rawHeaders['x-fastly-id']).toBe(mockFlowId);
+        expect((response as any).rawHeaders['x-request-id']).toBe(
+          mockHeaders['x-request-id']
+        );
+        expect((response as any).rawHeaders['x-nylas-api-version']).toBe(
+          mockHeaders['x-nylas-api-version']
+        );
+        expect((response as any).rawHeaders['x-rate-limit-limit']).toBe('200');
       });
 
       it('should throw an error if the response is undefined', async () => {

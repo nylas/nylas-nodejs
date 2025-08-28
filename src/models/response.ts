@@ -3,6 +3,20 @@
  */
 export interface NylasBaseResponse {
   requestId: string;
+  /**
+   * The flow ID
+   * Provide this to Nylas support to help trace requests and responses
+   */
+  flowId?: string;
+  /**
+   * The response headers with camelCased keys (backwards compatible)
+   * @deprecated Use rawHeaders instead
+   */
+  headers?: Record<string, string>;
+  /**
+   * The raw response headers with original dashed lowercase keys
+   */
+  rawHeaders?: Record<string, string>;
 }
 
 /**
@@ -24,8 +38,13 @@ export interface NylasResponse<T> {
   flowId?: string;
   /**
    * The response headers
+   * @deprecated Use rawHeaders instead
    */
   headers?: Record<string, string>;
+  /**
+   * The raw response headers with original dashed lowercase keys
+   */
+  rawHeaders?: Record<string, string>;
 }
 
 /**
@@ -44,6 +63,20 @@ export interface NylasListResponse<T> {
    * The cursor to use to get the next page of data.
    */
   nextCursor?: string;
+  /**
+   * The flow ID
+   * Provide this to Nylas support to help trace requests and responses
+   */
+  flowId?: string;
+  /**
+   * The response headers with camelCased keys (backwards compatible)
+   * @deprecated Use rawHeaders instead
+   */
+  headers?: Record<string, string>;
+  /**
+   * The raw response headers with original dashed lowercase keys
+   */
+  rawHeaders?: Record<string, string>;
 }
 
 /**

@@ -21,6 +21,15 @@ The file is structured with:
 ### Basic Messages (`messages.ts`)
 Shows basic message operations including reading, sending, and drafting messages.
 
+### Accessing Rate Limit Headers
+All SDK responses now expose a non-enumerable `rawHeaders` with dashed lowercase keys so you can read rate limit information:
+
+```ts
+const res = await nylas.messages.list({ identifier: process.env.NYLAS_GRANT_ID!, queryParams: { limit: 1 } });
+const limit = res.rawHeaders?.['x-rate-limit-limit'];
+const remaining = res.rawHeaders?.['x-rate-limit-remaining'];
+```
+
 ## Quick Start
 
 ### 1. Set up environment
