@@ -24,7 +24,7 @@ import { Notetakers } from './resources/notetakers.js';
  * A Nylas instance holds a configured http client pointing to a base URL and is intended to be reused and shared
  * across threads and time.
  */
-export default class Nylas {
+class Nylas {
   /**
    * Access the Applications API
    */
@@ -122,3 +122,5 @@ export default class Nylas {
     return this;
   }
 }
+
+export default Nylas;

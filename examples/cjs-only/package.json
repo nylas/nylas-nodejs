@@ -1,0 +1,16 @@
+{
+  "name": "cjs-only",
+  "version": "1.0.0",
+  "description": "A CommonJS-only example of the Nylas NodeJS SDK usage",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nylas": "file:../../",
+    "dotenv": "^17.2.2"
+  }
+}
