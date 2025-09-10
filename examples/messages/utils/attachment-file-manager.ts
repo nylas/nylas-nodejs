@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as mime from 'mime-types';
 import { CreateAttachmentRequest } from 'nylas';
 
-
 /**
  * File format types for different ways to handle attachments
  */
@@ -11,7 +10,7 @@ export type FileFormat = 'file' | 'stream' | 'buffer' | 'string';
 
 /**
  * Maximum size for small files
- */ 
+ */
 export const MAX_SMALL_FILE_SIZE_LIMIT = 1024 * 1024 * 3; // 3MB
 
 /**
@@ -23,7 +22,7 @@ interface FileHandler {
   filename: string;
   size: number;
   contentType: string;
-  
+
   // Methods to get content in different formats
   asFileRequest(): CreateAttachmentRequest;
   asStream(): fs.ReadStream;
@@ -47,7 +46,7 @@ export class TestFileHandler implements FileHandler {
     this.path = path.resolve(attachmentsDir, fileName);
     this.exists = fs.existsSync(this.path);
     this.filename = path.basename(this.path);
-    
+
     if (this.exists) {
       const stats = fs.statSync(this.path);
       this.size = stats.size;
@@ -101,15 +100,20 @@ export class TestFileHandler implements FileHandler {
     if (!this.exists) {
       throw new Error(`File not found: ${this.filename}`);
     }
-    
+
     // Check if it's likely a text file
     const textTypes = ['text/', 'application/json', 'application/xml'];
-    const isTextFile = textTypes.some(type => this.contentType.startsWith(type));
-    
-    if (!isTextFile && this.size > MAX_SMALL_FILE_SIZE_LIMIT) { // > 1MB
-      throw new Error(`File ${this.filename} is too large or not a text file to read as string`);
+    const isTextFile = textTypes.some((type) =>
+      this.contentType.startsWith(type)
+    );
+
+    if (!isTextFile && this.size > MAX_SMALL_FILE_SIZE_LIMIT) {
+      // > 1MB
+      throw new Error(
+        `File ${this.filename} is too large or not a text file to read as string`
+      );
     }
-    
+
     return fs.readFileSync(this.path, 'utf8');
   }
 }
@@ -124,9 +128,9 @@ export class TestFileManager {
   constructor(baseDir?: string, files?: string[]) {
     // Default to attachments subdirectory relative to the messages folder
     this.baseDir = baseDir || path.resolve(__dirname, '../attachments');
-    
+
     // Initialize all test files
-    files?.forEach(fileName => {
+    files?.forEach((fileName) => {
       this.files.set(fileName, new TestFileHandler(fileName, this.baseDir));
     });
   }
@@ -153,21 +157,25 @@ export class TestFileManager {
    * Get only files that exist
    */
   getExistingFiles(): TestFileHandler[] {
-    return this.getAllFiles().filter(file => file.exists);
+    return this.getAllFiles().filter((file) => file.exists);
   }
 
   /**
    * Get small files (< 1MB)
    */
   getSmallFiles(): TestFileHandler[] {
-    return this.getExistingFiles().filter(file => file.size < MAX_SMALL_FILE_SIZE_LIMIT);
+    return this.getExistingFiles().filter(
+      (file) => file.size < MAX_SMALL_FILE_SIZE_LIMIT
+    );
   }
 
   /**
    * Get large files (>= 1MB)
    */
   getLargeFiles(): TestFileHandler[] {
-    return this.getExistingFiles().filter(file => file.size >= MAX_SMALL_FILE_SIZE_LIMIT);
+    return this.getExistingFiles().filter(
+      (file) => file.size >= MAX_SMALL_FILE_SIZE_LIMIT
+    );
   }
 
   /**
@@ -175,9 +183,12 @@ export class TestFileManager {
    */
   checkFileStatus(): void {
     console.log('\nChecking test file status:');
-    this.getAllFiles().forEach(file => {
-      const status = file.exists ? `✓ Found (${file.size} bytes)` : '✗ Not found';
-      const sizeLabel = file.size >= MAX_SMALL_FILE_SIZE_LIMIT ? 'LARGE' : 'SMALL';
+    this.getAllFiles().forEach((file) => {
+      const status = file.exists
+        ? `✓ Found (${file.size} bytes)`
+        : '✗ Not found';
+      const sizeLabel =
+        file.size >= MAX_SMALL_FILE_SIZE_LIMIT ? 'LARGE' : 'SMALL';
       console.log(`  ${file.filename}: ${status} [${sizeLabel}]`);
     });
   }
@@ -185,13 +196,16 @@ export class TestFileManager {
   /**
    * Create attachment request for a file in the specified format
    */
-  createAttachmentRequest(fileName: string, format: FileFormat): CreateAttachmentRequest {
+  createAttachmentRequest(
+    fileName: string,
+    format: FileFormat
+  ): CreateAttachmentRequest {
     const file = this.getFile(fileName);
-    
+
     switch (format) {
       case 'file':
         return file.asFileRequest();
-        
+
       case 'stream':
         return {
           filename: file.filename,
@@ -199,7 +213,7 @@ export class TestFileManager {
           content: file.asStream(),
           size: file.size,
         };
-        
+
       case 'buffer':
         return {
           filename: file.filename,
@@ -207,7 +221,7 @@ export class TestFileManager {
           content: file.asBuffer(),
           size: file.size,
         };
-        
+
       case 'string':
         const stringContent = file.asString();
         return {
@@ -216,7 +230,7 @@ export class TestFileManager {
           content: stringContent,
           size: Buffer.byteLength(stringContent, 'utf8'),
         };
-        
+
       default:
         throw new Error(`Unsupported format: ${format}`);
     }
@@ -227,10 +241,12 @@ export class TestFileManager {
  * Helper function to create a file request builder for any file path
  * This maintains backward compatibility with the original function
  */
-export function createFileRequestBuilder(filePath: string): CreateAttachmentRequest {
+export function createFileRequestBuilder(
+  filePath: string
+): CreateAttachmentRequest {
   // If it's not an absolute path, assume it's in the attachments subdirectory
   const fullPath = path.resolve(__dirname, filePath);
-  
+
   const stats = fs.statSync(fullPath);
   const filename = path.basename(fullPath);
   const contentType = mime.lookup(fullPath) || 'application/octet-stream';
@@ -242,4 +258,4 @@ export function createFileRequestBuilder(filePath: string): CreateAttachmentRequ
     content,
     size: stats.size,
   };
-} 
+}

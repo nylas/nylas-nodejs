@@ -1,4 +1,3 @@
-
 import Nylas, { SendMessageRequest } from 'nylas';
 import * as mimeTypes from 'mime-types';
 
@@ -268,14 +267,16 @@ const HTML_INTERFACE = `
 `;
 
 // Helper function to parse multipart form data
-async function parseFormData(request: Request): Promise<{ [key: string]: any }> {
+async function parseFormData(
+  request: Request
+): Promise<{ [key: string]: any }> {
   const formData = await request.formData();
   const result: { [key: string]: any } = {};
-  
+
   for (const [key, value] of formData.entries()) {
     result[key] = value;
   }
-  
+
   return result;
 }
 
@@ -288,7 +289,7 @@ function getContentType(filename: string): string {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    
+
     // CORS headers for the response
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
@@ -317,7 +318,10 @@ export default {
         // Validate environment variables
         if (!env.NYLAS_API_KEY || !env.NYLAS_GRANT_ID) {
           return new Response(
-            JSON.stringify({ error: 'Missing required environment variables (NYLAS_API_KEY, NYLAS_GRANT_ID)' }),
+            JSON.stringify({
+              error:
+                'Missing required environment variables (NYLAS_API_KEY, NYLAS_GRANT_ID)',
+            }),
             {
               status: 500,
               headers: { 'Content-Type': 'application/json', ...corsHeaders },
@@ -418,13 +422,13 @@ export default {
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
           }
         );
-
       } catch (error) {
         console.error('Error sending email:', error);
-        
+
         return new Response(
           JSON.stringify({
-            error: error instanceof Error ? error.message : 'Unknown error occurred',
+            error:
+              error instanceof Error ? error.message : 'Unknown error occurred',
           }),
           {
             status: 500,
@@ -440,4 +444,4 @@ export default {
       headers: corsHeaders,
     });
   },
-}; 
+};

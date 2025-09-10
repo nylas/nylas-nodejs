@@ -1,0 +1,16 @@
+{
+  "name": "esm-only",
+  "version": "1.0.0",
+  "description": "An esm-only example of the Nylas NodeJS SDK usage",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nylas": "file:../../",
+    "dotenv": "^17.2.2"
+  }
+}
