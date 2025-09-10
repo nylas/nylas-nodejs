@@ -3,7 +3,7 @@
     "target": "es2021",
     "declaration": true,
     "declarationDir": "lib/types",
-    "esModuleInterop": false,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",

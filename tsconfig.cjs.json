@@ -3,5 +3,8 @@
   "compilerOptions": {
     "module": "commonjs",
     "outDir": "lib/cjs",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node"
   },
 }
