@@ -74,8 +74,13 @@
     "url": "https://github.com/nylas/nylas-nodejs.git"
   },
   "exports": {
-    "import": "./lib/esm/nylas.js",
-    "require": "./lib/cjs/nylas.js",
-    "types": "./lib/types/nylas.d.ts"
+    "import": {
+      "types": "./lib/types/nylas.d.ts",
+      "default": "./lib/esm/nylas.js"
+    },
+    "require": {
+      "types": "./cjs-wrapper.d.ts",
+      "default": "./cjs-wrapper.js"
+    }
   }
 }
