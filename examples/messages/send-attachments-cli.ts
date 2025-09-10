@@ -10,7 +10,7 @@ import { TestFileManager } from './utils/attachment-file-manager';
 // Example 1: File Path Attachments (Most Common & Efficient)
 import { sendFilePathAttachments } from './examples/file-path-attachments';
 
-// Example 2: Stream Attachments (For More Control) 
+// Example 2: Stream Attachments (For More Control)
 import { sendStreamAttachments } from './examples/stream-attachments';
 
 // Example 3: Buffer Attachments (For Small Files)
@@ -26,13 +26,15 @@ import { sendAttachmentsByFormat } from './examples/flexible-attachments';
 // 📂 File Manager - Manage test files
 // =============================================================================
 // Available test files in the examples/messages/attachments directory
-const testFileManager = new TestFileManager(path.resolve(__dirname, './attachments'), [
-  'test-small-26B.txt',
-  'test-image-512KB.jpg',
-  'test-document-12MB.pdf',
-  'test-image-10MB.jpg'
-]);
-
+const testFileManager = new TestFileManager(
+  path.resolve(__dirname, './attachments'),
+  [
+    'test-small-26B.txt',
+    'test-image-512KB.jpg',
+    'test-document-12MB.pdf',
+    'test-image-10MB.jpg',
+  ]
+);
 
 // =============================================================================
 // 🛠️ CLI Interface - Start CLI when run directly
@@ -46,7 +48,7 @@ const sendAttachmentsExamples: SendAttachmentsExamples = {
   sendStreamAttachments,
   sendBufferAttachments,
   sendStringAttachments,
-  sendAttachmentsByFormat
+  sendAttachmentsByFormat,
 };
 const grantId: string = process.env.NYLAS_GRANT_ID || '';
 
@@ -63,8 +65,12 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 // Run the CLI
 if (require.main === module) {
-  startCli(sendAttachmentsExamples, testFileManager, process.env.TEST_EMAIL || '').catch(error => {
+  startCli(
+    sendAttachmentsExamples,
+    testFileManager,
+    process.env.TEST_EMAIL || ''
+  ).catch((error) => {
     console.error('Error:', error.message);
     process.exit(1);
   });
-} 
+}

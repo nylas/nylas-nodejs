@@ -12,19 +12,25 @@ interface CliOptions {
   isPlaintext: boolean;
 }
 
-async function getCliOptions(fileManager: TestFileManager): Promise<CliOptions> {
+async function getCliOptions(
+  fileManager: TestFileManager
+): Promise<CliOptions> {
   console.log(chalk.blue.bold('\n🚀 Nylas Send Attachments Examples\n'));
-  
+
   fileManager.checkFileStatus();
-  
+
   const smallFiles = fileManager.getSmallFiles();
   const largeFiles = fileManager.getLargeFiles();
-  
+
   if (smallFiles.length === 0 && largeFiles.length === 0) {
-    console.log(chalk.red('\n❌ No test files found! Please create the required test files in attachments/'));
+    console.log(
+      chalk.red(
+        '\n❌ No test files found! Please create the required test files in attachments/'
+      )
+    );
     process.exit(1);
   }
-  
+
   const answers = await inquirer.prompt([
     {
       type: 'list',
@@ -35,71 +41,115 @@ async function getCliOptions(fileManager: TestFileManager): Promise<CliOptions> 
         { name: '🌊 Streams (advanced)', value: 'stream' },
         { name: '💾 Buffers (small files)', value: 'buffer' },
         { name: '📝 String content (dynamic)', value: 'string' },
-      ]
+      ],
     },
     {
       type: 'list',
       name: 'attachmentSize',
       message: 'What size attachments?',
       choices: [
-        { name: `📎 Small (${smallFiles.length} available)`, value: 'small', disabled: smallFiles.length === 0 },
-        { name: `📋 Large (${largeFiles.length} available)`, value: 'large', disabled: largeFiles.length === 0 }
-      ]
+        {
+          name: `📎 Small (${smallFiles.length} available)`,
+          value: 'small',
+          disabled: smallFiles.length === 0,
+        },
+        {
+          name: `📋 Large (${largeFiles.length} available)`,
+          value: 'large',
+          disabled: largeFiles.length === 0,
+        },
+      ],
     },
     {
       type: 'input',
       name: 'testEmail',
       message: 'Recipient email address:',
       default: process.env.TEST_EMAIL || '',
-      validate: (input: string) => input.includes('@') || 'Please enter a valid email address'
+      validate: (input: string) =>
+        input.includes('@') || 'Please enter a valid email address',
     },
     {
       type: 'confirm',
       name: 'isPlaintext',
       message: 'Send as plaintext (no HTML rendering)?',
-      default: false
-    }
+      default: false,
+    },
   ]);
 
   return answers as CliOptions;
 }
 
-async function runExample(examples: SendAttachmentsExamples, fileManager: TestFileManager, options: CliOptions): Promise<void> {
+async function runExample(
+  examples: SendAttachmentsExamples,
+  fileManager: TestFileManager,
+  options: CliOptions
+): Promise<void> {
   const { format, testEmail, attachmentSize, isPlaintext } = options;
-  
+
   if (!testEmail) {
     console.log(chalk.yellow('⚠️  No email provided. Skipping send.'));
     return;
   }
-  
+
   try {
-    console.log(chalk.blue(`\n📤 Running ${format} attachment example (${attachmentSize} files)${isPlaintext ? ' in plaintext mode' : ''}...\n`));
-    
+    console.log(
+      chalk.blue(
+        `\n📤 Running ${format} attachment example (${attachmentSize} files)${isPlaintext ? ' in plaintext mode' : ''}...\n`
+      )
+    );
+
     let result: NylasResponse<Message>;
     const isLarge = attachmentSize === 'large';
-    
+
     // Route to the appropriate example based on format
     switch (format) {
       case 'file':
-        result = await examples.sendFilePathAttachments(fileManager, testEmail, isLarge, isPlaintext);
+        result = await examples.sendFilePathAttachments(
+          fileManager,
+          testEmail,
+          isLarge,
+          isPlaintext
+        );
         break;
       case 'stream':
-        result = await examples.sendStreamAttachments(fileManager, testEmail, isLarge, isPlaintext);
+        result = await examples.sendStreamAttachments(
+          fileManager,
+          testEmail,
+          isLarge,
+          isPlaintext
+        );
         break;
       case 'buffer':
-        result = await examples.sendBufferAttachments(fileManager, testEmail, isLarge, isPlaintext);
+        result = await examples.sendBufferAttachments(
+          fileManager,
+          testEmail,
+          isLarge,
+          isPlaintext
+        );
         break;
       case 'string':
-        result = await examples.sendStringAttachments(fileManager, testEmail, isLarge, isPlaintext);
+        result = await examples.sendStringAttachments(
+          fileManager,
+          testEmail,
+          isLarge,
+          isPlaintext
+        );
         break;
       default:
-        result = await examples.sendAttachmentsByFormat(fileManager, format, testEmail, attachmentSize, isPlaintext);
+        result = await examples.sendAttachmentsByFormat(
+          fileManager,
+          format,
+          testEmail,
+          attachmentSize,
+          isPlaintext
+        );
     }
-    
+
     console.log(chalk.green.bold('\n✅ Message sent successfully!'));
     console.log(chalk.green(`📧 Message ID: ${result.data.id}`));
-    console.log(chalk.green(`📎 Attachments: ${result.data.attachments?.length || 0}`));
-    
+    console.log(
+      chalk.green(`📎 Attachments: ${result.data.attachments?.length || 0}`)
+    );
   } catch (error) {
     console.log(chalk.red.bold('\n❌ Error sending message:'));
     if (error instanceof NylasApiError) {
@@ -110,28 +160,39 @@ async function runExample(examples: SendAttachmentsExamples, fileManager: TestFi
   }
 }
 
-async function runBatchMode(examples: SendAttachmentsExamples, fileManager: TestFileManager, size: 'small' | 'large', format: FileFormat, email?: string, isPlaintext: boolean = false): Promise<void> {
+async function runBatchMode(
+  examples: SendAttachmentsExamples,
+  fileManager: TestFileManager,
+  size: 'small' | 'large',
+  format: FileFormat,
+  email?: string,
+  isPlaintext: boolean = false
+): Promise<void> {
   const options: CliOptions = {
     attachmentSize: size,
     format,
     testEmail: email,
-    isPlaintext
+    isPlaintext,
   };
-  
+
   console.log(chalk.blue.bold('\n🚀 Nylas Send Attachments (Batch Mode)\n'));
   fileManager.checkFileStatus();
-  
+
   await runExample(examples, fileManager, options);
 }
 
-export async function startCli(examples: SendAttachmentsExamples, fileManager: TestFileManager, testEmail: string): Promise<void> {
+export async function startCli(
+  examples: SendAttachmentsExamples,
+  fileManager: TestFileManager,
+  testEmail: string
+): Promise<void> {
   const program = new Command();
-  
+
   program
     .name('send-attachments')
     .description('Nylas SDK attachment examples')
     .version('1.0.0');
-  
+
   program
     .command('interactive', { isDefault: true })
     .description('Run interactive examples')
@@ -139,27 +200,49 @@ export async function startCli(examples: SendAttachmentsExamples, fileManager: T
       const options = await getCliOptions(fileManager);
       await runExample(examples, fileManager, options);
     });
-  
+
   program
     .command('small')
     .description('Send small attachments')
-    .option('-f, --format <format>', 'format (file|stream|buffer|string)', 'file')
+    .option(
+      '-f, --format <format>',
+      'format (file|stream|buffer|string)',
+      'file'
+    )
     .option('-e, --email <email>', 'recipient email')
     .option('--plaintext', 'send as plaintext', false)
     .action(async (options) => {
-      await runBatchMode(examples, fileManager, 'small', options.format as FileFormat, options.email || testEmail, Boolean(options.plaintext));
+      await runBatchMode(
+        examples,
+        fileManager,
+        'small',
+        options.format as FileFormat,
+        options.email || testEmail,
+        Boolean(options.plaintext)
+      );
     });
-  
+
   program
     .command('large')
     .description('Send large attachment')
-    .option('-f, --format <format>', 'format (file|stream|buffer|string)', 'file')
+    .option(
+      '-f, --format <format>',
+      'format (file|stream|buffer|string)',
+      'file'
+    )
     .option('-e, --email <email>', 'recipient email')
     .option('--plaintext', 'send as plaintext', false)
     .action(async (options) => {
-      await runBatchMode(examples, fileManager, 'large', options.format as FileFormat, options.email || testEmail, Boolean(options.plaintext));
+      await runBatchMode(
+        examples,
+        fileManager,
+        'large',
+        options.format as FileFormat,
+        options.email || testEmail,
+        Boolean(options.plaintext)
+      );
     });
-  
+
   program
     .command('status')
     .description('Check test files')
@@ -167,6 +250,6 @@ export async function startCli(examples: SendAttachmentsExamples, fileManager: T
       console.log(chalk.blue.bold('\n📁 Test Files Status\n'));
       fileManager.checkFileStatus();
     });
-  
+
   await program.parseAsync();
-} 
+}
