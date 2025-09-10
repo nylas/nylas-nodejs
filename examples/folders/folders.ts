@@ -11,7 +11,7 @@ const nylas = new Nylas({
 
 /**
  * This example shows how to list folders using the Nylas Node.js SDK.
- * 
+ *
  * For Microsoft accounts, you can use the includeHiddenFolders parameter
  * to include hidden folders in the response.
  */
@@ -25,7 +25,7 @@ async function listFolders() {
     });
 
     console.log('Found', folders.data.length, 'folders');
-    
+
     folders.data.forEach((folder, index) => {
       console.log(`${index + 1}. ${folder.name} (ID: ${folder.id})`);
       if (folder.parentId) {
@@ -39,7 +39,7 @@ async function listFolders() {
 
     // For Microsoft accounts: List folders including hidden ones
     console.log('\n--- Microsoft Only: Including Hidden Folders ---\n');
-    
+
     const foldersWithHidden = await nylas.folders.list({
       identifier: GRANT_ID,
       queryParams: {
@@ -47,11 +47,15 @@ async function listFolders() {
       },
     });
 
-    console.log('Found', foldersWithHidden.data.length, 'folders (including hidden)');
-    
+    console.log(
+      'Found',
+      foldersWithHidden.data.length,
+      'folders (including hidden)'
+    );
+
     // List only parent folders (no parentId)
     console.log('\n--- Parent Folders Only ---\n');
-    
+
     const parentFoldersWithHidden = await nylas.folders.list({
       identifier: GRANT_ID,
       queryParams: {
@@ -59,9 +63,11 @@ async function listFolders() {
       },
     });
 
-    const parentFolders = parentFoldersWithHidden.data.filter(folder => !folder.parentId);
+    const parentFolders = parentFoldersWithHidden.data.filter(
+      (folder) => !folder.parentId
+    );
     console.log('Found', parentFolders.length, 'parent folders');
-    
+
     parentFolders.forEach((folder, index) => {
       console.log(`${index + 1}. ${folder.name} (ID: ${folder.id})`);
       if (folder.childCount) {
@@ -75,7 +81,6 @@ async function listFolders() {
       }
       console.log('');
     });
-
   } catch (error) {
     console.error('Error listing folders:', error);
   }
@@ -85,4 +90,4 @@ if (!GRANT_ID) {
   console.error('Please set NYLAS_GRANT_ID in your environment variables');
 } else {
   listFolders().catch(console.error);
-} 
+}

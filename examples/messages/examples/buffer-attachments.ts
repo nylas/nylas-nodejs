@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-  import Nylas, { NylasResponse, Message, SendMessageRequest } from 'nylas';
+import Nylas, { NylasResponse, Message, SendMessageRequest } from 'nylas';
 import * as path from 'path';
 import * as process from 'process';
 import { TestFileManager } from '../utils/attachment-file-manager';
@@ -10,22 +10,27 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 // Initialize the Nylas client
 const nylas = new Nylas({
   apiKey: process.env.NYLAS_API_KEY || '',
-  apiUri: process.env.NYLAS_API_URI || 'https://api.us.nylas.com'
+  apiUri: process.env.NYLAS_API_URI || 'https://api.us.nylas.com',
 });
 
 const grantId: string = process.env.NYLAS_GRANT_ID || '';
 
 /**
  * Example 3: Buffer Attachments (For Small Files)
- * 
+ *
  * Loads the entire file into memory as a Buffer.
  * Good for small files or when you need to process content.
  */
-export async function sendBufferAttachments(fileManager: TestFileManager, recipientEmail: string, large: boolean = false, isPlaintext: boolean = false): Promise<NylasResponse<Message>> {
+export async function sendBufferAttachments(
+  fileManager: TestFileManager,
+  recipientEmail: string,
+  large: boolean = false,
+  isPlaintext: boolean = false
+): Promise<NylasResponse<Message>> {
   console.log('💾 Sending attachments using buffers...');
-  
+
   let sizeDescription;
-  
+
   let files;
   if (large) {
     // Send one large attachment
@@ -38,13 +43,13 @@ export async function sendBufferAttachments(fileManager: TestFileManager, recipi
   }
 
   // Create attachment using a buffer and use file info for name/type
-  const bufferAttachments = files.map(file => ({
+  const bufferAttachments = files.map((file) => ({
     filename: file.filename,
     contentType: file.contentType,
     content: file.asBuffer(),
     size: file.size,
   }));
-  
+
   const requestBody: SendMessageRequest = {
     to: [{ name: 'Test Recipient', email: recipientEmail }],
     subject: 'Nylas SDK - Buffer Attachments',
@@ -56,15 +61,15 @@ export async function sendBufferAttachments(fileManager: TestFileManager, recipi
       <p>Good for small files when you need the content in memory.</p>
     `,
     attachments: bufferAttachments,
-    isPlaintext
+    isPlaintext,
   };
-  
+
   // For large files, use a longer timeout (5 minutes)
   const overrides = large ? { timeout: 300 } : undefined;
-  
+
   return await nylas.messages.send({
     identifier: grantId,
     requestBody,
-    overrides
+    overrides,
   });
-} 
+}
