@@ -6,7 +6,9 @@
   "types": "lib/types/nylas.d.ts",
   "module": "lib/esm/nylas.js",
   "files": [
-    "lib"
+    "lib",
+    "cjs-wrapper.js",
+    "cjs-wrapper.d.ts"
   ],
   "engines": {
     "node": ">=16"
