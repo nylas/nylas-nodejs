@@ -2,6 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "es2020",
-    "outDir": "lib/esm",
+    "outDir": "lib/esm"
   },
+  "exclude": ["src/utils/fetchWrapper-cjs.ts"]
 }

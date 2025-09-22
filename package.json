@@ -26,8 +26,8 @@
     "generate-model-index": "node scripts/generateModelIndex.js",
     "prebuild": "npm run export-version && npm run generate-model-index",
     "build": "rm -rf lib && npm run build-esm && npm run build-cjs && npm run generate-lib-package-json",
-    "build-esm": "tsc -p tsconfig.esm.json",
-    "build-cjs": "tsc -p tsconfig.cjs.json",
+    "build-esm": "node scripts/setupFetchWrapper.js esm && tsc -p tsconfig.esm.json",
+    "build-cjs": "node scripts/setupFetchWrapper.js cjs && tsc -p tsconfig.cjs.json",
     "prepare": "npm run build",
     "build:docs": "typedoc --out docs",
     "version": "npm run export-version && git add src/version.ts"

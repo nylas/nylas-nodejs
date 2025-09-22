@@ -7,4 +7,5 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node"
   },
+  "exclude": ["src/utils/fetchWrapper-esm.ts"]
 }
