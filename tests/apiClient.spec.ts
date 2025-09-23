@@ -162,7 +162,7 @@ describe('APIClient', () => {
     });
 
     describe('newRequest', () => {
-      it('should set all the fields properly', () => {
+      it('should set all the fields properly', async () => {
         client.headers = {
           'global-header': 'global-value',
         };
@@ -178,7 +178,7 @@ describe('APIClient', () => {
             headers: { override: 'bar' },
           },
         };
-        const newRequest = client.newRequest(options);
+        const newRequest = await client.newRequest(options);
 
         expect(newRequest.method).toBe('POST');
         expect(newRequest.headers.raw()).toEqual({

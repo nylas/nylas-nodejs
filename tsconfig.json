@@ -9,7 +9,8 @@
     "moduleResolution": "node",
     "strict": true,
     "noImplicitAny": true,
-    "noImplicitThis": true
+    "noImplicitThis": true,
+    "baseUrl": "./src"
   },
   "typedocOptions": {
     "entryPointStrategy": "expand",
