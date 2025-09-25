@@ -125,6 +125,32 @@ describe('Grants', () => {
         })
       );
     });
+
+    it('should properly handle snake_case query parameters', async () => {
+      await grants.list({
+        queryParams: {
+          limit: 10,
+          offset: 5,
+          sort_by: 'created_at',
+          order_by: 'desc',
+          grant_status: 'valid',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'GET',
+          path: '/v3/grants',
+          queryParams: {
+            limit: 10,
+            offset: 5,
+            sort_by: 'created_at',
+            order_by: 'desc',
+            grant_status: 'valid',
+          },
+        })
+      );
+    });
   });
 
   describe('find', () => {
