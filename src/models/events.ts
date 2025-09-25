@@ -609,7 +609,7 @@ export interface Participant {
   /**
    * Participant's email address.
    */
-  email: string;
+  email?: string;
   /**
    * Participant's name.
    */
