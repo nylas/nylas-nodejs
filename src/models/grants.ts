@@ -110,11 +110,11 @@ export interface ListGrantsQueryParams {
   /**
    * Sort entries by field name
    */
-  sort_by?: 'created_at' | 'updated_at';
+  sortBy?: 'created_at' | 'updated_at';
   /**
    * Specify ascending or descending order.
    */
-  order_by?: 'asc' | 'desc';
+  orderBy?: 'asc' | 'desc';
   /**
    * Scope grants from a specific point in time by Unix timestamp.
    */
@@ -130,7 +130,7 @@ export interface ListGrantsQueryParams {
   /**
    * Filtering your query based on grant email status (if applicable)
    */
-  grant_status?: string;
+  grantStatus?: string;
   /**
    * Filtering your query based on grant IP address
    */

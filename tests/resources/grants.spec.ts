@@ -126,14 +126,14 @@ describe('Grants', () => {
       );
     });
 
-    it('should properly handle snake_case query parameters', async () => {
+    it('should properly handle camelCase query parameters with correct API values', async () => {
       await grants.list({
         queryParams: {
           limit: 10,
           offset: 5,
-          sort_by: 'created_at',
-          order_by: 'desc',
-          grant_status: 'valid',
+          sortBy: 'created_at',
+          orderBy: 'desc',
+          grantStatus: 'valid',
         },
       });
 
@@ -144,9 +144,9 @@ describe('Grants', () => {
           queryParams: {
             limit: 10,
             offset: 5,
-            sort_by: 'created_at',
-            order_by: 'desc',
-            grant_status: 'valid',
+            sortBy: 'created_at',
+            orderBy: 'desc',
+            grantStatus: 'valid',
           },
         })
       );
