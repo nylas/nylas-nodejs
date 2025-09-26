@@ -6,6 +6,7 @@
   "scripts": {
     "start": "ts-node",
     "build": "tsc",
+    "grants": "ts-node grants/grants.ts",
     "notetakers": "ts-node notetakers/notetaker.ts",
     "calendars": "ts-node calendars/event_with_notetaker.ts",
     "messages": "ts-node messages/messages.ts",
