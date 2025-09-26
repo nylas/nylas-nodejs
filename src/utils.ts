@@ -241,7 +241,7 @@ export function safePath(
     try {
       const decoded = decodeURIComponent(val);
       return encodeURIComponent(decoded);
-    } catch (error) {
+    } catch {
       // If decoding fails, the value wasn't properly encoded, so just encode it
       return encodeURIComponent(val);
     }

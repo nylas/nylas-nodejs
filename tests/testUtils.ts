@@ -10,20 +10,19 @@ export const mockResponse = (body: string, status = 200): any => {
   const headers: Record<string, string> = {};
 
   const headersObj = {
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     entries() {
       return Object.entries(headers);
     },
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+
     get(key: string) {
       return headers[key];
     },
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+
     set(key: string, value: string) {
       headers[key] = value;
       return headers;
     },
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+
     raw() {
       const rawHeaders: Record<string, string[]> = {};
       Object.keys(headers).forEach((key) => {
@@ -53,12 +52,10 @@ export const createReadableStream = (text: string): NodeJS.ReadableStream => {
 export class MockFormData implements MockedFormData {
   private data: Record<string, any> = {};
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   append(key: string, value: any) {
     this.data[key] = value;
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   _getAppendedData() {
     return this.data;
   }
