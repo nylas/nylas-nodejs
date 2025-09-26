@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Make `Participant.email` optional in `Event` model to match API behavior ([#670](https://github.com/nylas/nylas-nodejs/issues/670))
+- Updated `ListGrantsQueryParams.sortBy` values to match API expectations (`'created_at' | 'updated_at'` instead of `'createdAt' | 'updatedAt'`)
 
 ## [7.13.1] - 2025-09-18
 

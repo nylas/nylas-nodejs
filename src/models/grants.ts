@@ -110,7 +110,7 @@ export interface ListGrantsQueryParams {
   /**
    * Sort entries by field name
    */
-  sortBy?: 'createdAt' | 'updatedAt';
+  sortBy?: 'created_at' | 'updated_at';
   /**
    * Specify ascending or descending order.
    */
