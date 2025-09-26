@@ -66,7 +66,7 @@ export function attachmentStreamToFile(
     type: mimeType || attachment.contentType,
     name: attachment.filename,
     [Symbol.toStringTag]: 'File',
-    stream() {
+    stream(): NodeJS.ReadableStream {
       return content;
     },
   };

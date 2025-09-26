@@ -32,7 +32,7 @@ jest.mock('formdata-node', () => ({
       size:
         options?.size ||
         parts.reduce((size, part) => size + (part.length || 0), 0),
-      stream: () => parts[0],
+      stream: (): NodeJS.ReadableStream => parts[0],
       [Symbol.toStringTag]: 'File',
     })),
 }));
