@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Make `Participant.email` optional in `Event` model to match API behavior ([#670](https://github.com/nylas/nylas-nodejs/issues/670))
+- Updated `ListGrantsQueryParams.sortBy` values to match API expectations (`'created_at' | 'updated_at'` instead of `'createdAt' | 'updatedAt'`)
+
+## [7.13.1] - 2025-09-18
+
+### Fixed
 - Broken CJS build outputs resulted in a "TypeError: Nylas is not a constructor" error
 
 ## [7.13.0] - 2025-09-01

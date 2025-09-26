@@ -1,4 +1,3 @@
-import fetch, { Request, Response } from 'node-fetch';
 import { Readable as _Readable } from 'node:stream';
 import { NylasConfig, OverridableNylasConfig } from './config.js';
 import {
@@ -11,6 +10,8 @@ import { SDK_VERSION } from './version.js';
 import { FormData } from 'formdata-node';
 import { FormDataEncoder as _FormDataEncoder } from 'form-data-encoder';
 import { snakeCase } from 'change-case';
+import { getFetch, getRequest } from './utils/fetchWrapper.js';
+import type { Request, Response } from './utils/fetchWrapper.js';
 
 /**
  * The header key for the debugging flow ID
@@ -155,7 +156,7 @@ export default class APIClient {
   }
 
   private async sendRequest(options: RequestOptionsParams): Promise<Response> {
-    const req = this.newRequest(options);
+    const req = await this.newRequest(options);
     const controller: AbortController = new AbortController();
 
     // Handle timeout
@@ -177,6 +178,7 @@ export default class APIClient {
     }, timeoutDuration);
 
     try {
+      const fetch = await getFetch();
       const response = await fetch(req, {
         signal: controller.signal as AbortSignal,
       });
@@ -271,9 +273,10 @@ export default class APIClient {
     return requestOptions;
   }
 
-  newRequest(options: RequestOptionsParams): Request {
+  async newRequest(options: RequestOptionsParams): Promise<Request> {
     const newOptions = this.requestOptions(options);
-    return new Request(newOptions.url, {
+    const RequestConstructor = await getRequest();
+    return new RequestConstructor(newOptions.url, {
       method: newOptions.method,
       headers: newOptions.headers,
       body: newOptions.body,
