@@ -27,7 +27,7 @@ export function createFileRequestBuilder(
  * @param stream The ReadableStream containing the binary data.
  * @returns The stream base64 encoded to a string.
  */
-function streamToBase64(stream: NodeJS.ReadableStream): Promise<string> {
+export function streamToBase64(stream: NodeJS.ReadableStream): Promise<string> {
   return new Promise((resolve, reject) => {
     const chunks: Buffer[] = [];
     stream.on('data', (chunk: Buffer) => {

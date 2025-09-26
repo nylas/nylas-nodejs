@@ -5,6 +5,8 @@ import {
   makePathParams,
   encodeAttachmentContent,
   encodeAttachmentStreams,
+  attachmentStreamToFile,
+  streamToBase64,
 } from '../src/utils';
 import { Readable } from 'stream';
 import { CreateAttachmentRequest } from '../src/models/attachments';
@@ -485,5 +487,156 @@ describe('encodeAttachmentStreams (backwards compatibility)', () => {
 
     expect(oldResult).toEqual(newResult);
     expect(oldResult[0].content).toBe(buffer.toString('base64'));
+  });
+});
+
+describe('streamToBase64', () => {
+  // Helper function to create a readable stream from a string
+  const createReadableStream = (content: string): NodeJS.ReadableStream => {
+    const stream = new Readable();
+    stream.push(content);
+    stream.push(null); // Signal end of stream
+    return stream;
+  };
+
+  it('should convert stream to base64', async () => {
+    const testContent = 'Hello, World!';
+    const stream = createReadableStream(testContent);
+    const expectedBase64 = Buffer.from(testContent, 'utf8').toString('base64');
+
+    const result = await streamToBase64(stream);
+
+    expect(result).toBe(expectedBase64);
+  });
+
+  it('should handle stream errors', async () => {
+    const errorStream = new Readable({
+      read() {
+        // Implement _read to avoid the "not implemented" error
+      }
+    });
+    const testError = new Error('Stream error test');
+    
+    // Emit error after a short delay to ensure the error handler is set up
+    setTimeout(() => {
+      errorStream.emit('error', testError);
+    }, 10);
+
+    await expect(streamToBase64(errorStream)).rejects.toThrow('Stream error test');
+  });
+
+  it('should handle empty stream', async () => {
+    const emptyStream = createReadableStream('');
+    const result = await streamToBase64(emptyStream);
+    expect(result).toBe('');
+  });
+});
+
+describe('attachmentStreamToFile', () => {
+  // Helper function to create a readable stream from a string
+  const createReadableStream = (content: string): NodeJS.ReadableStream => {
+    const stream = new Readable();
+    stream.push(content);
+    stream.push(null); // Signal end of stream
+    return stream;
+  };
+
+  it('should convert stream attachment to file object', () => {
+    const stream = createReadableStream('test content');
+    const attachment: CreateAttachmentRequest = {
+      filename: 'test.txt',
+      contentType: 'text/plain',
+      content: stream,
+      size: 12,
+    };
+
+    const result = attachmentStreamToFile(attachment);
+
+    expect(result.name).toBe('test.txt');
+    expect(result.type).toBe('text/plain');
+    expect(result.size).toBe(12);
+    expect(typeof result.stream).toBe('function');
+    expect(result.stream()).toBe(stream);
+    expect(result[Symbol.toStringTag]).toBe('File');
+  });
+
+  it('should use mimeType parameter when provided', () => {
+    const stream = createReadableStream('test content');
+    const attachment: CreateAttachmentRequest = {
+      filename: 'test.txt',
+      contentType: 'text/plain',
+      content: stream,
+    };
+
+    const result = attachmentStreamToFile(attachment, 'application/json');
+
+    expect(result.type).toBe('application/json');
+  });
+
+  it('should throw error for invalid mimeType parameter', () => {
+    const stream = createReadableStream('test content');
+    const attachment: CreateAttachmentRequest = {
+      filename: 'test.txt',
+      contentType: 'text/plain',
+      content: stream,
+    };
+
+    expect(() => {
+      attachmentStreamToFile(attachment, 123 as any);
+    }).toThrow('Invalid mimetype, expected string.');
+  });
+
+  it('should throw error for string content', () => {
+    const attachment: CreateAttachmentRequest = {
+      filename: 'test.txt',
+      contentType: 'text/plain',
+      content: 'string content',
+    };
+
+    expect(() => {
+      attachmentStreamToFile(attachment);
+    }).toThrow('Invalid attachment content, expected ReadableStream.');
+  });
+
+  it('should throw error for Buffer content', () => {
+    const attachment: CreateAttachmentRequest = {
+      filename: 'test.txt',
+      contentType: 'text/plain',
+      content: Buffer.from('buffer content'),
+    };
+
+    expect(() => {
+      attachmentStreamToFile(attachment);
+    }).toThrow('Invalid attachment content, expected ReadableStream.');
+  });
+
+  it('should handle attachment without size', () => {
+    const stream = createReadableStream('test content');
+    const attachment: CreateAttachmentRequest = {
+      filename: 'test.txt',
+      contentType: 'text/plain',
+      content: stream,
+    };
+
+    const result = attachmentStreamToFile(attachment);
+
+    expect(result.name).toBe('test.txt');
+    expect(result.type).toBe('text/plain');
+    expect(result.size).toBeUndefined();
+    expect(result.stream()).toBe(stream);
+  });
+
+  it('should return content stream when stream() method is called', () => {
+    const stream = createReadableStream('test content');
+    const attachment: CreateAttachmentRequest = {
+      filename: 'test.txt',
+      contentType: 'text/plain',
+      content: stream,
+    };
+
+    const result = attachmentStreamToFile(attachment);
+    const returnedStream = result.stream();
+
+    expect(returnedStream).toBe(stream);
   });
 });

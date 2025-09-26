@@ -564,6 +564,84 @@ describe('Messages', () => {
       expect(capturedRequest.method).toEqual('POST');
       expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
     });
+
+    it('should handle base64 string attachments in multipart form', async () => {
+      const messageJson = {
+        to: [{ name: 'Test', email: 'test@example.com' }],
+        subject: 'This is my test email',
+      };
+      const base64Content = 'VGhpcyBpcyBhIGJhc2U2NCBzdHJpbmc='; // "This is a base64 string"
+      const file1: CreateAttachmentRequest = {
+        filename: 'file1.txt',
+        contentType: 'text/plain',
+        content: base64Content,
+        size: 3 * 1024 * 1024, // Large enough to trigger multipart
+      };
+
+      await messages.send({
+        identifier: 'id123',
+        requestBody: {
+          ...messageJson,
+          attachments: [file1],
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
+
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+      expect(formData.message).toEqual(JSON.stringify(messageJson));
+      // The base64 string should have been converted to a Blob and attached to the form
+      expect(formData.file0).toBeDefined();
+      expect(typeof formData.file0).toBe('object');
+      // Note: The exact structure of the Blob mock may vary, but it should exist
+    });
+
+    it('should handle Buffer attachments in multipart form', async () => {
+      const messageJson = {
+        to: [{ name: 'Test', email: 'test@example.com' }],
+        subject: 'This is my test email',
+      };
+      const bufferContent = Buffer.from('This is buffer content', 'utf8');
+      const file1: CreateAttachmentRequest = {
+        filename: 'file1.txt',
+        contentType: 'text/plain',
+        content: bufferContent,
+        size: 3 * 1024 * 1024, // Large enough to trigger multipart
+      };
+
+      await messages.send({
+        identifier: 'id123',
+        requestBody: {
+          ...messageJson,
+          attachments: [file1],
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
+
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+      expect(formData.message).toEqual(JSON.stringify(messageJson));
+      // The Buffer should have been converted to a Blob and attached to the form
+      expect(formData.file0).toBeDefined();
+      expect(typeof formData.file0).toBe('object');
+      // Note: The exact structure of the Blob mock may vary, but it should exist
+    });
   });
 
   describe('scheduledMessages', () => {

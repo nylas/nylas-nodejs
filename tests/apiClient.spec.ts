@@ -651,6 +651,101 @@ describe('APIClient', () => {
         expect((result as any).flowId).toBe(mockFlowId);
         expect((result as any).headers['xFastlyId']).toBe(mockFlowId);
       });
+
+      it('should handle form data in request options', () => {
+        const mockFormData = {
+          append: jest.fn(),
+          [Symbol.toStringTag]: 'FormData',
+        } as any;
+        
+        const options = client.requestOptions({
+          path: '/test',
+          method: 'POST',
+          form: mockFormData,
+        });
+
+        expect(options.body).toBe(mockFormData);
+        expect(options.headers['Content-Type']).toBeUndefined(); // FormData sets its own content-type
+      });
+
+      it('should throw error when JSON parsing fails in requestWithResponse', async () => {
+        const invalidJsonResponse = {
+          ok: true,
+          status: 200,
+          text: jest.fn().mockResolvedValue('invalid json content'),
+          json: jest.fn().mockRejectedValue(new Error('Unexpected token')),
+          headers: new Map(),
+        };
+        
+        await expect(client.requestWithResponse(invalidJsonResponse as any)).rejects.toThrow(
+          'Could not parse response from the server: invalid json content'
+        );
+      });
+    });
+
+    describe('requestRaw', () => {
+      it('should return raw buffer response', async () => {
+        const testData = 'raw binary data';
+        const mockResp = {
+          ok: true,
+          status: 200,
+          text: jest.fn().mockResolvedValue(testData),
+          json: jest.fn(),
+          headers: new Map(),
+          buffer: jest.fn().mockResolvedValue(Buffer.from(testData)),
+        };
+        
+        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp as any));
+
+        const result = await client.requestRaw({
+          path: '/test',
+          method: 'GET',
+        });
+
+        expect(result).toBeInstanceOf(Buffer);
+        expect(result.toString()).toBe(testData);
+      });
+    });
+
+    describe('requestStream', () => {
+      it('should return readable stream response', async () => {
+        const mockStream = { pipe: jest.fn(), on: jest.fn() };
+        const mockResp = {
+          ok: true,
+          status: 200,
+          text: jest.fn().mockResolvedValue('stream data'),
+          json: jest.fn(),
+          headers: new Map(),
+          body: mockStream,
+        };
+        
+        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp as any));
+
+        const result = await client.requestStream({
+          path: '/test',
+          method: 'GET',
+        });
+
+        expect(result).toBe(mockStream);
+      });
+
+      it('should throw error when response has no body', async () => {
+        const mockResp = {
+          ok: true,
+          status: 200,
+          text: jest.fn().mockResolvedValue('data'),
+          json: jest.fn(),
+          headers: new Map(),
+          body: null,
+        };
+        
+        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp as any));
+
+        await expect(client.requestStream({
+          path: '/test',
+          method: 'GET',
+        })).rejects.toThrow('No response body');
+      });
     });
   });
 });
