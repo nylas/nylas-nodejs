@@ -657,7 +657,7 @@ describe('APIClient', () => {
           append: jest.fn(),
           [Symbol.toStringTag]: 'FormData',
         } as any;
-        
+
         const options = client.requestOptions({
           path: '/test',
           method: 'POST',
@@ -676,8 +676,10 @@ describe('APIClient', () => {
           json: jest.fn().mockRejectedValue(new Error('Unexpected token')),
           headers: new Map(),
         };
-        
-        await expect(client.requestWithResponse(invalidJsonResponse as any)).rejects.toThrow(
+
+        await expect(
+          client.requestWithResponse(invalidJsonResponse as any)
+        ).rejects.toThrow(
           'Could not parse response from the server: invalid json content'
         );
       });
@@ -694,8 +696,10 @@ describe('APIClient', () => {
           headers: new Map(),
           buffer: jest.fn().mockResolvedValue(Buffer.from(testData)),
         };
-        
-        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp as any));
+
+        fetchMock.mockImplementationOnce(() =>
+          Promise.resolve(mockResp as any)
+        );
 
         const result = await client.requestRaw({
           path: '/test',
@@ -718,8 +722,10 @@ describe('APIClient', () => {
           headers: new Map(),
           body: mockStream,
         };
-        
-        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp as any));
+
+        fetchMock.mockImplementationOnce(() =>
+          Promise.resolve(mockResp as any)
+        );
 
         const result = await client.requestStream({
           path: '/test',
@@ -738,13 +744,17 @@ describe('APIClient', () => {
           headers: new Map(),
           body: null,
         };
-        
-        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp as any));
 
-        await expect(client.requestStream({
-          path: '/test',
-          method: 'GET',
-        })).rejects.toThrow('No response body');
+        fetchMock.mockImplementationOnce(() =>
+          Promise.resolve(mockResp as any)
+        );
+
+        await expect(
+          client.requestStream({
+            path: '/test',
+            method: 'GET',
+          })
+        ).rejects.toThrow('No response body');
       });
     });
   });

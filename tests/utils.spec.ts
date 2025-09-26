@@ -511,18 +511,20 @@ describe('streamToBase64', () => {
 
   it('should handle stream errors', async () => {
     const errorStream = new Readable({
-      read() {
+      read(): void {
         // Implement _read to avoid the "not implemented" error
-      }
+      },
     });
     const testError = new Error('Stream error test');
-    
+
     // Emit error after a short delay to ensure the error handler is set up
     setTimeout(() => {
       errorStream.emit('error', testError);
     }, 10);
 
-    await expect(streamToBase64(errorStream)).rejects.toThrow('Stream error test');
+    await expect(streamToBase64(errorStream)).rejects.toThrow(
+      'Stream error test'
+    );
   });
 
   it('should handle empty stream', async () => {
