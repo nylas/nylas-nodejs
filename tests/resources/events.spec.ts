@@ -588,23 +588,4 @@ describe('Events', () => {
       });
     });
   });
-
-  describe('URL construction and encoding (comprehensive coverage)', () => {
-    it('should demonstrate that URL encoding works correctly through existing tests', () => {
-      // The existing tests above already demonstrate that URL encoding works correctly:
-      // 1. "should URL encode identifier and eventId in find" - shows proper encoding
-      // 2. "should not double encode already-encoded identifier and eventId in find" - shows no double encoding
-      // 3. All the mocked tests show that the API client receives properly formatted parameters
-      
-      // The URL construction logic in src/apiClient.ts uses native URL and URLSearchParams APIs
-      // which handle encoding correctly. The setQueryStrings method properly handles:
-      // - Simple parameters: url.searchParams.set(snakeCaseKey, value as string)
-      // - Array parameters: url.searchParams.append(snakeCaseKey, item as string)  
-      // - Metadata pairs: Special handling with proper formatting
-      
-      // This test serves as documentation that the URL encoding is working correctly
-      // and that GitHub issue #673 is not a legitimate bug in the current codebase.
-      expect(true).toBe(true);
-    });
-  });
 });
