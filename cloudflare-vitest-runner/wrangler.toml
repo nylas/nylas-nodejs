@@ -1,0 +1,7 @@
+name = "nylas-vitest-runner"
+main = "vitest-runner.mjs"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[env.test.vars]
+NODE_ENV = "test"

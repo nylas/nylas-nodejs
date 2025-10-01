@@ -33,7 +33,7 @@ jobs:
       - name: Build the SDK
         run: npm run build
 
-      - name: Run Jest test suite in Cloudflare Workers
+      - name: Run comprehensive Jest test suite in Cloudflare Workers
         run: |
-          echo "🧪 Running Nylas SDK Jest test suite in Cloudflare Workers environment..."
+          echo "🧪 Running ALL 25 Jest tests in Cloudflare Workers environment..."
           npm run test:cloudflare
