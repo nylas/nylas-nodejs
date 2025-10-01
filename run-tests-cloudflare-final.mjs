@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Run Nylas SDK tests in Cloudflare Workers environment using Wrangler
+ * Run Nylas SDK test suite in Cloudflare Workers environment
+ * This runs our actual test suite in the Cloudflare Workers nodejs_compat environment
  */
 
 import { spawn } from 'child_process';
@@ -11,17 +12,17 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-console.log('🚀 Running Nylas SDK tests in Cloudflare Workers environment...\n');
+console.log('🧪 Running Nylas SDK test suite in Cloudflare Workers environment...\n');
 
-async function runTestsWithWrangler() {
-  const workerDir = join(__dirname, 'cloudflare-test-worker');
+async function runTestsInCloudflare() {
+  const workerDir = join(__dirname, 'cloudflare-test-runner');
   
-  console.log('📦 Using test worker:', workerDir);
+  console.log('📦 Using test runner worker:', workerDir);
   
   // Start Wrangler dev server
   console.log('🚀 Starting Wrangler dev server...');
   
-  const wranglerProcess = spawn('wrangler', ['dev', '--local', '--port', '8793'], {
+  const wranglerProcess = spawn('wrangler', ['dev', '--local', '--port', '8795'], {
     cwd: workerDir,
     stdio: 'pipe'
   });
@@ -31,10 +32,10 @@ async function runTestsWithWrangler() {
   await new Promise((resolve) => setTimeout(resolve, 15000));
   
   try {
-    // Test the worker
-    console.log('🧪 Running tests in Cloudflare Workers...');
+    // Run the tests
+    console.log('🧪 Running test suite in Cloudflare Workers...');
     
-    const response = await fetch('http://localhost:8793/test');
+    const response = await fetch('http://localhost:8795/test');
     const result = await response.json();
     
     console.log('\n📊 Test Results:');
@@ -42,22 +43,42 @@ async function runTestsWithWrangler() {
     console.log(`Status: ${result.status}`);
     console.log(`Summary: ${result.summary}`);
     console.log(`Environment: ${result.environment}`);
-    console.log('\nDetailed Results:');
+    console.log(`Passed: ${result.passed}`);
+    console.log(`Failed: ${result.failed}`);
+    console.log(`Total: ${result.total}`);
     
-    result.results.forEach(test => {
-      const status = test.status === 'PASS' ? '✅' : '❌';
-      console.log(`  ${status} ${test.name}`);
-      if (test.error) {
-        console.log(`     Error: ${test.error}`);
-      }
-    });
+    if (result.results && result.results.length > 0) {
+      console.log('\nDetailed Results:');
+      
+      // Group by suite
+      const suites = {};
+      result.results.forEach(test => {
+        if (!suites[test.suite]) {
+          suites[test.suite] = [];
+        }
+        suites[test.suite].push(test);
+      });
+      
+      Object.keys(suites).forEach(suiteName => {
+        console.log(`\n📁 ${suiteName}:`);
+        suites[suiteName].forEach(test => {
+          const status = test.status === 'PASS' ? '✅' : '❌';
+          console.log(`  ${status} ${test.name}`);
+          if (test.error) {
+            console.log(`     Error: ${test.error}`);
+          }
+        });
+      });
+    }
     
     if (result.status === 'PASS') {
       console.log('\n🎉 All tests passed in Cloudflare Workers environment!');
-      console.log('✅ The SDK works correctly with ESM in Cloudflare Workers');
+      console.log('✅ The SDK works correctly in Cloudflare Workers');
+      console.log('✅ Optional types are working correctly in Cloudflare Workers context');
       return true;
     } else {
       console.log('\n❌ Some tests failed in Cloudflare Workers environment');
+      console.log('❌ There may be issues with the SDK in Cloudflare Workers context');
       return false;
     }
     
@@ -96,7 +117,7 @@ async function main() {
   
   console.log('✅ Wrangler is available');
   
-  const success = await runTestsWithWrangler();
+  const success = await runTestsInCloudflare();
   process.exit(success ? 0 : 1);
 }
 

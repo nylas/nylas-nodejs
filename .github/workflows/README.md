@@ -4,19 +4,21 @@ This directory contains GitHub Actions workflows for testing the Nylas Node.js S
 
 ## Workflows
 
-### `cloudflare-simple-test.yml` & `cloudflare-esm-test.yml`
-**Recommended approach** - ESM + Wrangler testing:
+### `cloudflare-jest-final.yml` & `test-workflow.yml`
+**Final approach** - Jest test suite in Cloudflare Workers:
+- Runs our actual Jest test suite in Cloudflare Workers nodejs_compat environment
+- Tests the built SDK files (not source files) in production-like environment
 - Uses ESM (ECMAScript Modules) for better Cloudflare Workers compatibility
-- Runs our normal test suites in actual Cloudflare Workers environment using Wrangler
 - Tests locally using `wrangler dev` to simulate production environment
 - Validates optional types work correctly in Cloudflare Workers context
 - Optional deployment testing (requires secrets)
 
 ## Why This Approach Works
 
-### **ESM + Wrangler Environment**
+### **Jest Test Suite in Cloudflare Workers**
+- Runs our actual test suite in Cloudflare Workers nodejs_compat environment
+- Tests the built SDK files, not source files (as requested)
 - Uses ESM which is the native module system for Cloudflare Workers
-- Runs tests in actual Cloudflare Workers runtime using Wrangler
 - Tests the exact same code that users will run in production
 - Avoids CommonJS compatibility issues (like mime-db problems)
 
@@ -26,17 +28,18 @@ The main issue we're addressing is ensuring optional types work correctly in Clo
 - Client can be created with minimal configuration (tests optional types)
 - All optional properties work without TypeScript errors
 - ESM builds are fully compatible with Cloudflare Workers
+- Resource methods work correctly in Cloudflare Workers environment
 
 ## Local Testing
 
 You can test Cloudflare Workers compatibility locally:
 
 ```bash
-# Run the ESM + Wrangler test
+# Run the Jest test suite in Cloudflare Workers
 npm run test:cloudflare
 
 # Or run the test script directly
-node run-tests-cloudflare.mjs
+node run-tests-cloudflare-final.mjs
 ```
 
 ## GitHub Actions Setup
