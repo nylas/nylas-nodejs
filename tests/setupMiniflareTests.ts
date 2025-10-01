@@ -8,7 +8,7 @@ global.fetch = vi.fn();
 if (process.env.CLOUDFLARE_WORKERS === 'true') {
   // Set up Cloudflare Workers globals
   globalThis.CloudflareWorkers = true;
-  
+
   // Mock Cloudflare Workers specific APIs if needed
   // globalThis.caches = new Map();
   // globalThis.crypto = require('crypto');

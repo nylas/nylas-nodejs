@@ -5,6 +5,16 @@
 // Import types are only used for dynamic imports in tests, so we don't import them here
 // The functions are imported dynamically within each test to ensure proper module isolation
 
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  _beforeAll,
+  _afterAll,
+  vi,
+} from 'vitest';
+
 // Mock the dynamic import to avoid actually importing node-fetch
 const mockNodeFetch = {
   default: vi.fn().mockName('mockFetch'),
@@ -18,8 +28,6 @@ global.Function = vi.fn().mockImplementation(() => mockDynamicImport);
 
 // Mock global objects for test environment detection
 const originalGlobal = global;
-
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('fetchWrapper-cjs', () => {
   beforeEach(() => {

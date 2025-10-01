@@ -2,7 +2,7 @@
     <img src="https://brand.nylas.com/assets/downloads/logo_horizontal_png/Nylas-Logo-Horizontal-Blue_.png" alt="Aimeos logo" title="Aimeos" align="right" height="60" />
 </a>
 
-# Nylas Node.js SDK  
+# Nylas Node.js SDK
 
 [![npm](https://img.shields.io/npm/v/nylas)
 ](https://www.npmjs.com/package/nylas)
@@ -57,17 +57,17 @@ For code examples that demonstrate how to use this SDK, take a look at our [Node
 You access Nylas resources (messages, calendars, events, contacts) through an instance of `Nylas`. The `Nylas` object must be initialized with your Nylas API key, and you can provide other additional configurations such as the Nylas API url and the timeout.
 
 ```typescript
-import Nylas from "nylas";
+import Nylas from 'nylas';
 
 const nylas = new Nylas({
-  apiKey: "NYLAS_API_KEY",
+  apiKey: 'NYLAS_API_KEY',
 });
 ```
 
 Once initialized you can use the object to make requests for a given account's resources, for example to list all the calendars for a given account:
 
 ```typescript
-nylas.calendars.list({ identifier: "GRANT_ID" }).then(calendars => {
+nylas.calendars.list({ identifier: 'GRANT_ID' }).then((calendars) => {
   console.log(calendars);
 });
 ```

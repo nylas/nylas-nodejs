@@ -1,10 +1,18 @@
+import {
+  describe,
+  it,
+  expect,
+  _beforeEach,
+  beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Webhooks } from '../../src/resources/webhooks';
 import { WebhookTriggers } from '../../src/models/webhooks';
 
 vi.mock('../../src/apiClient');
-
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('Webhooks', () => {
   let apiClient: any;

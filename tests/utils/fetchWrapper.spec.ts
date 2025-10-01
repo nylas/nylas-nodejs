@@ -6,6 +6,16 @@
 const _originalGlobal = global;
 const originalFunction = global.Function;
 
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  _beforeAll,
+  _afterAll,
+  vi,
+} from 'vitest';
+
 // Mock the dynamic import to avoid actually importing node-fetch
 const mockNodeFetchMain = {
   default: vi.fn().mockName('mockFetch'),
@@ -15,8 +25,6 @@ const mockNodeFetchMain = {
 
 // Mock the Function constructor used for dynamic imports
 const mockDynamicImportMain = vi.fn().mockResolvedValue(mockNodeFetchMain);
-
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('fetchWrapper (main)', () => {
   beforeEach(() => {
@@ -61,14 +69,12 @@ describe('fetchWrapper (main)', () => {
     });
 
     it('should work with apiClient.newRequest() usage pattern', async () => {
-      const mockGlobalRequest = vi
-        .fn()
-        .mockImplementation((url, options) => ({
-          url,
-          method: options?.method || 'GET',
-          headers: new Map(Object.entries(options?.headers || {})),
-          body: options?.body,
-        }));
+      const mockGlobalRequest = vi.fn().mockImplementation((url, options) => ({
+        url,
+        method: options?.method || 'GET',
+        headers: new Map(Object.entries(options?.headers || {})),
+        body: options?.body,
+      }));
       (global as any).Request = mockGlobalRequest;
 
       const { getRequest } = await import('../../src/utils/fetchWrapper.js');

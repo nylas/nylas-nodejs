@@ -4,7 +4,6 @@ about: Report a bug or issue to help us improve
 title: ''
 labels: bug
 assignees: ''
-
 ---
 
 **Describe the bug**
@@ -12,6 +11,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Some steps involved to reproduce the bug and any code samples you can share.
+
 ```
 // Helps us with reproducing the error :)
 ```

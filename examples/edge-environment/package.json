@@ -9,7 +9,13 @@
     "build": "tsc && wrangler deploy --dry-run",
     "type-check": "tsc --noEmit"
   },
-  "keywords": ["cloudflare", "worker", "nylas", "email", "attachments"],
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "nylas",
+    "email",
+    "attachments"
+  ],
   "author": "Nylas",
   "license": "MIT",
   "devDependencies": {
@@ -22,4 +28,4 @@
     "nylas": "file:../../",
     "mime-types": "^2.1.35"
   }
-} 
+}

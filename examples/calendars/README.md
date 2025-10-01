@@ -11,28 +11,32 @@ This directory contains examples of how to use the Nylas Calendar API with the N
 To run these examples, you'll need to:
 
 1. Install dependencies from the examples directory:
+
    ```bash
    cd examples
    npm install
    ```
 
 2. Copy the `.env.example` file to `.env` if you haven't already and add your credentials:
+
    ```bash
    cp .env.example .env
    # Edit .env with your editor
    ```
 
 3. Edit the `.env` file to include:
+
    - `NYLAS_API_KEY` - Your Nylas API key
    - `NYLAS_API_URI` (optional) - The Nylas API server URI (defaults to "https://api.us.nylas.com")
    - `NYLAS_GRANT_ID` - The Grant ID to use for calendar operations
    - `NYLAS_CALENDAR_ID` - The Calendar ID to use for creating and updating events
 
 4. Run the example:
+
    ```bash
    # From the examples directory
    npm run calendars
-   
+
    # Or directly with ts-node
    npx ts-node calendars/event_with_notetaker.ts
    ```
@@ -47,4 +51,4 @@ This example demonstrates:
 
 ## Documentation
 
-For more information, see the [Nylas API Documentation](https://developer.nylas.com/). 
+For more information, see the [Nylas API Documentation](https://developer.nylas.com/).

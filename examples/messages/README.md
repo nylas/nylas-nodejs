@@ -4,28 +4,35 @@ This directory contains examples demonstrating how to work with messages using t
 
 ## Examples
 
-### Send Attachments (`send-attachments-cli.ts`) 
+### Send Attachments (`send-attachments-cli.ts`)
+
 **🎯 Core attachment examples with optional CLI interface**
 
 This file demonstrates the four main ways to send attachments with the Nylas SDK:
 
 1. **File Path Attachments** - Most common and efficient approach
-2. **Stream Attachments** - For more control over streams  
+2. **Stream Attachments** - For more control over streams
 3. **Buffer Attachments** - When you need to process content in memory
 4. **String Content Attachments** - For dynamically generated text content
 
 The file is structured with:
+
 - **Core examples at the top** - Focus on Nylas SDK integration
 - **CLI interface at the bottom** - Optional interactive/batch modes
 
 ### Basic Messages (`messages.ts`)
+
 Shows basic message operations including reading, sending, and drafting messages.
 
 ### Accessing Rate Limit Headers
+
 All SDK responses now expose a non-enumerable `rawHeaders` with dashed lowercase keys so you can read rate limit information:
 
 ```ts
-const res = await nylas.messages.list({ identifier: process.env.NYLAS_GRANT_ID!, queryParams: { limit: 1 } });
+const res = await nylas.messages.list({
+  identifier: process.env.NYLAS_GRANT_ID!,
+  queryParams: { limit: 1 },
+});
 const limit = res.rawHeaders?.['x-rate-limit-limit'];
 const remaining = res.rawHeaders?.['x-rate-limit-remaining'];
 ```
@@ -33,7 +40,9 @@ const remaining = res.rawHeaders?.['x-rate-limit-remaining'];
 ## Quick Start
 
 ### 1. Set up environment
+
 Create a `.env` file in the `examples` directory:
+
 ```bash
 NYLAS_API_KEY=your_api_key_here
 NYLAS_GRANT_ID=your_grant_id_here
@@ -42,13 +51,16 @@ NYLAS_API_URI=https://api.us.nylas.com  # Optional: defaults to US API
 ```
 
 ### 2. Install dependencies
+
 ```bash
 cd examples
 npm install
 ```
 
 ### 3. Ensure test files exist
+
 The examples expect test files in the `attachments/` subdirectory:
+
 - `test-small-26B.txt` (small text file)
 - `test-image-19KB.jpg` (small image)
 - `test-document-12MB.pdf` (large PDF)
@@ -57,17 +69,20 @@ The examples expect test files in the `attachments/` subdirectory:
 ### 4. Run the examples
 
 **Attachment examples (interactive mode):**
+
 ```bash
 npm run send-attachments
 ```
 
 **Attachment examples (batch mode):**
+
 ```bash
 npm run send-attachments small --format file --email test@example.com
 npm run send-attachments large --format stream --email test@example.com
 ```
 
 **Basic messages:**
+
 ```bash
 npm run messages
 ```
@@ -77,48 +92,56 @@ npm run messages
 The core examples demonstrate four different approaches to sending attachments:
 
 ### 1. File Path Method (Recommended)
+
 ```typescript
 const attachment = createFileRequestBuilder('test-image.jpg');
 ```
+
 - Most efficient and common approach
 - Uses streams internally for memory efficiency
 - Perfect for files on disk
 
 ### 2. Stream Method
+
 ```typescript
 const attachment = {
   filename: 'file.jpg',
   contentType: 'image/jpeg',
   content: fs.createReadStream('path/to/file.jpg'),
-  size: fileSize
+  size: fileSize,
 };
 ```
+
 - Good when you already have a stream
 - Useful for processing files from other sources
 - Memory efficient for large files
 
 ### 3. Buffer Method
+
 ```typescript
 const attachment = {
   filename: 'file.jpg',
   contentType: 'image/jpeg',
   content: fs.readFileSync('path/to/file.jpg'),
-  size: buffer.length
+  size: buffer.length,
 };
 ```
+
 - Loads entire file into memory
 - Good for small files or when you need to process content
 - Simple but uses more memory
 
 ### 4. String Content Method
+
 ```typescript
 const attachment = {
   filename: 'data.txt',
   contentType: 'text/plain',
   content: 'Your text content here',
-  size: Buffer.byteLength(content, 'utf8')
+  size: Buffer.byteLength(content, 'utf8'),
 };
 ```
+
 - Perfect for dynamically generated content
 - Works for text files, JSON, XML, etc.
 - Great for reports, logs, or generated data
@@ -149,11 +172,13 @@ The attachment examples include an optional CLI interface for easy testing:
 - **Multiple Formats**: Test all attachment processing methods
 
 **Interactive mode (default):**
+
 ```bash
 npm run send-attachments
 ```
 
 **Batch mode examples:**
+
 ```bash
 npm run send-attachments small --format stream --email test@example.com
 npm run send-attachments large --format buffer --email test@example.com
@@ -172,13 +197,16 @@ npm run send-attachments status  # Check file availability
 ## Troubleshooting
 
 **"File not found" errors:**
+
 - Ensure test files exist in the `attachments/` directory
 - Run `npm run send-attachments-cli status` to check file availability
 
 **"Environment variable not set" errors:**
+
 - Create a `.env` file in the `examples` directory with required variables
 - See the environment setup section above
 
 **TypeScript import errors:**
+
 - Ensure you've run `npm install` in the examples directory
-- The utils are properly exported from the attachment-file-manager module 
+- The utils are properly exported from the attachment-file-manager module

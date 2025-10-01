@@ -1,4 +1,13 @@
-import { describe, it, expect, beforeAll, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  _beforeEach,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 import APIClient from '../../src/apiClient';
 import { CreateAttachmentRequest } from '../../src/models/attachments';
 import { Drafts } from '../../src/resources/drafts';
@@ -21,7 +30,7 @@ vi.mock('formdata-node', () => ({
     type: options?.type || '',
     size: parts.reduce((size, part) => size + (part.length || 0), 0),
   })),
-  File: jest
+  File: vi
     .fn()
     .mockImplementation((parts: any[], name: string, options?: any) => ({
       name,
@@ -33,8 +42,6 @@ vi.mock('formdata-node', () => ({
       [Symbol.toStringTag]: 'File',
     })),
 }));
-
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('Drafts', () => {
   let apiClient: any;

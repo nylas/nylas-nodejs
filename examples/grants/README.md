@@ -16,11 +16,13 @@ In the Nylas API, a **Grant** represents an authenticated connection to a user's
 The `grants.ts` file demonstrates comprehensive grant management including:
 
 ### 📋 **Basic Operations**
+
 - **List all grants** - Retrieve all authenticated accounts
 - **Fetch specific grant** - Get detailed information about a single grant
 - **Pagination** - Handle large numbers of grants efficiently
 
 ### 🔄 **Sorting & Filtering**
+
 - **Sort by creation date** - See newest or oldest grants first
 - **Sort by update date** - Find recently modified grants
 - **Filter by provider** - Show only Gmail, Outlook, etc.
@@ -28,6 +30,7 @@ The `grants.ts` file demonstrates comprehensive grant management including:
 - **Filter by date range** - Grants created in specific time periods
 
 ### 🎯 **Advanced Features**
+
 - **Multiple filters** - Combine provider, status, and date filters
 - **Client-side grouping** - Organize grants by provider or other criteria
 - **Scope analysis** - Find grants with specific permissions
@@ -36,19 +39,23 @@ The `grants.ts` file demonstrates comprehensive grant management including:
 ## Quick Start
 
 ### 1. Set up environment
+
 Create a `.env` file in the `examples` directory:
+
 ```bash
 NYLAS_API_KEY=your_api_key_here
 NYLAS_API_URI=https://api.us.nylas.com  # Optional: defaults to US API
 ```
 
 ### 2. Install dependencies
+
 ```bash
 cd examples
 npm install
 ```
 
 ### 3. Run the example
+
 ```bash
 # Using ts-node (recommended for development)
 npx ts-node grants/grants.ts
@@ -61,6 +68,7 @@ node dist/grants/grants.js
 ## Example Functions
 
 ### Basic Listing
+
 ```typescript
 // List all grants
 const grants = await nylas.grants.list();
@@ -75,6 +83,7 @@ const grants = await nylas.grants.list({
 ```
 
 ### Sorting
+
 ```typescript
 // Sort by creation date (newest first)
 const grants = await nylas.grants.list({
@@ -94,6 +103,7 @@ const grants = await nylas.grants.list({
 ```
 
 ### Filtering
+
 ```typescript
 // Filter by provider
 const gmailGrants = await nylas.grants.list({
@@ -110,7 +120,9 @@ const validGrants = await nylas.grants.list({
 });
 
 // Filter by date range (last 30 days)
-const thirtyDaysAgo = Math.floor((Date.now() - (30 * 24 * 60 * 60 * 1000)) / 1000);
+const thirtyDaysAgo = Math.floor(
+  (Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000
+);
 const recentGrants = await nylas.grants.list({
   queryParams: {
     since: thirtyDaysAgo,
@@ -119,6 +131,7 @@ const recentGrants = await nylas.grants.list({
 ```
 
 ### Fetching Individual Grants
+
 ```typescript
 // Fetch a specific grant by ID
 const grant = await nylas.grants.find({
@@ -136,17 +149,17 @@ Each grant object contains the following key properties:
 
 ```typescript
 interface Grant {
-  id: string;                    // Unique grant identifier
-  provider: string;              // 'google', 'microsoft', 'yahoo', etc.
-  email?: string;                // Associated email address
-  name?: string;                 // User's display name
-  grantStatus?: string;          // 'valid', 'invalid', 'expired'
-  scope: string[];               // Permissions: ['email', 'calendar', 'contacts']
-  createdAt: number;             // Unix timestamp
-  updatedAt?: number;            // Unix timestamp of last update
-  providerUserId?: string;       // Provider's internal user ID
-  ip?: string;                   // IP address during authentication
-  userAgent?: string;            // Browser/client used for auth
+  id: string; // Unique grant identifier
+  provider: string; // 'google', 'microsoft', 'yahoo', etc.
+  email?: string; // Associated email address
+  name?: string; // User's display name
+  grantStatus?: string; // 'valid', 'invalid', 'expired'
+  scope: string[]; // Permissions: ['email', 'calendar', 'contacts']
+  createdAt: number; // Unix timestamp
+  updatedAt?: number; // Unix timestamp of last update
+  providerUserId?: string; // Provider's internal user ID
+  ip?: string; // IP address during authentication
+  userAgent?: string; // Browser/client used for auth
   settings?: Record<string, unknown>; // Provider-specific settings
 }
 ```
@@ -169,6 +182,7 @@ When listing grants, you can use these parameters:
 ## Common Use Cases
 
 ### 1. **Health Check Dashboard**
+
 ```typescript
 // Get overview of all grants and their status
 const allGrants = await nylas.grants.list();
@@ -181,6 +195,7 @@ console.log('Grant Status Overview:', grantsByStatus);
 ```
 
 ### 2. **Find Grants Needing Re-authentication**
+
 ```typescript
 // Find invalid or expired grants
 const invalidGrants = await nylas.grants.list({
@@ -192,6 +207,7 @@ console.log(`${invalidGrants.data.length} grants need re-authentication`);
 ```
 
 ### 3. **Provider Distribution Analysis**
+
 ```typescript
 // See which providers your users prefer
 const grants = await nylas.grants.list();
@@ -203,9 +219,10 @@ console.log('Provider Distribution:', providerCounts);
 ```
 
 ### 4. **Recent Activity Monitoring**
+
 ```typescript
 // Find grants created or updated in the last week
-const weekAgo = Math.floor((Date.now() - (7 * 24 * 60 * 60 * 1000)) / 1000);
+const weekAgo = Math.floor((Date.now() - 7 * 24 * 60 * 60 * 1000) / 1000);
 const recentActivity = await nylas.grants.list({
   queryParams: {
     since: weekAgo,

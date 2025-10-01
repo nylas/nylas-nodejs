@@ -1,4 +1,14 @@
 import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  _beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
+import {
   createFileRequestBuilder,
   objKeysToCamelCase,
   objKeysToSnakeCase,
@@ -23,8 +33,6 @@ vi.mock('mime-types', () => {
     lookup: vi.fn(),
   };
 });
-
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('createFileRequestBuilder', () => {
   const MOCK_FILE_PATH = 'path/to/mock/file.txt';
@@ -69,7 +77,16 @@ describe('createFileRequestBuilder', () => {
   });
 });
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  _beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 
 describe('convertCase', () => {
   it('should convert basic object keys to camelCase', () => {
@@ -187,7 +204,16 @@ describe('convertCase', () => {
   });
 });
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  _beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 
 describe('makePathParams and safePath', () => {
   it('should URL encode path params with special characters', () => {
@@ -288,7 +314,16 @@ describe('makePathParams and safePath', () => {
   });
 });
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  _beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 
 describe('encodeAttachmentContent', () => {
   // Helper function to create a readable stream from a string
@@ -476,7 +511,16 @@ describe('encodeAttachmentContent', () => {
   });
 });
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  _beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 
 describe('encodeAttachmentStreams (backwards compatibility)', () => {
   it('should work the same as encodeAttachmentContent', async () => {
@@ -500,7 +544,16 @@ describe('encodeAttachmentStreams (backwards compatibility)', () => {
   });
 });
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  _beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 
 describe('streamToBase64', () => {
   // Helper function to create a readable stream from a string
@@ -546,7 +599,16 @@ describe('streamToBase64', () => {
   });
 });
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  _beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 
 describe('attachmentStreamToFile', () => {
   // Helper function to create a readable stream from a string

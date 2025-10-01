@@ -20,7 +20,7 @@
     "plugin": ["typedoc-plugin-rename-defaults"],
     "excludeExternals": true,
     "excludePrivate": true,
-    "excludeInternal": true,
+    "excludeInternal": true
   },
   "include": ["src/**/*"],
   "exclude": ["tests", "lib", "scripts"]

@@ -73,6 +73,7 @@ npm run dev
 ```
 
 This will:
+
 - Start the Wrangler development server
 - Make your worker available at `http://localhost:8787`
 - Enable hot-reloading for code changes
@@ -125,6 +126,7 @@ npm run deploy
 ```
 
 This will:
+
 - Build and upload your worker to Cloudflare
 - Make it available at `https://your-worker-name.your-subdomain.workers.dev`
 - Use the production environment configuration
@@ -138,6 +140,7 @@ Visit your worker's URL and test the file upload functionality.
 If you have a custom domain managed by Cloudflare:
 
 1. **Add a route in `wrangler.toml`:**
+
 ```toml
 [[routes]]
 pattern = "attachments.yourdomain.com/*"
@@ -145,6 +148,7 @@ zone_name = "yourdomain.com"
 ```
 
 2. **Deploy with the route:**
+
 ```bash
 wrangler deploy
 ```
@@ -182,7 +186,8 @@ This worker uses the **Nylas SDK** with optimizations for Cloudflare Workers:
 ### Node.js Compatibility
 
 This worker uses:
-- **`compatibility_date = "2024-09-23"`**: Enables automatic Node.js built-in module support  
+
+- **`compatibility_date = "2024-09-23"`**: Enables automatic Node.js built-in module support
 - **`nodejs_compat` compatibility flag**: Additional Node.js compatibility features
 
 These settings enable Node.js built-in modules like `crypto`, `path`, `fs`, and `stream` that are required by the Nylas SDK. The Buffer attachment approach ensures optimal performance and compatibility with the Cloudflare Workers edge environment.
@@ -213,12 +218,14 @@ For extremely large files (>25MB), you can use ReadableStream instead of Buffer:
 const stream = file.stream();
 const sendRequest: SendMessageRequest = {
   // ... other fields
-  attachments: [{
-    filename: file.name,
-    contentType: getContentType(file.name),
-    content: stream,  // Use stream instead of buffer
-    size: file.size,
-  }],
+  attachments: [
+    {
+      filename: file.name,
+      contentType: getContentType(file.name),
+      content: stream, // Use stream instead of buffer
+      size: file.size,
+    },
+  ],
 };
 ```
 
@@ -244,10 +251,10 @@ Add file type validation in the worker:
 // Validate file type
 const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
 if (!allowedTypes.includes(getContentType(file.name))) {
-  return new Response(
-    JSON.stringify({ error: 'File type not allowed' }),
-    { status: 400, headers: { 'Content-Type': 'application/json' } }
-  );
+  return new Response(JSON.stringify({ error: 'File type not allowed' }), {
+    status: 400,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 ```
 
@@ -256,29 +263,35 @@ if (!allowedTypes.includes(getContentType(file.name))) {
 ### Common Issues
 
 **Error: "Missing required environment variables"**
+
 - Ensure all environment variables are set in `.dev.vars` (development) or as secrets (production)
 - Check variable names match exactly
 
 **Error: "Could not resolve [module]" (crypto, path, fs, stream)**
+
 - Ensure `compatibility_date = "2024-09-23"` or later is set in `wrangler.toml`
 - Ensure `compatibility_flags = ["nodejs_compat"]` is also set
 - These settings enable Node.js built-in modules required by the Nylas SDK
 - The worker uses Buffer objects for efficient binary attachment handling
 
 **Error: "File size exceeds 10MB limit"**
+
 - Reduce file size or increase the limit in the worker code
 - Note: Cloudflare Workers have memory and CPU time limits
 
 **Error: "Invalid file upload"**
+
 - Ensure you're uploading a valid file
 - Check that the form is submitting properly
 
 **Error: "optionParams.form.getHeaders is not a function"**
+
 - This was an old SDK compatibility issue, now resolved
 - The worker uses Buffer attachments instead of problematic form-data
 - This error should not occur with the current implementation
 
 **Email not received**
+
 - Verify the recipient email address
 - Check spam/junk folders
 - Verify your Nylas grant has send permissions
@@ -292,11 +305,12 @@ Add logging to the worker for debugging:
 console.log('File details:', {
   name: file.name,
   size: file.size,
-  type: file.type
+  type: file.type,
 });
 ```
 
 View logs with:
+
 ```bash
 wrangler tail
 ```
@@ -317,4 +331,4 @@ Found an issue or want to improve this example? Please:
 
 ## 📄 License
 
-This example is part of the Nylas Node.js SDK and is licensed under the MIT License. 
+This example is part of the Nylas Node.js SDK and is licensed under the MIT License.

@@ -8,7 +8,16 @@ import {
   getResponse,
 } from '../../src/utils/fetchWrapper-esm.js';
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  _beforeEach,
+  _beforeAll,
+  _afterEach,
+  _afterAll,
+  _vi,
+} from 'vitest';
 
 describe('fetchWrapper-esm', () => {
   describe('getFetch', () => {

@@ -1,8 +1,17 @@
+import {
+  describe,
+  it,
+  expect,
+  _beforeEach,
+  beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Bookings } from '../../src/resources/bookings';
-vi.mock('../../src/apiClient');
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+vi.mock('../../src/apiClient');
 
 describe('Bookings', () => {
   let apiClient: any;

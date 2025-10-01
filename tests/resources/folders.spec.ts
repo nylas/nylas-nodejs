@@ -1,9 +1,18 @@
+import {
+  describe,
+  it,
+  expect,
+  _beforeEach,
+  beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Folders } from '../../src/resources/folders';
 import { objKeysToCamelCase } from '../../src/utils';
-vi.mock('../../src/apiClient');
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+vi.mock('../../src/apiClient');
 
 describe('Folders', () => {
   let apiClient: any;

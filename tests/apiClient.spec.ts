@@ -1,4 +1,13 @@
-import { describe, it, expect, beforeEach, beforeAll, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 import APIClient, { RequestOptionsParams } from '../src/apiClient';
 import {
   NylasApiError,
@@ -7,8 +16,6 @@ import {
 } from '../src/models/error';
 import { SDK_VERSION } from '../src/version';
 import { mockResponse } from './testUtils';
-
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('APIClient', () => {
   beforeEach(() => {
@@ -293,7 +300,9 @@ describe('APIClient', () => {
           mockResp.headers.set(key, value);
         });
 
-        vi.mocked(fetch).mockImplementationOnce(() => Promise.resolve(mockResp));
+        vi.mocked(fetch).mockImplementationOnce(() =>
+          Promise.resolve(mockResp)
+        );
 
         const response = await client.request({
           path: '/test',
@@ -332,7 +341,9 @@ describe('APIClient', () => {
           mockResp.headers.set(key, value);
         });
 
-        vi.mocked(fetch).mockImplementationOnce(() => Promise.resolve(mockResp));
+        vi.mocked(fetch).mockImplementationOnce(() =>
+          Promise.resolve(mockResp)
+        );
 
         const response = await client.request({ path: '/test', method: 'GET' });
 
@@ -633,7 +644,9 @@ describe('APIClient', () => {
           mockResp.headers.set(key, value);
         });
 
-        vi.mocked(fetch).mockImplementationOnce(() => Promise.resolve(mockResp));
+        vi.mocked(fetch).mockImplementationOnce(() =>
+          Promise.resolve(mockResp)
+        );
 
         const result = await client.request({
           path: '/test',

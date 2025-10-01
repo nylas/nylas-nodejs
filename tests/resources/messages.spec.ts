@@ -1,4 +1,13 @@
-import { describe, it, expect, beforeAll, vi } from 'vitest';
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  _beforeEach,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Messages } from '../../src/resources/messages';
 import { createReadableStream, MockedFormData } from '../testUtils';
@@ -25,7 +34,7 @@ vi.mock('formdata-node', () => ({
     type: options?.type || '',
     size: parts.reduce((size, part) => size + (part.length || 0), 0),
   })),
-  File: jest
+  File: vi
     .fn()
     .mockImplementation((parts: any[], name: string, options?: any) => ({
       name,
@@ -37,8 +46,6 @@ vi.mock('formdata-node', () => ({
       [Symbol.toStringTag]: 'File',
     })),
 }));
-
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('Messages', () => {
   let apiClient: any;

@@ -1,12 +1,21 @@
+import {
+  describe,
+  it,
+  expect,
+  _beforeEach,
+  beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Auth } from '../../src/resources/auth';
 import {
   CodeExchangeRequest,
   TokenExchangeRequest,
 } from '../../src/models/auth';
-vi.mock('uuid', () => ({ v4: (): string => 'nylas' }));
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+vi.mock('uuid', () => ({ v4: (): string => 'nylas' }));
 
 describe('Auth', () => {
   let apiClient: APIClient;

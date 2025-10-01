@@ -1,9 +1,18 @@
+import {
+  describe,
+  it,
+  expect,
+  _beforeEach,
+  beforeAll,
+  _afterEach,
+  _afterAll,
+  vi,
+} from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Attachments } from '../../src/resources/attachments';
 import { Readable } from 'stream';
-vi.mock('../../src/apiClient');
 
-import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
+vi.mock('../../src/apiClient');
 
 describe('Attachments', () => {
   let apiClient: any;
