@@ -44,6 +44,15 @@ async function runVitestTestsInCloudflare() {
     console.log(`Summary: ${result.summary}`);
     console.log(`Environment: ${result.environment}`);
     
+    if (result.vitestResult) {
+      console.log(`\nVitest Details:`);
+      console.log(`  Files: ${result.vitestResult.files}`);
+      console.log(`  Tests: ${result.vitestResult.tests}`);
+      console.log(`  Passed: ${result.vitestResult.passed}`);
+      console.log(`  Failed: ${result.vitestResult.failed}`);
+      console.log(`  Duration: ${result.vitestResult.duration}ms`);
+    }
+    
     if (result.results && result.results.length > 0) {
       console.log('\nDetailed Results:');
       result.results.forEach(testResult => {
@@ -56,6 +65,13 @@ async function runVitestTestsInCloudflare() {
       console.log('✅ The SDK works correctly with Vitest in Cloudflare Workers');
       console.log('✅ Optional types are working correctly in Cloudflare Workers context');
       return true;
+    } else if (result.status === 'ERROR') {
+      console.log('\n❌ Error running Vitest tests in Cloudflare Workers environment');
+      console.log(`❌ Error: ${result.summary}`);
+      if (result.error) {
+        console.log(`❌ Stack: ${result.error}`);
+      }
+      return false;
     } else {
       console.log('\n❌ Some Vitest tests failed in Cloudflare Workers environment');
       console.log('❌ There may be issues with the SDK in Cloudflare Workers context');
