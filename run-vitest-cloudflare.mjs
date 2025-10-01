@@ -46,25 +46,8 @@ async function runVitestTestsInCloudflare() {
     
     if (result.results && result.results.length > 0) {
       console.log('\nDetailed Results:');
-      
-      // Group by suite
-      const suites = {};
-      result.results.forEach(test => {
-        if (!suites[test.suite]) {
-          suites[test.suite] = [];
-        }
-        suites[test.suite].push(test);
-      });
-      
-      Object.keys(suites).forEach(suiteName => {
-        console.log(`\n📁 ${suiteName}:`);
-        suites[suiteName].forEach(test => {
-          const status = test.status === 'PASS' ? '✅' : '❌';
-          console.log(`  ${status} ${test.name}`);
-          if (test.error) {
-            console.log(`     Error: ${test.error}`);
-          }
-        });
+      result.results.forEach(testResult => {
+        console.log(`  ${testResult}`);
       });
     }
     
