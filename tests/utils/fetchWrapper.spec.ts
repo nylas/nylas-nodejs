@@ -61,7 +61,7 @@ describe('fetchWrapper (main)', () => {
     });
 
     it('should work with apiClient.newRequest() usage pattern', async () => {
-      const mockGlobalRequest = jest
+      const mockGlobalRequest = vi
         .fn()
         .mockImplementation((url, options) => ({
           url,
