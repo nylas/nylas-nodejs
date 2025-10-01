@@ -24,4 +24,4 @@ vi.setConfig({
   hookTimeout: 30000,
 });
 
-console.log('🧪 Vitest environment setup complete with Jest compatibility');
+// Vitest environment setup complete with Jest compatibility
