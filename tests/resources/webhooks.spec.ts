@@ -1,11 +1,12 @@
+import { vi, describe, it, expect, beforeAll, beforeEach, afterAll, afterEach } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Webhooks } from '../../src/resources/webhooks';
 import { WebhookTriggers } from '../../src/models/webhooks';
 
-jest.mock('../../src/apiClient');
+vi.mock('../../src/apiClient');
 
 describe('Webhooks', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let webhooks: Webhooks;
 
   beforeAll(() => {
@@ -14,7 +15,7 @@ describe('Webhooks', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     webhooks = new Webhooks(apiClient);
     apiClient.request.mockResolvedValue({});

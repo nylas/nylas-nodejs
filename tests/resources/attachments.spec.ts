@@ -1,10 +1,11 @@
+import { vi, describe, it, expect, beforeAll, beforeEach, afterAll, afterEach } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Attachments } from '../../src/resources/attachments';
 import { Readable } from 'stream';
-jest.mock('../../src/apiClient');
+vi.mock('../../src/apiClient');
 
 describe('Attachments', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let attachments: Attachments;
 
   beforeAll(() => {
@@ -13,7 +14,7 @@ describe('Attachments', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     attachments = new Attachments(apiClient);
     apiClient.request.mockResolvedValue({});

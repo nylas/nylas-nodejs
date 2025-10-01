@@ -1,10 +1,11 @@
+import { vi, describe, it, expect, beforeAll, beforeEach, afterAll, afterEach } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { CredentialType } from '../../src/models/credentials';
 import { Credentials } from '../../src/resources/credentials';
-jest.mock('../../src/apiClient');
+vi.mock('../../src/apiClient');
 
 describe('Credentials', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let credentials: Credentials;
 
   beforeAll(() => {
@@ -13,7 +14,7 @@ describe('Credentials', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     credentials = new Credentials(apiClient);
     apiClient.request.mockResolvedValue({});

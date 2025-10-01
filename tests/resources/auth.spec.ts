@@ -1,10 +1,11 @@
+import { vi, describe, it, expect, beforeAll, beforeEach, afterAll, afterEach } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Auth } from '../../src/resources/auth';
 import {
   CodeExchangeRequest,
   TokenExchangeRequest,
 } from '../../src/models/auth';
-jest.mock('uuid', () => ({ v4: (): string => 'nylas' }));
+vi.mock('uuid', () => ({ v4: (): string => 'nylas' }));
 
 describe('Auth', () => {
   let apiClient: APIClient;
@@ -19,7 +20,7 @@ describe('Auth', () => {
     });
 
     auth = new Auth(apiClient);
-    jest.spyOn(APIClient.prototype, 'request').mockResolvedValue({});
+    vi.spyOn(APIClient.prototype, 'request').mockResolvedValue({});
   });
 
   describe('Exchanging tokens', () => {

@@ -34,7 +34,7 @@ describe('createFileRequestBuilder', () => {
   const mockedReadStream = {};
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     require('node:fs').statSync.mockReturnValue(mockedStatSync);
     require('node:fs').createReadStream.mockReturnValue(mockedReadStream);
   });

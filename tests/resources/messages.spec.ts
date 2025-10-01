@@ -1,3 +1,4 @@
+import { vi, describe, it, expect, beforeAll, beforeEach, afterAll, afterEach } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Messages } from '../../src/resources/messages';
 import { createReadableStream, MockedFormData } from '../testUtils';
@@ -7,11 +8,11 @@ import {
   Message,
   MessageTrackingOptions,
 } from '../../src/models/messages';
-jest.mock('../../src/apiClient');
+vi.mock('../../src/apiClient');
 
 // Mock the FormData constructor
-jest.mock('formdata-node', () => ({
-  FormData: jest.fn().mockImplementation(function (this: MockedFormData) {
+vi.mock('formdata-node', () => ({
+  FormData: vi.fn().mockImplementation(function (this: MockedFormData) {
     const appendedData: Record<string, any> = {};
 
     this.append = (key: string, value: any): void => {
@@ -20,11 +21,11 @@ jest.mock('formdata-node', () => ({
 
     this._getAppendedData = (): Record<string, any> => appendedData;
   }),
-  Blob: jest.fn().mockImplementation((parts: any[], options?: any) => ({
+  Blob: vi.fn().mockImplementation((parts: any[], options?: any) => ({
     type: options?.type || '',
     size: parts.reduce((size, part) => size + (part.length || 0), 0),
   })),
-  File: jest
+  File: vi
     .fn()
     .mockImplementation((parts: any[], name: string, options?: any) => ({
       name,
@@ -38,7 +39,7 @@ jest.mock('formdata-node', () => ({
 }));
 
 describe('Messages', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let messages: Messages;
 
   beforeAll(() => {
@@ -47,7 +48,7 @@ describe('Messages', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     messages = new Messages(apiClient);
     apiClient.request.mockResolvedValue({});
