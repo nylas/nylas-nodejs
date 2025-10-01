@@ -1,4 +1,4 @@
-name: Test Workflow
+name: Cloudflare Test Simple
 
 on:
   push:
@@ -11,8 +11,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-basic:
-    name: Test Basic Functionality
+  test-cloudflare:
+    name: Test Cloudflare Workers
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -27,18 +27,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build the SDK
-        run: npm run build
-
-      - name: Run basic test
-        run: |
-          echo "✅ Basic workflow is working!"
-          echo "Node.js version: $(node --version)"
-          echo "NPM version: $(npm --version)"
-          echo "Current branch: $(git branch --show-current)"
-
       - name: Install Wrangler CLI
         run: npm install -g wrangler@latest
+
+      - name: Build the SDK
+        run: npm run build
 
       - name: Test Cloudflare Workers compatibility
         run: |

@@ -1,0 +1,25 @@
+name: Cloudflare Basic
+
+on:
+  push:
+    branches:
+      - cursor/add-cloudflare-worker-to-test-matrix-3aca
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Wrangler
+        run: npm install -g wrangler@latest
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: echo "Cloudflare test would run here"
