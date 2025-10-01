@@ -302,6 +302,24 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
+    // Health check endpoint
+    if (request.method === 'GET' && url.pathname === '/health') {
+      return new Response(
+        JSON.stringify({
+          status: 'healthy',
+          timestamp: new Date().toISOString(),
+          environment: 'cloudflare-worker',
+          sdk: 'nylas-nodejs',
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            ...corsHeaders,
+          },
+        }
+      );
+    }
+
     // Serve the HTML interface on GET requests
     if (request.method === 'GET' && url.pathname === '/') {
       return new Response(HTML_INTERFACE, {
@@ -378,7 +396,7 @@ export default {
 
         // Convert file to Buffer for SDK
         const fileBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(fileBuffer);
+        const buffer = new Uint8Array(fileBuffer);
 
         // Prepare the email request using the SDK
         const sendRequest: SendMessageRequest = {

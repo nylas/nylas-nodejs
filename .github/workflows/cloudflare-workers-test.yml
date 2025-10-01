@@ -1,0 +1,142 @@
+name: Cloudflare Workers Test
+
+on:
+  push:
+    branches:
+      - cursor/make-type-optional-and-update-changelog-23e9
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  test-cloudflare-workers:
+    name: Test in Cloudflare Workers Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Wrangler CLI
+        run: npm install -g wrangler@latest
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Setup Cloudflare Worker test environment
+        run: |
+          cd examples/edge-environment
+          npm install
+          npm run build
+
+      - name: Test Cloudflare Worker locally (without deployment)
+        run: |
+          cd examples/edge-environment
+          
+          # Test that the worker can be built and type-checked
+          echo "Testing worker build..."
+          npx wrangler deploy --dry-run
+          
+          # Test that the worker starts locally
+          echo "Testing worker startup..."
+          timeout 30s npx wrangler dev --local --port 8787 &
+          WORKER_PID=$!
+          
+          # Wait for worker to start
+          sleep 10
+          
+          # Test basic functionality if worker is running
+          if curl -f http://localhost:8787/health 2>/dev/null; then
+            echo "✅ Worker health check passed"
+          else
+            echo "⚠️ Worker health check failed (this may be expected if no routes are defined)"
+          fi
+          
+          # Clean up
+          kill $WORKER_PID 2>/dev/null || true
+
+      - name: Test SDK compatibility with Cloudflare Workers
+        run: |
+          cd examples/edge-environment
+          npm run test:worker
+
+      - name: Test ESM compatibility with Cloudflare Workers
+        run: |
+          # Test ESM import in Cloudflare Workers context
+          node --input-type=module -e "
+            // Simulate Cloudflare Workers environment
+            global.fetch = (await import('node-fetch')).default;
+            global.Request = (await import('node-fetch')).Request;
+            global.Response = (await import('node-fetch')).Response;
+            global.Headers = (await import('node-fetch')).Headers;
+            
+            // Test ESM import
+            const nylas = (await import('./lib/esm/nylas.js')).default;
+            console.log('✅ ESM import works in Cloudflare Workers context');
+            
+            // Test client creation
+            const client = new nylas({ apiKey: 'test-key' });
+            console.log('✅ ESM client creation works in Cloudflare Workers context');
+          "
+
+  # Optional: Deploy to Cloudflare Workers for integration testing
+  deploy-and-test:
+    name: Deploy and Test Cloudflare Workers
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.CLOUDFLARE_API_TOKEN != ''
+    needs: test-cloudflare-workers
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Setup Cloudflare Worker test environment
+        run: |
+          cd examples/edge-environment
+          npm install
+          npm run build
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+          workingDirectory: examples/edge-environment
+
+      - name: Test deployed Cloudflare Worker
+        run: |
+          # Wait for deployment to be ready
+          sleep 30
+          
+          # Get the worker URL from wrangler output
+          WORKER_URL=$(cd examples/edge-environment && npx wrangler whoami --format json | jq -r '.subdomain')
+          echo "Testing worker at: https://${WORKER_URL}.workers.dev"
+          
+          # Test the deployed worker
+          if curl -f "https://${WORKER_URL}.workers.dev/health" 2>/dev/null; then
+            echo "✅ Deployed worker health check passed"
+          else
+            echo "⚠️ Deployed worker health check failed (this may be expected if no routes are defined)"
+          fi

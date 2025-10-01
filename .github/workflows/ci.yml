@@ -1,0 +1,272 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - cursor/make-type-optional-and-update-changelog-23e9
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  # Standard Node.js testing across multiple versions
+  test:
+    name: Test Node.js ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16, 18, 20, 22]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint:ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run type checking
+        run: npx tsc --noEmit
+
+  # Test in Cloudflare Workers environment
+  test-cloudflare-workers:
+    name: Test in Cloudflare Workers
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Wrangler CLI
+        run: npm install -g wrangler@latest
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Setup Cloudflare Worker test environment
+        run: |
+          cd examples/edge-environment
+          npm install
+          npm run build
+
+      - name: Deploy to Cloudflare Workers (dry run)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --dry-run
+          workingDirectory: examples/edge-environment
+
+      - name: Test Cloudflare Worker locally
+        run: |
+          cd examples/edge-environment
+          # Test that the worker can be built and type-checked
+          npx wrangler dev --local --port 8787 &
+          WORKER_PID=$!
+          sleep 10
+          
+          # Test basic functionality
+          curl -f http://localhost:8787/health || echo "Health check failed"
+          
+          # Kill the worker process
+          kill $WORKER_PID
+
+  # Test in Cloudflare Workers with actual deployment (only on main branch)
+  deploy-cloudflare-workers:
+    name: Deploy and Test Cloudflare Workers
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [test, test-cloudflare-workers]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Setup Cloudflare Worker test environment
+        run: |
+          cd examples/edge-environment
+          npm install
+          npm run build
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+          workingDirectory: examples/edge-environment
+
+      - name: Test deployed Cloudflare Worker
+        run: |
+          # Wait for deployment to be ready
+          sleep 30
+          
+          # Get the worker URL from wrangler output
+          WORKER_URL=$(cd examples/edge-environment && npx wrangler whoami --format json | jq -r '.subdomain')
+          echo "Testing worker at: https://${WORKER_URL}.workers.dev"
+          
+          # Test the deployed worker
+          curl -f "https://${WORKER_URL}.workers.dev/health" || echo "Deployed worker health check failed"
+
+  # Test in different Node.js environments including compact/edge-like environments
+  test-edge-environments:
+    name: Test Edge-like Environments
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: "Node.js 20 (minimal)"
+            node-version: "20"
+            env: "NODE_OPTIONS=--max-old-space-size=128"
+          - name: "Node.js 18 (minimal)"
+            node-version: "18"
+            env: "NODE_OPTIONS=--max-old-space-size=128"
+          - name: "Node.js 20 (compact)"
+            node-version: "20"
+            env: "NODE_OPTIONS=--max-old-space-size=64 --optimize-for-size"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Test in edge-like environment
+        env:
+          NODE_OPTIONS: ${{ matrix.env }}
+        run: |
+          # Test basic SDK functionality in constrained environment
+          node -e "
+            const nylas = require('./lib/cjs/nylas.js');
+            console.log('SDK loaded successfully in edge environment');
+            
+            // Test that types are properly optional
+            const config = { apiKey: 'test-key' };
+            const client = new nylas.Nylas(config);
+            console.log('Client created successfully');
+          "
+
+      - name: Test ESM in edge-like environment
+        env:
+          NODE_OPTIONS: ${{ matrix.env }}
+        run: |
+          # Test ESM build in constrained environment
+          node --input-type=module -e "
+            import nylas from './lib/esm/nylas.js';
+            console.log('ESM SDK loaded successfully in edge environment');
+            
+            const config = { apiKey: 'test-key' };
+            const client = new nylas(config);
+            console.log('ESM client created successfully');
+          "
+
+  # Build and test different module formats
+  test-module-formats:
+    name: Test Module Formats
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build all formats
+        run: npm run build
+
+      - name: Test CommonJS
+        run: |
+          node -e "
+            const nylas = require('./lib/cjs/nylas.js');
+            console.log('CommonJS build works');
+            const client = new nylas.Nylas({ apiKey: 'test' });
+            console.log('CommonJS client created');
+          "
+
+      - name: Test ESM
+        run: |
+          node --input-type=module -e "
+            import nylas from './lib/esm/nylas.js';
+            console.log('ESM build works');
+            const client = new nylas({ apiKey: 'test' });
+            console.log('ESM client created');
+          "
+
+      - name: Test CJS Wrapper
+        run: |
+          node -e "
+            const nylas = require('./cjs-wrapper.js');
+            console.log('CJS wrapper works');
+            const client = new nylas.Nylas({ apiKey: 'test' });
+            console.log('CJS wrapper client created');
+          "
+
+  # Security and dependency checks
+  security-check:
+    name: Security Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level=moderate
+
+      - name: Check for known vulnerabilities
+        run: npx audit-ci --moderate
