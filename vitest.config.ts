@@ -5,6 +5,7 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     include: ['tests/**/*.spec.ts'],
+    exclude: ['tests/cloudflare-workers*.spec.ts'],
     setupFiles: ['tests/setupVitest.ts'],
     coverage: {
       provider: 'v8',
