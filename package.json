@@ -14,9 +14,9 @@
     "node": ">=16"
   },
   "scripts": {
-    "test": "vitest",
-    "test:coverage": "vitest --coverage",
-    "test:miniflare": "vitest --config vitest.miniflare.config.ts",
+    "test": "vitest --run",
+    "test:coverage": "vitest run --coverage",
+    "test:miniflare": "vitest run --config vitest.miniflare.config.ts",
     "lint": "eslint --ext .js,.ts -f visualstudio .",
     "lint:fix": "npm run lint -- --fix",
     "lint:ci": "npm run lint:fix -- --quiet",
