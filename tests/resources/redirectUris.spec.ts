@@ -1,9 +1,11 @@
 import APIClient from '../../src/apiClient';
 import { RedirectUris } from '../../src/resources/redirectUris';
-jest.mock('../../src/apiClient');
+vi.mock('../../src/apiClient');
+
+import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('RedirectUris', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let redirectUris: RedirectUris;
 
   beforeAll(() => {
@@ -12,7 +14,7 @@ describe('RedirectUris', () => {
       apiUri: 'https://api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     redirectUris = new RedirectUris(apiClient);
     apiClient.request.mockResolvedValue({});

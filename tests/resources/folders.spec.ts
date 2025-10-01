@@ -1,10 +1,12 @@
 import APIClient from '../../src/apiClient';
 import { Folders } from '../../src/resources/folders';
 import { objKeysToCamelCase } from '../../src/utils';
-jest.mock('../../src/apiClient');
+vi.mock('../../src/apiClient');
+
+import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('Folders', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let folders: Folders;
 
   beforeAll(() => {
@@ -13,7 +15,7 @@ describe('Folders', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     folders = new Folders(apiClient);
     apiClient.request.mockResolvedValue({ data: [] });

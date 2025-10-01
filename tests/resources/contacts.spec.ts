@@ -1,9 +1,11 @@
 import APIClient from '../../src/apiClient';
 import { Contacts } from '../../src/resources/contacts';
-jest.mock('../../src/apiClient');
+vi.mock('../../src/apiClient');
+
+import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('Contacts', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let contacts: Contacts;
 
   beforeAll(() => {
@@ -12,7 +14,7 @@ describe('Contacts', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     contacts = new Contacts(apiClient);
     apiClient.request.mockResolvedValue({});

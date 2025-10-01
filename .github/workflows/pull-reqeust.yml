@@ -17,9 +17,9 @@ jobs:
         node-version: [ 16.x, 18.x, 20.x ]
     name: Nodejs ${{ matrix.node-version }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup Nodejs ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -32,10 +32,13 @@ jobs:
       - name: Run prettier checks
         run: npm run lint:prettier:check
 
-      - name: Run tests
+      - name: Run Node.js tests
         run: npm run test:coverage
 
+      - name: Run Cloudflare Workers tests
+        run: npm run test:miniflare
+
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

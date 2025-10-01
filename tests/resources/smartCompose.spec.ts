@@ -1,9 +1,11 @@
 import APIClient from '../../src/apiClient';
 import { SmartCompose } from '../../src/resources/smartCompose';
-jest.mock('../../src/apiClient');
+vi.mock('../../src/apiClient');
+
+import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('SmartCompose', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let smartCompose: SmartCompose;
 
   beforeAll(() => {
@@ -12,7 +14,7 @@ describe('SmartCompose', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     smartCompose = new SmartCompose(apiClient);
     apiClient.request.mockResolvedValue({});

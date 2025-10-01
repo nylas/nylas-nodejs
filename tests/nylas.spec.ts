@@ -1,4 +1,7 @@
+import { describe, it, expect } from 'vitest';
 import Nylas from '../src/nylas';
+
+import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('Nylas', () => {
   describe('constructor', () => {

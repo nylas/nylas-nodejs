@@ -14,8 +14,9 @@
     "node": ">=16"
   },
   "scripts": {
-    "test": "jest",
-    "test:coverage": "npm run test -- --coverage",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "test:miniflare": "vitest --config vitest.miniflare.config.ts",
     "lint": "eslint --ext .js,.ts -f visualstudio .",
     "lint:fix": "npm run lint -- --fix",
     "lint:ci": "npm run lint:fix -- --quiet",
@@ -50,24 +51,24 @@
   },
   "devDependencies": {
     "@babel/core": "^7.3.3",
-    "@types/jest": "^29.5.2",
+    "@cloudflare/vitest-pool-workers": "^0.9.8",
     "@types/mime-types": "^2.1.2",
     "@types/node": "^22.15.21",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^2.25.0",
     "@typescript-eslint/parser": "^2.25.0",
+    "@vitest/coverage-v8": "^2.1.8",
     "eslint": "^5.14.0",
     "eslint-config-prettier": "^4.0.0",
     "eslint-plugin-custom-rules": "^0.0.0",
     "eslint-plugin-import": "^2.28.1",
     "eslint-plugin-prettier": "^3.0.1",
-    "jest": "^29.6.1",
-    "jest-fetch-mock": "^3.0.3",
+    "miniflare": "^3.20241218.1",
     "prettier": "^3.5.3",
-    "ts-jest": "^29.1.1",
     "typedoc": "^0.28.4",
     "typedoc-plugin-rename-defaults": "^0.7.3",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^2.1.8"
   },
   "repository": {
     "type": "git",

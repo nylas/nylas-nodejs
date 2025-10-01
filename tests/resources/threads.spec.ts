@@ -1,9 +1,11 @@
 import APIClient from '../../src/apiClient';
 import { Threads } from '../../src/resources/threads';
-jest.mock('../../src/apiClient');
+vi.mock('../../src/apiClient');
+
+import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('Threads', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let threads: Threads;
 
   beforeEach(() => {
@@ -12,7 +14,7 @@ describe('Threads', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     threads = new Threads(apiClient);
     apiClient.request.mockResolvedValue({});

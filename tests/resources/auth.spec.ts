@@ -4,7 +4,9 @@ import {
   CodeExchangeRequest,
   TokenExchangeRequest,
 } from '../../src/models/auth';
-jest.mock('uuid', () => ({ v4: (): string => 'nylas' }));
+vi.mock('uuid', () => ({ v4: (): string => 'nylas' }));
+
+import { describe, it, expect, beforeEach, beforeAll, afterEach, afterAll, vi } from 'vitest';
 
 describe('Auth', () => {
   let apiClient: APIClient;
@@ -19,7 +21,7 @@ describe('Auth', () => {
     });
 
     auth = new Auth(apiClient);
-    jest.spyOn(APIClient.prototype, 'request').mockResolvedValue({});
+    vi.spyOn(APIClient.prototype, 'request').mockResolvedValue({});
   });
 
   describe('Exchanging tokens', () => {
