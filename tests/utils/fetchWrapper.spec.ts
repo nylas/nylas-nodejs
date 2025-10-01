@@ -2,31 +2,33 @@
  * Tests for main fetchWrapper implementation (CJS-based)
  */
 
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+
 // Store original global functions
 const _originalGlobal = global;
 const originalFunction = global.Function;
 
 // Mock the dynamic import to avoid actually importing node-fetch
 const mockNodeFetchMain = {
-  default: jest.fn().mockName('mockFetch'),
-  Request: jest.fn().mockName('mockRequest'),
-  Response: jest.fn().mockName('mockResponse'),
+  default: vi.fn(),
+  Request: vi.fn(),
+  Response: vi.fn(),
 };
 
 // Mock the Function constructor used for dynamic imports
-const mockDynamicImportMain = jest.fn().mockResolvedValue(mockNodeFetchMain);
+const mockDynamicImportMain = vi.fn().mockResolvedValue(mockNodeFetchMain);
 
 describe('fetchWrapper (main)', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    jest.resetModules();
+    vi.clearAllMocks();
+    vi.resetModules();
     // Setup mocked Function constructor
-    global.Function = jest.fn().mockImplementation(() => mockDynamicImportMain);
+    global.Function = vi.fn().mockImplementation(() => mockDynamicImportMain);
   });
 
   describe('integration with apiClient usage patterns', () => {
     it('should work with typical apiClient.request() usage', async () => {
-      const mockGlobalFetch = jest.fn().mockResolvedValue({
+      const mockGlobalFetch = vi.fn().mockResolvedValue({
         ok: true,
         status: 200,
         json: async () => ({ data: 'test' }),
@@ -98,7 +100,7 @@ describe('fetchWrapper (main)', () => {
 
   describe('consistency with CJS implementation', () => {
     it('should behave identically to fetchWrapper-cjs', async () => {
-      const mockGlobalFetch = jest.fn().mockName('globalFetch');
+      const mockGlobalFetch = vi.fn().mockName('globalFetch');
       (global as any).fetch = mockGlobalFetch;
 
       const { getFetch } = await import('../../src/utils/fetchWrapper.js');
@@ -145,9 +147,9 @@ describe('fetchWrapper (main)', () => {
     });
 
     it('should prefer global objects when available', async () => {
-      const mockGlobalFetch = jest.fn();
-      const mockGlobalRequest = jest.fn();
-      const mockGlobalResponse = jest.fn();
+      const mockGlobalFetch = vi.fn();
+      const mockGlobalRequest = vi.fn();
+      const mockGlobalResponse = vi.fn();
 
       (global as any).fetch = mockGlobalFetch;
       (global as any).Request = mockGlobalRequest;
@@ -168,7 +170,7 @@ describe('fetchWrapper (main)', () => {
 
   describe('environment detection', () => {
     it('should detect test environment correctly', async () => {
-      const mockGlobalFetch = jest.fn();
+      const mockGlobalFetch = vi.fn();
       (global as any).fetch = mockGlobalFetch;
 
       const { getFetch } = await import('../../src/utils/fetchWrapper.js');
@@ -192,7 +194,7 @@ describe('fetchWrapper (main)', () => {
 
     it('should handle dynamic import for getFetch when no global fetch', async () => {
       // Clear the module cache to ensure fresh import
-      jest.resetModules();
+      vi.resetModules();
 
       // Remove global fetch but keep global object
       delete (global as any).fetch;
@@ -206,7 +208,7 @@ describe('fetchWrapper (main)', () => {
 
     it('should handle dynamic import for getRequest when no global Request', async () => {
       // Clear the module cache to ensure fresh import
-      jest.resetModules();
+      vi.resetModules();
 
       // Remove global Request but keep global object
       delete (global as any).Request;
@@ -220,7 +222,7 @@ describe('fetchWrapper (main)', () => {
 
     it('should handle dynamic import for getResponse when no global Response', async () => {
       // Clear the module cache to ensure fresh import
-      jest.resetModules();
+      vi.resetModules();
 
       // Remove global Response but keep global object
       delete (global as any).Response;
@@ -234,8 +236,8 @@ describe('fetchWrapper (main)', () => {
 
     it('should reuse cached nodeFetchModule on subsequent calls', async () => {
       // Clear the module cache to ensure fresh import
-      jest.resetModules();
-      jest.clearAllMocks();
+      vi.resetModules();
+      vi.clearAllMocks();
 
       // Remove all global objects
       delete (global as any).fetch;

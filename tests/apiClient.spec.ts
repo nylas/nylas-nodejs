@@ -1,3 +1,4 @@
+import { vi, beforeEach, describe, it, expect } from 'vitest';
 import APIClient, { RequestOptionsParams } from '../src/apiClient';
 import {
   NylasApiError,
@@ -7,11 +8,13 @@ import {
 import { SDK_VERSION } from '../src/version';
 import { mockResponse } from './testUtils';
 
-import fetchMock from 'jest-fetch-mock';
+// Mock fetch using Vitest
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
 
 describe('APIClient', () => {
   beforeEach(() => {
-    fetchMock.resetMocks();
+    mockFetch.mockClear();
   });
 
   describe('constructor', () => {
@@ -292,7 +295,7 @@ describe('APIClient', () => {
           mockResp.headers.set(key, value);
         });
 
-        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp));
+        mockFetch.mockImplementationOnce(() => Promise.resolve(mockResp));
 
         const response = await client.request({
           path: '/test',
@@ -331,7 +334,7 @@ describe('APIClient', () => {
           mockResp.headers.set(key, value);
         });
 
-        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp));
+        mockFetch.mockImplementationOnce(() => Promise.resolve(mockResp));
 
         const response = await client.request({ path: '/test', method: 'GET' });
 
@@ -347,7 +350,7 @@ describe('APIClient', () => {
       });
 
       it('should throw an error if the response is undefined', async () => {
-        fetchMock.mockImplementationOnce(() =>
+        mockFetch.mockImplementationOnce(() =>
           Promise.resolve(undefined as any)
         );
 
@@ -363,7 +366,7 @@ describe('APIClient', () => {
         const payload = {
           invalid: true,
         };
-        fetchMock.mockImplementationOnce(() =>
+        mockFetch.mockImplementationOnce(() =>
           Promise.resolve(mockResponse(JSON.stringify(payload), 400))
         );
 
@@ -402,7 +405,7 @@ describe('APIClient', () => {
           mockHeaders['x-nylas-api-version']
         );
 
-        fetchMock.mockImplementation(() => Promise.resolve(mockResp));
+        mockFetch.mockImplementation(() => Promise.resolve(mockResp));
 
         try {
           await client.request({
@@ -452,7 +455,7 @@ describe('APIClient', () => {
           mockHeaders['x-nylas-api-version']
         );
 
-        fetchMock.mockImplementation(() => Promise.resolve(mockResp));
+        mockFetch.mockImplementation(() => Promise.resolve(mockResp));
 
         try {
           await client.request({
@@ -470,7 +473,7 @@ describe('APIClient', () => {
       it('should respect override timeout when provided in seconds (value < 1000)', async () => {
         const overrideTimeout = 2; // 2 second timeout
 
-        fetchMock.mockImplementationOnce(() => {
+        mockFetch.mockImplementationOnce(() => {
           // Immediately throw an AbortError to simulate a timeout
           const error = new Error('The operation was aborted');
           error.name = 'AbortError';
@@ -494,12 +497,12 @@ describe('APIClient', () => {
       it('should respect override timeout when provided in milliseconds (value >= 1000) for backward compatibility', async () => {
         // We no longer show the console warning since we're using TypeScript annotations instead
         const originalWarn = console.warn;
-        console.warn = jest.fn();
+        console.warn = vi.fn();
 
         try {
           const overrideTimeoutMs = 2000; // 2000 milliseconds (2 seconds)
 
-          fetchMock.mockImplementationOnce(() => {
+          mockFetch.mockImplementationOnce(() => {
             // Immediately throw an AbortError to simulate a timeout
             const error = new Error('The operation was aborted');
             error.name = 'AbortError';
@@ -528,12 +531,12 @@ describe('APIClient', () => {
       it('should convert override timeout from seconds to milliseconds for setTimeout when value < 1000', async () => {
         // We need to mock setTimeout to verify it's called with the correct duration
         const originalSetTimeout = global.setTimeout;
-        const mockSetTimeout = jest.fn().mockImplementation(() => 123); // Return a timeout ID
+        const mockSetTimeout = vi.fn().mockImplementation(() => 123); // Return a timeout ID
         global.setTimeout = mockSetTimeout as unknown as typeof setTimeout;
 
         try {
           // Mock fetch to return a successful response so we can verify setTimeout
-          fetchMock.mockImplementationOnce(() =>
+          mockFetch.mockImplementationOnce(() =>
             Promise.resolve(mockResponse(JSON.stringify({ data: 'test' })))
           );
 
@@ -559,16 +562,16 @@ describe('APIClient', () => {
       it('should keep override timeout in milliseconds for setTimeout when value >= 1000 (backward compatibility)', async () => {
         // We no longer show the console warning since we're using TypeScript annotations instead
         const originalWarn = console.warn;
-        console.warn = jest.fn();
+        console.warn = vi.fn();
 
         // We need to mock setTimeout to verify it's called with the correct duration
         const originalSetTimeout = global.setTimeout;
-        const mockSetTimeout = jest.fn().mockImplementation(() => 123); // Return a timeout ID
+        const mockSetTimeout = vi.fn().mockImplementation(() => 123); // Return a timeout ID
         global.setTimeout = mockSetTimeout as unknown as typeof setTimeout;
 
         try {
           // Mock fetch to return a successful response so we can verify setTimeout
-          fetchMock.mockImplementationOnce(() =>
+          mockFetch.mockImplementationOnce(() =>
             Promise.resolve(mockResponse(JSON.stringify({ data: 'test' })))
           );
 
@@ -595,7 +598,7 @@ describe('APIClient', () => {
       });
 
       it('should use default timeout when no override provided', async () => {
-        fetchMock.mockImplementationOnce(() => {
+        mockFetch.mockImplementationOnce(() => {
           // Immediately throw an AbortError to simulate a timeout
           const error = new Error('The operation was aborted');
           error.name = 'AbortError';
@@ -632,7 +635,7 @@ describe('APIClient', () => {
           mockResp.headers.set(key, value);
         });
 
-        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp));
+        mockFetch.mockImplementationOnce(() => Promise.resolve(mockResp));
 
         const result = await client.request({
           path: '/test',
@@ -654,7 +657,7 @@ describe('APIClient', () => {
 
       it('should handle form data in request options', () => {
         const mockFormData = {
-          append: jest.fn(),
+          append: vi.fn(),
           [Symbol.toStringTag]: 'FormData',
         } as any;
 
@@ -672,8 +675,8 @@ describe('APIClient', () => {
         const invalidJsonResponse = {
           ok: true,
           status: 200,
-          text: jest.fn().mockResolvedValue('invalid json content'),
-          json: jest.fn().mockRejectedValue(new Error('Unexpected token')),
+          text: vi.fn().mockResolvedValue('invalid json content'),
+          json: vi.fn().mockRejectedValue(new Error('Unexpected token')),
           headers: new Map(),
         };
 
@@ -691,13 +694,13 @@ describe('APIClient', () => {
         const mockResp = {
           ok: true,
           status: 200,
-          text: jest.fn().mockResolvedValue(testData),
-          json: jest.fn(),
+          text: vi.fn().mockResolvedValue(testData),
+          json: vi.fn(),
           headers: new Map(),
-          buffer: jest.fn().mockResolvedValue(Buffer.from(testData)),
+          buffer: vi.fn().mockResolvedValue(Buffer.from(testData)),
         };
 
-        fetchMock.mockImplementationOnce(() =>
+        mockFetch.mockImplementationOnce(() =>
           Promise.resolve(mockResp as any)
         );
 
@@ -713,17 +716,17 @@ describe('APIClient', () => {
 
     describe('requestStream', () => {
       it('should return readable stream response', async () => {
-        const mockStream = { pipe: jest.fn(), on: jest.fn() };
+        const mockStream = { pipe: vi.fn(), on: vi.fn() };
         const mockResp = {
           ok: true,
           status: 200,
-          text: jest.fn().mockResolvedValue('stream data'),
-          json: jest.fn(),
+          text: vi.fn().mockResolvedValue('stream data'),
+          json: vi.fn(),
           headers: new Map(),
           body: mockStream,
         };
 
-        fetchMock.mockImplementationOnce(() =>
+        mockFetch.mockImplementationOnce(() =>
           Promise.resolve(mockResp as any)
         );
 
@@ -739,13 +742,13 @@ describe('APIClient', () => {
         const mockResp = {
           ok: true,
           status: 200,
-          text: jest.fn().mockResolvedValue('data'),
-          json: jest.fn(),
+          text: vi.fn().mockResolvedValue('data'),
+          json: vi.fn(),
           headers: new Map(),
           body: null,
         };
 
-        fetchMock.mockImplementationOnce(() =>
+        mockFetch.mockImplementationOnce(() =>
           Promise.resolve(mockResp as any)
         );
 

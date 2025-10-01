@@ -1,3 +1,4 @@
+import { vi, describe, it, expect } from 'vitest';
 import {
   createFileRequestBuilder,
   objKeysToCamelCase,
@@ -11,16 +12,17 @@ import {
 import { Readable } from 'stream';
 import { CreateAttachmentRequest } from '../src/models/attachments';
 
-jest.mock('node:fs', () => {
+// Mock node:fs using Vitest
+vi.mock('node:fs', () => {
   return {
-    statSync: jest.fn(),
-    createReadStream: jest.fn(),
+    statSync: vi.fn(),
+    createReadStream: vi.fn(),
   };
 });
 
-jest.mock('mime-types', () => {
+vi.mock('mime-types', () => {
   return {
-    lookup: jest.fn(),
+    lookup: vi.fn(),
   };
 });
 
