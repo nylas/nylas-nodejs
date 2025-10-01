@@ -30,15 +30,10 @@ jobs:
       - name: Build the SDK
         run: npm run build
 
-      - name: Test Cloudflare Workers compatibility
+      - name: Test Cloudflare Workers compatibility with ESM
         run: |
-          echo "🧪 Testing Nylas SDK in Cloudflare Workers nodejs_compat environment..."
-          node test-cloudflare-compat.js
-          
-      - name: Test TypeScript optional types in Cloudflare Workers
-        run: |
-          echo "🔍 Testing TypeScript optional types in Cloudflare Workers environment..."
-          node test-types-cloudflare.js
+          echo "🧪 Testing Nylas SDK in Cloudflare Workers environment using ESM..."
+          node run-tests-cloudflare.mjs
 
       - name: Test with Wrangler (if available)
         run: |

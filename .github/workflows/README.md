@@ -4,50 +4,39 @@ This directory contains GitHub Actions workflows for testing the Nylas Node.js S
 
 ## Workflows
 
-### `cloudflare-simple-test.yml`
-**Recommended approach** - Simple and effective Cloudflare Workers testing:
-- Uses Cloudflare's `nodejs_compat` environment to test our existing SDK
-- Runs compatibility tests locally without requiring Cloudflare deployment
-- Tests both CommonJS and ESM builds
+### `cloudflare-simple-test.yml` & `cloudflare-esm-test.yml`
+**Recommended approach** - ESM + Wrangler testing:
+- Uses ESM (ECMAScript Modules) for better Cloudflare Workers compatibility
+- Runs our normal test suites in actual Cloudflare Workers environment using Wrangler
+- Tests locally using `wrangler dev` to simulate production environment
 - Validates optional types work correctly in Cloudflare Workers context
 - Optional deployment testing (requires secrets)
 
-### `cloudflare-nodejs-compat-test.yml`
-More comprehensive testing using Cloudflare Workers:
-- Creates a test worker that runs SDK tests in `nodejs_compat` environment
-- Tests locally using `wrangler dev`
-- Validates SDK functionality in actual Cloudflare Workers runtime
-
-### `cloudflare-vitest-test.yml`
-Advanced testing using Cloudflare's Vitest integration:
-- Uses `@cloudflare/vitest-pool-workers` for integration testing
-- Runs tests directly in Cloudflare Workers context
-- More sophisticated testing setup
-
 ## Why This Approach Works
 
-### **Cloudflare `nodejs_compat` Environment**
-- Cloudflare Workers supports Node.js compatibility through the `nodejs_compat` flag
-- This allows us to run our existing Node.js code (including the Nylas SDK) in Cloudflare Workers
-- We can test the exact same code that users will run in production
+### **ESM + Wrangler Environment**
+- Uses ESM which is the native module system for Cloudflare Workers
+- Runs tests in actual Cloudflare Workers runtime using Wrangler
+- Tests the exact same code that users will run in production
+- Avoids CommonJS compatibility issues (like mime-db problems)
 
 ### **Testing Optional Types**
 The main issue we're addressing is ensuring optional types work correctly in Cloudflare Workers. Our tests verify:
-- SDK can be imported in Cloudflare Workers context
+- SDK can be imported in Cloudflare Workers context using ESM
 - Client can be created with minimal configuration (tests optional types)
 - All optional properties work without TypeScript errors
-- Both CommonJS and ESM builds are compatible
+- ESM builds are fully compatible with Cloudflare Workers
 
 ## Local Testing
 
 You can test Cloudflare Workers compatibility locally:
 
 ```bash
-# Run the compatibility test
+# Run the ESM + Wrangler test
 npm run test:cloudflare
 
 # Or run the test script directly
-node test-cloudflare-compat.js
+node run-tests-cloudflare.mjs
 ```
 
 ## GitHub Actions Setup
