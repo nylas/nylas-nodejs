@@ -11,7 +11,7 @@ This directory contains GitHub Actions workflows for testing the Nylas Node.js S
 - Uses ESM (ECMAScript Modules) for better Cloudflare Workers compatibility
 - Tests locally using `wrangler dev` to simulate production environment
 - Validates optional types work correctly in Cloudflare Workers context
-- Optional deployment testing (requires secrets)
+- Runs on every push and pull request to main branch
 
 ### Existing Workflows
 - `clubhouse.yml` - Clubhouse integration

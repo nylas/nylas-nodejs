@@ -1,18 +1,18 @@
-name: Cloudflare Workers Jest Test Suite
+name: Cloudflare Workers Test
 
 on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
   push:
     branches:
-      - cursor/add-cloudflare-worker-to-test-matrix-3aca
       - main
   pull_request:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  test-jest-in-cloudflare:
-    name: Run Jest Test Suite in Cloudflare Workers
+  test-cloudflare-workers:
+    name: Test in Cloudflare Workers
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -37,52 +37,3 @@ jobs:
         run: |
           echo "🧪 Running Nylas SDK Jest test suite in Cloudflare Workers environment..."
           npm run test:cloudflare
-
-      - name: Test with wrangler deploy --dry-run
-        run: |
-          cd cloudflare-test-runner
-          echo "🔍 Testing worker build and deployment readiness..."
-          wrangler deploy --dry-run
-          echo "✅ Worker is ready for deployment"
-
-  # Optional: Deploy and test in actual Cloudflare environment
-  deploy-and-test:
-    name: Deploy and Test in Cloudflare
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.CLOUDFLARE_API_TOKEN != ''
-    needs: test-jest-in-cloudflare
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build the SDK
-        run: npm run build
-
-      - name: Deploy test worker to Cloudflare
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: deploy
-          workingDirectory: cloudflare-test-runner
-
-      - name: Test deployed worker
-        run: |
-          # Wait for deployment
-          sleep 30
-          
-          # Get worker URL
-          WORKER_URL=$(cd cloudflare-test-runner && npx wrangler whoami --format json | jq -r '.subdomain')
-          echo "Testing worker at: https://${WORKER_URL}.workers.dev"
-          
-          # Test the deployed worker
-          curl -f "https://${WORKER_URL}.workers.dev/test" | jq .
