@@ -14,8 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x, 24.x]
-    name: Nodejs ${{ matrix.node-version }}
+        include:
+          - node-version: 18.x
+            test-type: nodejs
+          - node-version: 20.x
+            test-type: nodejs
+          - node-version: 22.x
+            test-type: nodejs
+          - node-version: 24.x
+            test-type: nodejs
+          - node-version: 20.x
+            test-type: cloudflare-workers
+    name: ${{ matrix.test-type == 'cloudflare-workers' && 'Cloudflare Workers' || format('Nodejs {0}', matrix.node-version) }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Nodejs ${{ matrix.node-version }}
@@ -27,15 +37,19 @@ jobs:
         run: npm install
 
       - name: Run lint checks
+        if: matrix.test-type == 'nodejs'
         run: npm run lint:ci
 
       - name: Run prettier checks
+        if: matrix.test-type == 'nodejs'
         run: npm run lint:prettier:check
 
       - name: Run Node.js tests
+        if: matrix.test-type == 'nodejs'
         run: npm run test:coverage
 
       - name: Run Cloudflare Workers tests
+        if: matrix.test-type == 'cloudflare-workers'
         run: npm run test:miniflare
 
       - name: Upload coverage to Codecov
