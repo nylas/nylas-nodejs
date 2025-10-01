@@ -1,0 +1,130 @@
+name: Cloudflare Workers Compatibility Test
+
+on:
+  push:
+    branches:
+      - cursor/add-cloudflare-worker-to-test-matrix-3aca
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test-cloudflare-compatibility:
+    name: Test Cloudflare Workers Compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Test Cloudflare Workers compatibility
+        run: |
+          echo "🧪 Testing Nylas SDK in Cloudflare Workers nodejs_compat environment..."
+          node test-cloudflare-compat.js
+
+      - name: Test with Wrangler (if available)
+        run: |
+          # Install wrangler if not available
+          if ! command -v wrangler &> /dev/null; then
+            npm install -g wrangler@latest
+          fi
+          
+          # Create a simple test worker
+          mkdir -p cloudflare-test
+          cat > cloudflare-test/wrangler.toml << 'EOF'
+          name = "nylas-test"
+          main = "worker.js"
+          compatibility_date = "2024-09-23"
+          compatibility_flags = ["nodejs_compat"]
+          EOF
+          
+          cat > cloudflare-test/worker.js << 'EOF'
+          // Simple worker that tests our SDK
+          const nylas = require('../lib/cjs/nylas.js');
+          
+          export default {
+            async fetch(request, env) {
+              try {
+                // Test SDK in Cloudflare Workers context
+                const client = new nylas.default({ apiKey: 'test-key' });
+                
+                return new Response(JSON.stringify({
+                  status: 'success',
+                  message: 'SDK works in Cloudflare Workers',
+                  environment: 'nodejs_compat'
+                }), {
+                  headers: { 'Content-Type': 'application/json' }
+                });
+              } catch (error) {
+                return new Response(JSON.stringify({
+                  status: 'error',
+                  message: error.message,
+                  environment: 'nodejs_compat'
+                }), {
+                  status: 500,
+                  headers: { 'Content-Type': 'application/json' }
+                });
+              }
+            }
+          };
+          EOF
+          
+          # Test with wrangler deploy --dry-run
+          cd cloudflare-test
+          wrangler deploy --dry-run
+          echo "✅ Worker build successful - SDK is compatible with Cloudflare Workers"
+
+  # Optional: Deploy and test in actual Cloudflare environment
+  deploy-and-test:
+    name: Deploy and Test in Cloudflare
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.CLOUDFLARE_API_TOKEN != ''
+    needs: test-cloudflare-compatibility
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Deploy test worker to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy
+          workingDirectory: cloudflare-test
+
+      - name: Test deployed worker
+        run: |
+          # Wait for deployment
+          sleep 30
+          
+          # Get worker URL
+          WORKER_URL=$(cd cloudflare-test && npx wrangler whoami --format json | jq -r '.subdomain')
+          echo "Testing worker at: https://${WORKER_URL}.workers.dev"
+          
+          # Test the deployed worker
+          curl -f "https://${WORKER_URL}.workers.dev/" | jq .

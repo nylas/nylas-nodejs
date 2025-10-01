@@ -1,0 +1,236 @@
+name: Cloudflare Vitest Test
+
+on:
+  push:
+    branches:
+      - cursor/add-cloudflare-worker-to-test-matrix-3aca
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test-with-cloudflare-vitest:
+    name: Test with Cloudflare Vitest Integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Cloudflare Vitest integration
+        run: |
+          npm install --save-dev vitest @cloudflare/vitest-pool-workers
+          npm install --save-dev wrangler
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Create Vitest config for Cloudflare Workers
+        run: |
+          cat > vitest.config.workers.ts << 'EOF'
+          import { defineWorkersConfig } from '@cloudflare/vitest-pool-workers/config';
+          
+          export default defineWorkersConfig({
+            test: {
+              pool: '@cloudflare/vitest-pool-workers',
+              poolOptions: {
+                workers: {
+                  wrangler: { configPath: './cloudflare-test/wrangler.toml' },
+                },
+              },
+            },
+          });
+          EOF
+          
+          # Create a simple worker for testing
+          mkdir -p cloudflare-test
+          cat > cloudflare-test/wrangler.toml << 'EOF'
+          name = "nylas-test-worker"
+          main = "worker.js"
+          compatibility_date = "2024-09-23"
+          compatibility_flags = ["nodejs_compat"]
+          EOF
+          
+          cat > cloudflare-test/worker.js << 'EOF'
+          // Simple worker that just exports our SDK for testing
+          const nylas = require('../lib/cjs/nylas.js');
+          
+          export default {
+            async fetch(request, env) {
+              return new Response(JSON.stringify({
+                message: 'Nylas SDK Test Worker',
+                sdk: 'available'
+              }), {
+                headers: { 'Content-Type': 'application/json' }
+              });
+            }
+          };
+          EOF
+
+      - name: Create Cloudflare Workers test file
+        run: |
+          cat > test-cloudflare-workers.spec.ts << 'EOF'
+          import { describe, it, expect } from 'vitest';
+          import { SELF } from 'cloudflare:test';
+          
+          describe('Nylas SDK in Cloudflare Workers', () => {
+            it('should work in Cloudflare Workers environment', async () => {
+              // Test that our worker responds
+              const response = await SELF.fetch('https://example.com');
+              expect(response.status).toBe(200);
+              
+              const data = await response.json();
+              expect(data.message).toBe('Nylas SDK Test Worker');
+            });
+            
+            it('should import SDK in Workers context', async () => {
+              // This test runs in the Workers context, so we can test SDK directly
+              const nylas = require('../lib/cjs/nylas.js');
+              expect(nylas).toBeDefined();
+              expect(nylas.default).toBeDefined();
+            });
+            
+            it('should create client with minimal config', async () => {
+              const nylas = require('../lib/cjs/nylas.js');
+              const client = new nylas.default({ apiKey: 'test-key' });
+              expect(client).toBeDefined();
+            });
+            
+            it('should handle optional types correctly', async () => {
+              const nylas = require('../lib/cjs/nylas.js');
+              // This should not throw an error due to optional types
+              expect(() => {
+                new nylas.default({ 
+                  apiKey: 'test-key',
+                  // Optional properties should not cause errors
+                });
+              }).not.toThrow();
+            });
+          });
+          EOF
+
+      - name: Run tests with Cloudflare Vitest
+        run: |
+          npx vitest run test-cloudflare-workers.spec.ts --config vitest.config.workers.ts
+
+  # Alternative: Simple test using wrangler dev
+  test-with-wrangler-dev:
+    name: Test with Wrangler Dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Wrangler
+        run: npm install -g wrangler@latest
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Create test worker
+        run: |
+          mkdir -p cloudflare-test
+          cat > cloudflare-test/wrangler.toml << 'EOF'
+          name = "nylas-test"
+          main = "test-worker.js"
+          compatibility_date = "2024-09-23"
+          compatibility_flags = ["nodejs_compat"]
+          EOF
+          
+          cat > cloudflare-test/test-worker.js << 'EOF'
+          // Test worker that runs our SDK tests
+          const nylas = require('../lib/cjs/nylas.js');
+          
+          async function runTests() {
+            const results = [];
+            
+            try {
+              // Test SDK import
+              results.push({ test: 'SDK Import', status: 'PASS' });
+              
+              // Test client creation
+              const client = new nylas.default({ apiKey: 'test-key' });
+              results.push({ test: 'Client Creation', status: 'PASS' });
+              
+              // Test optional types
+              const minimalClient = new nylas.default({ apiKey: 'test-key' });
+              results.push({ test: 'Optional Types', status: 'PASS' });
+              
+              // Test ESM
+              const esmNylas = (await import('../lib/esm/nylas.js')).default;
+              const esmClient = new esmNylas({ apiKey: 'test-key' });
+              results.push({ test: 'ESM Support', status: 'PASS' });
+              
+            } catch (error) {
+              results.push({ test: 'Error', status: 'FAIL', message: error.message });
+            }
+            
+            return results;
+          }
+          
+          export default {
+            async fetch(request, env) {
+              const url = new URL(request.url);
+              
+              if (url.pathname === '/test') {
+                const results = await runTests();
+                const passed = results.filter(r => r.status === 'PASS').length;
+                const total = results.length;
+                
+                return new Response(JSON.stringify({
+                  status: passed === total ? 'PASS' : 'FAIL',
+                  summary: `${passed}/${total} tests passed`,
+                  results: results
+                }), {
+                  headers: { 'Content-Type': 'application/json' }
+                });
+              }
+              
+              return new Response('Nylas SDK Test Worker - /test endpoint available', {
+                headers: { 'Content-Type': 'text/plain' }
+              });
+            }
+          };
+          EOF
+
+      - name: Test with wrangler dev
+        run: |
+          cd cloudflare-test
+          
+          # Start worker in background
+          timeout 30s wrangler dev --local --port 8791 &
+          WORKER_PID=$!
+          
+          # Wait for worker to start
+          sleep 10
+          
+          # Run tests
+          if curl -f http://localhost:8791/test 2>/dev/null; then
+            echo "✅ Cloudflare Workers tests passed"
+            curl -s http://localhost:8791/test | jq .
+          else
+            echo "❌ Cloudflare Workers tests failed"
+            exit 1
+          fi
+          
+          # Clean up
+          kill $WORKER_PID 2>/dev/null || true

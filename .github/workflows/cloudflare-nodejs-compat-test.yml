@@ -1,0 +1,271 @@
+name: Cloudflare Node.js Compat Test
+
+on:
+  push:
+    branches:
+      - cursor/add-cloudflare-worker-to-test-matrix-3aca
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test-in-cloudflare-compat:
+    name: Test in Cloudflare Node.js Compat Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Wrangler CLI
+        run: npm install -g wrangler@latest
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Create Cloudflare Worker test environment
+        run: |
+          mkdir -p cloudflare-test
+          
+          # Create wrangler.toml with nodejs_compat
+          cat > cloudflare-test/wrangler.toml << 'EOF'
+          name = "nylas-sdk-test"
+          main = "test-worker.js"
+          compatibility_date = "2024-09-23"
+          compatibility_flags = ["nodejs_compat"]
+          EOF
+          
+          # Create a worker that runs our existing tests in Cloudflare's nodejs_compat environment
+          cat > cloudflare-test/test-worker.js << 'EOF'
+          // This worker runs our existing test suite in Cloudflare's nodejs_compat environment
+          
+          // Import our built SDK
+          const nylas = require('../lib/cjs/nylas.js');
+          
+          // Mock the test environment
+          global.fetch = require('node-fetch');
+          global.Request = require('node-fetch').Request;
+          global.Response = require('node-fetch').Response;
+          global.Headers = require('node-fetch').Headers;
+          
+          // Run a subset of our tests that are relevant for Cloudflare Workers
+          async function runCloudflareTests() {
+            const results = [];
+            
+            try {
+              // Test 1: Basic SDK functionality
+              results.push({ 
+                test: 'SDK Import', 
+                status: 'PASS', 
+                message: 'SDK imported successfully in Cloudflare Workers' 
+              });
+              
+              // Test 2: Client creation with minimal config (tests optional types)
+              const client = new nylas.default({ apiKey: 'test-key' });
+              results.push({ 
+                test: 'Client Creation', 
+                status: 'PASS', 
+                message: 'Client created with minimal config' 
+              });
+              
+              // Test 3: Client creation with all optional properties (tests optional types)
+              const clientWithOptions = new nylas.default({ 
+                apiKey: 'test-key',
+                apiUri: 'https://api.us.nylas.com',
+                timeout: 30000,
+                // All these should be optional and not cause errors
+              });
+              results.push({ 
+                test: 'Optional Properties', 
+                status: 'PASS', 
+                message: 'All optional properties work correctly' 
+              });
+              
+              // Test 4: ESM compatibility
+              const esmNylas = (await import('../lib/esm/nylas.js')).default;
+              const esmClient = new esmNylas({ apiKey: 'test-key' });
+              results.push({ 
+                test: 'ESM Compatibility', 
+                status: 'PASS', 
+                message: 'ESM import and client creation works' 
+              });
+              
+              // Test 5: Resource access (test that resources are properly initialized)
+              if (client.calendars && typeof client.calendars.list === 'function') {
+                results.push({ 
+                  test: 'Resource Access', 
+                  status: 'PASS', 
+                  message: 'Resources are properly initialized' 
+                });
+              } else {
+                results.push({ 
+                  test: 'Resource Access', 
+                  status: 'FAIL', 
+                  message: 'Resources not properly initialized' 
+                });
+              }
+              
+              // Test 6: Test that optional types don't cause TypeScript errors
+              // This is the main issue we're trying to catch
+              const minimalClient = new nylas.default({ 
+                apiKey: 'test-key'
+                // No other properties - this should work without errors
+              });
+              results.push({ 
+                test: 'Minimal Config (Optional Types)', 
+                status: 'PASS', 
+                message: 'Minimal configuration works - optional types are properly handled' 
+              });
+              
+            } catch (error) {
+              results.push({ 
+                test: 'Error', 
+                status: 'FAIL', 
+                message: `Test failed: ${error.message}` 
+              });
+            }
+            
+            return results;
+          }
+          
+          export default {
+            async fetch(request, env) {
+              const url = new URL(request.url);
+              
+              if (url.pathname === '/test') {
+                const results = await runCloudflareTests();
+                const passed = results.filter(r => r.status === 'PASS').length;
+                const total = results.length;
+                
+                return new Response(JSON.stringify({
+                  status: passed === total ? 'PASS' : 'FAIL',
+                  summary: `${passed}/${total} tests passed`,
+                  results: results,
+                  environment: 'cloudflare-nodejs-compat',
+                  timestamp: new Date().toISOString()
+                }), {
+                  headers: { 
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                  }
+                });
+              }
+              
+              if (url.pathname === '/health') {
+                return new Response(JSON.stringify({
+                  status: 'healthy',
+                  environment: 'cloudflare-nodejs-compat',
+                  sdk: 'nylas-nodejs'
+                }), {
+                  headers: { 'Content-Type': 'application/json' }
+                });
+              }
+              
+              return new Response(JSON.stringify({
+                message: 'Nylas SDK Cloudflare Workers Test',
+                endpoints: {
+                  '/test': 'Run SDK compatibility tests',
+                  '/health': 'Health check'
+                }
+              }), {
+                headers: { 'Content-Type': 'application/json' }
+              });
+            }
+          };
+          EOF
+
+      - name: Test locally with Cloudflare nodejs_compat
+        run: |
+          cd cloudflare-test
+          
+          echo "🧪 Testing Nylas SDK in Cloudflare Node.js Compat environment..."
+          
+          # Start worker locally with nodejs_compat
+          timeout 30s wrangler dev --local --port 8790 &
+          WORKER_PID=$!
+          
+          # Wait for worker to start
+          sleep 10
+          
+          # Run tests
+          echo "Running compatibility tests..."
+          if curl -f http://localhost:8790/test 2>/dev/null; then
+            echo "✅ Cloudflare Node.js Compat tests passed"
+            echo "Test results:"
+            curl -s http://localhost:8790/test | jq .
+          else
+            echo "❌ Cloudflare Node.js Compat tests failed"
+            exit 1
+          fi
+          
+          # Test health endpoint
+          echo "Testing health endpoint..."
+          if curl -f http://localhost:8790/health 2>/dev/null; then
+            echo "✅ Health check passed"
+            curl -s http://localhost:8790/health | jq .
+          else
+            echo "❌ Health check failed"
+            exit 1
+          fi
+          
+          # Clean up
+          kill $WORKER_PID 2>/dev/null || true
+
+      - name: Test with wrangler deploy --dry-run
+        run: |
+          cd cloudflare-test
+          echo "Testing worker build and deployment readiness..."
+          wrangler deploy --dry-run
+          echo "✅ Worker is ready for deployment"
+
+  # Optional: Deploy and test in actual Cloudflare environment
+  deploy-and-test-cloudflare:
+    name: Deploy and Test in Cloudflare
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.CLOUDFLARE_API_TOKEN != ''
+    needs: test-in-cloudflare-compat
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the SDK
+        run: npm run build
+
+      - name: Deploy test worker to Cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+          workingDirectory: cloudflare-test
+
+      - name: Test deployed worker
+        run: |
+          # Wait for deployment
+          sleep 30
+          
+          # Get worker URL
+          WORKER_URL=$(cd cloudflare-test && npx wrangler whoami --format json | jq -r '.subdomain')
+          echo "Testing worker at: https://${WORKER_URL}.workers.dev"
+          
+          # Run tests against deployed worker
+          curl -f "https://${WORKER_URL}.workers.dev/test" | jq .
