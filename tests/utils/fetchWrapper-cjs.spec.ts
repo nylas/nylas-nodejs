@@ -9,7 +9,7 @@ import {
   describe,
   it,
   expect,
-  beforeEach,
+  _beforeEach,
   _beforeAll,
   _afterAll,
   vi,

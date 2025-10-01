@@ -3,7 +3,7 @@ import {
   it,
   expect,
   _beforeEach,
-  beforeAll,
+  _beforeAll,
   _afterEach,
   _afterAll,
   vi,
@@ -16,6 +16,7 @@ import {
 } from '../../src/models/auth';
 
 vi.mock('uuid', () => ({ v4: (): string => 'nylas' }));
+vi.mock('../../src/apiClient');
 
 describe('Auth', () => {
   let apiClient: APIClient;
@@ -27,10 +28,18 @@ describe('Auth', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    });
+    }) as any;
 
     auth = new Auth(apiClient);
-    vi.spyOn(APIClient.prototype, 'request').mockResolvedValue({});
+
+    // Mock the request method
+    apiClient.request = vi.fn().mockResolvedValue({
+      data: {},
+    });
+
+    // Ensure apiKey is accessible
+    apiClient.apiKey = 'apiKey';
+    apiClient.serverUrl = 'https://test.api.nylas.com';
   });
 
   describe('Exchanging tokens', () => {

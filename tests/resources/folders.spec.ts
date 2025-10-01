@@ -3,7 +3,7 @@ import {
   it,
   expect,
   _beforeEach,
-  beforeAll,
+  _beforeAll,
   _afterEach,
   _afterAll,
   vi,
@@ -115,6 +115,11 @@ describe('Folders', () => {
     });
 
     it('should call apiClient.request with all supported query parameters', async () => {
+      // Mock response with exactly 10 items to satisfy pagination logic
+      apiClient.request.mockResolvedValueOnce({
+        data: Array(10).fill({}), // 10 empty objects
+      });
+
       await folders.list({
         identifier: 'id123',
         queryParams: {

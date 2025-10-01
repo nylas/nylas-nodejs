@@ -3,7 +3,7 @@ import {
   it,
   expect,
   _beforeEach,
-  beforeAll,
+  _beforeAll,
   _afterEach,
   _afterAll,
   vi,
@@ -26,7 +26,9 @@ describe('Events', () => {
     });
 
     events = new Events(apiClient);
-    apiClient.request.mockResolvedValue({});
+    apiClient.request.mockResolvedValue({
+      data: [],
+    });
   });
 
   describe('list', () => {
@@ -168,6 +170,11 @@ describe('Events', () => {
 
   describe('listImportEvents', () => {
     it('should call apiClient.request with the correct params', async () => {
+      // Mock response with exactly 100 items to satisfy pagination logic
+      apiClient.request.mockResolvedValueOnce({
+        data: Array(100).fill({}), // 100 empty objects
+      });
+
       await events.listImportEvents({
         identifier: 'id123',
         queryParams: {

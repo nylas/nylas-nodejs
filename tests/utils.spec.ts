@@ -1,13 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  _beforeAll,
-  _afterEach,
-  _afterAll,
-  vi,
-} from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   createFileRequestBuilder,
   objKeysToCamelCase,
@@ -21,18 +12,15 @@ import {
 import { Readable } from 'stream';
 import { CreateAttachmentRequest } from '../src/models/attachments';
 
-vi.mock('node:fs', () => {
-  return {
-    statSync: vi.fn(),
-    createReadStream: vi.fn(),
-  };
-});
+// Mock modules - must be defined inline for Vitest hoisting
+vi.mock('node:fs', () => ({
+  statSync: vi.fn(),
+  createReadStream: vi.fn(),
+}));
 
-vi.mock('mime-types', () => {
-  return {
-    lookup: vi.fn(),
-  };
-});
+vi.mock('mime-types', () => ({
+  lookup: vi.fn(),
+}));
 
 describe('createFileRequestBuilder', () => {
   const MOCK_FILE_PATH = 'path/to/mock/file.txt';
@@ -41,14 +29,16 @@ describe('createFileRequestBuilder', () => {
   };
   const mockedReadStream = {};
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.resetAllMocks();
-    require('node:fs').statSync.mockReturnValue(mockedStatSync);
-    require('node:fs').createReadStream.mockReturnValue(mockedReadStream);
+    const fs = await import('node:fs');
+    vi.mocked(fs.statSync).mockReturnValue(mockedStatSync as any);
+    vi.mocked(fs.createReadStream).mockReturnValue(mockedReadStream as any);
   });
 
-  it('should return correct file details for a given filePath', () => {
-    require('mime-types').lookup.mockReturnValue('text/plain');
+  it('should return correct file details for a given filePath', async () => {
+    const mime = await import('mime-types');
+    vi.mocked(mime.lookup).mockReturnValue('text/plain');
 
     const result = createFileRequestBuilder(MOCK_FILE_PATH);
 
@@ -60,33 +50,24 @@ describe('createFileRequestBuilder', () => {
     });
   });
 
-  it('should default contentType to application/octet-stream if mime lookup fails', () => {
-    require('mime-types').lookup.mockReturnValue(null);
+  it('should default contentType to application/octet-stream if mime lookup fails', async () => {
+    const mime = await import('mime-types');
+    vi.mocked(mime.lookup).mockReturnValue(null as any);
 
     const result = createFileRequestBuilder(MOCK_FILE_PATH);
 
     expect(result.contentType).toBe('application/octet-stream');
   });
 
-  it('should default contentType to application/octet-stream for files without extensions', () => {
-    require('mime-types').lookup.mockReturnValue(null);
+  it('should default contentType to application/octet-stream for files without extensions', async () => {
+    const mime = await import('mime-types');
+    vi.mocked(mime.lookup).mockReturnValue(null as any);
 
     const result = createFileRequestBuilder('path/to/mock/fileWithoutExt');
 
     expect(result.contentType).toBe('application/octet-stream');
   });
 });
-
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  _beforeAll,
-  _afterEach,
-  _afterAll,
-  vi,
-} from 'vitest';
 
 describe('convertCase', () => {
   it('should convert basic object keys to camelCase', () => {
@@ -204,17 +185,6 @@ describe('convertCase', () => {
   });
 });
 
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  _beforeAll,
-  _afterEach,
-  _afterAll,
-  vi,
-} from 'vitest';
-
 describe('makePathParams and safePath', () => {
   it('should URL encode path params with special characters', () => {
     const path = makePathParams(
@@ -313,17 +283,6 @@ describe('makePathParams and safePath', () => {
     expect(path).toBe('/v3/grants/%2F%40%23%24%25%5E%26*()');
   });
 });
-
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  _beforeAll,
-  _afterEach,
-  _afterAll,
-  vi,
-} from 'vitest';
 
 describe('encodeAttachmentContent', () => {
   // Helper function to create a readable stream from a string
@@ -511,17 +470,6 @@ describe('encodeAttachmentContent', () => {
   });
 });
 
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  _beforeAll,
-  _afterEach,
-  _afterAll,
-  vi,
-} from 'vitest';
-
 describe('encodeAttachmentStreams (backwards compatibility)', () => {
   it('should work the same as encodeAttachmentContent', async () => {
     const testContent = 'Backwards compatibility test';
@@ -543,17 +491,6 @@ describe('encodeAttachmentStreams (backwards compatibility)', () => {
     expect(oldResult[0].content).toBe(buffer.toString('base64'));
   });
 });
-
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  _beforeAll,
-  _afterEach,
-  _afterAll,
-  vi,
-} from 'vitest';
 
 describe('streamToBase64', () => {
   // Helper function to create a readable stream from a string
@@ -598,17 +535,6 @@ describe('streamToBase64', () => {
     expect(result).toBe('');
   });
 });
-
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  _beforeAll,
-  _afterEach,
-  _afterAll,
-  vi,
-} from 'vitest';
 
 describe('attachmentStreamToFile', () => {
   // Helper function to create a readable stream from a string
