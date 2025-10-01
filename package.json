@@ -17,6 +17,7 @@
     "test": "jest",
     "test:coverage": "npm run test -- --coverage",
     "test:cloudflare": "node test-cloudflare-compat.js",
+    "test:cloudflare-types": "node test-types-cloudflare.js",
     "lint": "eslint --ext .js,.ts -f visualstudio .",
     "lint:fix": "npm run lint -- --fix",
     "lint:ci": "npm run lint:fix -- --quiet",
