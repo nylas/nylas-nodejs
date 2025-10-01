@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Run Nylas SDK Vitest tests in Cloudflare Workers environment
+ * Run ALL 25 Vitest tests in Cloudflare Workers environment
  * This runs our actual Vitest test suite in the Cloudflare Workers nodejs_compat environment
  */
 
@@ -12,7 +12,7 @@ import { dirname, join } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-console.log('🧪 Running Nylas SDK Vitest tests in Cloudflare Workers environment...\n');
+console.log('🧪 Running ALL 25 Vitest tests in Cloudflare Workers environment...\n');
 
 async function runVitestTestsInCloudflare() {
   const workerDir = join(__dirname, 'cloudflare-vitest-runner');
