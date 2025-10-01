@@ -4,14 +4,19 @@ This directory contains GitHub Actions workflows for testing the Nylas Node.js S
 
 ## Workflows
 
-### `cloudflare-jest-final.yml` & `test-workflow.yml`
-**Final approach** - Jest test suite in Cloudflare Workers:
+### `cloudflare-workers-test.yml`
+**Cloudflare Workers Testing** - Jest test suite in Cloudflare Workers:
 - Runs our actual Jest test suite in Cloudflare Workers nodejs_compat environment
 - Tests the built SDK files (not source files) in production-like environment
 - Uses ESM (ECMAScript Modules) for better Cloudflare Workers compatibility
 - Tests locally using `wrangler dev` to simulate production environment
 - Validates optional types work correctly in Cloudflare Workers context
 - Optional deployment testing (requires secrets)
+
+### Existing Workflows
+- `clubhouse.yml` - Clubhouse integration
+- `pull-reqeust.yml` - Pull request workflow
+- `sdk-reference.yaml` - SDK reference documentation
 
 ## Why This Approach Works
 
