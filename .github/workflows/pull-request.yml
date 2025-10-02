@@ -10,7 +10,26 @@ on:
       - main
 
 jobs:
-  checks:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint & Prettier
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint checks
+        run: npm run lint:ci
+
+      - name: Run prettier checks
+        run: npm run lint:prettier:check
+
+  tests:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -37,14 +56,6 @@ jobs:
       - name: Install dependencies and build
         run: npm install
 
-      - name: Run lint checks
-        if: matrix.test-type == 'nodejs'
-        run: npm run lint:ci
-
-      - name: Run prettier checks
-        if: matrix.test-type == 'nodejs'
-        run: npm run lint:prettier:check
-
       - name: Run Node.js tests
         if: matrix.test-type == 'nodejs'
         run: npm run test:coverage
@@ -54,6 +65,7 @@ jobs:
         run: npm run test:miniflare
 
       - name: Upload coverage to Codecov
+        if: matrix.test-type == 'nodejs' && matrix.node-version == '20.x'
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
