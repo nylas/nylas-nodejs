@@ -1,16 +1,7 @@
-import {
-  describe,
-  it,
-  expect,
-  _beforeEach,
-  _beforeAll,
-  _afterEach,
-  _afterAll,
-  vi,
-} from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import APIClient from '../../src/apiClient';
-import { Calendars } from '../../src/resources/calendars';
 import { AvailabilityMethod } from '../../src/models/availability';
+import { Calendars } from '../../src/resources/calendars';
 
 vi.mock('../../src/apiClient');
 

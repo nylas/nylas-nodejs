@@ -1,13 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  _beforeEach,
-  _beforeAll,
-  _afterEach,
-  _afterAll,
-  vi,
-} from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Contacts } from '../../src/resources/contacts';
 

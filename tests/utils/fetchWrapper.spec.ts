@@ -7,7 +7,6 @@
  */
 
 // Store original global functions
-const _originalGlobal = globalThis;
 const originalFunction = globalThis.Function;
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';

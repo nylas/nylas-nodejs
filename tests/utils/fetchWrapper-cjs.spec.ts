@@ -5,15 +5,7 @@
 // Import types are only used for dynamic imports in tests, so we don't import them here
 // The functions are imported dynamically within each test to ensure proper module isolation
 
-import {
-  describe,
-  it,
-  expect,
-  _beforeEach,
-  _beforeAll,
-  _afterAll,
-  vi,
-} from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // Mock the dynamic import to avoid actually importing node-fetch
 const mockNodeFetch = {

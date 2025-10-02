@@ -1,13 +1,4 @@
-import {
-  describe,
-  it,
-  expect,
-  _beforeEach,
-  _beforeAll,
-  _afterEach,
-  _afterAll,
-  _vi,
-} from 'vitest';
+import { describe, expect, it } from 'vitest';
 import Nylas from '../src/nylas';
 
 describe('Nylas', () => {

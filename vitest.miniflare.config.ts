@@ -4,6 +4,16 @@ export default defineWorkersConfig({
   test: {
     globals: true,
     setupFiles: ['./tests/setupMiniflareTests.ts'],
+    // Exclude Node.js-specific tests that are incompatible with Workers environment
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/lib/**',
+      // Exclude Node.js-specific fetch wrapper tests
+      'tests/utils/fetchWrapper.spec.ts',
+      'tests/utils/fetchWrapper-esm.spec.ts',
+      'tests/utils/fetchWrapper-cjs.spec.ts',
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'cobertura'],
