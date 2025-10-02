@@ -1,9 +1,8 @@
-import { defineConfig } from 'vitest/config';
+import { defineWorkersConfig } from '@cloudflare/vitest-pool-workers/config';
 
-export default defineConfig({
+export default defineWorkersConfig({
   test: {
     globals: true,
-    environment: 'node',
     setupFiles: ['./tests/setupMiniflareTests.ts'],
     coverage: {
       provider: 'v8',
@@ -17,9 +16,16 @@ export default defineConfig({
     clearMocks: true,
     mockReset: true,
     restoreMocks: true,
-    // Environment variables for Cloudflare Workers testing
-    env: {
-      CLOUDFLARE_WORKERS: 'true',
+    poolOptions: {
+      workers: {
+        miniflare: {
+          // Miniflare configuration for Cloudflare Workers environment
+          compatibilityDate: '2023-05-18',
+          compatibilityFlags: ['nodejs_compat'],
+          // Enable Node.js compatibility for SDK dependencies
+          bindings: {},
+        },
+      },
     },
   },
   resolve: {
@@ -33,5 +39,23 @@ export default defineConfig({
   },
   esbuild: {
     target: 'node16',
+  },
+  // Configure Vite to handle CommonJS modules properly
+  optimizeDeps: {
+    include: ['mime-types', 'mime-db'],
+  },
+  // Bundle Node.js dependencies for Workers environment
+  ssr: {
+    external: [],
+    noExternal: [
+      'node-fetch',
+      'mime-types',
+      'mime-db',
+      'form-data-encoder',
+      'formdata-node',
+    ],
+    optimizeDeps: {
+      include: ['mime-types', 'mime-db'],
+    },
   },
 });
