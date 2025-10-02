@@ -1,7 +1,5 @@
 /**
- * Fetch wrapper - intelligently detects environment and uses appropriate implementation
- * - In Workers/Edge environments: uses native Web APIs
- * - In Node.js: uses node-fetch polyfill
+ * Fetch wrapper for CJS builds - uses dynamic imports for node-fetch compatibility
  */
 
 // Types for the dynamic import result
@@ -15,15 +13,14 @@ interface NodeFetchModule {
 let nodeFetchModule: NodeFetchModule | null = null;
 
 /**
- * Get fetch function - uses native fetch in Workers, node-fetch in Node.js
+ * Get fetch function - uses dynamic import for CJS
  */
 export async function getFetch(): Promise<any> {
-  // Use native fetch if available (Workers, modern browsers, or test mocks)
-  if (typeof globalThis !== 'undefined' && globalThis.fetch) {
-    return globalThis.fetch;
+  // In test environment, use global fetch (mocked by jest-fetch-mock)
+  if (typeof global !== 'undefined' && global.fetch) {
+    return global.fetch;
   }
 
-  // Fallback to node-fetch for Node.js environments
   if (!nodeFetchModule) {
     // Use Function constructor to prevent TypeScript from converting to require()
     const dynamicImport = new Function('specifier', 'return import(specifier)');
@@ -34,15 +31,14 @@ export async function getFetch(): Promise<any> {
 }
 
 /**
- * Get Request constructor - uses native Request in Workers, node-fetch in Node.js
+ * Get Request constructor - uses dynamic import for CJS
  */
 export async function getRequest(): Promise<any> {
-  // Use native Request if available (Workers, modern browsers, or test mocks)
-  if (typeof globalThis !== 'undefined' && globalThis.Request) {
-    return globalThis.Request;
+  // In test environment, use global Request or a mock
+  if (typeof global !== 'undefined' && global.Request) {
+    return global.Request;
   }
 
-  // Fallback to node-fetch for Node.js environments
   if (!nodeFetchModule) {
     // Use Function constructor to prevent TypeScript from converting to require()
     const dynamicImport = new Function('specifier', 'return import(specifier)');
@@ -53,15 +49,14 @@ export async function getRequest(): Promise<any> {
 }
 
 /**
- * Get Response constructor - uses native Response in Workers, node-fetch in Node.js
+ * Get Response constructor - uses dynamic import for CJS
  */
 export async function getResponse(): Promise<any> {
-  // Use native Response if available (Workers, modern browsers, or test mocks)
-  if (typeof globalThis !== 'undefined' && globalThis.Response) {
-    return globalThis.Response;
+  // In test environment, use global Response or a mock
+  if (typeof global !== 'undefined' && global.Response) {
+    return global.Response;
   }
 
-  // Fallback to node-fetch for Node.js environments
   if (!nodeFetchModule) {
     // Use Function constructor to prevent TypeScript from converting to require()
     const dynamicImport = new Function('specifier', 'return import(specifier)');
@@ -71,7 +66,7 @@ export async function getResponse(): Promise<any> {
   return nodeFetchModule.Response;
 }
 
-// Export types as any for compatibility
+// Export types as any for CJS compatibility
 export type RequestInit = any;
 export type HeadersInit = any;
 export type Request = any;

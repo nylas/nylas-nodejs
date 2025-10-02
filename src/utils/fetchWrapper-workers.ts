@@ -27,5 +27,8 @@ export async function getResponse(): Promise<typeof Response> {
   return Response;
 }
 
-// Export types directly from Web APIs
-export type { RequestInit, HeadersInit, Request, Response };
+// Export type aliases for Web API types
+export type RequestInit = globalThis.RequestInit;
+export type HeadersInit = globalThis.HeadersInit;
+export type Request = globalThis.Request;
+export type Response = globalThis.Response;
