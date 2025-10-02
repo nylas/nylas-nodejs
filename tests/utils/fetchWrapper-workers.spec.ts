@@ -66,9 +66,11 @@ describe('fetchWrapper-workers', () => {
       // URL might or might not have trailing slash depending on implementation
       expect(request.url).toMatch(/^https:\/\/example\.com\/?$/);
       expect(request.method).toBe('POST');
-      
+
       // Check content-type header (case-insensitive)
-      const contentType = request.headers.get('content-type') || request.headers.get('Content-Type');
+      const contentType =
+        request.headers.get('content-type') ||
+        request.headers.get('Content-Type');
       if (contentType) {
         expect(contentType).toBe('application/json');
       }
@@ -108,9 +110,13 @@ describe('fetchWrapper-workers', () => {
       // In Workers/Edge environments, headers are case-insensitive and normalized
       // In Node.js, the behavior might differ
       expect(request.headers).toBeDefined();
-      const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
-      const customHeader = request.headers.get('x-custom-header') || request.headers.get('X-Custom-Header');
-      
+      const authHeader =
+        request.headers.get('authorization') ||
+        request.headers.get('Authorization');
+      const customHeader =
+        request.headers.get('x-custom-header') ||
+        request.headers.get('X-Custom-Header');
+
       if (authHeader) {
         expect(authHeader).toBe('Bearer token');
       }
@@ -128,7 +134,7 @@ describe('fetchWrapper-workers', () => {
       });
 
       expect(request.body).toBeDefined();
-      
+
       // In Workers/Edge, Request has a text() method to read the body
       // In Node.js, the implementation might differ
       if (typeof request.text === 'function') {
