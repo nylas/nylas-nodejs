@@ -486,4 +486,138 @@ describe('Events', () => {
       });
     });
   });
+
+  describe('Event model with optional conferencing', () => {
+    it('should handle events without conferencing property', async () => {
+      const eventWithoutConferencing = {
+        requestId: 'request123',
+        data: {
+          id: 'event123',
+          grantId: 'grant123',
+          object: 'event' as const,
+          calendarId: 'calendar123',
+          busy: false,
+          readOnly: false,
+          participants: [],
+          when: {
+            time: 1617235200,
+            timezone: 'America/New_York',
+            object: 'time' as const,
+          },
+          visibility: 'default' as const,
+          title: 'Event without conferencing',
+        },
+      };
+
+      apiClient.request.mockResolvedValue(eventWithoutConferencing);
+
+      const result = await events.find({
+        identifier: 'id123',
+        eventId: 'event123',
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+      });
+
+      expect(result.data.conferencing).toBeUndefined();
+      expect(result.data.title).toBe('Event without conferencing');
+    });
+
+    it('should handle events with conferencing property', async () => {
+      const eventWithConferencing = {
+        requestId: 'request123',
+        data: {
+          id: 'event123',
+          grantId: 'grant123',
+          object: 'event' as const,
+          calendarId: 'calendar123',
+          busy: false,
+          readOnly: false,
+          participants: [],
+          when: {
+            time: 1617235200,
+            timezone: 'America/New_York',
+            object: 'time' as const,
+          },
+          conferencing: {
+            provider: 'Zoom Meeting' as const,
+            details: {
+              url: 'https://zoom.us/j/123456789',
+              meetingCode: '123456789',
+            },
+          },
+          visibility: 'default' as const,
+          title: 'Event with conferencing',
+        },
+      };
+
+      apiClient.request.mockResolvedValue(eventWithConferencing);
+
+      const result = await events.find({
+        identifier: 'id123',
+        eventId: 'event456',
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+      });
+
+      expect(result.data.conferencing).toBeDefined();
+      expect(result.data.conferencing?.provider).toBe('Zoom Meeting');
+      expect(result.data.title).toBe('Event with conferencing');
+    });
+
+    it('should create events without conferencing', async () => {
+      const eventResponse = {
+        requestId: 'request123',
+        data: {
+          id: 'event123',
+          grantId: 'grant123',
+          object: 'event' as const,
+          calendarId: 'calendar123',
+          busy: false,
+          readOnly: false,
+          participants: [],
+          when: {
+            time: 1617235200,
+            timezone: 'America/New_York',
+            object: 'time' as const,
+          },
+          visibility: 'default' as const,
+          title: 'Simple event',
+        },
+      };
+
+      apiClient.request.mockResolvedValue(eventResponse);
+
+      const result = await events.create({
+        identifier: 'id123',
+        requestBody: {
+          when: {
+            time: 1617235200,
+            timezone: 'America/New_York',
+          },
+          title: 'Simple event',
+        },
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/id123/events',
+        body: {
+          when: {
+            time: 1617235200,
+            timezone: 'America/New_York',
+          },
+          title: 'Simple event',
+        },
+        queryParams: {
+          calendarId: 'calendar123',
+        },
+      });
+      expect(result.data.conferencing).toBeUndefined();
+    });
+  });
 });
