@@ -486,4 +486,106 @@ describe('Events', () => {
       });
     });
   });
+
+  describe('URL encoding issues (GitHub issue #673)', () => {
+    it('should properly encode query parameters without double encoding', async () => {
+      // Test case that reproduces the issue described in GitHub issue #673
+      // where query parameters might be double-encoded causing %3F instead of ?
+      const queryParams = {
+        calendarId: 'calendar@example.com',
+        start: '1640995200',
+        end: '1641081600',
+        limit: 50,
+        metadataPair: { 'custom-key': 'custom-value' },
+      };
+
+      // Mock the response to avoid the pagination logic
+      apiClient.request.mockResolvedValueOnce({
+        requestId: 'request123',
+        data: [],
+        nextCursor: null,
+      });
+
+      await events.list({
+        identifier: 'grant-id',
+        queryParams,
+        overrides: {
+          apiUri: 'https://api.nylas.com',
+        },
+      });
+
+      // Verify that the request was made with properly encoded query parameters
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/grant-id/events',
+        queryParams,
+        overrides: {
+          apiUri: 'https://api.nylas.com',
+        },
+      });
+    });
+
+    it('should handle special characters in query parameters correctly', async () => {
+      const queryParams = {
+        calendarId: 'calendar+test@example.com',
+        title: 'meeting with ? special chars',
+        metadataPair: { 'key with spaces': 'value with & symbols' },
+      };
+
+      // Mock the response to avoid the pagination logic
+      apiClient.request.mockResolvedValueOnce({
+        requestId: 'request123',
+        data: [],
+        nextCursor: null,
+      });
+
+      await events.list({
+        identifier: 'grant-id',
+        queryParams,
+        overrides: {
+          apiUri: 'https://api.nylas.com',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/grant-id/events',
+        queryParams,
+        overrides: {
+          apiUri: 'https://api.nylas.com',
+        },
+      });
+    });
+
+    it('should not double-encode already encoded parameters', async () => {
+      const queryParams = {
+        calendarId: 'calendar%40example.com', // Already URL encoded
+        title: 'meeting%20with%20special%20chars', // Already URL encoded
+      };
+
+      // Mock the response to avoid the pagination logic
+      apiClient.request.mockResolvedValueOnce({
+        requestId: 'request123',
+        data: [],
+        nextCursor: null,
+      });
+
+      await events.list({
+        identifier: 'grant-id',
+        queryParams,
+        overrides: {
+          apiUri: 'https://api.nylas.com',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/grant-id/events',
+        queryParams,
+        overrides: {
+          apiUri: 'https://api.nylas.com',
+        },
+      });
+    });
+  });
 });
