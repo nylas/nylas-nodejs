@@ -1,44 +1,70 @@
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import APIClient from '../../src/apiClient';
-import { Messages } from '../../src/resources/messages';
-import { createReadableStream, MockedFormData } from '../testUtils';
 import { CreateAttachmentRequest } from '../../src/models/attachments';
 import {
-  MessageFields,
   Message,
+  MessageFields,
   MessageTrackingOptions,
 } from '../../src/models/messages';
-jest.mock('../../src/apiClient');
+import { Messages } from '../../src/resources/messages';
+import { createReadableStream, MockedFormData } from '../testUtils';
+vi.mock('../../src/apiClient');
 
 // Mock the FormData constructor
-jest.mock('formdata-node', () => ({
-  FormData: jest.fn().mockImplementation(function (this: MockedFormData) {
-    const appendedData: Record<string, any> = {};
+vi.mock('formdata-node', () => {
+  class MockFormData {
+    private appendedData: Record<string, any> = {};
 
-    this.append = (key: string, value: any): void => {
-      appendedData[key] = value;
-    };
+    append(key: string, value: any): void {
+      this.appendedData[key] = value;
+    }
 
-    this._getAppendedData = (): Record<string, any> => appendedData;
-  }),
-  Blob: jest.fn().mockImplementation((parts: any[], options?: any) => ({
-    type: options?.type || '',
-    size: parts.reduce((size, part) => size + (part.length || 0), 0),
-  })),
-  File: jest
-    .fn()
-    .mockImplementation((parts: any[], name: string, options?: any) => ({
-      name,
-      type: options?.type || '',
-      size:
+    _getAppendedData(): Record<string, any> {
+      return this.appendedData;
+    }
+  }
+
+  class MockBlob {
+    type: string;
+    size: number;
+
+    constructor(parts: any[], options?: any) {
+      this.type = options?.type || '';
+      this.size = parts.reduce(
+        (size: number, part: any) => size + (part.length || 0),
+        0
+      );
+    }
+  }
+
+  class MockFile {
+    name: string;
+    type: string;
+    size: number;
+    [Symbol.toStringTag] = 'File';
+
+    constructor(parts: any[], name: string, options?: any) {
+      this.name = name;
+      this.type = options?.type || '';
+      this.size =
         options?.size ||
-        parts.reduce((size, part) => size + (part.length || 0), 0),
-      stream: (): NodeJS.ReadableStream => parts[0],
-      [Symbol.toStringTag]: 'File',
-    })),
-}));
+        parts.reduce((size: number, part: any) => size + (part.length || 0), 0);
+    }
+
+    stream(): NodeJS.ReadableStream {
+      return (this as any).parts?.[0];
+    }
+  }
+
+  return {
+    FormData: MockFormData,
+    Blob: MockBlob,
+    File: MockFile,
+  };
+});
 
 describe('Messages', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let messages: Messages;
 
   beforeAll(() => {
@@ -47,7 +73,7 @@ describe('Messages', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     messages = new Messages(apiClient);
     apiClient.request.mockResolvedValue({});

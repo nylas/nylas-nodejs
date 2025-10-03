@@ -39,5 +39,5 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: nylas-nodejs-sdk-reference
           directory: docs
-          wranglerVersion: "3"
+          wranglerVersion: '3'
           branch: ${{ env.CLOUDFLARE_BRANCH }}

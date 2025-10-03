@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   createFileRequestBuilder,
   objKeysToCamelCase,
@@ -11,18 +12,15 @@ import {
 import { Readable } from 'stream';
 import { CreateAttachmentRequest } from '../src/models/attachments';
 
-jest.mock('node:fs', () => {
-  return {
-    statSync: jest.fn(),
-    createReadStream: jest.fn(),
-  };
-});
+// Mock modules - must be defined inline for Vitest hoisting
+vi.mock('node:fs', () => ({
+  statSync: vi.fn(),
+  createReadStream: vi.fn(),
+}));
 
-jest.mock('mime-types', () => {
-  return {
-    lookup: jest.fn(),
-  };
-});
+vi.mock('mime-types', () => ({
+  lookup: vi.fn(),
+}));
 
 describe('createFileRequestBuilder', () => {
   const MOCK_FILE_PATH = 'path/to/mock/file.txt';
@@ -31,14 +29,16 @@ describe('createFileRequestBuilder', () => {
   };
   const mockedReadStream = {};
 
-  beforeEach(() => {
-    jest.resetAllMocks();
-    require('node:fs').statSync.mockReturnValue(mockedStatSync);
-    require('node:fs').createReadStream.mockReturnValue(mockedReadStream);
+  beforeEach(async () => {
+    vi.resetAllMocks();
+    const fs = await import('node:fs');
+    vi.mocked(fs.statSync).mockReturnValue(mockedStatSync as any);
+    vi.mocked(fs.createReadStream).mockReturnValue(mockedReadStream as any);
   });
 
-  it('should return correct file details for a given filePath', () => {
-    require('mime-types').lookup.mockReturnValue('text/plain');
+  it('should return correct file details for a given filePath', async () => {
+    const mime = await import('mime-types');
+    vi.mocked(mime.lookup).mockReturnValue('text/plain');
 
     const result = createFileRequestBuilder(MOCK_FILE_PATH);
 
@@ -50,16 +50,18 @@ describe('createFileRequestBuilder', () => {
     });
   });
 
-  it('should default contentType to application/octet-stream if mime lookup fails', () => {
-    require('mime-types').lookup.mockReturnValue(null);
+  it('should default contentType to application/octet-stream if mime lookup fails', async () => {
+    const mime = await import('mime-types');
+    vi.mocked(mime.lookup).mockReturnValue(null as any);
 
     const result = createFileRequestBuilder(MOCK_FILE_PATH);
 
     expect(result.contentType).toBe('application/octet-stream');
   });
 
-  it('should default contentType to application/octet-stream for files without extensions', () => {
-    require('mime-types').lookup.mockReturnValue(null);
+  it('should default contentType to application/octet-stream for files without extensions', async () => {
+    const mime = await import('mime-types');
+    vi.mocked(mime.lookup).mockReturnValue(null as any);
 
     const result = createFileRequestBuilder('path/to/mock/fileWithoutExt');
 

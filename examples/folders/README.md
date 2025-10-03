@@ -27,6 +27,7 @@ npm run folders
 ```
 
 Or run directly with ts-node:
+
 ```bash
 npx ts-node folders.ts
 ```
@@ -39,7 +40,7 @@ The `includeHiddenFolders` parameter is specific to Microsoft accounts:
 const foldersWithHidden = await nylas.folders.list({
   identifier: GRANT_ID,
   queryParams: {
-    includeHiddenFolders: true,  // Microsoft only - includes hidden folders
+    includeHiddenFolders: true, // Microsoft only - includes hidden folders
   },
 });
 ```
@@ -49,6 +50,7 @@ This parameter defaults to `false` and when set to `true`, includes folders that
 ## Expected Output
 
 The example will output:
+
 1. A list of all visible folders
 2. A list of all folders including hidden ones (if using a Microsoft account)
 3. A filtered list showing only parent folders with their metadata
@@ -56,10 +58,11 @@ The example will output:
 ## Error Handling
 
 The example includes proper error handling and will display helpful error messages if:
+
 - Environment variables are not set
 - API requests fail
-- Authentication issues occur 
-=======
+- # Authentication issues occur
+
 # Nylas Folders API Examples
 
 This directory contains examples of how to use the Nylas Folders API with the Nylas Node.js SDK, including the new `singleLevel` query parameter.
@@ -81,27 +84,31 @@ The `singleLevel` parameter is a new query parameter for the "list all folders" 
 To run these examples, you'll need to:
 
 1. Install dependencies from the examples directory:
+
    ```bash
    cd examples
    npm install
    ```
 
 2. Copy the `.env.example` file to `.env` if you haven't already and add your credentials:
+
    ```bash
    cp .env.example .env
    # Edit .env with your editor
    ```
 
 3. Edit the `.env` file to include:
+
    - `NYLAS_API_KEY` - Your Nylas API key
    - `NYLAS_API_URI` (optional) - The Nylas API server URI (defaults to "https://api.us.nylas.com")
    - `NYLAS_GRANT_ID` - The Grant ID for a Microsoft account to see the `singleLevel` parameter in action
 
 4. Run the example:
+
    ```bash
    # From the examples directory
    npx ts-node folders/folders.ts
-   
+
    # Or if you add it to package.json scripts
    npm run folders
    ```
@@ -137,7 +144,7 @@ interface ListFolderQueryParams extends ListQueryParams {
   parentId?: string;
 
   /**
-   * (Microsoft only) If true, retrieves folders from a single-level hierarchy only. 
+   * (Microsoft only) If true, retrieves folders from a single-level hierarchy only.
    * If false, retrieves folders across a multi-level hierarchy.
    * @default false
    */
@@ -157,8 +164,8 @@ const singleLevelFolders = await nylas.folders.list({
   identifier: 'grant-id',
   queryParams: {
     parentId: 'parent-folder-id',
-    singleLevel: true
-  }
+    singleLevel: true,
+  },
 });
 
 // Get all descendants (default behavior)
@@ -166,11 +173,11 @@ const allFolders = await nylas.folders.list({
   identifier: 'grant-id',
   queryParams: {
     parentId: 'parent-folder-id',
-    singleLevel: false // or omit this parameter
-  }
+    singleLevel: false, // or omit this parameter
+  },
 });
 ```
 
 ## Documentation
 
-For more information, see the [Nylas API Documentation](https://developer.nylas.com/). 
+For more information, see the [Nylas API Documentation](https://developer.nylas.com/).

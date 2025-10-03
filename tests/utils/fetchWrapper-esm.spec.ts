@@ -8,6 +8,8 @@ import {
   getResponse,
 } from '../../src/utils/fetchWrapper-esm.js';
 
+import { describe, it, expect } from 'vitest';
+
 describe('fetchWrapper-esm', () => {
   describe('getFetch', () => {
     it('should return the node-fetch function', async () => {

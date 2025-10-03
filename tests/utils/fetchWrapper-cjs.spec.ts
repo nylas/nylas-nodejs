@@ -5,35 +5,37 @@
 // Import types are only used for dynamic imports in tests, so we don't import them here
 // The functions are imported dynamically within each test to ensure proper module isolation
 
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 // Mock the dynamic import to avoid actually importing node-fetch
 const mockNodeFetch = {
-  default: jest.fn().mockName('mockFetch'),
-  Request: jest.fn().mockName('mockRequest'),
-  Response: jest.fn().mockName('mockResponse'),
+  default: vi.fn().mockName('mockFetch'),
+  Request: vi.fn().mockName('mockRequest'),
+  Response: vi.fn().mockName('mockResponse'),
 };
 
 // Mock the Function constructor used for dynamic imports
-const mockDynamicImport = jest.fn().mockResolvedValue(mockNodeFetch);
-global.Function = jest.fn().mockImplementation(() => mockDynamicImport);
+const mockDynamicImport = vi.fn().mockResolvedValue(mockNodeFetch);
+global.Function = vi.fn().mockImplementation(() => mockDynamicImport);
 
 // Mock global objects for test environment detection
 const originalGlobal = global;
 
 describe('fetchWrapper-cjs', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Reset the module cache by clearing the nodeFetchModule cache
     // This is done by reimporting the module
-    jest.resetModules();
+    vi.resetModules();
     // Setup mocked Function constructor
-    global.Function = jest.fn().mockImplementation(() => mockDynamicImport);
+    global.Function = vi.fn().mockImplementation(() => mockDynamicImport);
     // Reset mock implementation
     mockDynamicImport.mockResolvedValue(mockNodeFetch);
   });
 
   describe('getFetch', () => {
     it('should return global.fetch when in test environment', async () => {
-      const mockGlobalFetch = jest.fn().mockName('globalFetch');
+      const mockGlobalFetch = vi.fn().mockName('globalFetch');
       (global as any).fetch = mockGlobalFetch;
 
       const { getFetch } = await import('../../src/utils/fetchWrapper-cjs.js');
@@ -74,7 +76,7 @@ describe('fetchWrapper-cjs', () => {
 
   describe('getRequest', () => {
     it('should return global.Request when in test environment', async () => {
-      const mockGlobalRequest = jest.fn().mockName('globalRequest');
+      const mockGlobalRequest = vi.fn().mockName('globalRequest');
       (global as any).Request = mockGlobalRequest;
 
       const { getRequest } = await import(
@@ -110,7 +112,7 @@ describe('fetchWrapper-cjs', () => {
 
   describe('getResponse', () => {
     it('should return global.Response when in test environment', async () => {
-      const mockGlobalResponse = jest.fn().mockName('globalResponse');
+      const mockGlobalResponse = vi.fn().mockName('globalResponse');
       (global as any).Response = mockGlobalResponse;
 
       const { getResponse } = await import(
@@ -146,7 +148,7 @@ describe('fetchWrapper-cjs', () => {
 
   describe('mixed environment scenarios', () => {
     it('should prefer global objects when available, fall back to dynamic import for missing ones', async () => {
-      const mockGlobalFetch = jest.fn().mockName('globalFetch');
+      const mockGlobalFetch = vi.fn().mockName('globalFetch');
       (global as any).fetch = mockGlobalFetch;
       delete (global as any).Request;
       delete (global as any).Response;

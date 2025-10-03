@@ -14,36 +14,40 @@ This directory contains examples of how to use the Nylas Node.js SDK to interact
 To run these examples, you'll need to:
 
 1. Install dependencies:
+
    ```bash
    cd examples
    npm install
    ```
 
 2. Copy the `.env.example` file to `.env` and fill in your API key:
+
    ```bash
    cp .env.example .env
    # Edit .env with your editor and add your API key
    ```
 
 3. Set up the required environment variables in the `.env` file:
+
    - `NYLAS_API_KEY` - Your Nylas API key
    - `NYLAS_API_URI` (optional) - The Nylas API server URI (defaults to "https://api.us.nylas.com")
    - Additional environment variables specific to each example
 
 4. Run the example:
+
    ```bash
    # Using ts-node
    npx ts-node grants/grants.ts
    npx ts-node notetakers/notetaker.ts
    npx ts-node calendars/event_with_notetaker.ts
    npx ts-node messages/messages.ts
-   
+
    # Or using npm scripts
    npm run grants
    npm run notetakers
    npm run calendars
    npm run messages
-   
+
    # Or if you compiled the examples
    npm run build
    node dist/grants/grants.js
@@ -54,4 +58,4 @@ To run these examples, you'll need to:
 
 ## Documentation
 
-For more information, see the [Nylas API Documentation](https://developer.nylas.com/). 
+For more information, see the [Nylas API Documentation](https://developer.nylas.com/).

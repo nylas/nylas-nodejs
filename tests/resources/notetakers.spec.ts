@@ -1,9 +1,11 @@
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Notetakers } from '../../src/resources/notetakers';
-jest.mock('../../src/apiClient');
+
+vi.mock('../../src/apiClient');
 
 describe('Notetakers', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let notetakers: Notetakers;
 
   beforeAll(() => {
@@ -12,10 +14,12 @@ describe('Notetakers', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     notetakers = new Notetakers(apiClient);
-    apiClient.request.mockResolvedValue({});
+    apiClient.request.mockResolvedValue({
+      data: [],
+    });
   });
 
   describe('list', () => {
@@ -83,7 +87,7 @@ describe('Notetakers', () => {
 
     it('should support pagination parameters', async () => {
       apiClient.request.mockResolvedValueOnce({
-        data: [],
+        data: Array(10).fill({}), // 10 empty objects to satisfy pagination logic
         requestId: 'test-request-id',
         nextCursor: 'next_cursor',
         prevCursor: 'prev_cursor',
@@ -110,7 +114,7 @@ describe('Notetakers', () => {
 
     it('should support combining multiple query parameters', async () => {
       apiClient.request.mockResolvedValueOnce({
-        data: [],
+        data: Array(25).fill({}), // 25 empty objects to satisfy pagination logic
         requestId: 'test-request-id',
         nextCursor: 'next_cursor',
       });

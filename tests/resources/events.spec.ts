@@ -1,9 +1,11 @@
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Events } from '../../src/resources/events';
-jest.mock('../../src/apiClient');
+
+vi.mock('../../src/apiClient');
 
 describe('Events', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let events: Events;
 
   beforeAll(() => {
@@ -12,10 +14,12 @@ describe('Events', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    });
 
     events = new Events(apiClient);
-    apiClient.request.mockResolvedValue({});
+    apiClient.request.mockResolvedValue({
+      data: [],
+    });
   });
 
   describe('list', () => {
@@ -157,6 +161,11 @@ describe('Events', () => {
 
   describe('listImportEvents', () => {
     it('should call apiClient.request with the correct params', async () => {
+      // Mock response with exactly 100 items to satisfy pagination logic
+      apiClient.request.mockResolvedValueOnce({
+        data: Array(100).fill({}), // 100 empty objects
+      });
+
       await events.listImportEvents({
         identifier: 'id123',
         queryParams: {

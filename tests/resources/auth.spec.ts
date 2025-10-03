@@ -1,10 +1,13 @@
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import APIClient from '../../src/apiClient';
-import { Auth } from '../../src/resources/auth';
 import {
   CodeExchangeRequest,
   TokenExchangeRequest,
 } from '../../src/models/auth';
-jest.mock('uuid', () => ({ v4: (): string => 'nylas' }));
+import { Auth } from '../../src/resources/auth';
+
+vi.mock('uuid', () => ({ v4: (): string => 'nylas' }));
+vi.mock('../../src/apiClient');
 
 describe('Auth', () => {
   let apiClient: APIClient;
@@ -16,10 +19,18 @@ describe('Auth', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    });
+    }) as any;
 
     auth = new Auth(apiClient);
-    jest.spyOn(APIClient.prototype, 'request').mockResolvedValue({});
+
+    // Mock the request method
+    apiClient.request = vi.fn().mockResolvedValue({
+      data: {},
+    });
+
+    // Ensure apiKey is accessible
+    apiClient.apiKey = 'apiKey';
+    apiClient.serverUrl = 'https://test.api.nylas.com';
   });
 
   describe('Exchanging tokens', () => {

@@ -13,23 +13,25 @@ This example demonstrates how to use the Nylas Node.js SDK in a pure CommonJS (C
 
 This example showcases the CommonJS equivalent of the ESM-only example:
 
-| ESM Syntax | CommonJS Syntax |
-|------------|-----------------|
-| `import Nylas from 'nylas'` | `const Nylas = require('nylas')` |
-| `import dotenv from 'dotenv'` | `const dotenv = require('dotenv')` |
-| `import path from 'node:path'` | `const path = require('path')` |
-| `import.meta.dirname` | `__dirname` |
-| `export { logger }` | `module.exports = { logger }` |
+| ESM Syntax                     | CommonJS Syntax                    |
+| ------------------------------ | ---------------------------------- |
+| `import Nylas from 'nylas'`    | `const Nylas = require('nylas')`   |
+| `import dotenv from 'dotenv'`  | `const dotenv = require('dotenv')` |
+| `import path from 'node:path'` | `const path = require('path')`     |
+| `import.meta.dirname`          | `__dirname`                        |
+| `export { logger }`            | `module.exports = { logger }`      |
 
 ## Setup
 
 1. **Install dependencies:**
+
    ```bash
    cd examples/cjs-only
    npm install
    ```
 
 2. **Set up environment variables:**
+
    - Copy `examples/.env.example` to `examples/.env`
    - Fill in your `NYLAS_API_KEY` and `NYLAS_GRANT_ID`
 

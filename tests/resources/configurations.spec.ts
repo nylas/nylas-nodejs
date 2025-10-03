@@ -1,9 +1,11 @@
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Configurations } from '../../src/resources/configurations';
-jest.mock('../../src/apiClient');
+
+vi.mock('../../src/apiClient');
 
 describe('Configurations', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let configurations: Configurations;
 
   beforeAll(() => {
@@ -12,7 +14,7 @@ describe('Configurations', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     configurations = new Configurations(apiClient);
     apiClient.request.mockResolvedValue({});

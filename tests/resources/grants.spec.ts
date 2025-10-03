@@ -1,9 +1,11 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Grants } from '../../src/resources/grants';
-jest.mock('../../src/apiClient');
+
+vi.mock('../../src/apiClient');
 
 describe('Grants', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let grants: Grants;
 
   beforeEach(() => {
@@ -12,12 +14,12 @@ describe('Grants', () => {
       apiUri: 'https://api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     grants = new Grants(apiClient);
 
     // Create a spy implementation that captures the inputs
-    apiClient.request = jest.fn().mockImplementation((input) => {
+    apiClient.request = vi.fn().mockImplementation((input) => {
       // eslint-disable-next-line no-console
       console.log('Request input:', JSON.stringify(input, null, 2));
       return Promise.resolve({

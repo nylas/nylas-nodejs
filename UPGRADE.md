@@ -23,11 +23,11 @@ First, the Nylas SDK is now a hybrid Node project, meaning we are using both Com
 The second change is that the Nylas SDK entrypoint is no longer static. Instead of importing the Nylas SDK directly, you import the `Nylas` class from the SDK. This allows you to create multiple instances of the Nylas SDK, each with their own configuration.
 
 ```typescript
-import Nylas from "nylas";
+import Nylas from 'nylas';
 
 const nylas = new Nylas({
-  apiKey: "NYLAS_API_KEY", // Required to make API calls
-})
+  apiKey: 'NYLAS_API_KEY', // Required to make API calls
+});
 ```
 
 From here, you can use the `Nylas` instance to make API requests by accessing the different resources configured with your API Key.
@@ -48,19 +48,22 @@ This meant that the models like the `Calendar` model had to be configured with _
 
 ```typescript
 // Import only required if you need the typing
-import { CreateCalendarRequest, UpdateCalendarRequest } from "nylas/lib/types/models/calendars";
+import {
+  CreateCalendarRequest,
+  UpdateCalendarRequest,
+} from 'nylas/lib/types/models/calendars';
 
 const createCalendarRequest: CreateCalendarRequest = {
-  name: "My Calendar", // Calendar name is required
-  description: "This is my calendar", // Calendar description is optional
-  location: "My calendar location", // Calendar location is optional
-  timezone: "America/New_York", // Calendar timezone is optional
-}
+  name: 'My Calendar', // Calendar name is required
+  description: 'This is my calendar', // Calendar description is optional
+  location: 'My calendar location', // Calendar location is optional
+  timezone: 'America/New_York', // Calendar timezone is optional
+};
 
 const updateCalendarRequest: UpdateCalenderRequest = {
-  name: "My Updated Calendar", // All fields are optional since we are updating
-  hexColor: "#000000", // Other fields not present during creation are now available
-}
+  name: 'My Updated Calendar', // All fields are optional since we are updating
+  hexColor: '#000000', // Other fields not present during creation are now available
+};
 ```
 
 Furthermore, these models are no longer classes but TypeScript interfaces. We also removed all functions that make API calls from the models. This means that the models are now just data structures, which makes them easier to understand and use. This includes the `save()` function. Instead now you can use the `create()`, `update()`, and `destroy()` functions on the resource class to make those requests to the API.
@@ -72,18 +75,17 @@ You use the `Nylas` instance you configured earlier to make requests to the Nyla
 For example, to get a list of calendars, you can do so like:
 
 ```typescript
-import Nylas from "nylas";
-import { NylasListResponse } from "nylas/lib/types/models/responses";
-import { Calendar } from "nylas/lib/types/models/calendars";
+import Nylas from 'nylas';
+import { NylasListResponse } from 'nylas/lib/types/models/responses';
+import { Calendar } from 'nylas/lib/types/models/calendars';
 
 const nylas = new Nylas({
-  apiKey: "NYLAS_API_KEY",
+  apiKey: 'NYLAS_API_KEY',
 });
 
-const response: NylasListResponse<Calendar> = await
-  nylas.calendars.list({
-    identifier: "GRANT_ID", // Required, the grant ID of the account to make the request for
-  });
+const response: NylasListResponse<Calendar> = await nylas.calendars.list({
+  identifier: 'GRANT_ID', // Required, the grant ID of the account to make the request for
+});
 ```
 
 You might notice in the code above that there are some new concepts in the new SDK when making requests. These concepts are explained in more detail below.
@@ -93,23 +95,25 @@ You might notice in the code above that there are some new concepts in the new S
 Each resource takes different parameters. All resources take an "identifier", which is the ID of the account ("grant") you want to make the request for. This is usually the Grant ID or the email address of the account. Some resources also take "query parameters" which are mainly used to filter data or pass in additional information. There are models available for all the query parameters that can be passed in. For example, listing a calendar you have `ListCalendersQueryParams`:
 
 ```typescript
-import Nylas from "nylas";
-import { NylasListResponse } from "nylas/lib/types/models/responses";
-import { Calendar, ListCalendersQueryParams } from "nylas/lib/types/models/calendars";
+import Nylas from 'nylas';
+import { NylasListResponse } from 'nylas/lib/types/models/responses';
+import {
+  Calendar,
+  ListCalendersQueryParams,
+} from 'nylas/lib/types/models/calendars';
 
 const nylas = new Nylas({
-  apiKey: "NYLAS_API_KEY",
+  apiKey: 'NYLAS_API_KEY',
 });
 
 const queryParams: ListCalendersQueryParams = {
-  limit: 10
-}
+  limit: 10,
+};
 
-const response: NylasListResponse<Calendar> = await
-  nylas.calendars.list({
-    identifier: "GRANT_ID",
-    queryParams, // Now you will get a maximum of 10 calendars back
-  });
+const response: NylasListResponse<Calendar> = await nylas.calendars.list({
+  identifier: 'GRANT_ID',
+  queryParams, // Now you will get a maximum of 10 calendars back
+});
 ```
 
 ### Response Objects
@@ -155,7 +159,7 @@ The SDK's authentication methods reflect [the methods available in the new Nylas
 
 There are two main methods to focus on when authenticating users to your application. The first is the `Auth#urlForOAuth2` method, which returns the URL that you should redirect your users to in order to authenticate them using Nylas' OAuth 2.0 implementation.
 
-The second is the `Auth#exchangeCodeForToken` method. Use this method to exchange the code Nylas returned from the authentication redirect for an access token from the OAuth provider. Nylas's response to this request includes both the access token, and information about the grant that was created.  You don't _need_ to use the `grant_id` to make requests. Instead, you can use the authenticated email address directly as the identifier for the account. If you prefer to use the `grant_id`, you can extract it from the `CodeExchangeResponse` object and use that instead.
+The second is the `Auth#exchangeCodeForToken` method. Use this method to exchange the code Nylas returned from the authentication redirect for an access token from the OAuth provider. Nylas's response to this request includes both the access token, and information about the grant that was created. You don't _need_ to use the `grant_id` to make requests. Instead, you can use the authenticated email address directly as the identifier for the account. If you prefer to use the `grant_id`, you can extract it from the `CodeExchangeResponse` object and use that instead.
 
 The following code shows how to authenticate a user into a Nylas application:
 

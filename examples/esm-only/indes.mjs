@@ -1,19 +1,19 @@
 /**
  * ESM-Only Nylas SDK Example
- * 
- * This example demonstrates how to use the Nylas Node.js SDK in a pure ESM 
+ *
+ * This example demonstrates how to use the Nylas Node.js SDK in a pure ESM
  * (ECMAScript Modules) environment without CommonJS compatibility.
- * 
+ *
  * Purpose:
  * - Shows ESM import syntax with the Nylas SDK
  * - Demonstrates environment variable handling in ESM
  * - Provides a simple messages listing example
- * 
+ *
  * Usage:
  * 1. Copy the parent examples/.env.example to examples/.env
  * 2. Fill in your NYLAS_API_KEY and NYLAS_GRANT_ID in the .env file
  * 3. Run: node indes.mjs
- * 
+ *
  * Requirements:
  * - Node.js with ESM support (Node 14+)
  * - Valid Nylas API credentials
@@ -42,9 +42,8 @@ if (!grantId) {
 // Initialize the Nylas client
 const nylas = new Nylas({
   apiKey,
-  apiUri: process.env.NYLAS_API_URI || 'https://api.us.nylas.com'
+  apiUri: process.env.NYLAS_API_URI || 'https://api.us.nylas.com',
 });
-
 
 /**
  * Main function to demonstrate basic Nylas SDK usage in ESM environment
@@ -52,24 +51,26 @@ const nylas = new Nylas({
 async function main() {
   try {
     logger.info('Listing messages...');
-    
+
     // Log runtime config for debugging without exposing sensitive data
     logger.debug('Runtime config', {
       apiKey: maskSecret(apiKey),
       grantId,
-      apiUri: process.env.NYLAS_API_URI || 'https://api.us.nylas.com'
+      apiUri: process.env.NYLAS_API_URI || 'https://api.us.nylas.com',
     });
-    
+
     // Use basic list operation to verify SDK functionality and connectivity
     const messages = await nylas.messages.list({
       identifier: grantId,
     });
 
     logger.success('Messages listed successfully');
-    
-    // Extract only essential fields to avoid logging sensitive message content
-    logger.info('Message subjects and ids', messages.data.map(m => ({ id: m.id, subject: m.subject })));
 
+    // Extract only essential fields to avoid logging sensitive message content
+    logger.info(
+      'Message subjects and ids',
+      messages.data.map((m) => ({ id: m.id, subject: m.subject }))
+    );
   } catch (error) {
     logger.error('Failed to list messages');
     logger.debug('Error details', error);

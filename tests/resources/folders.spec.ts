@@ -1,10 +1,12 @@
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import APIClient from '../../src/apiClient';
 import { Folders } from '../../src/resources/folders';
 import { objKeysToCamelCase } from '../../src/utils';
-jest.mock('../../src/apiClient');
+
+vi.mock('../../src/apiClient');
 
 describe('Folders', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let folders: Folders;
 
   beforeAll(() => {
@@ -13,7 +15,7 @@ describe('Folders', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     folders = new Folders(apiClient);
     apiClient.request.mockResolvedValue({ data: [] });
@@ -104,6 +106,11 @@ describe('Folders', () => {
     });
 
     it('should call apiClient.request with all supported query parameters', async () => {
+      // Mock response with exactly 10 items to satisfy pagination logic
+      apiClient.request.mockResolvedValueOnce({
+        data: Array(10).fill({}), // 10 empty objects
+      });
+
       await folders.list({
         identifier: 'id123',
         queryParams: {

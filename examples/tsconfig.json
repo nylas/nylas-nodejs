@@ -12,10 +12,6 @@
     "resolveJsonModule": true,
     "outDir": "dist"
   },
-  "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
-} 
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}

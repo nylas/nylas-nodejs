@@ -1,0 +1,47 @@
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'node',
+    setupFiles: ['./tests/setupTests.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'cobertura'],
+      include: ['src/**/*.ts'],
+      exclude: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/lib/**',
+        '**/*.spec.ts',
+        '**/*.test.ts',
+        '**/tests/**',
+        '**/coverage/**',
+        '**/.{idea,git,cache,output,temp}/**',
+        '**/vitest.config.ts',
+        '**/vitest.miniflare.config.ts',
+        '**/src/utils/fetchWrapper.ts', // Main fetchWrapper has edge cases tested by -cjs/-esm variants
+      ],
+      thresholds: {
+        functions: 80,
+        lines: 80,
+        statements: 80,
+      },
+    },
+    clearMocks: true,
+    mockReset: true,
+    restoreMocks: true,
+  },
+  resolve: {
+    alias: {
+      '^[../]+src/([^/]+)$': '<rootDir>/src/$1.ts',
+      '^[../]+src/resources/([^/]+)$': '<rootDir>/src/resources/$1.ts',
+      '^[../]+src/models/([^/]+)$': '<rootDir>/src/models/$1.ts',
+      // Handle .js imports in TypeScript files for Vitest
+      '^(.+)\\.js$': '$1',
+    },
+  },
+  esbuild: {
+    target: 'node16',
+  },
+});

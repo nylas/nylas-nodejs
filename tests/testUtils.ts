@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 import { Readable } from 'stream';
+import { vi } from 'vitest';
 
 export interface MockedFormData {
   append(key: string, value: any): void;
@@ -35,9 +36,20 @@ export const mockResponse = (body: string, status = 200): any => {
 
   return {
     status,
-    text: jest.fn().mockResolvedValue(body),
-    json: jest.fn().mockResolvedValue(JSON.parse(body)),
+    ok: status >= 200 && status < 300,
+    statusText: status === 200 ? 'OK' : 'Error',
+    text: vi.fn().mockResolvedValue(body),
+    json: vi.fn().mockResolvedValue(JSON.parse(body)),
     headers: headersObj,
+    url: '',
+    type: 'basic',
+    redirected: false,
+    body: null,
+    bodyUsed: false,
+    clone: vi.fn().mockReturnThis(),
+    arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(0)),
+    blob: vi.fn().mockResolvedValue(new Blob()),
+    formData: vi.fn().mockResolvedValue(new FormData()),
   };
 };
 

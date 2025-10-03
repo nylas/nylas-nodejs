@@ -1,10 +1,12 @@
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import APIClient from '../../src/apiClient';
-import { Calendars } from '../../src/resources/calendars';
 import { AvailabilityMethod } from '../../src/models/availability';
-jest.mock('../../src/apiClient');
+import { Calendars } from '../../src/resources/calendars';
+
+vi.mock('../../src/apiClient');
 
 describe('Calendars', () => {
-  let apiClient: jest.Mocked<APIClient>;
+  let apiClient: any;
   let calendars: Calendars;
 
   beforeAll(() => {
@@ -13,7 +15,7 @@ describe('Calendars', () => {
       apiUri: 'https://test.api.nylas.com',
       timeout: 30,
       headers: {},
-    }) as jest.Mocked<APIClient>;
+    }) as any;
 
     calendars = new Calendars(apiClient);
     apiClient.request.mockResolvedValue({});

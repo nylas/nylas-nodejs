@@ -42,4 +42,4 @@ npm run messages
 - **Raw MIME**: Getting raw MIME data for messages
 - **Message Operations**: Listing, finding, updating, and sending messages
 - **Scheduled Messages**: Working with scheduled message functionality
-- **Message Cleaning**: Using the clean messages API 
+- **Message Cleaning**: Using the clean messages API
