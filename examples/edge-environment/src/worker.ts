@@ -1,5 +1,6 @@
 import Nylas, { SendMessageRequest } from 'nylas';
 import * as mimeTypes from 'mime-types';
+import { Buffer } from 'node:buffer';
 
 // Define the environment interface for TypeScript
 interface Env {
@@ -309,6 +310,25 @@ export default {
           'Content-Type': 'text/html',
           ...corsHeaders,
         },
+      });
+    }
+
+    // Handle simple events list request
+    if (request.method === 'GET' && url.pathname === '/events') {
+      const nylas = new Nylas({
+        apiKey: env.NYLAS_API_KEY,
+        apiUri: env.NYLAS_API_URI || 'https://api.us.nylas.com',
+      });
+
+      const events = await nylas.events.list({
+        identifier: env.NYLAS_GRANT_ID,
+        queryParams: {
+          calendarId: 'primary',
+        },
+      });
+
+      return new Response(JSON.stringify({ events: events.data }), {
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
     }
 

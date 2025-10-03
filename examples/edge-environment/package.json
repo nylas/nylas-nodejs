@@ -9,17 +9,24 @@
     "build": "tsc && wrangler deploy --dry-run",
     "type-check": "tsc --noEmit"
   },
-  "keywords": ["cloudflare", "worker", "nylas", "email", "attachments"],
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "nylas",
+    "email",
+    "attachments"
+  ],
   "author": "Nylas",
   "license": "MIT",
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231218.0",
     "@types/mime-types": "^2.1.4",
+    "@types/node": "^24.6.2",
     "typescript": "^5.3.0",
-    "wrangler": "^4.27.0"
+    "wrangler": "^4.41.0"
   },
   "dependencies": {
-    "nylas": "file:../../",
-    "mime-types": "^2.1.35"
+    "mime-types": "^2.1.35",
+    "nylas": "7.13.2"
   }
-} 
+}
