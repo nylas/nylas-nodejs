@@ -64,7 +64,7 @@ export interface Event {
    * - {@link Autocreate}
    * - {@link Details}
    */
-  conferencing: Conferencing;
+  conferencing?: Conferencing;
   /**
    * Visibility of the event, if the event is private or public.
    */
