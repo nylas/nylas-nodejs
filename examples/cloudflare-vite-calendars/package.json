@@ -5,7 +5,7 @@
   "description": "Cloudflare Workers + Vite example for managing calendar events using Nylas SDK",
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "vite dev",
     "dev:vite": "vite dev",
     "build": "vite build",
     "preview": "npm run build && vite preview",

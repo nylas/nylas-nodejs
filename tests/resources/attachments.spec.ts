@@ -1,6 +1,5 @@
 import APIClient from '../../src/apiClient';
 import { Attachments } from '../../src/resources/attachments';
-import { Readable } from 'stream';
 jest.mock('../../src/apiClient');
 
 describe('Attachments', () => {
@@ -19,7 +18,13 @@ describe('Attachments', () => {
     apiClient.request.mockResolvedValue({});
     apiClient.requestRaw.mockResolvedValue(Buffer.from(''));
 
-    const mockStream = new Readable();
+    // Mock Web ReadableStream (native in Node 18+)
+    const mockStream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new Uint8Array([1, 2, 3]));
+        controller.close();
+      },
+    });
     apiClient.requestStream.mockResolvedValue(Promise.resolve(mockStream));
   });
 

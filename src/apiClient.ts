@@ -1,4 +1,3 @@
-import { Readable as _Readable } from 'node:stream';
 import { NylasConfig, OverridableNylasConfig } from './config.js';
 import {
   NylasApiError,
@@ -10,8 +9,6 @@ import { SDK_VERSION } from './version.js';
 import { FormData } from 'formdata-node';
 import { FormDataEncoder as _FormDataEncoder } from 'form-data-encoder';
 import { snakeCase } from 'change-case';
-import { getFetch, getRequest } from './utils/fetchWrapper.js';
-import type { Request, Response } from './utils/fetchWrapper.js';
 
 /**
  * The header key for the debugging flow ID
@@ -178,7 +175,6 @@ export default class APIClient {
     }, timeoutDuration);
 
     try {
-      const fetch = await getFetch();
       const response = await fetch(req, {
         signal: controller.signal as AbortSignal,
       });
@@ -275,8 +271,7 @@ export default class APIClient {
 
   async newRequest(options: RequestOptionsParams): Promise<Request> {
     const newOptions = this.requestOptions(options);
-    const RequestConstructor = await getRequest();
-    return new RequestConstructor(newOptions.url, {
+    return new Request(newOptions.url, {
       method: newOptions.method,
       headers: newOptions.headers,
       body: newOptions.body,
@@ -319,14 +314,14 @@ export default class APIClient {
 
   async requestRaw(options: RequestOptionsParams): Promise<Buffer> {
     const response = await this.sendRequest(options);
-    return response.buffer();
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
   }
 
   async requestStream(
     options: RequestOptionsParams
-  ): Promise<NodeJS.ReadableStream> {
+  ): Promise<ReadableStream<Uint8Array>> {
     const response = await this.sendRequest(options);
-    // TODO: See if we can fix this in a backwards compatible way
     if (!response.body) {
       throw new Error('No response body');
     }
