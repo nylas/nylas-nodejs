@@ -181,15 +181,14 @@ describe('APIClient', () => {
         const newRequest = await client.newRequest(options);
 
         expect(newRequest.method).toBe('POST');
-        expect(newRequest.headers.raw()).toEqual({
-          Accept: ['application/json'],
-          Authorization: ['Bearer testApiKey'],
-          'Content-Type': ['application/json'],
-          'User-Agent': [`Nylas Node SDK v${SDK_VERSION}`],
-          'X-SDK-Test-Header': ['This is a test'],
-          'global-header': ['global-value'],
-          override: ['bar'],
-        });
+        // Native Headers API uses .get() to check individual headers
+        expect(newRequest.headers.get('Accept')).toEqual('application/json');
+        expect(newRequest.headers.get('Authorization')).toEqual('Bearer testApiKey');
+        expect(newRequest.headers.get('Content-Type')).toEqual('application/json');
+        expect(newRequest.headers.get('User-Agent')).toEqual(`Nylas Node SDK v${SDK_VERSION}`);
+        expect(newRequest.headers.get('X-SDK-Test-Header')).toEqual('This is a test');
+        expect(newRequest.headers.get('global-header')).toEqual('global-value');
+        expect(newRequest.headers.get('override')).toEqual('bar');
         expect(newRequest.url).toEqual(
           'https://override.api.nylas.com/test?param=value'
         );
@@ -688,13 +687,15 @@ describe('APIClient', () => {
     describe('requestRaw', () => {
       it('should return raw buffer response', async () => {
         const testData = 'raw binary data';
+        const textEncoder = new TextEncoder();
         const mockResp = {
           ok: true,
           status: 200,
           text: jest.fn().mockResolvedValue(testData),
           json: jest.fn(),
           headers: new Map(),
-          buffer: jest.fn().mockResolvedValue(Buffer.from(testData)),
+          // Native fetch uses arrayBuffer() instead of buffer()
+          arrayBuffer: jest.fn().mockResolvedValue(textEncoder.encode(testData).buffer),
         };
 
         fetchMock.mockImplementationOnce(() =>

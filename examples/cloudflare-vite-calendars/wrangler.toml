@@ -1,0 +1,21 @@
+name = "nylas-calendar-vite-worker"
+main = "src/worker.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Environment variables for development
+[env.development.vars]
+NYLAS_API_KEY = ""
+NYLAS_API_URI = "https://api.us.nylas.com"
+NYLAS_GRANT_ID = ""
+NYLAS_CALENDAR_ID = ""
+
+# Environment variables for production
+[env.production.vars]
+NYLAS_API_URI = "https://api.us.nylas.com"
+
+# For production, use wrangler secret to set these:
+# wrangler secret put NYLAS_API_KEY
+# wrangler secret put NYLAS_GRANT_ID
+# wrangler secret put NYLAS_CALENDAR_ID
+
