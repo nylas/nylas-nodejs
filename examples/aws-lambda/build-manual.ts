@@ -60,47 +60,51 @@ async function buildForManualUpload(): Promise<void> {
       'npx esbuild src/handler.ts --bundle --platform=node --target=node20 --format=cjs --outfile=dist/handler.js --external:aws-sdk',
       { stdio: 'inherit', cwd: projectDir }
     );
-    
+
     // Verify handler.js was created
     const handlerPath = path.join(distDir, 'handler.js');
     if (!fs.existsSync(handlerPath)) {
       throw new Error('handler.js was not created by esbuild');
     }
-    
+
     // Verify handler export exists in the built file
     const handlerContent = fs.readFileSync(handlerPath, 'utf-8');
     // Check for various export patterns that esbuild might generate:
     // 1. Direct exports: exports.handler or module.exports.handler
     // 2. esbuild pattern: module.exports = __toCommonJS(handler_exports)
     // 3. Handler function definition
-    const hasDirectExport = 
-      handlerContent.includes('exports.handler') || 
+    const hasDirectExport =
+      handlerContent.includes('exports.handler') ||
       handlerContent.includes('module.exports.handler') ||
       handlerContent.match(/exports\.handler\s*=/);
-    
-    const hasEsbuildExport = 
+
+    const hasEsbuildExport =
       handlerContent.includes('module.exports = __toCommonJS') &&
       handlerContent.includes('handler_exports');
-    
-    const hasHandlerFunction = 
-      handlerContent.includes('const handler') || 
-      handlerContent.includes('var handler') || 
+
+    const hasHandlerFunction =
+      handlerContent.includes('const handler') ||
+      handlerContent.includes('var handler') ||
       handlerContent.includes('function handler') ||
       handlerContent.includes('handler: () => handler');
-    
+
     if (!hasDirectExport && !hasEsbuildExport && !hasHandlerFunction) {
       console.error('❌ Error: handler export not found in bundled file!');
-      console.error('   The handler must be exported as: exports.handler or module.exports.handler');
+      console.error(
+        '   The handler must be exported as: exports.handler or module.exports.handler'
+      );
       throw new Error('Handler export not found in bundled file');
     }
-    
+
     console.log('✅ handler.js created successfully');
     if (hasDirectExport) {
       console.log('✅ Direct handler export verified');
     } else if (hasEsbuildExport) {
       console.log('✅ Handler export verified (esbuild __toCommonJS pattern)');
     } else if (hasHandlerFunction) {
-      console.log('✅ Handler function found (export pattern will be resolved at runtime)');
+      console.log(
+        '✅ Handler function found (export pattern will be resolved at runtime)'
+      );
     }
 
     // Note: Since we're bundling with esbuild, all dependencies (including Nylas SDK)
@@ -126,14 +130,26 @@ async function buildForManualUpload(): Promise<void> {
         console.log('6. Configure environment variables:');
         console.log('   - NYLAS_API_KEY');
         console.log('   - NYLAS_GRANT_ID');
-        console.log('   - NYLAS_API_URI (optional, defaults to https://api.us.nylas.com)');
-        console.log('7. Create an API Gateway HTTP API and configure these routes:');
+        console.log(
+          '   - NYLAS_API_URI (optional, defaults to https://api.us.nylas.com)'
+        );
+        console.log(
+          '7. Create an API Gateway HTTP API and configure these routes:'
+        );
         console.log('   - GET / → Lambda function');
         console.log('   - POST /send-attachment → Lambda function');
-        console.log('   - OPTIONS /{proxy+} → Lambda function (for CORS preflight)');
-        console.log('   - ANY /{proxy+} → Lambda function (catch-all for other routes)');
-        console.log('8. Enable CORS on all routes (or configure in Lambda response headers)');
-        console.log('9. Deploy the API and test using the provided endpoint URL');
+        console.log(
+          '   - OPTIONS /{proxy+} → Lambda function (for CORS preflight)'
+        );
+        console.log(
+          '   - ANY /{proxy+} → Lambda function (catch-all for other routes)'
+        );
+        console.log(
+          '8. Enable CORS on all routes (or configure in Lambda response headers)'
+        );
+        console.log(
+          '9. Deploy the API and test using the provided endpoint URL'
+        );
         resolve();
       });
 
@@ -144,16 +160,20 @@ async function buildForManualUpload(): Promise<void> {
       archive.pipe(output);
       // Add handler.js directly to root of zip (not in dist/ subdirectory)
       archive.file(path.join(distDir, 'handler.js'), { name: 'handler.js' });
-      
+
       // Create a minimal package.json to ensure proper module resolution
-      const packageJsonContent = JSON.stringify({
-        name: 'nylas-lambda-handler',
-        version: '1.0.0',
-        main: 'handler.js',
-        type: 'commonjs'
-      }, null, 2);
+      const packageJsonContent = JSON.stringify(
+        {
+          name: 'nylas-lambda-handler',
+          version: '1.0.0',
+          main: 'handler.js',
+          type: 'commonjs',
+        },
+        null,
+        2
+      );
       archive.append(packageJsonContent, { name: 'package.json' });
-      
+
       archive.finalize();
     });
   } catch (error) {

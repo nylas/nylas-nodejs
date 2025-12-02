@@ -381,14 +381,14 @@ async function parseFormData(
   // API Gateway HTTP API sends multipart data as a string (or base64 if isBase64Encoded is true)
   // We parse it manually here for simplicity
   // For production, use a library like 'lambda-multipart-parser'
-  
+
   // Extract boundary from Content-Type header
   const boundaryMatch = contentType.match(/boundary=([^;]+)/);
   if (!boundaryMatch) {
     throw new Error(`Invalid multipart content type: ${contentType}`);
   }
   const boundary = boundaryMatch[1].trim();
-  
+
   // Split by boundary (with -- prefix)
   const parts = body.split(`--${boundary}`);
   const result: { [key: string]: any } = { files: [] };
@@ -427,7 +427,7 @@ function processPart(
   if (!nameMatch) return;
 
   const name = nameMatch[1];
-  
+
   // Check if it's a file (has filename attribute)
   const filenameMatch = headers.match(/filename="([^"]+)"/);
   const contentTypeMatch = headers.match(/Content-Type:\s*([^\r\n]+)/i);
@@ -441,7 +441,7 @@ function processPart(
     const fileContentType = contentTypeMatch
       ? contentTypeMatch[1].trim()
       : getContentType(filename);
-    
+
     // Convert content to buffer (handle both binary and base64 if needed)
     const buffer = Buffer.from(trimmedContent, 'binary');
 
@@ -506,140 +506,154 @@ export const handler = async (
 
     // Get the request path (API Gateway HTTP API uses rawPath, REST API uses path)
     const requestPath = (event as any).rawPath || event.path || '/';
-    const httpMethod = event.httpMethod || (event as any).requestContext?.http?.method || 'GET';
-    
-    console.log('Request received:', { httpMethod, requestPath, hasBody: !!event.body });
+    const httpMethod =
+      event.httpMethod || (event as any).requestContext?.http?.method || 'GET';
+
+    console.log('Request received:', {
+      httpMethod,
+      requestPath,
+      hasBody: !!event.body,
+    });
 
     // Serve HTML interface on GET /
     if (httpMethod === 'GET' && requestPath === '/') {
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'text/html',
-        ...corsHeaders,
-      },
-      body: HTML_INTERFACE,
-    };
-  }
+      return {
+        statusCode: 200,
+        headers: {
+          'Content-Type': 'text/html',
+          ...corsHeaders,
+        },
+        body: HTML_INTERFACE,
+      };
+    }
 
     // Handle file upload and email sending on POST /send-attachment
     if (httpMethod === 'POST' && requestPath === '/send-attachment') {
       try {
-      // Parse multipart form data
-      const contentType =
-        event.headers['Content-Type'] || event.headers['content-type'] || '';
+        // Parse multipart form data
+        const contentType =
+          event.headers['Content-Type'] || event.headers['content-type'] || '';
 
-      if (!contentType.includes('multipart/form-data')) {
-        return {
-          statusCode: 400,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders },
-          body: JSON.stringify({
-            error: 'Content-Type must be multipart/form-data',
-          }),
-        };
-      }
+        if (!contentType.includes('multipart/form-data')) {
+          return {
+            statusCode: 400,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+            body: JSON.stringify({
+              error: 'Content-Type must be multipart/form-data',
+            }),
+          };
+        }
 
-      // API Gateway sends body as base64 if isBase64Encoded is true
-      const body = event.isBase64Encoded
-        ? Buffer.from(event.body || '', 'base64').toString('binary')
-        : event.body || '';
+        // API Gateway sends body as base64 if isBase64Encoded is true
+        const body = event.isBase64Encoded
+          ? Buffer.from(event.body || '', 'base64').toString('binary')
+          : event.body || '';
 
-      if (!body) {
-        return {
-          statusCode: 400,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders },
-          body: JSON.stringify({ error: 'Request body is empty' }),
-        };
-      }
+        if (!body) {
+          return {
+            statusCode: 400,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+            body: JSON.stringify({ error: 'Request body is empty' }),
+          };
+        }
 
-      let formData;
-      try {
-        formData = await parseFormData(body, contentType);
-        console.log('Parsed form data keys:', Object.keys(formData));
-        console.log('Files count:', formData.files?.length || 0);
-        console.log('Recipient email:', formData.recipientEmail ? 'present' : 'missing');
-        console.log('Subject:', formData.subject ? 'present' : 'missing');
-        console.log('Message:', formData.message ? 'present' : 'missing');
-      } catch (parseError) {
-        console.error('Error parsing form data:', parseError);
-        console.error('Content-Type:', contentType);
-        console.error('Body length:', body.length);
-        console.error('Body preview (first 500 chars):', body.substring(0, 500));
-        return {
-          statusCode: 400,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders },
-          body: JSON.stringify({
-            error: 'Failed to parse form data',
-            details: parseError instanceof Error ? parseError.message : String(parseError),
-          }),
-        };
-      }
-      const recipientEmail = formData.recipientEmail as string;
-      const subject = formData.subject as string;
-      const message = formData.message as string;
-      const files = formData.files as Array<{
-        filename: string;
-        contentType: string;
-        content: Buffer;
-        size: number;
-      }>;
+        let formData;
+        try {
+          formData = await parseFormData(body, contentType);
+          console.log('Parsed form data keys:', Object.keys(formData));
+          console.log('Files count:', formData.files?.length || 0);
+          console.log(
+            'Recipient email:',
+            formData.recipientEmail ? 'present' : 'missing'
+          );
+          console.log('Subject:', formData.subject ? 'present' : 'missing');
+          console.log('Message:', formData.message ? 'present' : 'missing');
+        } catch (parseError) {
+          console.error('Error parsing form data:', parseError);
+          console.error('Content-Type:', contentType);
+          console.error('Body length:', body.length);
+          console.error(
+            'Body preview (first 500 chars):',
+            body.substring(0, 500)
+          );
+          return {
+            statusCode: 400,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+            body: JSON.stringify({
+              error: 'Failed to parse form data',
+              details:
+                parseError instanceof Error
+                  ? parseError.message
+                  : String(parseError),
+            }),
+          };
+        }
+        const recipientEmail = formData.recipientEmail as string;
+        const subject = formData.subject as string;
+        const message = formData.message as string;
+        const files = formData.files as Array<{
+          filename: string;
+          contentType: string;
+          content: Buffer;
+          size: number;
+        }>;
 
-      // Validate required fields with detailed error
-      const missingFields: string[] = [];
-      if (!recipientEmail) missingFields.push('recipientEmail');
-      if (!subject) missingFields.push('subject');
-      if (!message) missingFields.push('message');
-      if (!files || files.length === 0) missingFields.push('files');
+        // Validate required fields with detailed error
+        const missingFields: string[] = [];
+        if (!recipientEmail) missingFields.push('recipientEmail');
+        if (!subject) missingFields.push('subject');
+        if (!message) missingFields.push('message');
+        if (!files || files.length === 0) missingFields.push('files');
 
-      if (missingFields.length > 0) {
-        console.error('Missing required fields:', missingFields);
-        console.error('Form data keys:', Object.keys(formData));
-        console.error('Form data values:', {
-          recipientEmail: formData.recipientEmail ? 'present' : 'missing',
-          subject: formData.subject ? 'present' : 'missing',
-          message: formData.message ? 'present' : 'missing',
-          filesCount: formData.files?.length || 0,
+        if (missingFields.length > 0) {
+          console.error('Missing required fields:', missingFields);
+          console.error('Form data keys:', Object.keys(formData));
+          console.error('Form data values:', {
+            recipientEmail: formData.recipientEmail ? 'present' : 'missing',
+            subject: formData.subject ? 'present' : 'missing',
+            message: formData.message ? 'present' : 'missing',
+            filesCount: formData.files?.length || 0,
+          });
+          return {
+            statusCode: 400,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+            body: JSON.stringify({
+              error: 'Missing required fields',
+              missingFields: missingFields,
+              receivedFields: Object.keys(formData),
+            }),
+          };
+        }
+
+        // Initialize Nylas client
+        const nylas = new Nylas({
+          apiKey: env.NYLAS_API_KEY,
+          apiUri: env.NYLAS_API_URI,
         });
-        return {
-          statusCode: 400,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders },
-          body: JSON.stringify({ 
-            error: 'Missing required fields',
-            missingFields: missingFields,
-            receivedFields: Object.keys(formData),
-          }),
-        };
-      }
 
-      // Initialize Nylas client
-      const nylas = new Nylas({
-        apiKey: env.NYLAS_API_KEY,
-        apiUri: env.NYLAS_API_URI,
-      });
+        // Prepare attachments
+        // The SDK automatically uses multipart/form-data when total payload size >= 3MB
+        // This fixes the bug where Lambda would freeze with 2+ attachments over 3MB total
+        const attachments = files.map((file) => ({
+          filename: file.filename,
+          contentType: file.contentType,
+          content: file.content,
+          size: file.size,
+        }));
 
-      // Prepare attachments
-      // The SDK automatically uses multipart/form-data when total payload size >= 3MB
-      // This fixes the bug where Lambda would freeze with 2+ attachments over 3MB total
-      const attachments = files.map((file) => ({
-        filename: file.filename,
-        contentType: file.contentType,
-        content: file.content,
-        size: file.size,
-      }));
+        // Calculate total size for logging
+        const totalSize = attachments.reduce((sum, att) => sum + att.size, 0);
+        const threeMB = 3 * 1024 * 1024;
 
-      // Calculate total size for logging
-      const totalSize = attachments.reduce((sum, att) => sum + att.size, 0);
-      const threeMB = 3 * 1024 * 1024;
+        console.log(
+          `Sending email with ${attachments.length} attachment(s), total size: ${totalSize} bytes (${totalSize >= threeMB ? '>= 3MB, will use multipart/form-data' : '< 3MB, will use JSON'})`
+        );
 
-      console.log(
-        `Sending email with ${attachments.length} attachment(s), total size: ${totalSize} bytes (${totalSize >= threeMB ? '>= 3MB, will use multipart/form-data' : '< 3MB, will use JSON'})`
-      );
-
-      // Prepare the email request
-      const sendRequest: SendMessageRequest = {
-        to: [{ email: recipientEmail }],
-        subject: subject,
-        body: `
+        // Prepare the email request
+        const sendRequest: SendMessageRequest = {
+          to: [{ email: recipientEmail }],
+          subject: subject,
+          body: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h2 style="color: #333;">Email from AWS Lambda</h2>
             <p>${message.replace(/\n/g, '<br>')}</p>
@@ -650,46 +664,46 @@ export const handler = async (
             </p>
           </div>
         `,
-        attachments,
-      };
+          attachments,
+        };
 
-      // Send the email using the Nylas SDK
-      // The SDK automatically handles the 3MB threshold:
-      // - If total payload < 3MB: uses JSON encoding
-      // - If total payload >= 3MB: uses multipart/form-data encoding
-      // This prevents Lambda from freezing with large attachments
-      const response = await nylas.messages.send({
-        identifier: env.NYLAS_GRANT_ID,
-        requestBody: sendRequest,
-      });
+        // Send the email using the Nylas SDK
+        // The SDK automatically handles the 3MB threshold:
+        // - If total payload < 3MB: uses JSON encoding
+        // - If total payload >= 3MB: uses multipart/form-data encoding
+        // This prevents Lambda from freezing with large attachments
+        const response = await nylas.messages.send({
+          identifier: env.NYLAS_GRANT_ID,
+          requestBody: sendRequest,
+        });
 
-      console.log('Nylas API response received:', {
-        hasResponse: !!response,
-        hasData: !!response?.data,
-        responseKeys: response ? Object.keys(response) : [],
-        dataKeys: response?.data ? Object.keys(response.data) : [],
-        messageId: response?.data?.id,
-      });
+        console.log('Nylas API response received:', {
+          hasResponse: !!response,
+          hasData: !!response?.data,
+          responseKeys: response ? Object.keys(response) : [],
+          dataKeys: response?.data ? Object.keys(response.data) : [],
+          messageId: response?.data?.id,
+        });
 
-      // Extract message ID safely (response.data is the Message object)
-      const messageId = response?.data?.id || 'unknown';
+        // Extract message ID safely (response.data is the Message object)
+        const messageId = response?.data?.id || 'unknown';
 
-      // Return success response
-      const successResponse = {
-        success: true,
-        messageId: messageId,
-        message: 'Email sent successfully',
-        attachmentsCount: attachments.length,
-        totalSize: totalSize,
-      };
+        // Return success response
+        const successResponse = {
+          success: true,
+          messageId: messageId,
+          message: 'Email sent successfully',
+          attachmentsCount: attachments.length,
+          totalSize: totalSize,
+        };
 
-      console.log('Returning success response:', successResponse);
+        console.log('Returning success response:', successResponse);
 
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
-        body: JSON.stringify(successResponse),
-      };
+        return {
+          statusCode: 200,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          body: JSON.stringify(successResponse),
+        };
       } catch (error) {
         console.error('Error sending email:', error);
 
