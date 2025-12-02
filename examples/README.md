@@ -17,6 +17,10 @@ This directory contains examples of how to use the Nylas Node.js SDK to interact
 - [Cloudflare Vite Calendars](./cloudflare-vite-calendars/README.md) - Modern Cloudflare Workers example using Vite for building a calendar event manager. Showcases listing and creating events with a beautiful web interface.
 - [Edge Environment](./edge-environment/README.md) - Standard Cloudflare Workers example for sending email attachments. Demonstrates file upload handling and email sending on the edge.
 
+### AWS Lambda Examples
+
+- [AWS Lambda Attachments](./aws-lambda/README.md) - AWS Lambda example for sending email attachments using the Nylas SDK. Demonstrates how to handle multiple file uploads (including 2+ attachments over 3MB total) without Lambda freezing. Includes interactive setup CLI and Serverless Framework deployment.
+
 ### Module System Examples
 
 - [ESM Only](./esm-only/) - Example of using the SDK with ES Modules
@@ -100,6 +104,42 @@ The Cloudflare Workers examples are self-contained and have their own setup:
    ```
 
 Each Cloudflare example has its own comprehensive README with detailed instructions.
+
+### AWS Lambda Examples
+
+The AWS Lambda example is self-contained and has its own setup:
+
+1. Navigate to the example directory:
+   ```bash
+   cd examples/aws-lambda
+   ```
+
+2. Run the interactive setup:
+   ```bash
+   npm run setup
+   ```
+
+   This will guide you through:
+   - Prerequisites checking
+   - Nylas credentials configuration
+   - AWS credentials setup
+   - Environment variable configuration
+   - Optional immediate deployment
+
+3. Or set up manually:
+   ```bash
+   npm install
+   # Create .env file with your Nylas credentials
+   # Configure AWS credentials
+   npm run deploy
+   ```
+
+4. Test the deployed function:
+   - Visit the API Gateway URL displayed after deployment
+   - Upload multiple files and send emails
+   - Test with files totaling over 3MB to verify the bug fix
+
+The AWS Lambda example includes a comprehensive README with detailed instructions and troubleshooting.
 
 ## Documentation
 

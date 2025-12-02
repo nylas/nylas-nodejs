@@ -1,0 +1,38 @@
+{
+  "name": "nylas-aws-lambda-attachments",
+  "version": "1.0.0",
+  "description": "AWS Lambda example for sending email attachments using Nylas SDK",
+  "main": "src/handler.ts",
+  "scripts": {
+    "setup": "ts-node setup-cli.ts",
+    "deploy": "dotenv -e .env -- serverless deploy",
+    "remove": "dotenv -e .env -- serverless remove",
+    "logs": "dotenv -e .env -- serverless logs -f sendAttachment -t",
+    "build:manual": "ts-node build-manual.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": ["aws", "lambda", "nylas", "email", "attachments", "serverless"],
+  "author": "Nylas",
+  "license": "MIT",
+  "dependencies": {
+    "nylas": "file:../../",
+    "mime-types": "^2.1.35"
+  },
+  "devDependencies": {
+    "serverless": "^3.38.0",
+    "serverless-esbuild": "^1.52.0",
+    "serverless-dotenv-plugin": "^6.0.0",
+    "dotenv-cli": "^7.4.2",
+    "archiver": "^7.0.1",
+    "@types/archiver": "^6.0.2",
+    "@types/aws-lambda": "^8.10.131",
+    "@types/mime-types": "^2.1.4",
+    "chalk": "^5.6.2",
+    "commander": "^14.0.0",
+    "inquirer": "^12.9.4",
+    "dotenv": "^17.2.2",
+    "typescript": "^5.8.3",
+    "ts-node": "^10.9.2"
+  }
+}
+

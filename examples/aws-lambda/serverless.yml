@@ -1,0 +1,48 @@
+service: nylas-lambda-attachments
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-west-1
+  memorySize: 512
+  timeout: 30
+  environment:
+    NYLAS_API_KEY: ${env:NYLAS_API_KEY}
+    NYLAS_API_URI: ${env:NYLAS_API_URI, 'https://api.us.nylas.com'}
+    NYLAS_GRANT_ID: ${env:NYLAS_GRANT_ID}
+  httpApi:
+    cors: true
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-esbuild
+
+custom:
+  dotenv:
+    path: .env
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: false
+    exclude:
+      - aws-sdk
+    target: node20
+    platform: node
+    concurrency: 10
+
+functions:
+  sendAttachment:
+    handler: src/handler.handler
+    events:
+      - httpApi:
+          path: /
+          method: GET
+      - httpApi:
+          path: /send-attachment
+          method: POST
+      - httpApi:
+          path: /{proxy+}
+          method: ANY
+
