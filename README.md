@@ -1,12 +1,30 @@
-<a href="https://www.nylas.com/">
-    <img src="https://brand.nylas.com/assets/downloads/logo_horizontal_png/Nylas-Logo-Horizontal-Blue_.png" alt="Aimeos logo" title="Aimeos" align="right" height="60" />
-</a>
+<div align="center">
+  <a href="https://www.nylas.com/">
+    <img src="/diagrams/nylas-logo.png" alt="Nylas" height="80" />
+  </a>
+  
+  <h1>Nylas Node.js SDK</h1>
+  
+  <p>
+    <strong>The official Node.js SDK for the Nylas Communications Platform</strong>
+  </p>
+  
+  <p>
+    <a href="https://www.npmjs.com/package/nylas"><img src="https://img.shields.io/npm/v/nylas" alt="npm version" /></a>
+    <a href="https://codecov.io/gh/nylas/nylas-nodejs"><img src="https://codecov.io/gh/nylas/nylas-nodejs/branch/main/graph/badge.svg?token=94IMGU4F09" alt="code coverage" /></a>
+    <a href="https://www.npmjs.com/package/nylas"><img src="https://img.shields.io/npm/dm/nylas" alt="downloads" /></a>
+    <a href="LICENSE.txt"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="license" /></a>
+  </p>
+  
+  <p>
+    <a href="https://developer.nylas.com/docs/v3/sdks/node/">📖 Documentation</a> •
+    <a href="https://dashboard.nylas.com/register">🚀 Get Started</a> •
+    <a href="https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=javascript">💡 Examples</a> •
+    <a href="https://developer.nylas.com/docs/api/">📚 API Reference</a>
+  </p>
+</div>
 
-# Nylas Node.js SDK  
-
-[![npm](https://img.shields.io/npm/v/nylas)
-](https://www.npmjs.com/package/nylas)
-[![codecov](https://codecov.io/gh/nylas/nylas-nodejs/branch/main/graph/badge.svg?token=94IMGU4F09)](https://codecov.io/gh/nylas/nylas-nodejs)
+<br />
 
 This is the GitHub repository for the Nylas Node SDK. This repo is primarily for anyone who wants to make contributions to the SDK, or install it from source. If you are looking to use Node to access the Nylas Email, Calendar, or Contacts API you should refer to our official [Node SDK Quickstart Guide](https://developer.nylas.com/docs/developer-tools/sdk/node-sdk/).
 
