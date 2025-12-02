@@ -201,7 +201,7 @@ const HTML_INTERFACE = `
             <div class="form-group">
                 <label>Attachments (multiple files supported):</label>
                 <div class="file-input" id="fileInput">
-                    <input type="file" id="file" name="file" multiple required style="display: none;">
+                    <input type="file" id="file" name="file" multiple style="display: none;">
                     <div id="filePrompt">
                         <strong>📎 Click to select files</strong><br>
                         <span style="color: #888;">or drag and drop here</span><br>
@@ -381,52 +381,87 @@ async function parseFormData(
   // API Gateway HTTP API sends multipart data as a string (or base64 if isBase64Encoded is true)
   // We parse it manually here for simplicity
   // For production, use a library like 'lambda-multipart-parser'
-  const boundary = contentType.split('boundary=')[1];
-  if (!boundary) {
-    throw new Error('Invalid multipart content type');
+  
+  // Extract boundary from Content-Type header
+  const boundaryMatch = contentType.match(/boundary=([^;]+)/);
+  if (!boundaryMatch) {
+    throw new Error(`Invalid multipart content type: ${contentType}`);
   }
+  const boundary = boundaryMatch[1].trim();
+  
+  // Split by boundary (with -- prefix)
   const parts = body.split(`--${boundary}`);
   const result: { [key: string]: any } = { files: [] };
 
   for (const part of parts) {
-    if (!part.trim() || part.includes('--')) continue;
+    // Skip empty parts and closing boundary
+    const trimmedPart = part.trim();
+    if (!trimmedPart || trimmedPart === '--' || trimmedPart === '') continue;
 
-    const [headers, content] = part.split('\r\n\r\n');
-    if (!headers || !content) continue;
-
-    const nameMatch = headers.match(/name="([^"]+)"/);
-    const filenameMatch = headers.match(/filename="([^"]+)"/);
-    const contentTypeMatch = headers.match(/Content-Type:\s*([^\r\n]+)/);
-
-    if (nameMatch) {
-      const name = nameMatch[1];
-      const trimmedContent = content.replace(/\r\n$/, '');
-
-      if (filenameMatch) {
-        // It's a file
-        const filename = filenameMatch[1];
-        const fileContentType = contentTypeMatch
-          ? contentTypeMatch[1].trim()
-          : getContentType(filename);
-        const buffer = Buffer.from(trimmedContent, 'binary');
-
-        result.files.push({
-          filename,
-          contentType: fileContentType,
-          content: buffer,
-          size: buffer.length,
-        });
-      } else {
-        // It's a regular field
-        result[name] = trimmedContent;
-      }
+    // Split headers and content (multipart uses \r\n\r\n as separator)
+    const headerEndIndex = trimmedPart.indexOf('\r\n\r\n');
+    if (headerEndIndex === -1) {
+      // Try \n\n as fallback
+      const headerEndIndexAlt = trimmedPart.indexOf('\n\n');
+      if (headerEndIndexAlt === -1) continue;
+      const headers = trimmedPart.substring(0, headerEndIndexAlt);
+      const content = trimmedPart.substring(headerEndIndexAlt + 2);
+      processPart(headers, content, result);
+    } else {
+      const headers = trimmedPart.substring(0, headerEndIndex);
+      const content = trimmedPart.substring(headerEndIndex + 4);
+      processPart(headers, content, result);
     }
   }
 
   return result;
 }
 
+function processPart(
+  headers: string,
+  content: string,
+  result: { [key: string]: any }
+): void {
+  // Extract field name
+  const nameMatch = headers.match(/name="([^"]+)"/);
+  if (!nameMatch) return;
+
+  const name = nameMatch[1];
+  
+  // Check if it's a file (has filename attribute)
+  const filenameMatch = headers.match(/filename="([^"]+)"/);
+  const contentTypeMatch = headers.match(/Content-Type:\s*([^\r\n]+)/i);
+
+  // Remove trailing \r\n from content
+  const trimmedContent = content.replace(/\r\n$/, '').replace(/\n$/, '');
+
+  if (filenameMatch) {
+    // It's a file
+    const filename = filenameMatch[1];
+    const fileContentType = contentTypeMatch
+      ? contentTypeMatch[1].trim()
+      : getContentType(filename);
+    
+    // Convert content to buffer (handle both binary and base64 if needed)
+    const buffer = Buffer.from(trimmedContent, 'binary');
+
+    if (!result.files) {
+      result.files = [];
+    }
+    result.files.push({
+      filename,
+      contentType: fileContentType,
+      content: buffer,
+      size: buffer.length,
+    });
+  } else {
+    // It's a regular form field
+    result[name] = trimmedContent;
+  }
+}
+
 // Main Lambda handler
+// Export as const so esbuild can properly convert to CommonJS exports.handler
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
@@ -437,38 +472,46 @@ export const handler = async (
     'Access-Control-Allow-Headers': 'Content-Type',
   };
 
-  // Handle CORS preflight
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers: corsHeaders,
-      body: '',
+  try {
+    // Handle CORS preflight
+    if (event.httpMethod === 'OPTIONS') {
+      return {
+        statusCode: 200,
+        headers: corsHeaders,
+        body: '',
+      };
+    }
+
+    // Validate environment variables
+    const env: LambdaEnv = {
+      NYLAS_API_KEY: process.env.NYLAS_API_KEY || '',
+      NYLAS_API_URI: process.env.NYLAS_API_URI || 'https://api.us.nylas.com',
+      NYLAS_GRANT_ID: process.env.NYLAS_GRANT_ID || '',
     };
-  }
 
-  // Validate environment variables
-  const env: LambdaEnv = {
-    NYLAS_API_KEY: process.env.NYLAS_API_KEY || '',
-    NYLAS_API_URI: process.env.NYLAS_API_URI || 'https://api.us.nylas.com',
-    NYLAS_GRANT_ID: process.env.NYLAS_GRANT_ID || '',
-  };
+    if (!env.NYLAS_API_KEY || !env.NYLAS_GRANT_ID) {
+      console.error('Missing environment variables:', {
+        hasApiKey: !!env.NYLAS_API_KEY,
+        hasGrantId: !!env.NYLAS_GRANT_ID,
+      });
+      return {
+        statusCode: 500,
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
+        body: JSON.stringify({
+          error:
+            'Missing required environment variables (NYLAS_API_KEY, NYLAS_GRANT_ID)',
+        }),
+      };
+    }
 
-  if (!env.NYLAS_API_KEY || !env.NYLAS_GRANT_ID) {
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json', ...corsHeaders },
-      body: JSON.stringify({
-        error:
-          'Missing required environment variables (NYLAS_API_KEY, NYLAS_GRANT_ID)',
-      }),
-    };
-  }
+    // Get the request path (API Gateway HTTP API uses rawPath, REST API uses path)
+    const requestPath = (event as any).rawPath || event.path || '/';
+    const httpMethod = event.httpMethod || (event as any).requestContext?.http?.method || 'GET';
+    
+    console.log('Request received:', { httpMethod, requestPath, hasBody: !!event.body });
 
-  // Get the request path (API Gateway HTTP API uses rawPath)
-  const requestPath = event.path ?? '/';
-
-  // Serve HTML interface on GET /
-  if (event.httpMethod === 'GET' && requestPath === '/') {
+    // Serve HTML interface on GET /
+    if (httpMethod === 'GET' && requestPath === '/') {
     return {
       statusCode: 200,
       headers: {
@@ -479,9 +522,9 @@ export const handler = async (
     };
   }
 
-  // Handle file upload and email sending on POST /send-attachment
-  if (event.httpMethod === 'POST' && requestPath === '/send-attachment') {
-    try {
+    // Handle file upload and email sending on POST /send-attachment
+    if (httpMethod === 'POST' && requestPath === '/send-attachment') {
+      try {
       // Parse multipart form data
       const contentType =
         event.headers['Content-Type'] || event.headers['content-type'] || '';
@@ -501,7 +544,36 @@ export const handler = async (
         ? Buffer.from(event.body || '', 'base64').toString('binary')
         : event.body || '';
 
-      const formData = await parseFormData(body, contentType);
+      if (!body) {
+        return {
+          statusCode: 400,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          body: JSON.stringify({ error: 'Request body is empty' }),
+        };
+      }
+
+      let formData;
+      try {
+        formData = await parseFormData(body, contentType);
+        console.log('Parsed form data keys:', Object.keys(formData));
+        console.log('Files count:', formData.files?.length || 0);
+        console.log('Recipient email:', formData.recipientEmail ? 'present' : 'missing');
+        console.log('Subject:', formData.subject ? 'present' : 'missing');
+        console.log('Message:', formData.message ? 'present' : 'missing');
+      } catch (parseError) {
+        console.error('Error parsing form data:', parseError);
+        console.error('Content-Type:', contentType);
+        console.error('Body length:', body.length);
+        console.error('Body preview (first 500 chars):', body.substring(0, 500));
+        return {
+          statusCode: 400,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          body: JSON.stringify({
+            error: 'Failed to parse form data',
+            details: parseError instanceof Error ? parseError.message : String(parseError),
+          }),
+        };
+      }
       const recipientEmail = formData.recipientEmail as string;
       const subject = formData.subject as string;
       const message = formData.message as string;
@@ -512,18 +584,30 @@ export const handler = async (
         size: number;
       }>;
 
-      // Validate required fields
-      if (
-        !recipientEmail ||
-        !subject ||
-        !message ||
-        !files ||
-        files.length === 0
-      ) {
+      // Validate required fields with detailed error
+      const missingFields: string[] = [];
+      if (!recipientEmail) missingFields.push('recipientEmail');
+      if (!subject) missingFields.push('subject');
+      if (!message) missingFields.push('message');
+      if (!files || files.length === 0) missingFields.push('files');
+
+      if (missingFields.length > 0) {
+        console.error('Missing required fields:', missingFields);
+        console.error('Form data keys:', Object.keys(formData));
+        console.error('Form data values:', {
+          recipientEmail: formData.recipientEmail ? 'present' : 'missing',
+          subject: formData.subject ? 'present' : 'missing',
+          message: formData.message ? 'present' : 'missing',
+          filesCount: formData.files?.length || 0,
+        });
         return {
           statusCode: 400,
           headers: { 'Content-Type': 'application/json', ...corsHeaders },
-          body: JSON.stringify({ error: 'Missing required fields' }),
+          body: JSON.stringify({ 
+            error: 'Missing required fields',
+            missingFields: missingFields,
+            receivedFields: Object.keys(formData),
+          }),
         };
       }
 
@@ -579,36 +663,66 @@ export const handler = async (
         requestBody: sendRequest,
       });
 
+      console.log('Nylas API response received:', {
+        hasResponse: !!response,
+        hasData: !!response?.data,
+        responseKeys: response ? Object.keys(response) : [],
+        dataKeys: response?.data ? Object.keys(response.data) : [],
+        messageId: response?.data?.id,
+      });
+
+      // Extract message ID safely (response.data is the Message object)
+      const messageId = response?.data?.id || 'unknown';
+
       // Return success response
+      const successResponse = {
+        success: true,
+        messageId: messageId,
+        message: 'Email sent successfully',
+        attachmentsCount: attachments.length,
+        totalSize: totalSize,
+      };
+
+      console.log('Returning success response:', successResponse);
+
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', ...corsHeaders },
-        body: JSON.stringify({
-          success: true,
-          messageId: response.data.id,
-          message: 'Email sent successfully',
-          attachmentsCount: attachments.length,
-          totalSize: totalSize,
-        }),
+        body: JSON.stringify(successResponse),
       };
-    } catch (error) {
-      console.error('Error sending email:', error);
+      } catch (error) {
+        console.error('Error sending email:', error);
 
-      return {
-        statusCode: 500,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders },
-        body: JSON.stringify({
-          error:
-            error instanceof Error ? error.message : 'Unknown error occurred',
-        }),
-      };
+        return {
+          statusCode: 500,
+          headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          body: JSON.stringify({
+            error:
+              error instanceof Error ? error.message : 'Unknown error occurred',
+          }),
+        };
+      }
     }
-  }
 
-  // 404 for other routes
-  return {
-    statusCode: 404,
-    headers: corsHeaders,
-    body: JSON.stringify({ error: 'Not Found' }),
-  };
+    // 404 for other routes
+    return {
+      statusCode: 404,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: 'Not Found' }),
+    };
+  } catch (error) {
+    console.error('Unhandled error in handler:', error);
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json', ...corsHeaders },
+      body: JSON.stringify({
+        error: error instanceof Error ? error.message : 'Internal server error',
+        details: error instanceof Error ? error.stack : String(error),
+      }),
+    };
+  }
 };
+
+// With --format=cjs, esbuild will convert "export const handler" to "exports.handler = handler"
+// This is the correct format for Lambda handlers
+// No need for additional exports - esbuild handles the CommonJS conversion

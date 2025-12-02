@@ -247,6 +247,14 @@ provider:
 - Ensure you're using the latest SDK version
 - The SDK automatically uses multipart/form-data for payloads ≥ 3MB
 
+**Error: "Cannot find module 'index'"**
+- This usually means the handler setting is incorrect
+- Verify the handler is set to exactly: `handler.handler` (not `index.handler` or `handler`)
+- The handler format is: `filename.functionName`
+- For this example: file is `handler.js`, function is `handler`, so handler = `handler.handler`
+- Check Lambda Configuration → Runtime settings → Handler
+- Rebuild and re-upload the zip file if you changed the handler code
+
 ### Debug Mode
 
 View Lambda logs in real-time:
@@ -343,10 +351,20 @@ This will:
 
 8. **Configure Routes**
    - In your API, go to "Routes"
-   - Create routes:
-     - `GET /` → Your Lambda function
-     - `POST /send-attachment` → Your Lambda function
-     - `OPTIONS /{proxy+}` → Your Lambda function (for CORS)
+   - Create the following routes (all pointing to your Lambda function):
+     - **GET /** → Lambda function (serves the HTML interface)
+     - **POST /send-attachment** → Lambda function (handles file uploads)
+     - **OPTIONS /{proxy+}** → Lambda function (for CORS preflight requests)
+     - **ANY /{proxy+}** → Lambda function (catch-all for other routes, returns 404)
+   - For each route:
+     - Click "Create" → Enter the path and method
+     - Select your Lambda function as the integration target
+     - Click "Create"
+
+9. **Enable CORS (if not already configured)**
+   - The Lambda function returns CORS headers, but you may want to configure CORS in API Gateway as well
+   - Go to "CORS" in your API settings
+   - Or ensure your Lambda function returns the appropriate CORS headers (already implemented)
 
 9. **Test Your Function**
    - Copy the API Gateway endpoint URL
