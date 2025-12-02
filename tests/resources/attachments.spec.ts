@@ -25,7 +25,7 @@ describe('Attachments', () => {
         controller.close();
       },
     });
-    apiClient.requestStream.mockResolvedValue(Promise.resolve(mockStream));
+    apiClient.requestStream.mockResolvedValue(mockStream);
   });
 
   describe('find', () => {
