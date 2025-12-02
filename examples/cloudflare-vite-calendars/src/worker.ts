@@ -449,7 +449,9 @@ async function createEvent(
 ): Promise<Response> {
   try {
     // Convert ISO dates to Unix timestamps
-    const startTime = Math.floor(new Date(eventData.startDate).getTime() / 1000);
+    const startTime = Math.floor(
+      new Date(eventData.startDate).getTime() / 1000
+    );
     const endTime = Math.floor(new Date(eventData.endDate).getTime() / 1000);
 
     // Prepare the event request
@@ -526,11 +528,7 @@ export default {
     }
 
     // Validate environment variables
-    if (
-      !env.NYLAS_API_KEY ||
-      !env.NYLAS_GRANT_ID ||
-      !env.NYLAS_CALENDAR_ID
-    ) {
+    if (!env.NYLAS_API_KEY || !env.NYLAS_GRANT_ID || !env.NYLAS_CALENDAR_ID) {
       return new Response(
         JSON.stringify({
           error:
@@ -590,4 +588,3 @@ export default {
     });
   },
 };
-

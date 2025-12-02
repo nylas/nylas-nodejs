@@ -74,7 +74,9 @@ export class Attachments extends Resource {
     attachmentId,
     queryParams,
     overrides,
-  }: DownloadAttachmentParams & Overrides): Promise<ReadableStream<Uint8Array>> {
+  }: DownloadAttachmentParams & Overrides): Promise<
+    ReadableStream<Uint8Array>
+  > {
     return this._getStream({
       path: makePathParams(
         '/v3/grants/{identifier}/attachments/{attachmentId}/download',

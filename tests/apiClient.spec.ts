@@ -183,10 +183,18 @@ describe('APIClient', () => {
         expect(newRequest.method).toBe('POST');
         // Native Headers API uses .get() to check individual headers
         expect(newRequest.headers.get('Accept')).toEqual('application/json');
-        expect(newRequest.headers.get('Authorization')).toEqual('Bearer testApiKey');
-        expect(newRequest.headers.get('Content-Type')).toEqual('application/json');
-        expect(newRequest.headers.get('User-Agent')).toEqual(`Nylas Node SDK v${SDK_VERSION}`);
-        expect(newRequest.headers.get('X-SDK-Test-Header')).toEqual('This is a test');
+        expect(newRequest.headers.get('Authorization')).toEqual(
+          'Bearer testApiKey'
+        );
+        expect(newRequest.headers.get('Content-Type')).toEqual(
+          'application/json'
+        );
+        expect(newRequest.headers.get('User-Agent')).toEqual(
+          `Nylas Node SDK v${SDK_VERSION}`
+        );
+        expect(newRequest.headers.get('X-SDK-Test-Header')).toEqual(
+          'This is a test'
+        );
         expect(newRequest.headers.get('global-header')).toEqual('global-value');
         expect(newRequest.headers.get('override')).toEqual('bar');
         expect(newRequest.url).toEqual(
@@ -695,7 +703,9 @@ describe('APIClient', () => {
           json: jest.fn(),
           headers: new Map(),
           // Native fetch uses arrayBuffer() instead of buffer()
-          arrayBuffer: jest.fn().mockResolvedValue(textEncoder.encode(testData).buffer),
+          arrayBuffer: jest
+            .fn()
+            .mockResolvedValue(textEncoder.encode(testData).buffer),
         };
 
         fetchMock.mockImplementationOnce(() =>
