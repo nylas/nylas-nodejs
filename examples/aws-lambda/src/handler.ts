@@ -629,6 +629,7 @@ export const handler = async (
         const nylas = new Nylas({
           apiKey: env.NYLAS_API_KEY,
           apiUri: env.NYLAS_API_URI,
+          timeout: 3,
         });
 
         // Prepare attachments
@@ -648,6 +649,13 @@ export const handler = async (
         console.log(
           `Sending email with ${attachments.length} attachment(s), total size: ${totalSize} bytes (${totalSize >= threeMB ? '>= 3MB, will use multipart/form-data' : '< 3MB, will use JSON'})`
         );
+
+        // Output the attachments json without the content
+        console.log('Attachments JSON:', JSON.stringify(attachments.map((att) => ({
+          filename: att.filename,
+          contentType: att.contentType,
+          size: att.size,
+        })), null, 2));
 
         // Prepare the email request
         const sendRequest: SendMessageRequest = {
@@ -675,6 +683,9 @@ export const handler = async (
         const response = await nylas.messages.send({
           identifier: env.NYLAS_GRANT_ID,
           requestBody: sendRequest,
+          overrides: {
+            timeout: 3000,
+          },
         });
 
         console.log('Nylas API response received:', {

@@ -6,6 +6,8 @@ import {
 } from '../src/models/error';
 import { SDK_VERSION } from '../src/version';
 import { mockResponse } from './testUtils';
+import { FormData } from 'formdata-node';
+import { Readable } from 'stream';
 
 import fetchMock from 'jest-fetch-mock';
 
@@ -660,19 +662,21 @@ describe('APIClient', () => {
       });
 
       it('should handle form data in request options', () => {
-        const mockFormData = {
-          append: jest.fn(),
-          [Symbol.toStringTag]: 'FormData',
-        } as any;
+        const formData = new FormData();
+        formData.append('message', JSON.stringify({ subject: 'Test' }));
 
         const options = client.requestOptions({
           path: '/test',
           method: 'POST',
-          form: mockFormData,
+          form: formData,
         });
 
-        expect(options.body).toBe(mockFormData);
-        expect(options.headers['Content-Type']).toBeUndefined(); // FormData sets its own content-type
+        // Body should be a readable stream from FormDataEncoder
+        expect(options.body).toBeInstanceOf(Readable);
+        // Content-Type should be set to multipart/form-data with boundary
+        expect(options.headers['Content-Type']).toMatch(
+          /^multipart\/form-data; boundary=/
+        );
       });
 
       it('should throw error when JSON parsing fails in requestWithResponse', async () => {
