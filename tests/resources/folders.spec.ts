@@ -188,7 +188,10 @@ describe('Folders', () => {
       await folders.find({
         identifier: 'id123',
         folderId: 'folder123',
-        queryParams: {},
+        queryParams: {
+          includeHiddenFolders: true,
+          select: 'id,name,updated_at',
+        },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
@@ -198,7 +201,10 @@ describe('Folders', () => {
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'GET',
         path: '/v3/grants/id123/folders/folder123',
-        queryParams: {},
+        queryParams: {
+          includeHiddenFolders: true,
+          select: 'id,name,updated_at',
+        },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'bar' },
