@@ -115,4 +115,12 @@ export interface ListFolderQueryParams extends ListQueryParams {
   singleLevel?: boolean;
 }
 
+/**
+ * Interface representing the query parameters for finding a folder.
+ */
+export interface FindFolderQueryParams {
+  // Currently no specific query parameters for finding a folder
+  // This interface can be extended in the future if the API adds query parameters
+}
+
 export type UpdateFolderRequest = Partial<CreateFolderRequest>;
