@@ -651,11 +651,18 @@ export const handler = async (
         );
 
         // Output the attachments json without the content
-        console.log('Attachments JSON:', JSON.stringify(attachments.map((att) => ({
-          filename: att.filename,
-          contentType: att.contentType,
-          size: att.size,
-        })), null, 2));
+        console.log(
+          'Attachments JSON:',
+          JSON.stringify(
+            attachments.map((att) => ({
+              filename: att.filename,
+              contentType: att.contentType,
+              size: att.size,
+            })),
+            null,
+            2
+          )
+        );
 
         // Prepare the email request
         const sendRequest: SendMessageRequest = {
