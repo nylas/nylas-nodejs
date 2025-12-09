@@ -4,6 +4,7 @@ import {
   CreateFolderRequest,
   UpdateFolderRequest,
   ListFolderQueryParams,
+  FindFolderQueryParams,
 } from '../models/folders.js';
 import {
   NylasBaseResponse,
@@ -26,10 +27,12 @@ interface ListFoldersParams {
  * The parameters for the {@link Folders.find} method
  * @property identifier The identifier of the grant to act upon
  * @property folderId The id of the Folder to retrieve
+ * @property queryParams The query parameters to include in the request
  */
 interface FindFolderParams {
   identifier: string;
   folderId: string;
+  queryParams?: FindFolderQueryParams;
 }
 
 /**
@@ -103,6 +106,7 @@ export class Folders extends Resource {
   public find({
     identifier,
     folderId,
+    queryParams,
     overrides,
   }: FindFolderParams & Overrides): Promise<NylasResponse<Folder>> {
     return super._find({
@@ -110,6 +114,7 @@ export class Folders extends Resource {
         identifier,
         folderId,
       }),
+      queryParams,
       overrides,
     });
   }

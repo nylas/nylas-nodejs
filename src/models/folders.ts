@@ -115,4 +115,22 @@ export interface ListFolderQueryParams extends ListQueryParams {
   singleLevel?: boolean;
 }
 
+/**
+ * Interface representing the query parameters for finding a folder.
+ */
+export interface FindFolderQueryParams {
+  /**
+   * (Microsoft only) When true, Nylas includes hidden folders in its response.
+   * @default false
+   */
+  includeHiddenFolders?: boolean;
+
+  /**
+   * Specify fields that you want Nylas to return, as a comma-separated list (for example, select=id,updated_at).
+   * This allows you to receive only the portion of object data that you're interested in.
+   * You can use select to optimize response size and reduce latency by limiting queries to only the information that you need.
+   */
+  select?: string;
+}
+
 export type UpdateFolderRequest = Partial<CreateFolderRequest>;
