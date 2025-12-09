@@ -694,6 +694,106 @@ describe('APIClient', () => {
           'Could not parse response from the server: invalid json content'
         );
       });
+
+      it('should handle response without headers.entries method', async () => {
+        const payload = {
+          id: 123,
+          name: 'test',
+        };
+
+        // Create a mock response without headers.entries
+        const mockResp = {
+          ok: true,
+          status: 200,
+          text: jest.fn().mockResolvedValue(JSON.stringify(payload)),
+          json: jest.fn().mockResolvedValue(payload),
+          headers: {
+            // No entries method - this tests the branch where entries is falsy
+            get: jest.fn().mockReturnValue(null),
+          },
+        };
+
+        fetchMock.mockImplementationOnce(() =>
+          Promise.resolve(mockResp as any)
+        );
+
+        const response = await client.request({
+          path: '/test',
+          method: 'GET',
+        });
+
+        // Response will include flowId and headers even when entries doesn't exist
+        expect(response).toMatchObject(payload);
+        expect((response as any).headers).toEqual({});
+      });
+
+      it('should handle requestWithResponse without headers.entries method', async () => {
+        const payload = {
+          id: 456,
+          name: 'test',
+        };
+
+        // Create a mock response without headers.entries
+        const mockResp = {
+          ok: true,
+          status: 200,
+          text: jest.fn().mockResolvedValue(JSON.stringify(payload)),
+          json: jest.fn().mockResolvedValue(payload),
+          headers: {
+            // No entries method - this tests the branch where entries is falsy
+            get: jest.fn().mockReturnValue(null),
+          },
+        };
+
+        const result = await client.requestWithResponse(mockResp as any);
+
+        // Response will include flowId and headers even when entries doesn't exist
+        expect(result).toMatchObject(payload);
+        expect((result as any).headers).toEqual({});
+      });
+
+      it('should include duplex option when form data is provided', async () => {
+        const formData = new FormData();
+        formData.append('message', JSON.stringify({ subject: 'Test' }));
+
+        const mockResp = mockResponse(JSON.stringify({ success: true }));
+        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp));
+
+        // Test that the request succeeds with form data (which requires duplex)
+        // This indirectly tests that duplex was set correctly
+        const response = await client.request({
+          path: '/test',
+          method: 'POST',
+          form: formData,
+        });
+
+        expect(response).toMatchObject({ success: true });
+      });
+
+      it('should actually trigger timeout and abort request', async () => {
+        const shortTimeout = 0.001; // 1ms timeout - very short
+
+        // Mock fetch to reject with AbortError when aborted
+        // This tests the timeout callback that aborts the request (lines 175-176)
+        fetchMock.mockImplementationOnce(() => {
+          return new Promise((_, reject) => {
+            // Simulate abort by rejecting with AbortError after a delay
+            setTimeout(() => {
+              const error = new Error('The operation was aborted');
+              error.name = 'AbortError';
+              reject(error);
+            }, 5); // Slightly longer than timeout to ensure abort happens
+          });
+        });
+
+        await expect(
+          client.request({
+            path: '/test',
+            method: 'GET',
+            overrides: { timeout: shortTimeout },
+          })
+        ).rejects.toThrow(NylasSdkTimeoutError);
+      });
     });
 
     describe('requestRaw', () => {

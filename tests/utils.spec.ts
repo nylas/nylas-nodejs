@@ -7,6 +7,7 @@ import {
   encodeAttachmentStreams,
   attachmentStreamToFile,
   streamToBase64,
+  calculateTotalPayloadSize,
 } from '../src/utils';
 import { Readable } from 'stream';
 import { CreateAttachmentRequest } from '../src/models/attachments';
@@ -640,5 +641,163 @@ describe('attachmentStreamToFile', () => {
     const returnedStream = result.stream();
 
     expect(returnedStream).toBe(stream);
+  });
+});
+
+describe('calculateTotalPayloadSize', () => {
+  it('should calculate total payload size including message body and attachments', () => {
+    const requestBody = {
+      to: [{ email: 'test@example.com' }],
+      subject: 'Test',
+      body: 'Test body',
+      attachments: [
+        { filename: 'file1.txt', size: 100 },
+        { filename: 'file2.txt', size: 200 },
+      ],
+    };
+
+    const result = calculateTotalPayloadSize(requestBody);
+
+    // Should include JSON body size + attachment sizes
+    expect(result).toBeGreaterThan(0);
+    expect(result).toBeGreaterThanOrEqual(300); // At least the attachment sizes
+  });
+
+  it('should calculate size without attachments', () => {
+    const requestBody = {
+      to: [{ email: 'test@example.com' }],
+      subject: 'Test',
+      body: 'Test body',
+    };
+
+    const result = calculateTotalPayloadSize(requestBody);
+
+    // Should only include JSON body size
+    expect(result).toBeGreaterThan(0);
+    expect(result).toBeLessThan(1000); // Should be relatively small without attachments
+  });
+
+  it('should handle empty attachments array', () => {
+    const requestBody = {
+      to: [{ email: 'test@example.com' }],
+      subject: 'Test',
+      attachments: [],
+    };
+
+    const result = calculateTotalPayloadSize(requestBody);
+
+    expect(result).toBeGreaterThan(0);
+  });
+
+  it('should handle attachments without size property', () => {
+    const requestBody = {
+      to: [{ email: 'test@example.com' }],
+      subject: 'Test',
+      attachments: [
+        { filename: 'file1.txt' },
+        { filename: 'file2.txt', size: 200 },
+      ],
+    };
+
+    const result = calculateTotalPayloadSize(requestBody);
+
+    // Should only count attachments with size property
+    expect(result).toBeGreaterThanOrEqual(200);
+  });
+
+  it('should handle undefined attachments', () => {
+    const requestBody = {
+      to: [{ email: 'test@example.com' }],
+      subject: 'Test',
+    };
+
+    const result = calculateTotalPayloadSize(requestBody);
+
+    expect(result).toBeGreaterThan(0);
+  });
+
+  it('should handle large attachments', () => {
+    const requestBody = {
+      to: [{ email: 'test@example.com' }],
+      subject: 'Test',
+      attachments: [
+        { filename: 'large1.txt', size: 1000000 },
+        { filename: 'large2.txt', size: 2000000 },
+      ],
+    };
+
+    const result = calculateTotalPayloadSize(requestBody);
+
+    expect(result).toBeGreaterThanOrEqual(3000000);
+  });
+});
+
+describe('convertCase with nested arrays', () => {
+  it('should recursively convert object items in arrays to camelCase', () => {
+    const obj = {
+      items: [
+        { user_id: 1, user_name: 'John' },
+        { user_id: 2, user_name: 'Jane' },
+        'plain string',
+        123,
+      ],
+    };
+    const result = objKeysToCamelCase(obj);
+    expect(result).toEqual({
+      items: [
+        { userId: 1, userName: 'John' },
+        { userId: 2, userName: 'Jane' },
+        'plain string',
+        123,
+      ],
+    });
+  });
+
+  it('should recursively convert object items in arrays to snake_case', () => {
+    const obj = {
+      items: [
+        { userId: 1, userName: 'John' },
+        { userId: 2, userName: 'Jane' },
+        'plain string',
+        123,
+      ],
+    };
+    const result = objKeysToSnakeCase(obj);
+    expect(result).toEqual({
+      items: [
+        { user_id: 1, user_name: 'John' },
+        { user_id: 2, user_name: 'Jane' },
+        'plain string',
+        123,
+      ],
+    });
+  });
+
+  it('should handle deeply nested objects in arrays', () => {
+    const obj = {
+      users: [
+        {
+          user_id: 1,
+          profile: { first_name: 'John', last_name: 'Doe' },
+        },
+        {
+          user_id: 2,
+          profile: { first_name: 'Jane', last_name: 'Smith' },
+        },
+      ],
+    };
+    const result = objKeysToCamelCase(obj);
+    expect(result).toEqual({
+      users: [
+        {
+          userId: 1,
+          profile: { firstName: 'John', lastName: 'Doe' },
+        },
+        {
+          userId: 2,
+          profile: { firstName: 'Jane', lastName: 'Smith' },
+        },
+      ],
+    });
   });
 });
