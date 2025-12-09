@@ -1,4 +1,3 @@
-import { Readable as _Readable } from 'node:stream';
 import { NylasConfig, OverridableNylasConfig } from './config.js';
 import {
   NylasApiError,
@@ -8,10 +7,9 @@ import {
 import { objKeysToCamelCase, objKeysToSnakeCase } from './utils.js';
 import { SDK_VERSION } from './version.js';
 import { FormData } from 'formdata-node';
-import { FormDataEncoder as _FormDataEncoder } from 'form-data-encoder';
+import { FormDataEncoder } from 'form-data-encoder';
+import { Readable } from 'stream';
 import { snakeCase } from 'change-case';
-import { getFetch, getRequest } from './utils/fetchWrapper.js';
-import type { Request, Response } from './utils/fetchWrapper.js';
 
 /**
  * The header key for the debugging flow ID
@@ -59,6 +57,7 @@ interface RequestOptions {
   url: URL;
   body?: any;
   overrides?: Partial<NylasConfig>;
+  duplex?: 'half';
 }
 
 /**
@@ -178,7 +177,6 @@ export default class APIClient {
     }, timeoutDuration);
 
     try {
-      const fetch = await getFetch();
       const response = await fetch(req, {
         signal: controller.signal as AbortSignal,
       });
@@ -267,7 +265,20 @@ export default class APIClient {
     }
 
     if (optionParams.form) {
-      requestOptions.body = optionParams.form;
+      // Use FormDataEncoder to properly encode the form data with the correct
+      // Content-Type header including the multipart boundary.
+      // This is required for Node.js environments where formdata-node's FormData
+      // doesn't automatically set the Content-Type header on fetch requests.
+      const encoder = new FormDataEncoder(optionParams.form);
+
+      // Set the Content-Type header with the boundary from the encoder
+      requestOptions.headers['Content-Type'] = encoder.contentType;
+
+      // Convert the encoded form data to a readable stream for the request body
+      requestOptions.body = Readable.from(encoder);
+
+      // Node.js native fetch requires duplex: 'half' when sending a streaming body
+      requestOptions.duplex = 'half';
     }
 
     return requestOptions;
@@ -275,12 +286,18 @@ export default class APIClient {
 
   async newRequest(options: RequestOptionsParams): Promise<Request> {
     const newOptions = this.requestOptions(options);
-    const RequestConstructor = await getRequest();
-    return new RequestConstructor(newOptions.url, {
+    const requestInit: RequestInit = {
       method: newOptions.method,
       headers: newOptions.headers,
       body: newOptions.body,
-    });
+    };
+
+    // Add duplex option for streaming bodies (required by Node.js native fetch)
+    if (newOptions.duplex) {
+      (requestInit as any).duplex = newOptions.duplex;
+    }
+
+    return new Request(newOptions.url, requestInit);
   }
 
   async requestWithResponse<T>(response: Response): Promise<T> {
@@ -319,14 +336,14 @@ export default class APIClient {
 
   async requestRaw(options: RequestOptionsParams): Promise<Buffer> {
     const response = await this.sendRequest(options);
-    return response.buffer();
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
   }
 
   async requestStream(
     options: RequestOptionsParams
-  ): Promise<NodeJS.ReadableStream> {
+  ): Promise<ReadableStream<Uint8Array>> {
     const response = await this.sendRequest(options);
-    // TODO: See if we can fix this in a backwards compatible way
     if (!response.body) {
       throw new Error('No response body');
     }

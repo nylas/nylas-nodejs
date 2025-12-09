@@ -6,6 +6,8 @@ import {
 } from '../src/models/error';
 import { SDK_VERSION } from '../src/version';
 import { mockResponse } from './testUtils';
+import { FormData } from 'formdata-node';
+import { Readable } from 'stream';
 
 import fetchMock from 'jest-fetch-mock';
 
@@ -181,15 +183,22 @@ describe('APIClient', () => {
         const newRequest = await client.newRequest(options);
 
         expect(newRequest.method).toBe('POST');
-        expect(newRequest.headers.raw()).toEqual({
-          Accept: ['application/json'],
-          Authorization: ['Bearer testApiKey'],
-          'Content-Type': ['application/json'],
-          'User-Agent': [`Nylas Node SDK v${SDK_VERSION}`],
-          'X-SDK-Test-Header': ['This is a test'],
-          'global-header': ['global-value'],
-          override: ['bar'],
-        });
+        // Native Headers API uses .get() to check individual headers
+        expect(newRequest.headers.get('Accept')).toEqual('application/json');
+        expect(newRequest.headers.get('Authorization')).toEqual(
+          'Bearer testApiKey'
+        );
+        expect(newRequest.headers.get('Content-Type')).toEqual(
+          'application/json'
+        );
+        expect(newRequest.headers.get('User-Agent')).toEqual(
+          `Nylas Node SDK v${SDK_VERSION}`
+        );
+        expect(newRequest.headers.get('X-SDK-Test-Header')).toEqual(
+          'This is a test'
+        );
+        expect(newRequest.headers.get('global-header')).toEqual('global-value');
+        expect(newRequest.headers.get('override')).toEqual('bar');
         expect(newRequest.url).toEqual(
           'https://override.api.nylas.com/test?param=value'
         );
@@ -653,19 +662,21 @@ describe('APIClient', () => {
       });
 
       it('should handle form data in request options', () => {
-        const mockFormData = {
-          append: jest.fn(),
-          [Symbol.toStringTag]: 'FormData',
-        } as any;
+        const formData = new FormData();
+        formData.append('message', JSON.stringify({ subject: 'Test' }));
 
         const options = client.requestOptions({
           path: '/test',
           method: 'POST',
-          form: mockFormData,
+          form: formData,
         });
 
-        expect(options.body).toBe(mockFormData);
-        expect(options.headers['Content-Type']).toBeUndefined(); // FormData sets its own content-type
+        // Body should be a readable stream from FormDataEncoder
+        expect(options.body).toBeInstanceOf(Readable);
+        // Content-Type should be set to multipart/form-data with boundary
+        expect(options.headers['Content-Type']).toMatch(
+          /^multipart\/form-data; boundary=/
+        );
       });
 
       it('should throw error when JSON parsing fails in requestWithResponse', async () => {
@@ -683,18 +694,122 @@ describe('APIClient', () => {
           'Could not parse response from the server: invalid json content'
         );
       });
+
+      it('should handle response without headers.entries method', async () => {
+        const payload = {
+          id: 123,
+          name: 'test',
+        };
+
+        // Create a mock response without headers.entries
+        const mockResp = {
+          ok: true,
+          status: 200,
+          text: jest.fn().mockResolvedValue(JSON.stringify(payload)),
+          json: jest.fn().mockResolvedValue(payload),
+          headers: {
+            // No entries method - this tests the branch where entries is falsy
+            get: jest.fn().mockReturnValue(null),
+          },
+        };
+
+        fetchMock.mockImplementationOnce(() =>
+          Promise.resolve(mockResp as any)
+        );
+
+        const response = await client.request({
+          path: '/test',
+          method: 'GET',
+        });
+
+        // Response will include flowId and headers even when entries doesn't exist
+        expect(response).toMatchObject(payload);
+        expect((response as any).headers).toEqual({});
+      });
+
+      it('should handle requestWithResponse without headers.entries method', async () => {
+        const payload = {
+          id: 456,
+          name: 'test',
+        };
+
+        // Create a mock response without headers.entries
+        const mockResp = {
+          ok: true,
+          status: 200,
+          text: jest.fn().mockResolvedValue(JSON.stringify(payload)),
+          json: jest.fn().mockResolvedValue(payload),
+          headers: {
+            // No entries method - this tests the branch where entries is falsy
+            get: jest.fn().mockReturnValue(null),
+          },
+        };
+
+        const result = await client.requestWithResponse(mockResp as any);
+
+        // Response will include flowId and headers even when entries doesn't exist
+        expect(result).toMatchObject(payload);
+        expect((result as any).headers).toEqual({});
+      });
+
+      it('should include duplex option when form data is provided', async () => {
+        const formData = new FormData();
+        formData.append('message', JSON.stringify({ subject: 'Test' }));
+
+        const mockResp = mockResponse(JSON.stringify({ success: true }));
+        fetchMock.mockImplementationOnce(() => Promise.resolve(mockResp));
+
+        // Test that the request succeeds with form data (which requires duplex)
+        // This indirectly tests that duplex was set correctly
+        const response = await client.request({
+          path: '/test',
+          method: 'POST',
+          form: formData,
+        });
+
+        expect(response).toMatchObject({ success: true });
+      });
+
+      it('should actually trigger timeout and abort request', async () => {
+        const shortTimeout = 0.001; // 1ms timeout - very short
+
+        // Mock fetch to reject with AbortError when aborted
+        // This tests the timeout callback that aborts the request (lines 175-176)
+        fetchMock.mockImplementationOnce(() => {
+          return new Promise((_, reject) => {
+            // Simulate abort by rejecting with AbortError after a delay
+            setTimeout(() => {
+              const error = new Error('The operation was aborted');
+              error.name = 'AbortError';
+              reject(error);
+            }, 5); // Slightly longer than timeout to ensure abort happens
+          });
+        });
+
+        await expect(
+          client.request({
+            path: '/test',
+            method: 'GET',
+            overrides: { timeout: shortTimeout },
+          })
+        ).rejects.toThrow(NylasSdkTimeoutError);
+      });
     });
 
     describe('requestRaw', () => {
       it('should return raw buffer response', async () => {
         const testData = 'raw binary data';
+        const textEncoder = new TextEncoder();
         const mockResp = {
           ok: true,
           status: 200,
           text: jest.fn().mockResolvedValue(testData),
           json: jest.fn(),
           headers: new Map(),
-          buffer: jest.fn().mockResolvedValue(Buffer.from(testData)),
+          // Native fetch uses arrayBuffer() instead of buffer()
+          arrayBuffer: jest
+            .fn()
+            .mockResolvedValue(textEncoder.encode(testData).buffer),
         };
 
         fetchMock.mockImplementationOnce(() =>

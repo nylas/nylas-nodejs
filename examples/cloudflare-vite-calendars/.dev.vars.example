@@ -1,0 +1,15 @@
+# Nylas API Configuration
+# Copy this file to .dev.vars and fill in your actual values
+
+# Your Nylas API key (found in Nylas Dashboard > Applications)
+NYLAS_API_KEY=your_api_key_here
+
+# Nylas API URI (use your region's API URL)
+NYLAS_API_URI=https://api.us.nylas.com
+
+# Grant ID for the connected email account
+NYLAS_GRANT_ID=your_grant_id_here
+
+# Calendar ID to manage events
+NYLAS_CALENDAR_ID=your_calendar_id_here
+

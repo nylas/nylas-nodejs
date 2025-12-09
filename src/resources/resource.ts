@@ -213,7 +213,7 @@ export class Resource {
     path,
     queryParams,
     overrides,
-  }: FindParams<void>): Promise<NodeJS.ReadableStream> {
+  }: FindParams<void>): Promise<ReadableStream<Uint8Array>> {
     return this.apiClient.requestStream({
       method: 'GET',
       path,
