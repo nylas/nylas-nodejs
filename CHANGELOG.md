@@ -5,10 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [8.0.0] - 2025-12-12
 
 ### Added
-- Support for query parameters (`includeHiddenFolders`, `select`) in `folders.find` method ([#685](https://github.com/nylas/nylas-nodejs/issues/685))
+- Migrated the SDK from `node-fetch` to the native Fetch API available in Node.js 18+.
+- Removed the custom fetch wrapper abstraction.
+- Updated Node.js engine requirements.
+- Updated Folders.find method to support optional queryParams (includeHiddenFolders, select).
+- Support for query parameters (`includeHiddenFolders`, `select`) in `folders.find` method ([#685](https://github.com/nylas/nylas-nodejs/issues/685)).
+
+### Breaking change
+- Requires Node.js 18+. Support for Node 16 has been dropped.
 
 ## [7.13.3] - 2025-10-10
 
