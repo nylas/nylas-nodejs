@@ -356,3 +356,28 @@ export interface CleanMessagesResponse extends Message {
    */
   conversation: string;
 }
+
+/**
+ * Interface representing a request to send a message using raw MIME format.
+ */
+export interface SendMimeMessageRequest {
+  /**
+   * The raw MIME content of the message to send.
+   */
+  mime: string;
+  /**
+   * Optional metadata to attach to the message.
+   * Defaults to empty string if not provided.
+   */
+  metadata?: string;
+}
+
+/**
+ * Interface representing the query parameters for sending a MIME message.
+ */
+export interface SendMimeMessageQueryParams {
+  /**
+   * The type of message being sent. Must be 'mime' for MIME messages.
+   */
+  type: 'mime';
+}
