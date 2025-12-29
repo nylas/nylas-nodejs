@@ -133,6 +133,11 @@ export interface Event {
    */
   masterEventId?: string;
   /**
+   * The original start time of the event, in Unix timestamp format.
+   * This field is present only if the event is an instance of a recurring event.
+   */
+  originalStartTime?: number;
+  /**
    * Notetaker meeting bot settings
    */
   notetaker?: NotetakerSettings;
