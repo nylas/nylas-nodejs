@@ -10,7 +10,15 @@ tags
 CTAGS
 .idea
 coverage
-docs
+/docs
 cjs
 esm
 .env
+
+# Auto-generated CLAUDE.md in subdirectories (keep root one)
+**/CLAUDE.md
+!/CLAUDE.md
+
+# Ignore local dirs and files
+local/
+*_PR.md
