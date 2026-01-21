@@ -1,5 +1,6 @@
 const config = {
   preset: 'ts-jest/presets/js-with-ts',
+  testPathIgnorePatterns: ['/node_modules/', '/.claude/'],
   transform: {
     '^.+\\.tsx?$': [
       'ts-jest',
