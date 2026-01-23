@@ -1,0 +1,22 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          # Required: GitHub token for creating releases and PRs
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+          # Release Please will use configuration from .release-please-config.json
+          # and track versions in .release-please-manifest.json

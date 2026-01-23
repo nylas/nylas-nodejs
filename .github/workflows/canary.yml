@@ -1,0 +1,80 @@
+name: Canary Release
+
+on:
+  push:
+    branches:
+      - 'canary/**'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  canary-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Generate canary version
+        id: canary_version
+        run: |
+          # Get current version from package.json
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          
+          # Get short commit SHA
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          
+          # Generate timestamp
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          
+          # Create canary version
+          CANARY_VERSION="${CURRENT_VERSION}-canary.${TIMESTAMP}.${SHORT_SHA}"
+          
+          echo "canary_version=${CANARY_VERSION}" >> $GITHUB_OUTPUT
+          echo "Generated canary version: ${CANARY_VERSION}"
+          
+          # Update package.json with canary version
+          npm version ${CANARY_VERSION} --no-git-tag-version
+      
+      - name: Run build
+        run: npm run build
+      
+      - name: Check for test files in src
+        run: |
+          if find src -name "*.spec.ts" -o -name "*.test.ts" | grep -q .; then
+            echo "Error: Test files found in /src directory"
+            echo "Please ensure no test files are in /src before publishing"
+            exit 1
+          fi
+          echo "No test files found in /src - safe to publish"
+      
+      - name: Publish canary to npm
+        run: npm publish --tag canary
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      - name: Summary
+        run: |
+          echo "Canary release published successfully!"
+          echo "Version: ${{ steps.canary_version.outputs.canary_version }}"
+          echo "npm tag: canary"
+          echo ""
+          echo "To install this canary release:"
+          echo "npm install nylas@${{ steps.canary_version.outputs.canary_version }}"
+          echo ""
+          echo "Or install latest canary:"
+          echo "npm install nylas@canary"
+          echo ""
+          echo "Verify at: https://www.npmjs.com/package/nylas?activeTab=versions"

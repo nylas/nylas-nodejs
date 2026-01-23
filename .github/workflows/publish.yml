@@ -1,0 +1,63 @@
+name: Publish Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Git tag to publish (e.g., v8.0.1)'
+        required: true
+        type: string
+      npm_tag:
+        description: 'npm dist-tag'
+        required: true
+        type: choice
+        options:
+          - latest
+          - canary
+        default: latest
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code at specified tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run build
+        run: npm run build
+      
+      - name: Check for test files in src
+        run: |
+          if find src -name "*.spec.ts" -o -name "*.test.ts" | grep -q .; then
+            echo "Error: Test files found in /src directory"
+            echo "Please ensure no test files are in /src before publishing"
+            exit 1
+          fi
+          echo "No test files found in /src - safe to publish"
+      
+      - name: Publish to npm
+        run: npm publish --tag ${{ inputs.npm_tag }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      - name: Verify publication
+        run: |
+          echo "Package published successfully!"
+          echo "Version: ${{ inputs.version }}"
+          echo "npm tag: ${{ inputs.npm_tag }}"
+          echo "Verify at: https://www.npmjs.com/package/nylas"
