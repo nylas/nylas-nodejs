@@ -219,6 +219,29 @@ describe('Auth', () => {
           'https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=google&login_hint=loginHint&include_grant_scopes=true&scope=calendar&prompt=prompt&state=state'
         );
       });
+
+      it('should add options=smtp_required when smtpRequired is true', () => {
+        const url = auth.urlForOAuth2({
+          clientId: 'clientId',
+          redirectUri: 'https://redirect.uri/path',
+          provider: 'imap',
+          smtpRequired: true,
+        });
+
+        expect(url).toBe(
+          'https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=imap&options=smtp_required'
+        );
+      });
+
+      it('should not add options parameter when smtpRequired is not set', () => {
+        const url = auth.urlForOAuth2({
+          clientId: 'clientId',
+          redirectUri: 'https://redirect.uri/path',
+          provider: 'imap',
+        });
+
+        expect(url).not.toContain('options=');
+      });
     });
 
     describe('urlForAuthenticationPKCE', () => {

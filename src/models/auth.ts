@@ -58,6 +58,12 @@ export interface URLForAuthenticationConfig {
    * If a Grant for the provided email already exists, a Grant's re-auth will automatically be initiated.
    */
   loginHint?: string;
+  /**
+   * If set to true, the options=smtp_required parameter is added to the authentication URL.
+   * This forces users to provide SMTP settings during IMAP authentication, preventing
+   * send failures from missing SMTP configuration.
+   */
+  smtpRequired?: boolean;
 }
 
 /**
