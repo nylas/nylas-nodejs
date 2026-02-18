@@ -19,7 +19,7 @@
     "mime-types": "^2.1.35"
   },
   "devDependencies": {
-    "serverless": "^3.38.0",
+    "serverless": "^4.32.0",
     "serverless-esbuild": "^1.52.0",
     "serverless-dotenv-plugin": "^6.0.0",
     "dotenv-cli": "^7.4.2",
