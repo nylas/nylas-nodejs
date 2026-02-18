@@ -215,6 +215,9 @@ export class Auth extends Resource {
     if (config.state) {
       url.searchParams.set('state', config.state);
     }
+    if (config.smtpRequired) {
+      url.searchParams.set('options', 'smtp_required');
+    }
 
     return url;
   }
