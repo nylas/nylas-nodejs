@@ -1,0 +1,78 @@
+# =============================================================================
+# .claudeignore - Files Claude Code should ignore
+# =============================================================================
+
+# Build outputs (auto-generated, don't need to read)
+lib/
+docs/
+cjs/
+esm/
+coverage/
+
+# Dependencies (too large, not useful)
+node_modules/
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment and secrets
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+
+# Git internals
+.git/
+
+# Debug logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+*.log
+
+# Test artifacts
+*.tsbuildinfo
+.grunt/
+_SpecRunner.html
+tags
+CTAGS
+
+# TypeScript cache
+tsconfig.tsbuildinfo
+
+# Auto-generated files (use make build instead of reading)
+src/version.ts
+src/models/index.ts
+
+# Example projects (not part of SDK core)
+examples/
+
+# Diagrams and images (not code)
+diagrams/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+
+# GitHub templates (not relevant to code)
+.github/ISSUE_TEMPLATE/
+pull_request_template.md
+
+# Changelog (too large, use git log instead)
+CHANGELOG.md
+
+# Other AI agent files (not for Claude)
+AGENTS.md
+.codex/
