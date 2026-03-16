@@ -1,6 +1,6 @@
 /**
  * Multi-Credential Authentication Example
- * 
+ *
  * This example demonstrates how to use the multi-credential feature to manage
  * multiple provider credentials under a single connector.
  */
@@ -32,7 +32,7 @@ async function multiCredentialExample() {
 
   // Step 2: Create additional credentials for different GCP projects
   console.log('\nStep 2: Creating additional credentials...');
-  
+
   const projectACredential = await nylas.connectors.credentials.create({
     provider: 'google',
     requestBody: {
@@ -69,7 +69,9 @@ async function multiCredentialExample() {
   console.log(`Total credentials: ${credentialsList.data.length}`);
 
   // Step 4: Use specific credential in Hosted OAuth flow
-  console.log('\nStep 4: Generating hosted auth URL with Project A credentials...');
+  console.log(
+    '\nStep 4: Generating hosted auth URL with Project A credentials...'
+  );
   const authUrlProjectA = nylas.auth.urlForOAuth2({
     clientId: 'your-nylas-app-client-id',
     redirectUri: 'https://your-app.com/callback',
@@ -80,7 +82,9 @@ async function multiCredentialExample() {
   console.log('Auth URL for Project A:', authUrlProjectA);
 
   // Step 5: Use different credential for another user
-  console.log('\nStep 5: Generating hosted auth URL with Project B credentials...');
+  console.log(
+    '\nStep 5: Generating hosted auth URL with Project B credentials...'
+  );
   const authUrlProjectB = nylas.auth.urlForOAuth2({
     clientId: 'your-nylas-app-client-id',
     redirectUri: 'https://your-app.com/callback',
@@ -103,7 +107,9 @@ async function multiCredentialExample() {
   console.log('Secret (store this securely):', pkceAuth.secret);
 
   // Step 7: Custom authentication with specific credential
-  console.log('\nStep 7: Using custom authentication with specific credential...');
+  console.log(
+    '\nStep 7: Using custom authentication with specific credential...'
+  );
   const customGrant = await nylas.auth.customAuthentication({
     requestBody: {
       provider: 'google',
@@ -126,10 +132,15 @@ async function multiCredentialExample() {
       activeCredentialId: projectACredential.data.id, // Set Project A as default
     },
   });
-  console.log('Updated active credential:', updatedConnector.data.activeCredentialId);
+  console.log(
+    'Updated active credential:',
+    updatedConnector.data.activeCredentialId
+  );
 
   // Step 9: Use default credential (no credentialId specified)
-  console.log('\nStep 9: Generating auth URL without specifying credential (uses default)...');
+  console.log(
+    '\nStep 9: Generating auth URL without specifying credential (uses default)...'
+  );
   const defaultAuthUrl = nylas.auth.urlForOAuth2({
     clientId: 'your-nylas-app-client-id',
     redirectUri: 'https://your-app.com/callback',
