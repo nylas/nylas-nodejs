@@ -166,7 +166,7 @@ describe('Credentials', () => {
       });
 
       expect(apiClient.request).toHaveBeenCalledWith({
-        method: 'PUT',
+        method: 'PATCH',
         path: '/v3/connectors/microsoft/creds/microsoft-123',
         body: {
           name: 'Changed Name',
