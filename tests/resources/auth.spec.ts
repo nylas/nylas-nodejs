@@ -171,6 +171,34 @@ describe('Auth', () => {
         },
       });
     });
+
+    it('should support credentialId in settings for multi-credential authentication', async () => {
+      await auth.customAuthentication({
+        requestBody: {
+          provider: 'google',
+          settings: {
+            test_setting: 'abc123',
+            credentialId: 'custom-auth-cred-id',
+          },
+          scope: ['calendar'],
+          state: 'state123',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/connect/custom',
+        body: {
+          provider: 'google',
+          settings: {
+            test_setting: 'abc123',
+            credentialId: 'custom-auth-cred-id',
+          },
+          scope: ['calendar'],
+          state: 'state123',
+        },
+      });
+    });
   });
   describe('URL building', () => {
     describe('urlForAuthentication', () => {
@@ -242,6 +270,48 @@ describe('Auth', () => {
 
         expect(url).not.toContain('options=');
       });
+
+      it('should add credential_id when credentialId is provided', () => {
+        const url = auth.urlForOAuth2({
+          clientId: 'clientId',
+          redirectUri: 'https://redirect.uri/path',
+          provider: 'google',
+          credentialId: 'test-credential-id',
+        });
+
+        expect(url).toBe(
+          'https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=google&credential_id=test-credential-id'
+        );
+      });
+
+      it('should not add credential_id when credentialId is not provided', () => {
+        const url = auth.urlForOAuth2({
+          clientId: 'clientId',
+          redirectUri: 'https://redirect.uri/path',
+          provider: 'google',
+        });
+
+        expect(url).not.toContain('credential_id');
+      });
+
+      it('should include credential_id with all other parameters', () => {
+        const url = auth.urlForOAuth2({
+          clientId: 'clientId',
+          redirectUri: 'https://redirect.uri/path',
+          scope: ['calendar'],
+          provider: 'google',
+          loginHint: 'loginHint',
+          includeGrantScopes: true,
+          prompt: 'prompt',
+          state: 'state',
+          accessType: 'online',
+          credentialId: 'multi-cred-id',
+        });
+
+        expect(url).toBe(
+          'https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=google&login_hint=loginHint&include_grant_scopes=true&scope=calendar&prompt=prompt&state=state&credential_id=multi-cred-id'
+        );
+      });
     });
 
     describe('urlForAuthenticationPKCE', () => {
@@ -260,6 +330,25 @@ describe('Auth', () => {
           secret: 'nylas',
           secretHash: codeChallenge,
           url: `https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=google&include_grant_scopes=true&scope=calendar&code_challenge_method=s256&code_challenge=${codeChallenge}`,
+        });
+      });
+
+      it('should include credential_id in PKCE URL when provided', () => {
+        const pkce = auth.urlForOAuth2PKCE({
+          clientId: 'clientId',
+          redirectUri: 'https://redirect.uri/path',
+          scope: ['calendar'],
+          provider: 'google',
+          includeGrantScopes: true,
+          credentialId: 'pkce-credential-id',
+        });
+        const codeChallenge =
+          'ZTk2YmY2Njg2YTNjMzUxMGU5ZTkyN2RiNzA2OWNiMWNiYTliOTliMDIyZjQ5NDgzYTZjZTMyNzA4MDllNjhhMg';
+
+        expect(pkce).toEqual({
+          secret: 'nylas',
+          secretHash: codeChallenge,
+          url: `https://test.api.nylas.com/v3/connect/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.uri%2Fpath&access_type=online&response_type=code&provider=google&include_grant_scopes=true&scope=calendar&credential_id=pkce-credential-id&code_challenge_method=s256&code_challenge=${codeChallenge}`,
         });
       });
     });

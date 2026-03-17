@@ -17,6 +17,11 @@ export interface Connector {
    * Default scopes for the connector
    */
   scope?: string[];
+  /**
+   * The active credential ID for the connector.
+   * This is the default credential used for authentication when no specific credential is specified.
+   */
+  activeCredentialId?: string;
 }
 
 /**
@@ -132,6 +137,11 @@ export interface UpdateConnectorRequest {
    * The OAuth scopes
    */
   scope?: string[];
+  /**
+   * The active credential ID to set as the default for this connector.
+   * When specified, this credential will be used for authentication when no specific credential is provided.
+   */
+  activeCredentialId?: string;
 }
 
 /**
