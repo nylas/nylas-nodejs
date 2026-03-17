@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [8.0.3] - 2026-03-17
+
+### Added
+- Add multi-credential support for authentication ([#713](https://github.com/nylas/nylas-nodejs/pull/713))
+
+### Fixed
+- Change credentials update method from PUT to PATCH ([#712](https://github.com/nylas/nylas-nodejs/pull/712))
+
 ## [8.0.2] - 2026-02-18
 
 ### Added
