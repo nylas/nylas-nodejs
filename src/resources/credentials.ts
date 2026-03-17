@@ -129,7 +129,7 @@ export class Credentials extends Resource {
     requestBody,
     overrides,
   }: UpdateCredentialParams & Overrides): Promise<NylasResponse<Credential>> {
-    return super._update({
+    return super._updatePatch({
       path: makePathParams('/v3/connectors/{provider}/creds/{credentialsId}', {
         provider,
         credentialsId,
