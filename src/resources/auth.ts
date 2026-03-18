@@ -218,6 +218,9 @@ export class Auth extends Resource {
     if (config.smtpRequired) {
       url.searchParams.set('options', 'smtp_required');
     }
+    if (config.credentialId) {
+      url.searchParams.set('credential_id', config.credentialId);
+    }
 
     return url;
   }

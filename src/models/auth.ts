@@ -64,6 +64,13 @@ export interface URLForAuthenticationConfig {
    * send failures from missing SMTP configuration.
    */
   smtpRequired?: boolean;
+  /**
+   * Optional credential ID to use for hosted authentication.
+   * Allows selecting a specific set of provider credentials when multiple are configured under a connector.
+   * If not specified, the connector's default credential will be used.
+   * This is supported for standard OAuth flows (response_type=code).
+   */
+  credentialId?: string;
 }
 
 /**

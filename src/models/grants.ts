@@ -56,6 +56,11 @@ export interface Grant {
    * Settings required by the provider that were sent as part of the OAuth request.
    */
   settings?: Record<string, unknown>;
+  /**
+   * The credential ID that was used to create this grant.
+   * This links the grant to a specific set of provider credentials.
+   */
+  credentialId?: string;
 }
 
 /**
@@ -68,8 +73,16 @@ export interface CreateGrantRequest {
   provider: Provider;
   /**
    * Settings required by provider.
+   * Can include 'credentialId' to specify which credential to use for authentication.
+   * If not specified, the connector's default credential will be used.
    */
-  settings: Record<string, unknown>;
+  settings: Record<string, unknown> & {
+    /**
+     * Optional credential ID to use for this authentication.
+     * Allows selecting a specific set of provider credentials when multiple are configured.
+     */
+    credentialId?: string;
+  };
   /**
    * Optional state value to return to developer's website after authentication flow is completed.
    */
