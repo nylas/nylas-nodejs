@@ -23,8 +23,9 @@ export class SchedulerAvailability extends Resource {
   public get({
     queryParams,
     overrides,
-  }: GetSchedulerAvailabilityParams &
-    Overrides): Promise<NylasResponse<SchedulerAvailabilityResponse>> {
+  }: GetSchedulerAvailabilityParams & Overrides): Promise<
+    NylasResponse<SchedulerAvailabilityResponse>
+  > {
     return super._find({
       path: makePathParams('/v3/scheduling/availability', {}),
       queryParams,
