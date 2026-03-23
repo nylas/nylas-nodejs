@@ -125,6 +125,30 @@ export interface MeetingBuffer {
 }
 
 /**
+ * Interface of a participant's availability for a specific date and time range.
+ * This can override the open_hours configurations for the specified date.
+ */
+export interface SpecificTimeAvailability {
+  /**
+   * The specific date in YYYY-MM-DD format.
+   */
+  date: string;
+  /**
+   * Start time in 24-hour time format. Leading 0's are left off (e.g. "9:00").
+   */
+  start: string;
+  /**
+   * End time in 24-hour time format. Leading 0's are left off (e.g. "17:00").
+   */
+  end: string;
+  /**
+   * IANA time zone database formatted string (e.g. America/Toronto).
+   * @see <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">List of tz database time zones</a>
+   */
+  timezone?: string;
+}
+
+/**
  * Interface of a participant's open hours.
  */
 export interface OpenHours {
@@ -170,6 +194,10 @@ export interface AvailabilityParticipant {
    * Open hours for this participant. The endpoint searches for free time slots during these open hours.
    */
   openHours?: OpenHours[];
+  /**
+   * Specific availability for this participant that overrides open_hours for the specified dates.
+   */
+  specificTimeAvailability?: SpecificTimeAvailability[];
 }
 
 /**

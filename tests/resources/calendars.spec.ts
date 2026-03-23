@@ -1,6 +1,9 @@
 import APIClient from '../../src/apiClient';
 import { Calendars } from '../../src/resources/calendars';
-import { AvailabilityMethod } from '../../src/models/availability';
+import {
+  AvailabilityMethod,
+  SpecificTimeAvailability,
+} from '../../src/models/availability';
 jest.mock('../../src/apiClient');
 
 describe('Calendars', () => {
@@ -475,6 +478,80 @@ describe('Calendars', () => {
             ],
             roundRobinEventId: 'event123',
           },
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+  });
+
+  describe('getAvailability with specificTimeAvailability', () => {
+    it('should pass specificTimeAvailability on participants to the API', async () => {
+      const specificTimeAvailability: SpecificTimeAvailability[] = [
+        {
+          date: '2025-08-21',
+          start: '09:00',
+          end: '13:00',
+          timezone: 'America/Toronto',
+        },
+        {
+          date: '2025-08-22',
+          start: '10:00',
+          end: '16:00',
+        },
+      ];
+
+      await calendars.getAvailability({
+        requestBody: {
+          startTime: 123,
+          endTime: 456,
+          durationMinutes: 30,
+          participants: [
+            {
+              email: 'test@example.com',
+              openHours: [
+                {
+                  days: [1, 2, 3, 4, 5],
+                  timezone: 'America/Toronto',
+                  start: '09:00',
+                  end: '17:00',
+                  exdates: [],
+                },
+              ],
+              specificTimeAvailability,
+            },
+          ],
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/calendars/availability',
+        body: {
+          startTime: 123,
+          endTime: 456,
+          durationMinutes: 30,
+          participants: [
+            {
+              email: 'test@example.com',
+              openHours: [
+                {
+                  days: [1, 2, 3, 4, 5],
+                  timezone: 'America/Toronto',
+                  start: '09:00',
+                  end: '17:00',
+                  exdates: [],
+                },
+              ],
+              specificTimeAvailability,
+            },
+          ],
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
