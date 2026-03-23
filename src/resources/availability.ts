@@ -1,18 +1,18 @@
 import { Overrides } from '../config.js';
 import { NylasResponse } from '../models/response.js';
 import {
-  AvailabilityResponse,
-  GetAvailabilityQueryParams,
+  SchedulerAvailabilityResponse,
+  GetSchedulerAvailabilityQueryParams,
 } from '../models/scheduler.js';
 import { Resource } from './resource.js';
 import { makePathParams } from '../utils.js';
 
 /**
- * The parameters for the {@link SchedulerAvailability.list} method
+ * The parameters for the {@link SchedulerAvailability.get} method
  * @property queryParams The query parameters to include in the request
  */
-export interface GetAvailabilityParams {
-  queryParams: GetAvailabilityQueryParams;
+export interface GetSchedulerAvailabilityParams {
+  queryParams: GetSchedulerAvailabilityQueryParams;
 }
 
 export class SchedulerAvailability extends Resource {
@@ -20,11 +20,11 @@ export class SchedulerAvailability extends Resource {
    * Get availability for a scheduling configuration
    * @return The availability response with time slots
    */
-  public list({
+  public get({
     queryParams,
     overrides,
-  }: GetAvailabilityParams &
-    Overrides): Promise<NylasResponse<AvailabilityResponse>> {
+  }: GetSchedulerAvailabilityParams &
+    Overrides): Promise<NylasResponse<SchedulerAvailabilityResponse>> {
     return super._find({
       path: makePathParams('/v3/scheduling/availability', {}),
       queryParams,

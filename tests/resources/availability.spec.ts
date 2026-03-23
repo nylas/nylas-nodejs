@@ -18,12 +18,12 @@ describe('SchedulerAvailability', () => {
     apiClient.request.mockResolvedValue({});
   });
 
-  describe('list', () => {
-    it('should call apiClient.request with the correct params', async () => {
-      await availability.list({
+  describe('get', () => {
+    it('should call apiClient.request with configurationId', async () => {
+      await availability.get({
         queryParams: {
-          startTime: '1659367800',
-          endTime: '1659369600',
+          startTime: 1659367800,
+          endTime: 1659369600,
           configurationId: 'configuration123',
         },
         overrides: {
@@ -36,14 +36,100 @@ describe('SchedulerAvailability', () => {
         method: 'GET',
         path: '/v3/scheduling/availability',
         queryParams: {
-          startTime: '1659367800',
-          endTime: '1659369600',
+          startTime: 1659367800,
+          endTime: 1659369600,
           configurationId: 'configuration123',
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
           headers: { override: 'foobar' },
         },
+      });
+    });
+
+    it('should call apiClient.request with slug', async () => {
+      await availability.get({
+        queryParams: {
+          startTime: 1659367800,
+          endTime: 1659369600,
+          slug: 'my-schedule',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/scheduling/availability',
+        queryParams: {
+          startTime: 1659367800,
+          endTime: 1659369600,
+          slug: 'my-schedule',
+        },
+        overrides: undefined,
+      });
+    });
+
+    it('should call apiClient.request with clientId', async () => {
+      await availability.get({
+        queryParams: {
+          startTime: 1659367800,
+          endTime: 1659369600,
+          clientId: 'client123',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/scheduling/availability',
+        queryParams: {
+          startTime: 1659367800,
+          endTime: 1659369600,
+          clientId: 'client123',
+        },
+        overrides: undefined,
+      });
+    });
+
+    it('should call apiClient.request with bookingId for reschedule availability', async () => {
+      await availability.get({
+        queryParams: {
+          startTime: 1659367800,
+          endTime: 1659369600,
+          configurationId: 'configuration123',
+          bookingId: 'booking456',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/scheduling/availability',
+        queryParams: {
+          startTime: 1659367800,
+          endTime: 1659369600,
+          configurationId: 'configuration123',
+          bookingId: 'booking456',
+        },
+        overrides: undefined,
+      });
+    });
+
+    it('should URL-encode special characters in query params', async () => {
+      await availability.get({
+        queryParams: {
+          startTime: 1659367800,
+          endTime: 1659369600,
+          slug: 'my schedule/special',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/scheduling/availability',
+        queryParams: {
+          startTime: 1659367800,
+          endTime: 1659369600,
+          slug: 'my schedule/special',
+        },
+        overrides: undefined,
       });
     });
   });

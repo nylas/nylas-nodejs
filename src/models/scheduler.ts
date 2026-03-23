@@ -460,7 +460,7 @@ export type ConfirmBookingQueryParams = FindBookingQueryParams;
 export type RescheduleBookingQueryParams = FindBookingQueryParams;
 export type DestroyBookingQueryParams = FindBookingQueryParams;
 
-export interface AvailabilityTimeSlot {
+export interface SchedulerAvailabilityTimeSlot {
   emails: string[];
   startTime: number;
   endTime: number;
@@ -469,14 +469,14 @@ export interface AvailabilityTimeSlot {
   calendarId?: string;
 }
 
-export interface AvailabilityResponse {
+export interface SchedulerAvailabilityResponse {
   order?: string[];
-  timeSlots: AvailabilityTimeSlot[];
+  timeSlots: SchedulerAvailabilityTimeSlot[];
 }
 
-export interface GetAvailabilityQueryParams {
-  startTime: string;
-  endTime: string;
+export interface GetSchedulerAvailabilityQueryParams {
+  startTime: number;
+  endTime: number;
   configurationId?: string;
   slug?: string;
   clientId?: string;
