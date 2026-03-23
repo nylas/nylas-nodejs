@@ -20,7 +20,7 @@ describe('Attachments', () => {
 
     // Mock Web ReadableStream (native in Node 18+)
     const mockStream = new ReadableStream({
-      start(controller) {
+      start(controller: ReadableStreamDefaultController<Uint8Array>): void {
         controller.enqueue(new Uint8Array([1, 2, 3]));
         controller.close();
       },
