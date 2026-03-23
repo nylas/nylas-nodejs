@@ -459,3 +459,26 @@ export interface FindBookingQueryParams {
 export type ConfirmBookingQueryParams = FindBookingQueryParams;
 export type RescheduleBookingQueryParams = FindBookingQueryParams;
 export type DestroyBookingQueryParams = FindBookingQueryParams;
+
+export interface SchedulerAvailabilityTimeSlot {
+  emails: string[];
+  startTime: number;
+  endTime: number;
+  eventId?: string;
+  masterId?: string;
+  calendarId?: string;
+}
+
+export interface SchedulerAvailabilityResponse {
+  order?: string[];
+  timeSlots: SchedulerAvailabilityTimeSlot[];
+}
+
+export interface GetSchedulerAvailabilityQueryParams {
+  startTime: number;
+  endTime: number;
+  configurationId?: string;
+  slug?: string;
+  clientId?: string;
+  bookingId?: string;
+}
