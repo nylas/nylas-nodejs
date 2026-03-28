@@ -14,6 +14,8 @@ import {
   Message,
   ScheduledMessage,
   ScheduledMessagesList,
+  SendMimeMessageRequest,
+  SendMimeMessageQueryParams,
   StopScheduledMessageResponse,
   UpdateMessageRequest,
 } from '../models/messages.js';
@@ -84,6 +86,18 @@ export interface DestroyMessageParams {
 export interface SendMessageParams {
   identifier: string;
   requestBody: SendMessageRequest;
+}
+
+/**
+ * The parameters for the {@link Messages.sendMime} method
+ * @property identifier The identifier of the grant to act upon
+ * @property requestBody The MIME message to send
+ * @property queryParams The query parameters for the MIME send request
+ */
+export interface SendMimeMessageParams {
+  identifier: string;
+  requestBody: SendMimeMessageRequest;
+  queryParams: SendMimeMessageQueryParams;
 }
 
 /**
@@ -261,6 +275,44 @@ export class Messages extends Resource {
         requestOptions.body = requestBody;
       }
     }
+
+    return this.apiClient.request(requestOptions);
+  }
+
+  /**
+   * Send an email using raw MIME format
+   * @return The sent message
+   */
+  public async sendMime({
+    identifier,
+    requestBody,
+    queryParams,
+    overrides,
+  }: SendMimeMessageParams & Overrides): Promise<NylasResponse<Message>> {
+    const path = makePathParams('/v3/grants/{identifier}/messages/send', {
+      identifier,
+    });
+
+    // Create FormData for MIME message
+    const FD = require('form-data');
+    const FormDataConstructor = FD.default || FD;
+    const form: FormData = new FormDataConstructor();
+
+    // Add MIME content
+    form.append('mime', requestBody.mime);
+
+    // Add metadata (defaults to empty string if not provided)
+    if (requestBody.metadata) {
+      form.append('metadata', requestBody.metadata);
+    }
+
+    const requestOptions: RequestOptionsParams = {
+      method: 'POST',
+      path,
+      form,
+      queryParams,
+      overrides,
+    };
 
     return this.apiClient.request(requestOptions);
   }
