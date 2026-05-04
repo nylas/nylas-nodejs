@@ -17,6 +17,9 @@ import { Contacts } from './resources/contacts.js';
 import { Attachments } from './resources/attachments.js';
 import { Scheduler } from './resources/scheduler.js';
 import { Notetakers } from './resources/notetakers.js';
+import { Policies } from './resources/policies.js';
+import { Rules } from './resources/rules.js';
+import { AgentLists } from './resources/agentLists.js';
 
 /**
  * The entry point to the Node SDK
@@ -70,6 +73,18 @@ class Nylas {
    */
   public notetakers: Notetakers;
   /**
+   * Access the Agent Account Policies API
+   */
+  public policies: Policies;
+  /**
+   * Access the Agent Account Rules API
+   */
+  public rules: Rules;
+  /**
+   * Access the Agent Account Lists API
+   */
+  public lists: AgentLists;
+  /**
    * Access the Threads API
    */
   public threads: Threads;
@@ -112,6 +127,9 @@ class Nylas {
     this.grants = new Grants(this.apiClient);
     this.messages = new Messages(this.apiClient);
     this.notetakers = new Notetakers(this.apiClient);
+    this.policies = new Policies(this.apiClient);
+    this.rules = new Rules(this.apiClient);
+    this.lists = new AgentLists(this.apiClient);
     this.threads = new Threads(this.apiClient);
     this.webhooks = new Webhooks(this.apiClient);
     this.folders = new Folders(this.apiClient);

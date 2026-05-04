@@ -66,11 +66,11 @@ export interface Grant {
 /**
  * Interface representing a request to create a grant.
  */
-export interface CreateGrantRequest {
+export interface CreateCustomAuthenticationGrantRequest {
   /**
    * OAuth provider
    */
-  provider: Provider;
+  provider: Exclude<Provider, 'nylas'>;
   /**
    * Settings required by provider.
    * Can include 'credentialId' to specify which credential to use for authentication.
@@ -92,6 +92,46 @@ export interface CreateGrantRequest {
    */
   scope?: string[];
 }
+
+/**
+ * Interface representing settings to create a Nylas Agent Account grant.
+ */
+export interface CreateAgentAccountSettings {
+  /**
+   * The Agent Account email address.
+   */
+  email: string;
+  /**
+   * A policy to apply to this grant.
+   */
+  policyId?: string;
+  /**
+   * Password for IMAP and SMTP-submission access.
+   */
+  appPassword?: string;
+}
+
+/**
+ * Interface representing a request to create a Nylas Agent Account grant.
+ */
+export interface CreateAgentAccountRequest {
+  /**
+   * The Nylas provider provisions an Agent Account.
+   */
+  provider: 'nylas';
+  /**
+   * Settings required to provision the Agent Account.
+   */
+  settings: CreateAgentAccountSettings;
+  /**
+   * Optional state value to return to developer's website after authentication flow is completed.
+   */
+  state?: string;
+}
+
+export type CreateGrantRequest =
+  | CreateCustomAuthenticationGrantRequest
+  | CreateAgentAccountRequest;
 
 /**
  * Interface representing a request to update a grant.
