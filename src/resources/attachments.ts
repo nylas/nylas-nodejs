@@ -1,6 +1,9 @@
 import { Overrides } from '../config.js';
 import {
   Attachment,
+  AttachmentUploadSession,
+  AttachmentUploadSessionComplete,
+  CreateAttachmentUploadSessionRequest,
   FindAttachmentQueryParams,
   DownloadAttachmentQueryParams,
 } from '../models/attachments.js';
@@ -28,6 +31,24 @@ interface DownloadAttachmentParams {
   identifier: string;
   attachmentId: string;
   queryParams: DownloadAttachmentQueryParams;
+}
+
+/**
+ * @property identifier The ID of the grant to act upon.
+ * @property requestBody Session details (filename, content type, optional size).
+ */
+interface CreateAttachmentUploadSessionParams {
+  identifier: string;
+  requestBody: CreateAttachmentUploadSessionRequest;
+}
+
+/**
+ * @property identifier The ID of the grant to act upon.
+ * @property attachmentId The attachment upload session ID.
+ */
+interface CompleteAttachmentUploadSessionParams {
+  identifier: string;
+  attachmentId: string;
 }
 
 /**
@@ -106,6 +127,51 @@ export class Attachments extends Resource {
         { identifier, attachmentId }
       ),
       queryParams,
+      overrides,
+    });
+  }
+
+  /**
+   * Create a resumable upload session for a large attachment (up to 150 MB).
+   * Upload bytes to the returned `url`, then call {@link Attachments.completeUploadSession}.
+   *
+   * @see https://developer.nylas.com/docs/v3/email/send-large-attachments/
+   * @return Session details including `attachmentId` and pre-signed `url`
+   */
+  public createUploadSession({
+    identifier,
+    requestBody,
+    overrides,
+  }: CreateAttachmentUploadSessionParams & Overrides): Promise<
+    NylasResponse<AttachmentUploadSession>
+  > {
+    return super._create({
+      path: makePathParams('/v3/grants/{identifier}/attachment-uploads', {
+        identifier,
+      }),
+      requestBody,
+      overrides,
+    });
+  }
+
+  /**
+   * Complete an upload session after the file has been uploaded to the pre-signed URL.
+   *
+   * @see https://developer.nylas.com/docs/v3/email/send-large-attachments/
+   */
+  public completeUploadSession({
+    identifier,
+    attachmentId,
+    overrides,
+  }: CompleteAttachmentUploadSessionParams & Overrides): Promise<
+    NylasResponse<AttachmentUploadSessionComplete>
+  > {
+    return super._create({
+      path: makePathParams(
+        '/v3/grants/{identifier}/attachment-uploads/{attachmentId}/complete',
+        { identifier, attachmentId }
+      ),
+      requestBody: {},
       overrides,
     });
   }

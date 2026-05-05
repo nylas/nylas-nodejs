@@ -75,3 +75,92 @@ export interface FindAttachmentQueryParams {
  * Interface representing of the query parameters for downloading an attachment.
  */
 export type DownloadAttachmentQueryParams = FindAttachmentQueryParams;
+
+/**
+ * Status of a large-attachment upload session.
+ * @see https://developer.nylas.com/docs/v3/email/send-large-attachments/
+ */
+export type AttachmentUploadSessionStatusType =
+  | 'uploading'
+  | 'ready'
+  | 'failed'
+  | 'expired';
+
+/**
+ * Request body for creating a large-attachment upload session.
+ * Sent to the API as snake_case (`content_type`, etc.).
+ */
+export interface CreateAttachmentUploadSessionRequest {
+  /**
+   * The name of the file as it will appear in the email.
+   */
+  filename: string;
+  /**
+   * MIME type of the file (for example, `application/pdf`).
+   */
+  contentType: string;
+  /**
+   * Expected file size in bytes. Recommended — Nylas validates the upload matches at completion.
+   * Maximum: 157286400 (150 MB).
+   */
+  size?: number;
+}
+
+/**
+ * Upload session returned when creating a large-attachment upload session.
+ * Corresponds to the `data` object in the create-session API response.
+ */
+export interface AttachmentUploadSession {
+  /**
+   * Unique identifier for the upload session. Use when completing the session and when referencing the attachment in send or draft.
+   */
+  attachmentId: string;
+  /**
+   * HTTP method to use when uploading to {@link AttachmentUploadSession.url}. Always `PUT`.
+   */
+  method: string;
+  /**
+   * Pre-signed URL to upload file bytes (no Nylas auth header on this request).
+   */
+  url: string;
+  /**
+   * Headers to include when uploading to {@link AttachmentUploadSession.url}.
+   */
+  headers: Record<string, string>;
+  /**
+   * When the upload session expires (RFC 3339).
+   */
+  expiresAt: string;
+  /**
+   * Maximum allowed file size in bytes.
+   */
+  maxSize: number;
+  /**
+   * Expected file size in bytes, echoing the request. `0` if `size` was omitted on creation.
+   */
+  size: number;
+  /**
+   * MIME type of the file.
+   */
+  contentType: string;
+  /**
+   * Name of the file.
+   */
+  filename: string;
+  /**
+   * The grant ID the upload session belongs to.
+   */
+  grantId: string;
+}
+
+/**
+ * Result of completing an upload session (`data` in the complete API response).
+ */
+export interface AttachmentUploadSessionComplete {
+  attachmentId: string;
+  grantId: string;
+  /**
+   * After successful completion, typically `ready`.
+   */
+  status: AttachmentUploadSessionStatusType;
+}
