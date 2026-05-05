@@ -154,47 +154,6 @@ export interface AttachmentUploadSession {
 }
 
 /**
- * Normalized upload session record from `GET /v3/grants/{grant_id}/attachment-uploads/{attachment_id}`.
- *
- * The API returns PascalCase keys and no `{ request_id, data }` envelope; the SDK still parses JSON
- * and converts keys to camelCase like other endpoints.
- */
-export interface AttachmentUploadSessionStatus {
-  /**
-   * The attachment upload session ID.
-   */
-  id: string;
-  /**
-   * The grant ID the upload session belongs to.
-   */
-  grantId: string;
-  /**
-   * Name of the file.
-   */
-  filename: string;
-  /**
-   * MIME type of the file.
-   */
-  contentType: string;
-  /**
-   * Declared file size in bytes, or `0` if `size` was not provided on session creation.
-   */
-  expectedSize: number;
-  /**
-   * Current status of the upload session.
-   */
-  status: AttachmentUploadSessionStatusType;
-  /**
-   * When the upload session was created (RFC 3339).
-   */
-  createdAt: string;
-  /**
-   * When the upload session expires (RFC 3339).
-   */
-  expiresAt: string;
-}
-
-/**
  * Result of completing an upload session (`data` in the complete API response).
  */
 export interface AttachmentUploadSessionComplete {

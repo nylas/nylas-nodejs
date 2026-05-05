@@ -3,7 +3,6 @@ import {
   Attachment,
   AttachmentUploadSession,
   AttachmentUploadSessionComplete,
-  AttachmentUploadSessionStatus,
   CreateAttachmentUploadSessionRequest,
   FindAttachmentQueryParams,
   DownloadAttachmentQueryParams,
@@ -41,15 +40,6 @@ interface DownloadAttachmentParams {
 interface CreateAttachmentUploadSessionParams {
   identifier: string;
   requestBody: CreateAttachmentUploadSessionRequest;
-}
-
-/**
- * @property identifier The ID of the grant to act upon.
- * @property attachmentId The attachment upload session ID.
- */
-interface GetAttachmentUploadSessionParams {
-  identifier: string;
-  attachmentId: string;
 }
 
 /**
@@ -160,30 +150,6 @@ export class Attachments extends Resource {
         identifier,
       }),
       requestBody,
-      overrides,
-    });
-  }
-
-  /**
-   * Return the status and details of an attachment upload session.
-   *
-   * Note: The HTTP API returns an unwrapped body with PascalCase keys; the SDK normalizes keys to camelCase.
-   *
-   * @see https://developer.nylas.com/docs/reference/api/attachments/get-attachment-upload-session/
-   */
-  public getUploadSession({
-    identifier,
-    attachmentId,
-    overrides,
-  }: GetAttachmentUploadSessionParams & Overrides): Promise<
-    AttachmentUploadSessionStatus
-  > {
-    return this.apiClient.request<AttachmentUploadSessionStatus>({
-      method: 'GET',
-      path: makePathParams(
-        '/v3/grants/{identifier}/attachment-uploads/{attachmentId}',
-        { identifier, attachmentId }
-      ),
       overrides,
     });
   }

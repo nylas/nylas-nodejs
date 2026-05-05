@@ -286,55 +286,6 @@ describe('Attachments', () => {
     });
   });
 
-  describe('getUploadSession', () => {
-    it('should call apiClient.request with GET and correct path', async () => {
-      const mockStatus = {
-        id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-        grantId: 'id123',
-        filename: 'document.pdf',
-        contentType: 'application/pdf',
-        expectedSize: 1048576,
-        status: 'ready' as const,
-        createdAt: '2026-04-22T18:00:00Z',
-        expiresAt: '2026-04-22T19:00:00Z',
-      };
-      apiClient.request.mockResolvedValue(mockStatus);
-
-      const result = await attachments.getUploadSession({
-        identifier: 'id123',
-        attachmentId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-        overrides: {
-          apiUri: 'https://test.api.nylas.com',
-          headers: { override: 'bar' },
-        },
-      });
-
-      expect(apiClient.request).toHaveBeenCalledWith({
-        method: 'GET',
-        path: '/v3/grants/id123/attachment-uploads/a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-        overrides: {
-          apiUri: 'https://test.api.nylas.com',
-          headers: { override: 'bar' },
-        },
-      });
-      expect(result).toEqual(mockStatus);
-    });
-
-    it('should URL encode identifier and attachmentId in getUploadSession path', async () => {
-      apiClient.request.mockResolvedValue({});
-      await attachments.getUploadSession({
-        identifier: 'id 123',
-        attachmentId: 'att/id',
-        overrides: {},
-      });
-      expect(apiClient.request).toHaveBeenCalledWith(
-        expect.objectContaining({
-          path: '/v3/grants/id%20123/attachment-uploads/att%2Fid',
-        })
-      );
-    });
-  });
-
   describe('completeUploadSession', () => {
     it('should call apiClient.request with POST, complete path, and empty body', async () => {
       const mockResponse = {

@@ -1,10 +1,9 @@
 /**
  * End-to-end test for the new large-attachment upload session API.
  *
- * Exercises all three new methods on `nylas.attachments`:
+ * Exercises the large-attachment upload session methods on `nylas.attachments`:
  *   1. createUploadSession
- *   2. getUploadSession
- *   3. completeUploadSession
+ *   2. completeUploadSession
  * plus the surrounding flow (PUT to pre-signed URL, send message referencing
  * the uploaded attachment).
  *
@@ -74,10 +73,6 @@ function fail(label: string, detail?: unknown): void {
   } else {
     console.error(`FAIL: ${label}`);
   }
-}
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function main(): Promise<void> {
@@ -150,42 +145,9 @@ async function main(): Promise<void> {
   pass(`PUT succeeded (HTTP ${putRes.status})`);
 
   // -------------------------------------------------------------------------
-  // Step 3: getUploadSession (pre-complete)
+  // Step 3: completeUploadSession
   // -------------------------------------------------------------------------
-  console.log('\n[3] getUploadSession (before complete)');
-  const preStatus = await nylas.attachments.getUploadSession({
-    identifier: grantId,
-    attachmentId,
-  });
-  if (preStatus.id !== attachmentId) {
-    fail(`getUploadSession id mismatch (got ${preStatus.id})`, preStatus);
-  }
-  if (preStatus.filename !== TEST_FILENAME) {
-    fail(
-      `getUploadSession filename mismatch (got ${preStatus.filename})`,
-      preStatus
-    );
-  }
-  if (preStatus.contentType !== TEST_CONTENT_TYPE) {
-    fail(
-      `getUploadSession contentType mismatch (got ${preStatus.contentType})`,
-      preStatus
-    );
-  }
-  if (typeof preStatus.status !== 'string') {
-    fail('getUploadSession status missing', preStatus);
-  }
-  pass('getUploadSession returned status', {
-    status: preStatus.status,
-    expectedSize: preStatus.expectedSize,
-    createdAt: preStatus.createdAt,
-    expiresAt: preStatus.expiresAt,
-  });
-
-  // -------------------------------------------------------------------------
-  // Step 4: completeUploadSession
-  // -------------------------------------------------------------------------
-  console.log('\n[4] completeUploadSession');
+  console.log('\n[3] completeUploadSession');
   const completeResponse = await nylas.attachments.completeUploadSession({
     identifier: grantId,
     attachmentId,
@@ -206,34 +168,9 @@ async function main(): Promise<void> {
   });
 
   // -------------------------------------------------------------------------
-  // Step 5: getUploadSession again — wait for status = ready
+  // Step 4: Send a message referencing the uploaded attachment
   // -------------------------------------------------------------------------
-  console.log('\n[5] getUploadSession (poll for ready)');
-  let postStatus = await nylas.attachments.getUploadSession({
-    identifier: grantId,
-    attachmentId,
-  });
-  for (let attempt = 1; attempt <= 5 && postStatus.status !== 'ready'; attempt++) {
-    console.log(`    status=${postStatus.status}, retrying in 1s (${attempt}/5)`);
-    await sleep(1000);
-    postStatus = await nylas.attachments.getUploadSession({
-      identifier: grantId,
-      attachmentId,
-    });
-  }
-  if (postStatus.status !== 'ready') {
-    fail(`expected status=ready, got ${postStatus.status}`, postStatus);
-  } else {
-    pass('upload session is ready', {
-      status: postStatus.status,
-      expectedSize: postStatus.expectedSize,
-    });
-  }
-
-  // -------------------------------------------------------------------------
-  // Step 6: Send a message referencing the uploaded attachment
-  // -------------------------------------------------------------------------
-  console.log('\n[6] messages.send with attachmentId');
+  console.log('\n[4] messages.send with attachmentId');
   try {
     const sendResponse = await nylas.messages.send({
       identifier: grantId,
