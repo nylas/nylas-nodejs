@@ -147,6 +147,16 @@ async function createPolicy(ruleId: string): Promise<string> {
 }
 
 /**
+ * Masks an email address before logging to avoid exposing sensitive data.
+ */
+function maskEmail(email: string): string {
+  const [localPart, domain] = email.split('@');
+  if (!localPart || !domain) return '***';
+  const visible = localPart.slice(0, 2);
+  return `${visible}${'*'.repeat(Math.max(localPart.length - 2, 1))}@${domain}`;
+}
+
+/**
  * Demonstrates provisioning an Agent Account through the SDK's custom auth flow.
  */
 async function maybeCreateAgentAccount(
@@ -173,7 +183,8 @@ async function maybeCreateAgentAccount(
   });
 
   console.log(`Created Agent Account grant: ${grant.data.id}`);
-  console.log(`Email: ${grant.data.email ?? agentAccountEmail}`);
+  const resolvedEmail = grant.data.email ?? agentAccountEmail;
+  console.log(`Email: ${maskEmail(resolvedEmail)}`);
   console.log(`Status: ${grant.data.grantStatus ?? 'N/A'}`);
 
   return grant.data.id;
