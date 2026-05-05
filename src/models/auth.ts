@@ -13,7 +13,8 @@ export type Provider =
   | 'icloud'
   | 'virtual-calendar'
   | 'ews'
-  | 'zoom';
+  | 'zoom'
+  | 'nylas';
 
 /**
  * Configuration for generating a URL for OAuth 2.0 authentication.
