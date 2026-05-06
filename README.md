@@ -2,59 +2,63 @@
   <a href="https://www.nylas.com/">
     <img src="/diagrams/nylas-logo.png" alt="Nylas" height="80" />
   </a>
-  
+
   <h1>Nylas Node.js SDK</h1>
-  
+
   <p>
-    <strong>The official Node.js SDK for the Nylas Communications Platform</strong>
+    <strong>The official Node.js SDK for Nylas — the infrastructure that powers communications</strong>
   </p>
-  
+
   <p>
     <a href="https://www.npmjs.com/package/nylas"><img src="https://img.shields.io/npm/v/nylas" alt="npm version" /></a>
     <a href="https://codecov.io/gh/nylas/nylas-nodejs"><img src="https://codecov.io/gh/nylas/nylas-nodejs/branch/main/graph/badge.svg?token=94IMGU4F09" alt="code coverage" /></a>
     <a href="https://www.npmjs.com/package/nylas"><img src="https://img.shields.io/npm/dm/nylas" alt="downloads" /></a>
     <a href="LICENSE.txt"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="license" /></a>
   </p>
-  
+
   <p>
-    <a href="https://developer.nylas.com/docs/v3/sdks/node/">📖 Documentation</a> •
-    <a href="https://dashboard.nylas.com/register">🚀 Get Started</a> •
-    <a href="https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=javascript">💡 Examples</a> •
-    <a href="https://developer.nylas.com/docs/api/">📚 API Reference</a>
+    <a href="https://developer.nylas.com/docs/v3/sdks/node/">📖 SDK Guide</a> ·
+    <a href="https://developer.nylas.com/docs/api/v3/">📚 API Reference</a> ·
+    <a href="https://dashboard-v3.nylas.com/register">🚀 Sign up</a> ·
+    <a href="https://github.com/orgs/nylas-samples/repositories?q=node">💡 Samples</a> ·
+    <a href="https://forums.nylas.com">💬 Forum</a>
   </p>
 </div>
 
 <br />
 
-This is the GitHub repository for the Nylas Node SDK. This repo is primarily for anyone who wants to make contributions to the SDK, or install it from source. If you are looking to use Node to access the Nylas Email, Calendar, or Contacts API you should refer to our official [Node SDK Quickstart Guide](https://developer.nylas.com/docs/developer-tools/sdk/node-sdk/).
+The official Node.js SDK for [Nylas](https://developer.nylas.com/docs/v3/) — the infrastructure that powers communications. Integrate with Gmail, Microsoft, IMAP, Zoom, and 250+ email, calendar, and meeting providers in 5 minutes. Covers [Email](https://developer.nylas.com/docs/v3/email/), [Calendar](https://developer.nylas.com/docs/v3/calendar/), [Contacts](https://developer.nylas.com/docs/v3/email/contacts/), [Scheduler](https://developer.nylas.com/docs/v3/scheduler/), [Notetaker](https://developer.nylas.com/docs/v3/notetaker/), and [Agent Accounts](https://developer.nylas.com/docs/v3/agent-accounts/).
 
-The Nylas Communications Platform provides REST APIs for [Email](https://developer.nylas.com/docs/connectivity/email/), [Calendar](https://developer.nylas.com/docs/connectivity/calendar/), and [Contacts](https://developer.nylas.com/docs/connectivity/contacts/), and the Node SDK is the quickest way to build your integration using JavaScript.
+This repository is for contributors and anyone installing the SDK from source. If you just want to use the SDK in your app, head straight to the [**Node.js SDK guide**](https://developer.nylas.com/docs/v3/sdks/node/) on developer.nylas.com.
 
-Here are some resources to help you get started:
+## Get started
 
-- [Sign up for your free Nylas account](https://dashboard.nylas.com/register)
-- [Sign up for the Nylas v3 Beta program to access the v3 Dashboard](https://info.nylas.com/apiv3betasignup.html?utm_source=github&utm_medium=devrel-surfaces&utm_campaign=&utm_content=node-sdk-upgrade)
-- [Nylas API v3 Quickstart Guide](https://developer.nylas.com/docs/v3-beta/v3-quickstart/)
-- [Nylas SDK Reference](https://nylas-nodejs-sdk-reference.pages.dev/)
-- [Nylas API Reference](https://developer.nylas.com/docs/api/)
-- [Nylas Samples repo for code samples and example applications](https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=javascript)
+1. [Sign up for a free Nylas account](https://dashboard-v3.nylas.com/register) and grab your API key from the [Nylas Dashboard](https://dashboard-v3.nylas.com/).
+2. Read the [Getting started guide](https://developer.nylas.com/docs/v3/getting-started/) for the core concepts (applications, grants, API keys).
+3. Install the SDK and make your first request — see below.
+
+You can also bootstrap from the terminal:
+
+```bash
+brew install nylas/nylas-cli/nylas
+nylas init
+```
+
+More options in the [CLI getting-started guide](https://cli.nylas.com/guides/getting-started).
 
 ## ⚙️ Install
 
-**Note:** The Nylas Node SDK requires Node.js v16 or later.
+> **Requirements:** Node.js v18 or later.
 
-### Set up using npm
+```bash
+npm install nylas
+# or
+yarn add nylas
+```
 
-To run the Nylas Node SDK, first install [Node](https://nodejs.org/en/download/) and [npm](https://www.npmjs.com/get-npm) on your machine.
+The package ships its own TypeScript types — no `@types/nylas` needed. It's a hybrid ESM + CommonJS package, so both `import` and `require` work.
 
-Then, head to the nearest command line and run the following:
-`npm install nylas`
-
-Alternatively, you can use [Yarn](https://yarnpkg.com/en/) to install the Nylas Node SDK by running the `yarn add nylas` command.
-
-### Build from source
-
-To install this package from source, clone this repo and run `npm install` from inside the project directory.
+To install from source:
 
 ```bash
 git clone https://github.com/nylas/nylas-nodejs.git
@@ -62,48 +66,115 @@ cd nylas-nodejs
 npm install
 ```
 
+### Runtime support
+
+Tested on Node.js 18+. Also runs on AWS Lambda, Cloudflare Workers, and Vite/edge environments — see the [`examples/`](examples/) directory for working setups.
+
 ## ⚡️ Usage
 
-To use this SDK, you must first [get a free Nylas account](https://dashboard.nylas.com/register).
-
-Then, follow the Quickstart guide to [set up your first app and get your API keys](https://developer.nylas.com/docs/v3-beta/v3-quickstart/).
-
-For code examples that demonstrate how to use this SDK, take a look at our [Node repos in the Nylas Samples collection](https://github.com/orgs/nylas-samples/repositories?q=&type=all&language=javascript&sort=).
-
-### 🚀 Making Your First Request
-
-You access Nylas resources (messages, calendars, events, contacts) through an instance of `Nylas`. The `Nylas` object must be initialized with your Nylas API key, and you can provide other additional configurations such as the Nylas API url and the timeout.
+You access Nylas resources (messages, calendars, events, contacts, …) through an instance of `Nylas`. Initialize it with your API key — and optionally an `apiUri` matching your [data residency](https://developer.nylas.com/docs/dev-guide/platform/data-residency/).
 
 ```typescript
 import Nylas from "nylas";
+// or: const Nylas = require("nylas").default;
 
 const nylas = new Nylas({
-  apiKey: "NYLAS_API_KEY",
+  apiKey: process.env.NYLAS_API_KEY,
+  apiUri: process.env.NYLAS_API_URI, // e.g. https://api.us.nylas.com
+  timeout: 30, // optional, in seconds
 });
 ```
 
-Once initialized you can use the object to make requests for a given account's resources, for example to list all the calendars for a given account:
+Once initialized, use it to make requests against a [grant](https://developer.nylas.com/docs/v3/auth/) (an authenticated end-user account):
 
 ```typescript
-nylas.calendars.list({ identifier: "GRANT_ID" }).then(calendars => {
-  console.log(calendars);
+const calendars = await nylas.calendars.list({
+  identifier: process.env.NYLAS_GRANT_ID,
 });
+console.log(calendars);
 ```
 
-## 📚 Documentation
+### Error handling
 
-Nylas maintains a [reference guide for the Node SDK](https://nylas-nodejs-sdk-reference.pages.dev/) to help you get familiar with the available methods and classes.
+The SDK throws typed errors you can catch and inspect. Every API error carries a `requestId` and `flowId` — include both when filing a support ticket so we can trace the request end-to-end.
 
-## ✨ Upgrading from 6.x
+```typescript
+import { NylasApiError, NylasOAuthError, NylasSdkTimeoutError } from "nylas";
 
-See [UPGRADE.md](UPGRADE.md) for instructions on upgrading from 6.x to 7.x.
+try {
+  await nylas.calendars.list({ identifier: grantId });
+} catch (err) {
+  if (err instanceof NylasApiError) {
+    console.error(err.statusCode, err.type, err.message, err.requestId, err.flowId);
+  } else if (err instanceof NylasSdkTimeoutError) {
+    console.error("Timed out:", err.url, err.timeout);
+  } else {
+    throw err;
+  }
+}
+```
 
-**Note**: The Node SDK v7.x is not compatible with the Nylas API earlier than v3-beta.
+Step-by-step walkthroughs in the SDK guide:
+
+- [Send and receive email](https://developer.nylas.com/docs/v3/sdks/node/send-email/)
+- [Read messages and threads](https://developer.nylas.com/docs/v3/sdks/node/read-messages-threads/)
+- [Manage events on a calendar](https://developer.nylas.com/docs/v3/sdks/node/manage-events/)
+- [Manage contacts](https://developer.nylas.com/docs/v3/sdks/node/manage-contacts/)
+- [Manage folders and labels](https://developer.nylas.com/docs/v3/sdks/node/manage-folders-labels/)
+- [Test webhooks locally](https://developer.nylas.com/docs/v3/sdks/node/webhook-testing/)
+
+## 💡 Examples
+
+Runnable examples live in [`examples/`](examples/) — including [agent accounts](examples/agent-accounts/), [attachments](examples/attachments/) (incl. large attachments), [calendars](examples/calendars/), [folders](examples/folders/), [grants](examples/grants/), [messages](examples/messages/), [notetakers](examples/notetakers/), and edge runtimes ([AWS Lambda](examples/aws-lambda/), [Cloudflare + Vite](examples/cloudflare-vite-calendars/), [generic edge](examples/edge-environment/)).
+
+For full sample apps and product quickstarts, browse [**nylas-samples** on GitHub](https://github.com/orgs/nylas-samples/repositories?q=node) — every official SDK has Email, Calendar, Contacts, Scheduler, and Webhooks quickstarts.
+
+## 🤖 AI agents
+
+[nylas/skills](https://github.com/nylas/skills) drops Nylas into Claude Code, Cursor, Codex, and other agents that support the skills format:
+
+```bash
+npx skills add nylas/skills
+/plugin marketplace add nylas/skills   # Claude Code
+```
+
+The CLI also installs an MCP server for Claude Desktop, Claude Code, Cursor, Windsurf, or VS Code:
+
+```bash
+brew install nylas/nylas-cli/nylas
+nylas mcp install
+```
+
+Walkthrough: [give AI agents email access via MCP](https://cli.nylas.com/guides/give-ai-agents-email-access-via-mcp).
+
+## 📚 Reference
+
+- **SDK guide:** [developer.nylas.com/docs/v3/sdks/node](https://developer.nylas.com/docs/v3/sdks/node/)
+- **API reference:** [developer.nylas.com/docs/api/v3](https://developer.nylas.com/docs/api/v3/)
+- **TypeDoc reference:** [nylas-nodejs-sdk-reference.pages.dev](https://nylas-nodejs-sdk-reference.pages.dev/) — generated method/class docs for this SDK
+- **Webhooks (notifications):** [developer.nylas.com/docs/v3/notifications](https://developer.nylas.com/docs/v3/notifications/)
+- **Auth flows:** [developer.nylas.com/docs/v3/auth](https://developer.nylas.com/docs/v3/auth/)
+- **Dev guide & best practices:** [developer.nylas.com/docs/dev-guide](https://developer.nylas.com/docs/dev-guide/)
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+
+## ✨ Upgrading
+
+See [`CHANGELOG.md`](CHANGELOG.md) for per-release notes. Older upgrade guidance lives in [`UPGRADE.md`](UPGRADE.md).
 
 ## 💙 Contributing
 
-Please refer to [Contributing](Contributing.md) for information about how to make contributions to this project. We welcome questions, bug reports, and pull requests.
+Issues, ideas, and pull requests welcome — see [Contributing.md](Contributing.md). Before opening a large change, please open an issue or post in the [forum](https://forums.nylas.com) so we can sanity-check the direction.
+
+## 🔒 Security
+
+Found a vulnerability? Please **don't** open a public issue. Report it through our [Vulnerability Disclosure Policy](https://www.nylas.com/security/vulnerability-disclosure-policy/).
+
+## 🔗 Other Nylas SDKs
+
+- [nylas-python](https://github.com/nylas/nylas-python) · `pip install nylas`
+- [nylas-ruby](https://github.com/nylas/nylas-ruby) · `gem install nylas`
+- [nylas-java](https://github.com/nylas/nylas-java) · Maven / Gradle (Kotlin too)
 
 ## 📝 License
 
-This project is licensed under the terms of the MIT license. Please refer to [LICENSE](LICENSE.txt) for the full terms.
+MIT — see [LICENSE.txt](LICENSE.txt).
