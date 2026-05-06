@@ -6,7 +6,7 @@
   <h1>Nylas Node.js SDK</h1>
 
   <p>
-    <strong>The official Node.js SDK for the Nylas Communications Platform</strong>
+    <strong>The official Node.js SDK for Nylas — the infrastructure that powers communications</strong>
   </p>
 
   <p>
@@ -27,7 +27,7 @@
 
 <br />
 
-The official Node.js SDK for the [Nylas APIs](https://developer.nylas.com/docs/v3/) — [Email](https://developer.nylas.com/docs/v3/email/), [Calendar](https://developer.nylas.com/docs/v3/calendar/), [Contacts](https://developer.nylas.com/docs/v3/email/contacts/), [Scheduler](https://developer.nylas.com/docs/v3/scheduler/), [Notetaker](https://developer.nylas.com/docs/v3/notetaker/), and [Agent Accounts](https://developer.nylas.com/docs/v3/agent-accounts/). Write your integration once and it works across Gmail, Microsoft, and IMAP.
+The official Node.js SDK for [Nylas](https://developer.nylas.com/docs/v3/) — the infrastructure that powers communications. Integrate with Gmail, Microsoft, IMAP, Zoom, and 250+ email, calendar, and meeting providers in 5 minutes. Covers [Email](https://developer.nylas.com/docs/v3/email/), [Calendar](https://developer.nylas.com/docs/v3/calendar/), [Contacts](https://developer.nylas.com/docs/v3/email/contacts/), [Scheduler](https://developer.nylas.com/docs/v3/scheduler/), [Notetaker](https://developer.nylas.com/docs/v3/notetaker/), and [Agent Accounts](https://developer.nylas.com/docs/v3/agent-accounts/).
 
 This repository is for contributors and anyone installing the SDK from source. If you just want to use the SDK in your app, head straight to the [**Node.js SDK guide**](https://developer.nylas.com/docs/v3/sdks/node/) on developer.nylas.com.
 
@@ -128,6 +128,24 @@ Step-by-step walkthroughs in the SDK guide:
 Runnable examples live in [`examples/`](examples/) — including [agent accounts](examples/agent-accounts/), [attachments](examples/attachments/) (incl. large attachments), [calendars](examples/calendars/), [folders](examples/folders/), [grants](examples/grants/), [messages](examples/messages/), [notetakers](examples/notetakers/), and edge runtimes ([AWS Lambda](examples/aws-lambda/), [Cloudflare + Vite](examples/cloudflare-vite-calendars/), [generic edge](examples/edge-environment/)).
 
 For full sample apps and product quickstarts, browse [**nylas-samples** on GitHub](https://github.com/orgs/nylas-samples/repositories?q=node) — every official SDK has Email, Calendar, Contacts, Scheduler, and Webhooks quickstarts.
+
+## 🤖 AI agents
+
+[nylas/skills](https://github.com/nylas/skills) drops Nylas into Claude Code, Cursor, Codex, and other agents that support the skills format:
+
+```bash
+npx skills add nylas/skills
+/plugin marketplace add nylas/skills   # Claude Code
+```
+
+The CLI also installs an MCP server for Claude Desktop, Claude Code, Cursor, Windsurf, or VS Code:
+
+```bash
+brew install nylas/nylas-cli/nylas
+nylas mcp install
+```
+
+Walkthrough: [give AI agents email access via MCP](https://cli.nylas.com/guides/give-ai-agents-email-access-via-mcp).
 
 ## 📚 Reference
 
