@@ -473,6 +473,46 @@ describe('Messages', () => {
       expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
     });
 
+    it('should preserve metadata key casing in multipart form request', async () => {
+      const largeBody = 'A'.repeat(3.5 * 1024 * 1024);
+      const metadata = {
+        myCustomKey: 'value1',
+        anotherCamelCase: 'value2',
+      };
+
+      const fileStream = createReadableStream('attachment content');
+      const attachment: CreateAttachmentRequest = {
+        filename: 'file.txt',
+        contentType: 'text/plain',
+        content: fileStream,
+        size: 1000,
+      };
+
+      await messages.send({
+        identifier: 'id123',
+        requestBody: {
+          to: [{ name: 'Test', email: 'test@example.com' }],
+          subject: 'Test',
+          body: largeBody,
+          metadata,
+          attachments: [attachment],
+        } as any,
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      expect(capturedRequest.form).toBeDefined();
+
+      const formData = (
+        capturedRequest.form as any as MockedFormData
+      )._getAppendedData();
+      const parsedMessage = JSON.parse(formData.message);
+
+      expect(parsedMessage.metadata).toEqual({
+        myCustomKey: 'value1',
+        anotherCamelCase: 'value2',
+      });
+    });
+
     it('should use JSON when total payload (body + attachments) is under 3MB', async () => {
       // Create a message with body + attachments under 3MB
       const smallBody = 'Small message content';

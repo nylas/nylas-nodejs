@@ -285,7 +285,7 @@ export function calculateTotalPayloadSize(requestBody: any): number {
     attachments: undefined,
   };
   const messagePayloadString = JSON.stringify(
-    objKeysToSnakeCase(messagePayloadWithoutAttachments)
+    objKeysToSnakeCase(messagePayloadWithoutAttachments, ['metadata'])
   );
   totalSize += Buffer.byteLength(messagePayloadString, 'utf8');
 

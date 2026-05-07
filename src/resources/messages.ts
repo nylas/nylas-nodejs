@@ -354,7 +354,10 @@ export class Messages extends Resource {
       ...requestBody,
       attachments: undefined,
     };
-    form.append('message', JSON.stringify(objKeysToSnakeCase(messagePayload)));
+    form.append(
+      'message',
+      JSON.stringify(objKeysToSnakeCase(messagePayload, ['metadata']))
+    );
 
     // Add a separate form field for each attachment
     if (requestBody.attachments && requestBody.attachments.length > 0) {
