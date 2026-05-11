@@ -1,5 +1,6 @@
 import APIClient from '../../src/apiClient';
 import { Attachments } from '../../src/resources/attachments';
+import { Readable } from 'stream';
 jest.mock('../../src/apiClient');
 
 describe('Attachments', () => {
@@ -185,6 +186,64 @@ describe('Attachments', () => {
       await attachments.download({
         identifier: 'id%20123',
         attachmentId: 'attach%2F123',
+        queryParams: { messageId: 'message123' },
+        overrides: {},
+      });
+      expect(apiClient.requestStream).toHaveBeenCalledWith(
+        expect.objectContaining({
+          path: '/v3/grants/id%20123/attachments/attach%2F123/download',
+        })
+      );
+    });
+  });
+
+  describe('downloadNodeStream', () => {
+    it('should convert the downloaded Web ReadableStream into a Node.js readable stream', async () => {
+      apiClient.requestStream.mockResolvedValueOnce(
+        new ReadableStream({
+          start(controller: ReadableStreamDefaultController<Uint8Array>): void {
+            controller.enqueue(new Uint8Array([1, 2, 3]));
+            controller.close();
+          },
+        })
+      );
+
+      const stream = await attachments.downloadNodeStream({
+        identifier: 'id123',
+        attachmentId: 'attach123',
+        queryParams: {
+          messageId: 'message123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      const chunks: Buffer[] = [];
+      for await (const chunk of stream as AsyncIterable<Uint8Array>) {
+        chunks.push(Buffer.from(chunk));
+      }
+
+      expect(stream).toBeInstanceOf(Readable);
+      expect(Buffer.concat(chunks)).toEqual(Buffer.from([1, 2, 3]));
+      expect(apiClient.requestStream).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/attachments/attach123/download',
+        queryParams: {
+          messageId: 'message123',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
+
+    it('should URL encode identifier and attachmentId in downloadNodeStream', async () => {
+      await attachments.downloadNodeStream({
+        identifier: 'id 123',
+        attachmentId: 'attach/123',
         queryParams: { messageId: 'message123' },
         overrides: {},
       });
