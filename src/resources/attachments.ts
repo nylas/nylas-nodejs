@@ -80,15 +80,15 @@ export class Attachments extends Resource {
   /**
    * Download the attachment data
    *
-   * This method returns a NodeJS.ReadableStream which can be used to stream the attachment data.
+   * This method returns a Web ReadableStream which can be used to stream the attachment data.
    * This is particularly useful for handling large attachments efficiently, as it avoids loading
-   * the entire file into memory. The stream can be piped to a file stream or used in any other way
-   * that Node.js streams are typically used.
+   * the entire file into memory. In Node.js, convert it with Readable.fromWeb() when a
+   * NodeJS.ReadableStream is required.
    *
    * @param identifier Grant ID or email account to query
    * @param attachmentId The id of the attachment to download.
    * @param queryParams The query parameters to include in the request
-   * @returns {NodeJS.ReadableStream} The ReadableStream containing the file data.
+   * @returns {ReadableStream<Uint8Array>} The ReadableStream containing the file data.
    */
   public download({
     identifier,
