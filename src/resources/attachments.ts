@@ -10,7 +10,8 @@ import {
 import { NylasResponse } from '../models/response.js';
 import { makePathParams } from '../utils.js';
 import { Resource } from './resource.js';
-import type { ReadableStream as NodeReadableStream } from 'stream/web';
+import { Readable } from 'node:stream';
+import type { ReadableStream as NodeReadableStream } from 'node:stream/web';
 
 /**
  * @property identifier The ID of the grant to act upon. Use "me" to refer to the grant associated with an access token.
@@ -133,7 +134,6 @@ export class Attachments extends Resource {
       queryParams,
       overrides,
     });
-    const { Readable } = await import('stream');
     return Readable.fromWeb(
       stream as unknown as NodeReadableStream<Uint8Array>
     );

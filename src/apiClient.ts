@@ -8,7 +8,7 @@ import { objKeysToCamelCase, objKeysToSnakeCase } from './utils.js';
 import { SDK_VERSION } from './version.js';
 import { FormData } from 'formdata-node';
 import { FormDataEncoder } from 'form-data-encoder';
-import { Readable } from 'stream';
+import { Readable } from 'node:stream';
 import { snakeCase } from 'change-case';
 
 /**
