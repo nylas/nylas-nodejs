@@ -10,6 +10,8 @@ import {
 import { NylasResponse } from '../models/response.js';
 import { makePathParams } from '../utils.js';
 import { Resource } from './resource.js';
+import { Readable } from 'stream';
+import type { ReadableStream as NodeReadableStream } from 'stream/web';
 
 /**
  * @property identifier The ID of the grant to act upon. Use "me" to refer to the grant associated with an access token.
@@ -106,6 +108,35 @@ export class Attachments extends Resource {
       queryParams,
       overrides,
     });
+  }
+
+  /**
+   * Download the attachment data as a Node.js readable stream.
+   *
+   * This is a Node.js convenience wrapper around {@link Attachments.download}. Use
+   * {@link Attachments.download} directly in Fetch-native runtimes, such as Cloudflare Workers,
+   * where Web ReadableStreams are the standard stream primitive.
+   *
+   * @param identifier Grant ID or email account to query
+   * @param attachmentId The id of the attachment to download.
+   * @param queryParams The query parameters to include in the request
+   * @returns {NodeJS.ReadableStream} The Node.js readable stream containing the file data.
+   */
+  public async downloadNodeStream({
+    identifier,
+    attachmentId,
+    queryParams,
+    overrides,
+  }: DownloadAttachmentParams & Overrides): Promise<NodeJS.ReadableStream> {
+    const stream = await this.download({
+      identifier,
+      attachmentId,
+      queryParams,
+      overrides,
+    });
+    return Readable.fromWeb(
+      stream as unknown as NodeReadableStream<Uint8Array>
+    );
   }
 
   /**
