@@ -10,7 +10,6 @@ import {
 import { NylasResponse } from '../models/response.js';
 import { makePathParams } from '../utils.js';
 import { Resource } from './resource.js';
-import { Readable } from 'stream';
 import type { ReadableStream as NodeReadableStream } from 'stream/web';
 
 /**
@@ -134,6 +133,7 @@ export class Attachments extends Resource {
       queryParams,
       overrides,
     });
+    const { Readable } = await import('stream');
     return Readable.fromWeb(
       stream as unknown as NodeReadableStream<Uint8Array>
     );
