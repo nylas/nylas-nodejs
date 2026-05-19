@@ -183,6 +183,7 @@ export interface MessageHeaders {
  */
 export enum MessageFields {
   STANDARD = 'standard',
+  INCLUDE_BASIC_HEADERS = 'include_basic_headers',
   INCLUDE_HEADERS = 'include_headers',
   INCLUDE_TRACKING_OPTIONS = 'include_tracking_options',
   RAW_MIME = 'raw_mime',
@@ -313,6 +314,16 @@ export interface ListMessagesQueryParams extends ListQueryParams {
 export interface FindMessageQueryParams {
   /**
    * Allows you to specify to the message with headers included.
+   */
+  fields?: MessageFields;
+}
+
+/**
+ * Interface representing the query parameters for sending a message.
+ */
+export interface SendMessageQueryParams {
+  /**
+   * Allows you to specify to return the sent message with headers included.
    */
   fields?: MessageFields;
 }

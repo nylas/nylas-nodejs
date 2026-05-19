@@ -682,6 +682,87 @@ describe('Messages', () => {
       expect(typeof formData.file0).toBe('object');
       // Note: The exact structure of the Blob mock may vary, but it should exist
     });
+
+    it('should call apiClient.request with fields=include_headers query param', async () => {
+      const jsonBody = {
+        to: [{ name: 'Test', email: 'test@example.com' }],
+        subject: 'This is my test email',
+      };
+      await messages.send({
+        identifier: 'id123',
+        requestBody: jsonBody,
+        queryParams: {
+          fields: MessageFields.INCLUDE_HEADERS,
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+      expect(capturedRequest.body).toEqual(jsonBody);
+      expect(capturedRequest.queryParams).toEqual({
+        fields: MessageFields.INCLUDE_HEADERS,
+      });
+    });
+
+    it('should call apiClient.request with fields=include_basic_headers query param', async () => {
+      const jsonBody = {
+        to: [{ name: 'Test', email: 'test@example.com' }],
+        subject: 'This is my test email',
+      };
+      await messages.send({
+        identifier: 'id123',
+        requestBody: jsonBody,
+        queryParams: {
+          fields: MessageFields.INCLUDE_BASIC_HEADERS,
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+      expect(capturedRequest.body).toEqual(jsonBody);
+      expect(capturedRequest.queryParams).toEqual({
+        fields: MessageFields.INCLUDE_BASIC_HEADERS,
+      });
+    });
+
+    it('should include query params with multipart form data', async () => {
+      const messageJson = {
+        to: [{ name: 'Test', email: 'test@example.com' }],
+        subject: 'This is my test email',
+      };
+      const fileStream = createReadableStream('This is the text from file 1');
+      const file1: CreateAttachmentRequest = {
+        filename: 'file1.txt',
+        contentType: 'text/plain',
+        content: fileStream,
+        size: 3 * 1024 * 1024,
+      };
+
+      await messages.send({
+        identifier: 'id123',
+        requestBody: {
+          ...messageJson,
+          attachments: [file1],
+        },
+        queryParams: {
+          fields: MessageFields.INCLUDE_HEADERS,
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      const capturedRequest = apiClient.request.mock.calls[0][0];
+      expect(capturedRequest.method).toEqual('POST');
+      expect(capturedRequest.path).toEqual('/v3/grants/id123/messages/send');
+      expect(capturedRequest.queryParams).toEqual({
+        fields: MessageFields.INCLUDE_HEADERS,
+      });
+      expect(capturedRequest.form).toBeDefined();
+    });
   });
 
   describe('scheduledMessages', () => {
