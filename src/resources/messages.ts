@@ -14,6 +14,7 @@ import {
   Message,
   ScheduledMessage,
   ScheduledMessagesList,
+  SendMessageQueryParams,
   StopScheduledMessageResponse,
   UpdateMessageRequest,
 } from '../models/messages.js';
@@ -80,10 +81,12 @@ export interface DestroyMessageParams {
  * The parameters for the {@link Messages.send} method
  * @property identifier The identifier of the grant to act upon
  * @property requestBody The message to send
+ * @property queryParams The query parameters to include in the request
  */
 export interface SendMessageParams {
   identifier: string;
   requestBody: SendMessageRequest;
+  queryParams?: SendMessageQueryParams;
 }
 
 /**
@@ -231,6 +234,7 @@ export class Messages extends Resource {
   public async send({
     identifier,
     requestBody,
+    queryParams,
     overrides,
   }: SendMessageParams & Overrides): Promise<NylasResponse<Message>> {
     const path = makePathParams('/v3/grants/{identifier}/messages/send', {
@@ -239,6 +243,7 @@ export class Messages extends Resource {
     const requestOptions: RequestOptionsParams = {
       method: 'POST',
       path,
+      queryParams,
       overrides,
     };
 
