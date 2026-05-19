@@ -5,13 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [8.1.2] - 2026-05-19
 
 ### Added
-- Add `attachments.downloadNodeStream()` as a Node.js convenience helper for converting attachment downloads to `NodeJS.ReadableStream`.
+- Add `attachments.downloadNodeStream()` as a Node.js convenience helper for converting attachment downloads to `NodeJS.ReadableStream` ([#731](https://github.com/nylas/nylas-nodejs/pull/731))
+- Support `fields=include_headers` and `fields=include_basic_headers` query param on `messages.send()` ([#732](https://github.com/nylas/nylas-nodejs/pull/732))
 
 ### Fixed
-- Update `attachments.download()` documentation to describe its Web `ReadableStream<Uint8Array>` return type.
+- Update `attachments.download()` documentation to describe its Web `ReadableStream<Uint8Array>` return type ([#731](https://github.com/nylas/nylas-nodejs/pull/731))
 
 ## [8.1.1] - 2026-05-08
 
