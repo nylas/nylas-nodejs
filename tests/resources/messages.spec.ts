@@ -763,6 +763,46 @@ describe('Messages', () => {
       });
       expect(capturedRequest.form).toBeDefined();
     });
+
+    it('should return message with headers field in response when fields=include_headers is requested', async () => {
+      const mockResponse = {
+        requestId: 'req123',
+        data: {
+          id: 'msg1',
+          grantId: 'id123',
+          object: 'message',
+          subject: 'This is my test email',
+          headers: [
+            {
+              name: 'Message-ID',
+              value: '<bde0x4tz0iuhp1c2x59cg9u29.DIM0M8N2NTA2@yahoo.com>',
+            },
+            { name: 'From', value: 'sender@example.com' },
+          ],
+        },
+      };
+      apiClient.request.mockResolvedValueOnce(mockResponse);
+
+      const result = await messages.send({
+        identifier: 'id123',
+        requestBody: {
+          to: [{ name: 'Test', email: 'test@example.com' }],
+          subject: 'This is my test email',
+        },
+        queryParams: {
+          fields: MessageFields.INCLUDE_HEADERS,
+        },
+      });
+
+      expect(result.data.headers).toBeDefined();
+      expect(result.data.headers).toEqual([
+        {
+          name: 'Message-ID',
+          value: '<bde0x4tz0iuhp1c2x59cg9u29.DIM0M8N2NTA2@yahoo.com>',
+        },
+        { name: 'From', value: 'sender@example.com' },
+      ]);
+    });
   });
 
   describe('scheduledMessages', () => {
