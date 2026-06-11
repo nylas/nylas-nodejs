@@ -75,6 +75,23 @@ describe('Rules', () => {
       expect(result.nextCursor).toBe('cursor-abc');
     });
 
+    it('should preserve top-level cursor when nested rules envelope omits nextCursor', async () => {
+      apiClient.request.mockResolvedValue({
+        requestId: 'req-1',
+        data: {
+          items: [
+            { id: 'rule123', name: 'Block spam', match: {}, actions: [] },
+          ],
+        },
+        nextCursor: 'outer-cursor',
+      });
+
+      const result = await rules.list({});
+
+      expect(result.data).toHaveLength(1);
+      expect(result.nextCursor).toBe('outer-cursor');
+    });
+
     // Back-compat: the normalization is a no-op when an endpoint returns the normal
     // flat list envelope, so a flat response must still pass through untouched.
     it('should leave a flat list envelope untouched (back-compat)', async () => {
