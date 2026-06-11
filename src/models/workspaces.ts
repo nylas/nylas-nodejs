@@ -28,13 +28,17 @@ export interface Workspace {
    */
   autoGroup: boolean;
   /**
+   * When true, this is the application's default workspace.
+   */
+  default?: boolean;
+  /**
    * The ID of the inbox policy attached to the workspace.
    */
   policyId?: string;
   /**
    * The IDs of the inbox rules attached to the workspace.
    */
-  rulesIds?: string[];
+  ruleIds?: string[];
   /**
    * Unix timestamp (seconds) when the workspace was created.
    */
@@ -70,7 +74,7 @@ export interface CreateWorkspaceRequest {
   /**
    * The IDs of the inbox rules to attach to the workspace.
    */
-  rulesIds?: string[];
+  ruleIds?: string[];
 }
 
 /**
@@ -103,7 +107,7 @@ export interface UpdateWorkspaceRequest {
    * The IDs of the inbox rules attached to the workspace.
    * An array (including an empty array) overwrites; null or omitting preserves.
    */
-  rulesIds?: string[] | null;
+  ruleIds?: string[] | null;
 }
 
 /**

@@ -68,7 +68,7 @@ describe('Workspaces', () => {
         domain: 'acme.com',
         autoGroup: true,
         policyId: 'policy123',
-        rulesIds: ['rule123', 'rule456'],
+        ruleIds: ['rule123', 'rule456'],
       };
 
       await workspaces.create({
@@ -96,7 +96,7 @@ describe('Workspaces', () => {
       const requestBody = {
         name: 'Renamed Workspace',
         policyId: null,
-        rulesIds: ['rule789'],
+        ruleIds: ['rule789'],
       };
 
       await workspaces.update({
