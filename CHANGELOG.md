@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [8.2.0] - 2026-06-11
+## [Unreleased]
 
 ### Added
 - Add Workspaces API support via `nylas.workspaces` — list, find, create, update (PATCH), destroy, plus `autoGroup()` and `manualAssign()` for grouping grants by domain
@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Correct `Applications` `ApplicationDetails` field `redirectUris` → `callbackUris` (V3 wire contract), widen `region`/`environment` to `string`, add hosted-auth/IdP/source-only fields, and add `applications.update()` (PATCH)
 - Correct `Applications` `applications.update()` to accept write-only `additionalSettings` (forwarded in the request body, stripped from the response)
 - Correct `RedirectUris` `update()` to use PATCH (was PUT), fix `destroy()` return type, make `platform` optional with a typed `RedirectUriPlatform` enum, and surface `deletedAt` on `RedirectUri`
+
+## [8.2.0] - 2026-06-11
 
 ### Added
 - Add `attachments.downloadNodeStream()` as a Node.js convenience helper for converting attachment downloads to `NodeJS.ReadableStream` ([#731](https://github.com/nylas/nylas-nodejs/pull/731))

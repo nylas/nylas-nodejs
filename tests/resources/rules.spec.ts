@@ -60,7 +60,9 @@ describe('Rules', () => {
       apiClient.request.mockResolvedValue({
         requestId: 'req-1',
         data: {
-          items: [{ id: 'rule123', name: 'Block spam', match: {}, actions: [] }],
+          items: [
+            { id: 'rule123', name: 'Block spam', match: {}, actions: [] },
+          ],
           nextCursor: 'cursor-abc',
         },
       });
