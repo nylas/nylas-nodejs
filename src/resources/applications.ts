@@ -1,10 +1,20 @@
 import { Resource } from './resource.js';
 import { RedirectUris } from './redirectUris.js';
 import APIClient from '../apiClient.js';
-import { ApplicationDetails } from '../models/applicationDetails.js';
+import {
+  ApplicationDetails,
+  UpdateApplicationRequest,
+} from '../models/applicationDetails.js';
 import { NylasResponse } from '../models/response.js';
 import { Overrides } from '../config.js';
 import { makePathParams } from '../utils.js';
+
+/**
+ * @property requestBody The values to update the application with.
+ */
+export interface UpdateApplicationParams {
+  requestBody: UpdateApplicationRequest;
+}
 
 /**
  * Nylas Applications API
@@ -34,6 +44,26 @@ export class Applications extends Resource {
   > {
     return super._find({
       path: makePathParams('/v3/applications', {}),
+      overrides,
+    });
+  }
+
+  /**
+   * Update application details.
+   *
+   * Each supplied nested object is a full replace, not a deep merge. Callback URIs cannot
+   * be updated here — manage them via {@link redirectUris}.
+   * @returns The updated application details
+   */
+  public update({
+    requestBody,
+    overrides,
+  }: UpdateApplicationParams & Overrides): Promise<
+    NylasResponse<ApplicationDetails>
+  > {
+    return super._updatePatch({
+      path: makePathParams('/v3/applications', {}),
+      requestBody,
       overrides,
     });
   }

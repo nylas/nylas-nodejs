@@ -97,7 +97,7 @@ describe('RedirectUris', () => {
       await redirectUris.create({
         requestBody: {
           url: 'https://test.com',
-          platform: 'google',
+          platform: 'ios',
           settings: {
             origin: 'https://origin.com',
             bundleId: 'com.test',
@@ -113,12 +113,14 @@ describe('RedirectUris', () => {
         },
       });
 
+      // POST to the redirect-uris collection; the server regenerates the id
+      // server-side, so no id is sent in the body.
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'POST',
         path: '/v3/applications/redirect-uris',
         body: {
           url: 'https://test.com',
-          platform: 'google',
+          platform: 'ios',
           settings: {
             origin: 'https://origin.com',
             bundleId: 'com.test',
@@ -134,6 +136,22 @@ describe('RedirectUris', () => {
         },
       });
     });
+
+    it('should allow creating without a platform (defaults to web server-side)', async () => {
+      await redirectUris.create({
+        requestBody: {
+          url: 'https://test.com',
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/applications/redirect-uris',
+        body: {
+          url: 'https://test.com',
+        },
+      });
+    });
   });
 
   describe('update', () => {
@@ -142,7 +160,7 @@ describe('RedirectUris', () => {
         redirectUriId: 'redirect123',
         requestBody: {
           url: 'https://test.com',
-          platform: 'google',
+          platform: 'ios',
           settings: {
             origin: 'https://origin.com',
             bundleId: 'com.test',
@@ -158,12 +176,13 @@ describe('RedirectUris', () => {
         },
       });
 
+      // Update is a PATCH (not PUT) per the v3 applications spec.
       expect(apiClient.request).toHaveBeenCalledWith({
-        method: 'PUT',
+        method: 'PATCH',
         path: '/v3/applications/redirect-uris/redirect123',
         body: {
           url: 'https://test.com',
-          platform: 'google',
+          platform: 'ios',
           settings: {
             origin: 'https://origin.com',
             bundleId: 'com.test',
@@ -185,7 +204,7 @@ describe('RedirectUris', () => {
         redirectUriId: 'redirect/123',
         requestBody: {
           url: 'https://test.com',
-          platform: 'google',
+          platform: 'web',
           settings: {},
         },
         overrides: {},
@@ -202,7 +221,7 @@ describe('RedirectUris', () => {
         redirectUriId: 'redirect%2F123',
         requestBody: {
           url: 'https://test.com',
-          platform: 'google',
+          platform: 'web',
           settings: {},
         },
         overrides: {},

@@ -263,6 +263,11 @@ export interface RuleEvaluationAppliedActions {
    */
   blocked?: boolean;
   /**
+   * Whether the message or send was blocked because an evaluation error
+   * triggered fail-closed handling, rather than a genuine rule match.
+   */
+  blockedByEvaluationError?: boolean;
+  /**
    * Whether the message or stored sent copy was moved to spam.
    */
   markedAsSpam?: boolean;
@@ -302,8 +307,9 @@ export interface RuleEvaluation {
   grantId: string;
   /**
    * The inbound message or stored sent copy associated with this evaluation.
+   * Omitted (absent) for smtp_rcpt evaluations and outbound sends with no stored copy.
    */
-  messageId?: string | null;
+  messageId?: string;
   /**
    * Unix timestamp when the evaluation occurred.
    */

@@ -73,6 +73,8 @@ describe('Policies', () => {
         limits: {
           limitAttachmentSizeLimit: 26214400,
           limitAttachmentCountLimit: 50,
+          limitCountDailyMessageReceived: 1000,
+          limitCountDailyEmailSent: 500,
           limitInboxRetentionPeriod: 365,
           limitSpamRetentionPeriod: 30,
         },

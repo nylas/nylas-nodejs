@@ -17,8 +17,10 @@ import { Contacts } from './resources/contacts.js';
 import { Attachments } from './resources/attachments.js';
 import { Scheduler } from './resources/scheduler.js';
 import { Notetakers } from './resources/notetakers.js';
+import { Domains } from './resources/domains.js';
 import { Policies } from './resources/policies.js';
 import { Rules } from './resources/rules.js';
+import { Workspaces } from './resources/workspaces.js';
 import { AgentLists } from './resources/agentLists.js';
 
 /**
@@ -73,6 +75,10 @@ class Nylas {
    */
   public notetakers: Notetakers;
   /**
+   * Access the Manage Domains API
+   */
+  public domains: Domains;
+  /**
    * Access the Agent Account Policies API
    */
   public policies: Policies;
@@ -80,6 +86,10 @@ class Nylas {
    * Access the Agent Account Rules API
    */
   public rules: Rules;
+  /**
+   * Access the Workspaces API
+   */
+  public workspaces: Workspaces;
   /**
    * Access the Agent Account Lists API
    */
@@ -127,8 +137,10 @@ class Nylas {
     this.grants = new Grants(this.apiClient);
     this.messages = new Messages(this.apiClient);
     this.notetakers = new Notetakers(this.apiClient);
+    this.domains = new Domains(this.apiClient);
     this.policies = new Policies(this.apiClient);
     this.rules = new Rules(this.apiClient);
+    this.workspaces = new Workspaces(this.apiClient);
     this.lists = new AgentLists(this.apiClient);
     this.threads = new Threads(this.apiClient);
     this.webhooks = new Webhooks(this.apiClient);
