@@ -12,7 +12,10 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { ServiceAccountSigner } from '../models/serviceAccount.js';
+import {
+  canonicalJson,
+  ServiceAccountSigner,
+} from '../models/serviceAccount.js';
 import { makePathParams, objKeysToSnakeCase } from '../utils.js';
 import { AsyncListResponse, Resource } from './resource.js';
 
@@ -141,7 +144,11 @@ export class Domains extends Resource {
   } {
     if (!signer) {
       this.assertServiceAccountSigningHeaders(overrides);
-      return { overrides: { ...overrides, skipAuth: true } };
+      const body = requestBody ? objKeysToSnakeCase(requestBody) : undefined;
+      return {
+        overrides: { ...overrides, skipAuth: true },
+        serializedBody: body ? canonicalJson(body) : undefined,
+      };
     }
 
     const body = requestBody ? objKeysToSnakeCase(requestBody) : undefined;

@@ -247,7 +247,8 @@ describe('Domains', () => {
         path: '/v3/admin/domains',
         queryParams: undefined,
         body: requestBody,
-        serializedBody: undefined,
+        serializedBody:
+          '{"domain_address":"mail.example.com","name":"Example mail domain"}',
         overrides: expectedSignedOverrides({ override: 'bar' }),
       });
     });
@@ -313,7 +314,7 @@ describe('Domains', () => {
         path: '/v3/admin/domains/domain123',
         queryParams: undefined,
         body: requestBody,
-        serializedBody: undefined,
+        serializedBody: '{"name":"Renamed domain"}',
         overrides: expectedSignedOverrides({ override: 'bar' }),
       });
     });
@@ -386,7 +387,7 @@ describe('Domains', () => {
         path: '/v3/admin/domains/domain123/info',
         queryParams: undefined,
         body: requestBody,
-        serializedBody: undefined,
+        serializedBody: '{"type":"ownership"}',
         overrides: expectedSignedOverrides({ override: 'bar' }),
       });
     });
@@ -408,7 +409,7 @@ describe('Domains', () => {
         path: '/v3/admin/domains/domain123/info',
         queryParams: undefined,
         body: requestBody,
-        serializedBody: undefined,
+        serializedBody: '{"options":{"key_length":2048},"type":"dkim"}',
         overrides: expectedSignedOverrides(),
       });
     });
@@ -468,7 +469,7 @@ describe('Domains', () => {
         path: '/v3/admin/domains/domain123/verify',
         queryParams: undefined,
         body: requestBody,
-        serializedBody: undefined,
+        serializedBody: '{"type":"spf"}',
         overrides: expectedSignedOverrides({ override: 'bar' }),
       });
     });
@@ -489,7 +490,7 @@ describe('Domains', () => {
         path: '/v3/admin/domains/mail.example.com/verify',
         queryParams: undefined,
         body: requestBody,
-        serializedBody: undefined,
+        serializedBody: '{"type":"arc"}',
         overrides: expectedSignedOverrides(),
       });
     });
