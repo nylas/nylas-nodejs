@@ -1,6 +1,7 @@
 import { createVerify, generateKeyPairSync } from 'node:crypto';
 import {
   canonicalJson,
+  generateNonce,
   ServiceAccountSigner,
 } from '../../src/models/serviceAccount';
 
@@ -12,6 +13,10 @@ describe('ServiceAccountSigner', () => {
     type: 'pkcs1',
     format: 'pem',
   }) as string;
+  const pkcs8PrivateKeyPem = privateKey.export({
+    type: 'pkcs8',
+    format: 'pem',
+  }) as string;
 
   it('should serialize JSON canonically with sorted keys', () => {
     expect(
@@ -21,6 +26,66 @@ describe('ServiceAccountSigner', () => {
         list: [{ b: 2, a: 1 }],
       })
     ).toEqual('{"a":{"x":"value","y":true},"list":[{"a":1,"b":2}],"z":1}');
+  });
+
+  it('should omit undefined and function object fields while preserving array slots', () => {
+    expect(
+      canonicalJson({
+        kept: 'value',
+        omitted: undefined,
+        ignored: () => 'value',
+        list: [undefined, () => 'value', 'ok'],
+      })
+    ).toEqual('{"kept":"value","list":[null,null,"ok"]}');
+  });
+
+  it('should reject non-finite numbers', () => {
+    expect(() => canonicalJson({ value: Number.NaN })).toThrow(
+      'Service account signing only supports finite numbers.'
+    );
+  });
+
+  it('should generate secure alphanumeric nonces', () => {
+    const nonce = generateNonce(24);
+
+    expect(nonce).toHaveLength(24);
+    expect(nonce).toMatch(/^[A-Za-z0-9]+$/);
+    expect(() => generateNonce(0)).toThrow(
+      'Nonce length must be a positive integer.'
+    );
+  });
+
+  it('should accept base64-encoded PEM private keys', () => {
+    const signer = new ServiceAccountSigner({
+      privateKeyPem: Buffer.from(pkcs8PrivateKeyPem, 'utf8').toString('base64'),
+      privateKeyId: 'service-account-key-id',
+    });
+
+    const signed = signer.buildHeaders({
+      method: 'GET',
+      path: '/v3/admin/domains',
+      timestamp: 1742932766,
+      nonce: 'nonce-1234567890123456',
+    });
+
+    expect(signed.headers['X-Nylas-Signature']).toEqual(expect.any(String));
+  });
+
+  it('should reject non-RSA private keys', () => {
+    const { privateKey: ecPrivateKey } = generateKeyPairSync('ec', {
+      namedCurve: 'prime256v1',
+    });
+
+    expect(
+      () =>
+        new ServiceAccountSigner({
+          privateKeyPem: ecPrivateKey.export({
+            type: 'pkcs8',
+            format: 'pem',
+          }),
+          privateKeyId: 'service-account-key-id',
+        })
+    ).toThrow('Service account private key must be RSA.');
   });
 
   it('should create service account signing headers', () => {
