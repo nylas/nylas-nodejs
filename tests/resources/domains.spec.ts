@@ -473,6 +473,5 @@ describe('Domains', () => {
         overrides: expectedSignedOverrides({ override: 'bar' }),
       });
     });
-
   });
 });
