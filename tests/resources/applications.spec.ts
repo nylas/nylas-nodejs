@@ -66,6 +66,13 @@ describe('Applications', () => {
             origins: 'https://example.com',
             issuers: 'https://issuer.example.com',
           },
+          callbackUris: [
+            {
+              id: '0556d035-6cb6-4262-a035-6b77e11cf8fc',
+              url: 'https://example.com/callback',
+              platform: 'web',
+            },
+          ],
           domain: 'auth.example.com',
         },
         overrides: {
@@ -91,6 +98,13 @@ describe('Applications', () => {
             origins: 'https://example.com',
             issuers: 'https://issuer.example.com',
           },
+          callbackUris: [
+            {
+              id: '0556d035-6cb6-4262-a035-6b77e11cf8fc',
+              url: 'https://example.com/callback',
+              platform: 'web',
+            },
+          ],
           domain: 'auth.example.com',
         },
         overrides: {
