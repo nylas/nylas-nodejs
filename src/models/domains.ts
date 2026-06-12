@@ -196,4 +196,4 @@ export interface DomainVerificationResult {
 /**
  * Interface representing query parameters for listing domains.
  */
-export interface ListDomainsQueryParams extends ListQueryParams {}
+export type ListDomainsQueryParams = ListQueryParams;
