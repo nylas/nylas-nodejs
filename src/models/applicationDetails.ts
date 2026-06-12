@@ -9,10 +9,6 @@ export interface ApplicationDetails {
    */
   applicationId: string;
   /**
-   * V2 Application ID. Omitted when empty.
-   */
-  v2ApplicationId?: string;
-  /**
    * ID of organization
    */
   organizationId: string;
