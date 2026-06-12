@@ -196,13 +196,4 @@ export interface DomainVerificationResult {
 /**
  * Interface representing query parameters for listing domains.
  */
-export interface ListDomainsQueryParams extends ListQueryParams {
-  /**
-   * Filter by exact domain address. Note the key is `domain`, not `domainAddress`.
-   */
-  domain?: string;
-  /**
-   * Filter by region.
-   */
-  region?: string;
-}
+export interface ListDomainsQueryParams extends ListQueryParams {}

@@ -179,21 +179,15 @@ describe('Domains', () => {
       await domains.list({
         queryParams: {
           limit: 10,
-          domain: 'mail.example.com',
-          region: 'us',
         },
         overrides: signedOverrides({ override: 'bar' }),
       });
 
-      // Path must target the public admin surface, and the address filter key
-      // is `domain` (not `domainAddress`).
       expect(apiClient.request).toHaveBeenCalledWith({
         method: 'GET',
         path: '/v3/admin/domains',
         queryParams: {
           limit: 10,
-          domain: 'mail.example.com',
-          region: 'us',
         },
         overrides: expectedSignedOverrides({ override: 'bar' }),
       });
