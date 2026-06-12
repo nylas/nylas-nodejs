@@ -23,6 +23,7 @@ export * from './redirectUri.js';
 export * from './response.js';
 export * from './rules.js';
 export * from './scheduler.js';
+export * from './serviceAccount.js';
 export * from './smartCompose.js';
 export * from './threads.js';
 export * from './webhooks.js';

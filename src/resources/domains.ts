@@ -12,7 +12,8 @@ import {
   NylasListResponse,
   NylasResponse,
 } from '../models/response.js';
-import { makePathParams } from '../utils.js';
+import { ServiceAccountSigner } from '../models/serviceAccount.js';
+import { makePathParams, objKeysToSnakeCase } from '../utils.js';
 import { AsyncListResponse, Resource } from './resource.js';
 
 /**
@@ -20,6 +21,7 @@ import { AsyncListResponse, Resource } from './resource.js';
  */
 interface ListDomainsParams {
   queryParams?: ListDomainsQueryParams;
+  signer?: ServiceAccountSigner;
 }
 
 /**
@@ -28,6 +30,7 @@ interface ListDomainsParams {
  */
 interface FindDomainParams {
   domainId: string;
+  signer?: ServiceAccountSigner;
 }
 
 /**
@@ -35,6 +38,7 @@ interface FindDomainParams {
  */
 interface CreateDomainParams {
   requestBody: CreateDomainRequest;
+  signer?: ServiceAccountSigner;
 }
 
 /**
@@ -45,6 +49,7 @@ interface CreateDomainParams {
 interface UpdateDomainParams {
   domainId: string;
   requestBody: UpdateDomainRequest;
+  signer?: ServiceAccountSigner;
 }
 
 /**
@@ -53,6 +58,7 @@ interface UpdateDomainParams {
  */
 interface DestroyDomainParams {
   domainId: string;
+  signer?: ServiceAccountSigner;
 }
 
 /**
@@ -63,6 +69,7 @@ interface DestroyDomainParams {
 interface InfoDomainParams {
   domainId: string;
   requestBody: DomainVerificationAttempt;
+  signer?: ServiceAccountSigner;
 }
 
 /**
@@ -73,6 +80,15 @@ interface InfoDomainParams {
 interface VerifyDomainParams {
   domainId: string;
   requestBody: DomainVerificationAttempt;
+  signer?: ServiceAccountSigner;
+}
+
+interface SignedRequestParams {
+  method: string;
+  path: string;
+  requestBody?: Record<string, any>;
+  signer?: ServiceAccountSigner;
+  overrides?: OverridableNylasConfig;
 }
 
 /**
@@ -113,6 +129,39 @@ export class Domains extends Resource {
     }
   }
 
+  private buildSignedRequest({
+    method,
+    path,
+    requestBody,
+    signer,
+    overrides,
+  }: SignedRequestParams): {
+    overrides?: OverridableNylasConfig;
+    serializedBody?: string;
+  } {
+    if (!signer) {
+      this.assertServiceAccountSigningHeaders(overrides);
+      return { overrides: { ...overrides, skipAuth: true } };
+    }
+
+    const body = requestBody ? objKeysToSnakeCase(requestBody) : undefined;
+    const signedRequest = signer.buildHeaders({ method, path, body });
+    const signedOverrides = {
+      ...overrides,
+      skipAuth: true,
+      headers: {
+        ...(overrides?.headers ?? {}),
+        ...signedRequest.headers,
+      },
+    };
+
+    this.assertServiceAccountSigningHeaders(signedOverrides);
+    return {
+      overrides: signedOverrides,
+      serializedBody: signedRequest.serializedBody,
+    };
+  }
+
   /**
    * Return all domains for the caller's organization.
    *
@@ -122,15 +171,35 @@ export class Domains extends Resource {
    */
   public list({
     queryParams,
+    signer,
     overrides,
   }: ListDomainsParams & Overrides = {}): AsyncListResponse<
     NylasListResponse<Domain>
   > {
-    this.assertServiceAccountSigningHeaders(overrides);
+    const path = makePathParams('/v3/admin/domains', {});
+    if (signer) {
+      return super._list({
+        queryParams,
+        path,
+        getOverrides: () =>
+          this.buildSignedRequest({
+            method: 'GET',
+            path,
+            signer,
+            overrides,
+          }).overrides,
+      });
+    }
+
+    const signed = this.buildSignedRequest({
+      method: 'GET',
+      path,
+      overrides,
+    });
     return super._list({
       queryParams,
-      path: makePathParams('/v3/admin/domains', {}),
-      overrides,
+      path,
+      overrides: signed.overrides,
     });
   }
 
@@ -143,12 +212,19 @@ export class Domains extends Resource {
    */
   public find({
     domainId,
+    signer,
     overrides,
   }: FindDomainParams & Overrides): Promise<NylasResponse<Domain>> {
-    this.assertServiceAccountSigningHeaders(overrides);
-    return super._find({
-      path: makePathParams('/v3/admin/domains/{domainId}', { domainId }),
+    const path = makePathParams('/v3/admin/domains/{domainId}', { domainId });
+    const signed = this.buildSignedRequest({
+      method: 'GET',
+      path,
+      signer,
       overrides,
+    });
+    return super._find({
+      path,
+      overrides: signed.overrides,
     });
   }
 
@@ -161,13 +237,22 @@ export class Domains extends Resource {
    */
   public create({
     requestBody,
+    signer,
     overrides,
   }: CreateDomainParams & Overrides): Promise<NylasResponse<Domain>> {
-    this.assertServiceAccountSigningHeaders(overrides);
-    return super._create({
-      path: makePathParams('/v3/admin/domains', {}),
+    const path = makePathParams('/v3/admin/domains', {});
+    const signed = this.buildSignedRequest({
+      method: 'POST',
+      path,
       requestBody,
+      signer,
       overrides,
+    });
+    return super._create({
+      path,
+      requestBody,
+      serializedBody: signed.serializedBody,
+      overrides: signed.overrides,
     });
   }
 
@@ -185,13 +270,22 @@ export class Domains extends Resource {
   public update({
     domainId,
     requestBody,
+    signer,
     overrides,
   }: UpdateDomainParams & Overrides): Promise<NylasResponse<Domain>> {
-    this.assertServiceAccountSigningHeaders(overrides);
-    return super._update({
-      path: makePathParams('/v3/admin/domains/{domainId}', { domainId }),
+    const path = makePathParams('/v3/admin/domains/{domainId}', { domainId });
+    const signed = this.buildSignedRequest({
+      method: 'PUT',
+      path,
       requestBody,
+      signer,
       overrides,
+    });
+    return super._update({
+      path,
+      requestBody,
+      serializedBody: signed.serializedBody,
+      overrides: signed.overrides,
     });
   }
 
@@ -204,12 +298,19 @@ export class Domains extends Resource {
    */
   public destroy({
     domainId,
+    signer,
     overrides,
   }: DestroyDomainParams & Overrides): Promise<NylasBaseResponse> {
-    this.assertServiceAccountSigningHeaders(overrides);
-    return super._destroy({
-      path: makePathParams('/v3/admin/domains/{domainId}', { domainId }),
+    const path = makePathParams('/v3/admin/domains/{domainId}', { domainId });
+    const signed = this.buildSignedRequest({
+      method: 'DELETE',
+      path,
+      signer,
       overrides,
+    });
+    return super._destroy({
+      path,
+      overrides: signed.overrides,
     });
   }
 
@@ -223,15 +324,26 @@ export class Domains extends Resource {
   public info({
     domainId,
     requestBody,
+    signer,
     overrides,
   }: InfoDomainParams & Overrides): Promise<
     NylasResponse<DomainVerificationResult>
   > {
-    this.assertServiceAccountSigningHeaders(overrides);
-    return super._create({
-      path: makePathParams('/v3/admin/domains/{domainId}/info', { domainId }),
+    const path = makePathParams('/v3/admin/domains/{domainId}/info', {
+      domainId,
+    });
+    const signed = this.buildSignedRequest({
+      method: 'POST',
+      path,
       requestBody,
+      signer,
       overrides,
+    });
+    return super._create({
+      path,
+      requestBody,
+      serializedBody: signed.serializedBody,
+      overrides: signed.overrides,
     });
   }
 
@@ -245,15 +357,26 @@ export class Domains extends Resource {
   public verify({
     domainId,
     requestBody,
+    signer,
     overrides,
   }: VerifyDomainParams & Overrides): Promise<
     NylasResponse<DomainVerificationResult>
   > {
-    this.assertServiceAccountSigningHeaders(overrides);
-    return super._create({
-      path: makePathParams('/v3/admin/domains/{domainId}/verify', { domainId }),
+    const path = makePathParams('/v3/admin/domains/{domainId}/verify', {
+      domainId,
+    });
+    const signed = this.buildSignedRequest({
+      method: 'POST',
+      path,
       requestBody,
+      signer,
       overrides,
+    });
+    return super._create({
+      path,
+      requestBody,
+      serializedBody: signed.serializedBody,
+      overrides: signed.overrides,
     });
   }
 }

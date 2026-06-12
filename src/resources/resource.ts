@@ -11,6 +11,7 @@ interface ListParams<T> {
   queryParams?: ListQueryParams;
   path: string;
   overrides?: OverridableNylasConfig;
+  getOverrides?: () => OverridableNylasConfig | undefined;
   useGenerator?: boolean;
 }
 
@@ -24,6 +25,7 @@ interface PayloadParams<T> {
   path: string;
   queryParams?: Record<string, any>;
   requestBody: Record<string, any>;
+  serializedBody?: string | Buffer;
   overrides?: OverridableNylasConfig;
 }
 
@@ -55,12 +57,13 @@ export class Resource {
     queryParams,
     path,
     overrides,
+    getOverrides,
   }: ListParams<T>): Promise<T> {
     const res = await this.apiClient.request<T>({
       method: 'GET',
       path,
       queryParams,
-      overrides,
+      overrides: getOverrides ? getOverrides() : overrides,
     });
 
     // Some list endpoints return a nested envelope after key conversion:
@@ -97,7 +100,7 @@ export class Resource {
             limit: entriesRemaining,
             pageToken: res.nextCursor,
           },
-          overrides,
+          overrides: getOverrides ? getOverrides() : overrides,
         });
 
         res.data = res.data.concat(nextRes.data);
@@ -172,13 +175,20 @@ export class Resource {
 
   private payloadRequest<T>(
     method: 'POST' | 'PUT' | 'PATCH',
-    { path, queryParams, requestBody, overrides }: PayloadParams<T>
+    {
+      path,
+      queryParams,
+      requestBody,
+      serializedBody,
+      overrides,
+    }: PayloadParams<T>
   ): Promise<NylasResponse<T>> {
     return this.apiClient.request<NylasResponse<T>>({
       method,
       path,
       queryParams,
       body: requestBody,
+      serializedBody,
       overrides,
     });
   }
