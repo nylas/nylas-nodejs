@@ -2,9 +2,6 @@ import { ListQueryParams } from './listQueryParams.js';
 
 /**
  * Type for the DNS verification types supported by the Manage Domains API.
- *
- * Note: the published contract only documents the first five, but the
- * service source also accepts `dmarc` and `arc`.
  */
 export type DomainVerificationType =
   | 'ownership'
@@ -51,21 +48,6 @@ export interface Domain {
    */
   region?: string;
   /**
-   * SES tenant key. Set during provisioning.
-   */
-  tenantKey?: string;
-  /**
-   * BYODKIM public key.
-   */
-  dkimPublicKey?: string;
-  /**
-   * Unix timestamp when the DKIM key was submitted to the provider.
-   *
-   * Not returned by Get or List; only populated in the Create response during
-   * branded provisioning. Treat as optional and do not depend on it from Get/List.
-   */
-  dkimSubmittedAt?: number;
-  /**
    * Ownership (TXT) verification flag.
    */
   verifiedOwnership?: boolean;
@@ -107,8 +89,7 @@ export interface Domain {
  * Interface representing a request to create a domain.
  *
  * Other Domain fields are not honored for create: the server sets region,
- * branded, the verified flags, id, timestamps, and (for branded) the
- * tenant_key/dkim_public_key/dkim_submitted_at.
+ * branded, the verified flags, id, and timestamps.
  */
 export interface CreateDomainRequest {
   /**
@@ -125,37 +106,14 @@ export interface CreateDomainRequest {
 /**
  * Interface representing a request to update a domain.
  *
- * Only non-null fields are persisted. `domainAddress` cannot be updated and is
- * rejected with a 400 if supplied. The update response echoes the sparse
- * cleared input (typically just `name` and `updatedAt`), not a full Domain;
- * re-fetch the domain if you need the complete record.
+ * Only `name` is updatable. `domainAddress` cannot be changed after create;
+ * delete and recreate the domain to use a different address.
  */
 export interface UpdateDomainRequest {
   /**
    * New human-readable label.
    */
   name?: string;
-  /**
-   * New cluster region.
-   */
-  region?: string;
-  /**
-   * New SES tenant key.
-   */
-  tenantKey?: string;
-  /**
-   * New BYODKIM public key.
-   */
-  dkimPublicKey?: string;
-  /**
-   * Unix timestamp when the DKIM key was submitted to the provider.
-   */
-  dkimSubmittedAt?: number;
-  /**
-   * Feedback MX verification flag. This is the only verified flag that can be
-   * set directly, without running a DNS verification.
-   */
-  verifiedFeedback?: boolean;
 }
 
 /**

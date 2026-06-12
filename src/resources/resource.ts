@@ -63,19 +63,10 @@ export class Resource {
       overrides,
     });
 
-    // Normalize the nested list envelope used by the rules endpoint.
-    //
-    // Most list endpoints return a flat envelope: { data: T[], nextCursor }.
-    // GET /v3/rules instead returns a nested one (after the camelCase transform):
-    // { data: { items: T[], nextCursor? } } — because the inbox service serializes
-    // a ListWithCursorResult directly into `data` rather than flattening it (see
-    // inbox/internal/rule/interface_http_find.go using NewFiberSuccessResponse vs
-    // policies using NewFiberSuccessListWithCursorResponse).
-    //
+    // Some list endpoints return a nested envelope after key conversion:
+    // { data: { items: T[], nextCursor? } }.
     // This guard remaps that nested shape back to the flat shape the list machinery
-    // (and the public SDK surface) expects. It is a no-op for the normal flat shape:
-    // it only fires when `data` is a non-null, non-array object carrying an `items`
-    // array, so it cannot corrupt responses where `data` is already an array.
+    // and public SDK surface expect.
     const data: unknown = (res as { data?: unknown }).data;
     if (
       data != null &&

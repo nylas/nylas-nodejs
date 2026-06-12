@@ -44,18 +44,14 @@ describe('Rules', () => {
       });
     });
 
-    // GROUND TRUTH (source-verified): GET /v3/rules returns a NESTED list envelope.
-    // The inbox service serializes a ListWithCursorResult straight into `data`, so
-    // after the SDK camelCase transform the apiClient yields
+    // GET /v3/rules can return a nested list envelope, so after the SDK camelCase
+    // transform the apiClient yields
     // { requestId, data: { items: Rule[], nextCursor? } } — NOT the flat
-    // { requestId, data: Rule[], nextCursor } that every other list endpoint returns
-    // (proven by inbox/internal/rule/interface_http_find.go using
-    // NewFiberSuccessResponse on a ListWithCursorResult, vs policies using
-    // NewFiberSuccessListWithCursorResponse). The base list machinery must normalize
-    // this nested shape so the public surface stays consistent: callers still get
+    // { requestId, data: Rule[], nextCursor } that the list surface exposes. The
+    // base list machinery must normalize this nested shape so callers still get
     // result.data as an array and result.nextCursor at the top level. If the
-    // normalization is removed, result.data is the {items,nextCursor} OBJECT (so
-    // toHaveLength / [0].id fail) and result.nextCursor is undefined.
+    // normalization is removed, result.data is the {items,nextCursor} object and
+    // result.nextCursor is undefined.
     it('should normalize the nested rules list envelope to the flat surface', async () => {
       apiClient.request.mockResolvedValue({
         requestId: 'req-1',
