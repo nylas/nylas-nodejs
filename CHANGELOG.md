@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Add Workspaces API support via `nylas.workspaces` — list, find, create, update (PATCH), destroy, plus `autoGroup()` and `manualAssign()` for grouping grants by domain, `default`, `policyId`, and `ruleIds`
+- Add Workspaces API support via `nylas.workspaces` — list, find, create, update (PATCH), destroy, plus `autoGroup()` and `manualAssign()` for grouping grants by domain, `invalidAlso`, `default`, `policyId`, and `ruleIds`
 - Add Agent Account Lists API support via `nylas.lists` — create lists with `name`, optional `description`, and immutable `type`, plus list, find, update, destroy, `listItems()`, `addItems()`, and `removeItems()` for managing `/v3/lists`
 - Add Manage Domains API support via `nylas.domains` — list, find, create, update, destroy, plus `info()` and `verify()` for domain verification (`/v3/admin/domains`). Includes `ServiceAccountSigner` support for Nylas Service Account request signing, bearer-auth suppression, and canonical signed wire bodies.
 
