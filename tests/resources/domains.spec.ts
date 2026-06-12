@@ -474,25 +474,5 @@ describe('Domains', () => {
       });
     });
 
-    it('should accept the extended dmarc/arc verification types', async () => {
-      const requestBody = {
-        type: 'arc' as const,
-      };
-
-      await domains.verify({
-        domainId: 'mail.example.com',
-        requestBody,
-        overrides: signedOverrides(),
-      });
-
-      expect(apiClient.request).toHaveBeenCalledWith({
-        method: 'POST',
-        path: '/v3/admin/domains/mail.example.com/verify',
-        queryParams: undefined,
-        body: requestBody,
-        serializedBody: '{"type":"arc"}',
-        overrides: expectedSignedOverrides(),
-      });
-    });
   });
 });

@@ -13,6 +13,17 @@ export type DomainVerificationType =
   | 'arc';
 
 /**
+ * Type for the DNS verification types accepted by Manage Domains info and
+ * verify request bodies.
+ */
+export type DomainVerificationRequestType =
+  | 'ownership'
+  | 'mx'
+  | 'spf'
+  | 'dkim'
+  | 'feedback';
+
+/**
  * Type for the status of a domain DNS verification attempt.
  */
 export type DomainVerificationStatus = 'pending' | 'done' | 'failed';
@@ -124,7 +135,7 @@ export interface DomainVerificationAttempt {
   /**
    * The DNS verification type to fetch info for or verify.
    */
-  type: DomainVerificationType;
+  type: DomainVerificationRequestType;
   /**
    * Free-form options. For dkim, may carry a key-length hint. Most callers omit this.
    */
