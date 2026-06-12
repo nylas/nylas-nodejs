@@ -51,8 +51,7 @@ export class Applications extends Resource {
   /**
    * Update application details.
    *
-   * Each supplied nested object is a full replace, not a deep merge. Callback URIs cannot
-   * be updated here — manage them via {@link redirectUris}.
+   * Each supplied nested object is a full replace, not a deep merge.
    * @returns The updated application details
    */
   public update({

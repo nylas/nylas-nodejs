@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Add Workspaces API support via `nylas.workspaces` — list, find, create, update (PATCH), destroy, plus `autoGroup()` and `manualAssign()` for grouping grants by domain, `default`, `policyId`, and `ruleIds`
+- Add Workspaces API support via `nylas.workspaces` — list, find, create, update (PATCH), destroy, plus `autoGroup()` and `manualAssign()` for grouping grants by domain, `invalidAlso`, `default`, `policyId`, and `ruleIds`
 - Add Agent Account Lists API support via `nylas.lists` — create lists with `name`, optional `description`, and immutable `type`, plus list, find, update, destroy, `listItems()`, `addItems()`, and `removeItems()` for managing `/v3/lists`
 - Add Manage Domains API support via `nylas.domains` — list, find, create, update, destroy, plus `info()` and `verify()` for domain verification (`/v3/admin/domains`). Includes `ServiceAccountSigner` support for Nylas Service Account request signing, bearer-auth suppression, and canonical signed wire bodies.
 
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Correct `Rules` list (`GET /v3/rules`) to normalize its nested `{ data: { items, nextCursor } }` envelope back to the flat `{ data, nextCursor }` shape the list machinery expects
 - Correct `Applications` `ApplicationDetails` field `redirectUris` → `callbackUris` (V3 wire contract), widen `region`/`environment` to `string`, add hosted-auth/IdP public fields, and add `applications.update()` (PATCH)
 - Correct `Applications` `applications.update()` to accept write-only `additionalSettings` (forwarded in the request body, stripped from the response)
+- Correct `Applications` `applications.update()` to accept `callbackUris` with callback URI IDs for preserving existing callback URIs
 - Correct `RedirectUris` `update()` to use PATCH (was PUT), fix `destroy()` return type, make `platform` optional with a typed `RedirectUriPlatform` enum, and surface `deletedAt` on `RedirectUri`
 
 ## [8.2.0] - 2026-06-11

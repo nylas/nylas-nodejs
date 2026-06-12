@@ -1,4 +1,8 @@
-import { RedirectUri } from './redirectUri.js';
+import {
+  RedirectUri,
+  RedirectUriPlatform,
+  RedirectUriSettings,
+} from './redirectUri.js';
 
 /**
  * Interface for a Nylas application details object
@@ -182,11 +186,32 @@ export interface AdditionalSettings {
 export type UpdateBranding = Partial<Branding>;
 
 /**
+ * Callback URI shape accepted by application updates.
+ */
+export interface UpdateApplicationRedirectUriRequest {
+  /**
+   * Existing callback URI ID. Include this when preserving or updating an existing URI.
+   */
+  id?: string;
+  /**
+   * Redirect URL.
+   */
+  url: string;
+  /**
+   * Platform identifier. One of `web`, `js`, `ios`, `android`, `desktop`.
+   * Defaults to `web` when omitted.
+   */
+  platform?: RedirectUriPlatform;
+  /**
+   * Optional settings for the redirect URI.
+   */
+  settings?: RedirectUriSettings;
+}
+
+/**
  * Interface representing a request to update application details.
  *
  * All fields are optional; each supplied nested object is a full replace, not a deep merge.
- * Note: `callbackUris`/`redirectUris` are ignored by this endpoint — manage callback URIs
- * via the dedicated redirect-uris endpoints.
  */
 export interface UpdateApplicationRequest {
   /**
@@ -201,6 +226,10 @@ export interface UpdateApplicationRequest {
    * Identity provider (IdP) settings for the application.
    */
   idpSettings?: IdpSettings;
+  /**
+   * List of callback URIs for the application.
+   */
+  callbackUris?: UpdateApplicationRedirectUriRequest[];
   /**
    * White-label domain for the application.
    */
