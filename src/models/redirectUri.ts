@@ -1,4 +1,11 @@
 /**
+ * The platform of a Redirect URI.
+ *
+ * One of `web`, `js`, `ios`, `android`, or `desktop`. Defaults to `web` when omitted.
+ */
+export type RedirectUriPlatform = 'web' | 'js' | 'ios' | 'android' | 'desktop';
+
+/**
  * Interface representation of a Redirect URI object
  */
 export type RedirectUri = {
@@ -11,13 +18,17 @@ export type RedirectUri = {
    */
   url: string;
   /**
-   * Platform identifier
+   * Platform identifier. One of `web`, `js`, `ios`, `android`, `desktop`.
    */
-  platform: string;
+  platform: RedirectUriPlatform;
   /**
    * Configuration settings
    */
   settings?: RedirectUriSettings;
+  /**
+   * Unix timestamp (seconds) when the redirect URI was soft-deleted. Omitted when empty.
+   */
+  deletedAt?: number;
 };
 
 /**
@@ -59,9 +70,10 @@ export type CreateRedirectUriRequest = {
    */
   url: string;
   /**
-   * Platform identifier.
+   * Platform identifier. One of `web`, `js`, `ios`, `android`, `desktop`.
+   * Defaults to `web` when omitted.
    */
-  platform: string;
+  platform?: RedirectUriPlatform;
   /**
    * Optional settings for the redirect uri.
    */

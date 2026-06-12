@@ -71,6 +71,9 @@ export interface AgentListItem {
 
 /**
  * Interface representing a request to create a Nylas Agent Account list.
+ *
+ * The server derives `id`, `itemsCount`, `applicationId`, `organizationId`,
+ * `createdAt`, and `updatedAt`; they are intentionally not accepted here.
  */
 export interface CreateAgentListRequest {
   /**
@@ -89,6 +92,8 @@ export interface CreateAgentListRequest {
 
 /**
  * Interface representing a request to update a Nylas Agent Account list.
+ *
+ * List `type` is immutable after creation.
  */
 export interface UpdateAgentListRequest {
   /**

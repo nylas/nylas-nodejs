@@ -25,9 +25,13 @@ export interface PolicyLimits {
    */
   limitStorageTotal?: number;
   /**
-   * Maximum number of messages each grant can send per day.
+   * Maximum number of messages each grant can receive per day. Use -1 for unlimited.
    */
-  limitCountDailyMessagePerGrant?: number;
+  limitCountDailyMessageReceived?: number;
+  /**
+   * Maximum number of emails each grant can send per day. Use -1 for unlimited.
+   */
+  limitCountDailyEmailSent?: number;
   /**
    * How long, in days, to retain messages in the inbox.
    */

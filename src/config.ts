@@ -19,6 +19,12 @@ export type OverridableNylasConfig = {
   apiKey?: string;
   apiUri?: string;
   /**
+   * Suppress the default bearer Authorization header for endpoints that use a
+   * different authentication mechanism.
+   * @ignore Not for public use
+   */
+  skipAuth?: boolean;
+  /**
    * @deprecated Providing timeout in milliseconds is deprecated and will be removed in the next major release. Please use seconds instead.
    */
   timeout?: number;

@@ -204,6 +204,75 @@ describe('APIClient', () => {
         );
         expect(newRequest.body?.toString()).toBe('{"id":"abc123"}');
       });
+
+      it('should preserve service account signing headers from overrides', async () => {
+        const newRequest = await client.newRequest({
+          path: '/v3/admin/domains',
+          method: 'GET',
+          overrides: {
+            headers: {
+              'X-Nylas-Kid': 'service-account-key-id',
+              'X-Nylas-Timestamp': '1742932766',
+              'X-Nylas-Nonce': 'nonce-1234567890123456',
+              'X-Nylas-Signature': 'signed-request',
+            },
+          },
+        });
+
+        expect(newRequest.headers.get('Authorization')).toEqual(
+          'Bearer testApiKey'
+        );
+        expect(newRequest.headers.get('X-Nylas-Kid')).toEqual(
+          'service-account-key-id'
+        );
+        expect(newRequest.headers.get('X-Nylas-Timestamp')).toEqual(
+          '1742932766'
+        );
+        expect(newRequest.headers.get('X-Nylas-Nonce')).toEqual(
+          'nonce-1234567890123456'
+        );
+        expect(newRequest.headers.get('X-Nylas-Signature')).toEqual(
+          'signed-request'
+        );
+      });
+
+      it('should omit the authorization header when skipAuth is set', async () => {
+        const newRequest = await client.newRequest({
+          path: '/v3/admin/domains',
+          method: 'GET',
+          overrides: {
+            skipAuth: true,
+            headers: {
+              'X-Nylas-Kid': 'service-account-key-id',
+            },
+          },
+        });
+
+        expect(newRequest.headers.get('Authorization')).toBeNull();
+        expect(newRequest.headers.get('X-Nylas-Kid')).toEqual(
+          'service-account-key-id'
+        );
+      });
+
+      it('should send a pre-serialized JSON body when provided', async () => {
+        const newRequest = await client.newRequest({
+          path: '/v3/admin/domains',
+          method: 'POST',
+          body: {
+            name: 'Example mail domain',
+            domainAddress: 'mail.example.com',
+          },
+          serializedBody:
+            '{"domain_address":"mail.example.com","name":"Example mail domain"}',
+        });
+
+        expect(await newRequest.text()).toEqual(
+          '{"domain_address":"mail.example.com","name":"Example mail domain"}'
+        );
+        expect(newRequest.headers.get('Content-Type')).toEqual(
+          'application/json'
+        );
+      });
     });
 
     describe('requestWithResponse', () => {

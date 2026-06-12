@@ -104,7 +104,7 @@ export class RedirectUris extends Resource {
   }: UpdateRedirectUrisParams & Overrides): Promise<
     NylasResponse<RedirectUri>
   > {
-    return super._update({
+    return super._updatePatch({
       overrides,
       path: makePathParams('/v3/applications/redirect-uris/{redirectUriId}', {
         redirectUriId,
@@ -115,14 +115,12 @@ export class RedirectUris extends Resource {
 
   /**
    * Delete a Redirect URI
-   * @return The deleted Redirect URI
+   * @return The deletion response
    */
   public destroy({
     redirectUriId,
     overrides,
-  }: DestroyRedirectUrisParams & Overrides): Promise<
-    NylasResponse<NylasBaseResponse>
-  > {
+  }: DestroyRedirectUrisParams & Overrides): Promise<NylasBaseResponse> {
     return super._destroy({
       overrides,
       path: makePathParams('/v3/applications/redirect-uris/{redirectUriId}', {

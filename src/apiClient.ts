@@ -36,6 +36,7 @@ export interface RequestOptionsParams {
   headers?: Record<string, string>;
   queryParams?: Record<string, any>;
   body?: any;
+  serializedBody?: string | Buffer;
   form?: FormData;
   overrides?: OverridableNylasConfig;
 }
@@ -146,12 +147,17 @@ export default class APIClient {
       ...overrides?.headers,
     };
 
-    return {
+    const defaultHeaders: Record<string, string> = {
       Accept: 'application/json',
       'User-Agent': `Nylas Node SDK v${SDK_VERSION}`,
-      Authorization: `Bearer ${overrides?.apiKey || this.apiKey}`,
       ...mergedHeaders,
     };
+
+    if (!overrides?.skipAuth) {
+      defaultHeaders.Authorization = `Bearer ${overrides?.apiKey || this.apiKey}`;
+    }
+
+    return defaultHeaders;
   }
 
   private async sendRequest(options: RequestOptionsParams): Promise<Response> {
@@ -257,7 +263,10 @@ export default class APIClient {
     requestOptions.headers = this.setRequestHeaders(optionParams);
     requestOptions.method = optionParams.method;
 
-    if (optionParams.body) {
+    if (optionParams.serializedBody) {
+      requestOptions.body = optionParams.serializedBody;
+      requestOptions.headers['Content-Type'] = 'application/json';
+    } else if (optionParams.body) {
       requestOptions.body = JSON.stringify(
         objKeysToSnakeCase(optionParams.body, ['metadata']) // metadata should remain as is
       );
