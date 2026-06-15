@@ -154,3 +154,11 @@ export interface ListThreadsQueryParams extends ListQueryParams {
    */
   searchQueryNative?: string;
 }
+
+export interface FindThreadQueryParams {
+  /**
+   * Specify fields that you want Nylas to return
+   * as a comma-separated list (for example, select=id,updated_at).
+   */
+  select?: string;
+}
