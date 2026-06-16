@@ -877,6 +877,7 @@ describe('Messages', () => {
           ignoreTables: true,
           imagesAsMarkdown: true,
           removeConclusionPhrases: true,
+          htmlAsMarkdown: true,
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -894,6 +895,7 @@ describe('Messages', () => {
           ignoreTables: true,
           imagesAsMarkdown: true,
           removeConclusionPhrases: true,
+          htmlAsMarkdown: true,
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
