@@ -322,6 +322,11 @@ export interface ListEventQueryParams extends ListQueryParams {
    */
   masterEventId?: string;
   /**
+   * Filter events by their iCalendar unique identifier.
+   * Useful for finding a specific event across calendaring systems.
+   */
+  icalUid?: string;
+  /**
    * When set to false, treats tentative calendar events as busy:false.
    * Only applicable for Microsoft and EWS calendar providers. Defaults to true.
    */
