@@ -356,6 +356,11 @@ export interface CleanMessagesRequest {
    * If true, removes phrases such as "Best" and "Regards" in the email message signature.
    */
   removeConclusionPhrases?: boolean;
+  /**
+   * If true, converts the cleaned HTML message body to Markdown.
+   * Note: This can't be true when imagesAsMarkdown is false.
+   */
+  htmlAsMarkdown?: boolean;
 }
 
 /**
