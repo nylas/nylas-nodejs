@@ -1,4 +1,5 @@
 import {
+  FindThreadQueryParams,
   ListThreadsQueryParams,
   Thread,
   UpdateThreadRequest,
@@ -31,6 +32,7 @@ export interface ListThreadsParams {
 export interface FindThreadParams {
   identifier: string;
   threadId: string;
+  queryParams?: FindThreadQueryParams;
 }
 
 /**
@@ -99,6 +101,7 @@ export class Threads extends Resource {
     identifier,
     threadId,
     overrides,
+    queryParams,
   }: FindThreadParams & Overrides): Promise<NylasResponse<Thread>> {
     return super._find({
       path: makePathParams('/v3/grants/{identifier}/threads/{threadId}', {
@@ -106,6 +109,7 @@ export class Threads extends Resource {
         threadId,
       }),
       overrides,
+      queryParams,
     });
   }
 

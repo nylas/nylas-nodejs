@@ -104,6 +104,32 @@ describe('Threads', () => {
         })
       );
     });
+
+    it('should call apiClient.request with queryParams in find', async () => {
+      await threads.find({
+        identifier: 'id123',
+        threadId: 'thread123',
+        queryParams: {
+          select: 'id,updated_at',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/threads/thread123',
+        queryParams: {
+          select: 'id,updated_at',
+        },
+        overrides: {
+          apiUri: 'https://test.api.nylas.com',
+          headers: { override: 'bar' },
+        },
+      });
+    });
   });
 
   describe('update', () => {

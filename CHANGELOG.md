@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Correct `Applications` `applications.update()` to accept write-only `additionalSettings` (forwarded in the request body, stripped from the response)
 - Correct `Applications` `applications.update()` to accept `callbackUris` with callback URI IDs for preserving existing callback URIs
 - Correct `RedirectUris` `update()` to use PATCH (was PUT), fix `destroy()` return type, make `platform` optional with a typed `RedirectUriPlatform` enum, and surface `deletedAt` on `RedirectUri`
+- Forward `queryParams` in `threads.find()` so callers can use the `select` parameter to reduce field sets on single-thread fetches
 
 ## [8.2.0] - 2026-06-11
 
