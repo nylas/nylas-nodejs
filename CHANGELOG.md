@@ -5,24 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [8.2.0] - 2026-06-17
 
 ### Added
-- Add Workspaces API support via `nylas.workspaces` — list, find, create, update (PATCH), destroy, plus `autoGroup()` and `manualAssign()` for grouping grants by domain, `invalidAlso`, `default`, `policyId`, and `ruleIds`
-- Add Agent Account Lists API support via `nylas.lists` — create lists with `name`, optional `description`, and immutable `type`, plus list, find, update, destroy, `listItems()`, `addItems()`, and `removeItems()` for managing `/v3/lists`
-- Add Manage Domains API support via `nylas.domains` — list, find, create, update, destroy, plus `info()` and `verify()` for domain verification (`/v3/admin/domains`). Includes `ServiceAccountSigner` support for Nylas Service Account request signing, bearer-auth suppression, and canonical signed wire bodies.
+- Add Workspaces API support via `nylas.workspaces` — list, find, create, update (PATCH), destroy, plus `autoGroup()` and `manualAssign()` for grouping grants by domain, `invalidAlso`, `default`, `policyId`, and `ruleIds` ([#736](https://github.com/nylas/nylas-nodejs/pull/736))
+- Add Agent Account Lists API support via `nylas.lists` — create lists with `name`, optional `description`, and immutable `type`, plus list, find, update, destroy, `listItems()`, `addItems()`, and `removeItems()` for managing `/v3/lists` ([#736](https://github.com/nylas/nylas-nodejs/pull/736))
+- Add Manage Domains API support via `nylas.domains` — list, find, create, update, destroy, plus `info()` and `verify()` for domain verification (`/v3/admin/domains`). Includes `ServiceAccountSigner` support for Nylas Service Account request signing, bearer-auth suppression, and canonical signed wire bodies ([#736](https://github.com/nylas/nylas-nodejs/pull/736))
+- Add `icalUid` to `ListEventQueryParams` ([#738](https://github.com/nylas/nylas-nodejs/pull/738))
 
 ### Fixed
-- Correct `Policies` `PolicyLimits` to expose `limitCountDailyMessageReceived` and `limitCountDailyEmailSent` (replacing a non-existent per-grant field)
-- Correct `Rules` `RuleEvaluation.messageId` to be omitted-when-absent (not nullable) and surface `blockedByEvaluationError` on applied actions
-- Correct `Rules` list (`GET /v3/rules`) to normalize its nested `{ data: { items, nextCursor } }` envelope back to the flat `{ data, nextCursor }` shape the list machinery expects
-- Correct `Applications` `ApplicationDetails` field `redirectUris` → `callbackUris` (V3 wire contract), widen `region`/`environment` to `string`, add hosted-auth/IdP public fields, and add `applications.update()` (PATCH)
-- Correct `Applications` `applications.update()` to accept write-only `additionalSettings` (forwarded in the request body, stripped from the response)
-- Correct `Applications` `applications.update()` to accept `callbackUris` with callback URI IDs for preserving existing callback URIs
-- Correct `RedirectUris` `update()` to use PATCH (was PUT), fix `destroy()` return type, make `platform` optional with a typed `RedirectUriPlatform` enum, and surface `deletedAt` on `RedirectUri`
-- Forward `queryParams` in `threads.find()` so callers can use the `select` parameter to reduce field sets on single-thread fetches
+- Correct `Policies` `PolicyLimits` to expose `limitCountDailyMessageReceived` and `limitCountDailyEmailSent` (replacing a non-existent per-grant field) ([#736](https://github.com/nylas/nylas-nodejs/pull/736))
+- Correct `Rules` `RuleEvaluation.messageId` to be omitted-when-absent (not nullable) and surface `blockedByEvaluationError` on applied actions ([#736](https://github.com/nylas/nylas-nodejs/pull/736))
+- Correct `Rules` list (`GET /v3/rules`) to normalize its nested `{ data: { items, nextCursor } }` envelope back to the flat `{ data, nextCursor }` shape the list machinery expects ([#736](https://github.com/nylas/nylas-nodejs/pull/736))
+- Correct `Applications` `ApplicationDetails` field `redirectUris` → `callbackUris` (V3 wire contract), widen `region`/`environment` to `string`, add hosted-auth/IdP public fields, and add `applications.update()` (PATCH) ([#736](https://github.com/nylas/nylas-nodejs/pull/736))
+- Correct `Applications` `applications.update()` to accept write-only `additionalSettings` (forwarded in the request body, stripped from the response) ([#736](https://github.com/nylas/nylas-nodejs/pull/736))
+- Correct `Applications` `applications.update()` to accept `callbackUris` with callback URI IDs for preserving existing callback URIs ([#737](https://github.com/nylas/nylas-nodejs/pull/737))
+- Correct `RedirectUris` `update()` to use PATCH (was PUT), fix `destroy()` return type, make `platform` optional with a typed `RedirectUriPlatform` enum, and surface `deletedAt` on `RedirectUri` ([#736](https://github.com/nylas/nylas-nodejs/pull/736))
+- Forward `queryParams` in `threads.find()` so callers can use the `select` parameter to reduce field sets on single-thread fetches ([#739](https://github.com/nylas/nylas-nodejs/pull/739))
 
-## [8.2.0] - 2026-06-11
+## [8.1.2] - 2026-05-19
 
 ### Added
 - Add `attachments.downloadNodeStream()` as a Node.js convenience helper for converting attachment downloads to `NodeJS.ReadableStream` ([#731](https://github.com/nylas/nylas-nodejs/pull/731))
