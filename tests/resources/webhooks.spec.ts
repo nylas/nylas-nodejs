@@ -313,15 +313,9 @@ describe('Webhooks', () => {
       ['MessageBounced', 'message.bounced'],
       ['MessageComplaint', 'message.complaint'],
       ['MessageRejected', 'message.rejected'],
-      [
-        'MessageTransactionalDelivered',
-        'message.transactional.delivered',
-      ],
+      ['MessageTransactionalDelivered', 'message.transactional.delivered'],
       ['MessageTransactionalBounced', 'message.transactional.bounced'],
-      [
-        'MessageTransactionalComplaint',
-        'message.transactional.complaint',
-      ],
+      ['MessageTransactionalComplaint', 'message.transactional.complaint'],
       ['MessageTransactionalRejected', 'message.transactional.rejected'],
       ['NotetakerCreated', 'notetaker.created'],
       ['NotetakerUpdated', 'notetaker.updated'],
