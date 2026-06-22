@@ -22,6 +22,7 @@ import { Policies } from './resources/policies.js';
 import { Rules } from './resources/rules.js';
 import { Workspaces } from './resources/workspaces.js';
 import { AgentLists } from './resources/agentLists.js';
+import { TransactionalSend } from './resources/transactionalSend.js';
 
 /**
  * The entry point to the Node SDK
@@ -95,6 +96,10 @@ class Nylas {
    */
   public lists: AgentLists;
   /**
+   * Access the Transactional Send API
+   */
+  public transactionalSend: TransactionalSend;
+  /**
    * Access the Threads API
    */
   public threads: Threads;
@@ -142,6 +147,7 @@ class Nylas {
     this.rules = new Rules(this.apiClient);
     this.workspaces = new Workspaces(this.apiClient);
     this.lists = new AgentLists(this.apiClient);
+    this.transactionalSend = new TransactionalSend(this.apiClient);
     this.threads = new Threads(this.apiClient);
     this.webhooks = new Webhooks(this.apiClient);
     this.folders = new Folders(this.apiClient);

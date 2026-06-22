@@ -33,8 +33,8 @@ describe('ServiceAccountSigner', () => {
       canonicalJson({
         kept: 'value',
         omitted: undefined,
-        ignored: () => 'value',
-        list: [undefined, () => 'value', 'ok'],
+        ignored: (): string => 'value',
+        list: [undefined, (): string => 'value', 'ok'],
       })
     ).toEqual('{"kept":"value","list":[null,null,"ok"]}');
   });
