@@ -7,7 +7,7 @@ import {
   ListResponseInnerType,
 } from '../models/response.js';
 
-interface ListParams<T> {
+interface ListParams<_T> {
   queryParams?: ListQueryParams;
   path: string;
   overrides?: OverridableNylasConfig;
@@ -15,13 +15,13 @@ interface ListParams<T> {
   useGenerator?: boolean;
 }
 
-interface FindParams<T> {
+interface FindParams<_T> {
   path: string;
   queryParams?: Record<string, any>;
   overrides?: OverridableNylasConfig;
 }
 
-interface PayloadParams<T> {
+interface PayloadParams<_T> {
   path: string;
   queryParams?: Record<string, any>;
   requestBody: Record<string, any>;
