@@ -13,7 +13,6 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'prettier',
-    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
   ],
   rules: {
@@ -25,10 +24,7 @@ module.exports = {
     ],
     '@typescript-eslint/no-empty-function': 0,
     '@typescript-eslint/no-explicit-any': 0,
-    '@typescript-eslint/camelcase': [
-      'error',
-      { properties: 'never', ignoreDestructuring: true },
-    ],
+    'camelcase': ['error', { properties: 'never', ignoreDestructuring: true }],
     'no-undef': 'error',
     'import/extensions': ['error', 'ignorePackages'],
   },
