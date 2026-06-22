@@ -37,7 +37,9 @@ describe('TransactionalSend', () => {
         requestBody,
         overrides: {
           apiUri: 'https://test.api.nylas.com',
-          headers: { 'Idempotency-Key': 'f47ac10b-58cc-4372-a567-0e02b2c3d479' },
+          headers: {
+            'Idempotency-Key': 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+          },
         },
       });
 

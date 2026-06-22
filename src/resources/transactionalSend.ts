@@ -41,10 +41,9 @@ export class TransactionalSend extends Resource {
   }: SendTransactionalEmailParams & Overrides): Promise<
     NylasResponse<TransactionalSendResult>
   > {
-    const path = makePathParams(
-      '/v3/domains/{domainName}/messages/send',
-      { domainName }
-    );
+    const path = makePathParams('/v3/domains/{domainName}/messages/send', {
+      domainName,
+    });
     const requestOptions: RequestOptionsParams = {
       method: 'POST',
       path,
