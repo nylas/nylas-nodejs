@@ -1,4 +1,5 @@
 import APIClient from '../../src/apiClient';
+import { OverridableNylasConfig } from '../../src/config';
 import { ServiceAccountSigner } from '../../src/models/serviceAccount';
 import { Domains } from '../../src/resources/domains';
 
@@ -11,12 +12,16 @@ const serviceAccountHeaders = {
   'X-Nylas-Signature': 'signed-request',
 };
 
-const signedOverrides = (headers: Record<string, string> = {}) => ({
+const signedOverrides = (
+  headers: Record<string, string> = {}
+): OverridableNylasConfig => ({
   apiUri: 'https://override.api.nylas.com',
   headers: { ...serviceAccountHeaders, ...headers },
 });
 
-const expectedSignedOverrides = (headers: Record<string, string> = {}) => ({
+const expectedSignedOverrides = (
+  headers: Record<string, string> = {}
+): OverridableNylasConfig => ({
   ...signedOverrides(headers),
   skipAuth: true,
 });
