@@ -129,10 +129,13 @@ export enum WebhookTriggers {
   GrantUpdated = 'grant.updated',
   GrantDeleted = 'grant.deleted',
   GrantExpired = 'grant.expired',
+  GrantImapSyncCompleted = 'grant.imap_sync_completed',
 
   // Message triggers
   MessageCreated = 'message.created',
+  MessageCreatedCleaned = 'message.created.cleaned',
   MessageUpdated = 'message.updated',
+  MessageDeleted = 'message.deleted',
   MessageCreatedTruncated = 'message.created.truncated',
   MessageUpdatedTruncated = 'message.updated.truncated',
   MessageSendSuccess = 'message.send_success',
@@ -141,8 +144,23 @@ export enum WebhookTriggers {
 
   // Message tracking triggers
   MessageOpened = 'message.opened',
+  MessageOpenedLegacy = 'message.opened.legacy',
   MessageLinkClicked = 'message.link_clicked',
+  MessageLinkClickedLegacy = 'message.link_clicked.legacy',
   ThreadReplied = 'thread.replied',
+  ThreadRepliedLegacy = 'thread.replied.legacy',
+
+  // Agent Account deliverability triggers
+  MessageDelivered = 'message.delivered',
+  MessageBounced = 'message.bounced',
+  MessageComplaint = 'message.complaint',
+  MessageRejected = 'message.rejected',
+
+  // Transactional email deliverability triggers
+  MessageTransactionalDelivered = 'message.transactional.delivered',
+  MessageTransactionalBounced = 'message.transactional.bounced',
+  MessageTransactionalComplaint = 'message.transactional.complaint',
+  MessageTransactionalRejected = 'message.transactional.rejected',
 
   // ExtractAI triggers
   MessageIntelligenceOrder = 'message.intelligence.order',
@@ -163,6 +181,13 @@ export enum WebhookTriggers {
   BookingRescheduled = 'booking.rescheduled',
   BookingCancelled = 'booking.cancelled',
   BookingReminder = 'booking.reminder',
+
+  // Notetaker triggers
+  NotetakerCreated = 'notetaker.created',
+  NotetakerUpdated = 'notetaker.updated',
+  NotetakerDeleted = 'notetaker.deleted',
+  NotetakerMeetingState = 'notetaker.meeting_state',
+  NotetakerMedia = 'notetaker.media',
 }
 
 /**

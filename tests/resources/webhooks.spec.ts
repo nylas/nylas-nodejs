@@ -302,6 +302,30 @@ describe('Webhooks', () => {
   });
 
   describe('WebhookTriggers', () => {
+    it.each([
+      ['MessageDeleted', 'message.deleted'],
+      ['MessageCreatedCleaned', 'message.created.cleaned'],
+      ['GrantImapSyncCompleted', 'grant.imap_sync_completed'],
+      ['MessageOpenedLegacy', 'message.opened.legacy'],
+      ['MessageLinkClickedLegacy', 'message.link_clicked.legacy'],
+      ['ThreadRepliedLegacy', 'thread.replied.legacy'],
+      ['MessageDelivered', 'message.delivered'],
+      ['MessageBounced', 'message.bounced'],
+      ['MessageComplaint', 'message.complaint'],
+      ['MessageRejected', 'message.rejected'],
+      ['MessageTransactionalDelivered', 'message.transactional.delivered'],
+      ['MessageTransactionalBounced', 'message.transactional.bounced'],
+      ['MessageTransactionalComplaint', 'message.transactional.complaint'],
+      ['MessageTransactionalRejected', 'message.transactional.rejected'],
+      ['NotetakerCreated', 'notetaker.created'],
+      ['NotetakerUpdated', 'notetaker.updated'],
+      ['NotetakerDeleted', 'notetaker.deleted'],
+      ['NotetakerMeetingState', 'notetaker.meeting_state'],
+      ['NotetakerMedia', 'notetaker.media'],
+    ] as const)('should map %s to %s', (key, value) => {
+      expect(WebhookTriggers[key]).toBe(value);
+    });
+
     it('should include truncated message webhook triggers', () => {
       expect(WebhookTriggers.MessageCreatedTruncated).toBe(
         'message.created.truncated'
