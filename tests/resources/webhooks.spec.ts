@@ -301,6 +301,17 @@ describe('Webhooks', () => {
     });
   });
 
+  describe('WebhookTriggers', () => {
+    it('should include truncated message webhook triggers', () => {
+      expect(WebhookTriggers.MessageCreatedTruncated).toBe(
+        'message.created.truncated'
+      );
+      expect(WebhookTriggers.MessageUpdatedTruncated).toBe(
+        'message.updated.truncated'
+      );
+    });
+  });
+
   describe('extractChallengeParameter', () => {
     it('should extract the challenge parameter from a valid URL', () => {
       const url = 'https://example.com?challenge=testValue';
