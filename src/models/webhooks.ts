@@ -133,6 +133,8 @@ export enum WebhookTriggers {
   // Message triggers
   MessageCreated = 'message.created',
   MessageUpdated = 'message.updated',
+  MessageCreatedTruncated = 'message.created.truncated',
+  MessageUpdatedTruncated = 'message.updated.truncated',
   MessageSendSuccess = 'message.send_success',
   MessageSendFailed = 'message.send_failed',
   MessageBounceDetected = 'message.bounce_detected',

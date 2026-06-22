@@ -377,6 +377,37 @@ describe('Notetakers', () => {
         path: '/v3/notetakers/notetaker123',
       });
     });
+
+    it('should return calendarId and eventId when present in the response', async () => {
+      const mockResponse = {
+        requestId: 'req-123',
+        data: {
+          id: 'notetaker123',
+          name: 'Nylas Notetaker',
+          joinTime: 1744222418,
+          meetingLink: 'https://meet.google.com/abc-def-ghi',
+          meetingProvider: 'Google Meet',
+          state: 'scheduled',
+          calendarId: 'calendar123',
+          eventId: 'event456',
+          meetingSettings: {
+            videoRecording: true,
+            audioRecording: true,
+            transcription: false,
+          },
+        },
+      };
+
+      apiClient.request.mockResolvedValueOnce(mockResponse);
+
+      const response = await notetakers.find({
+        identifier: 'id123',
+        notetakerId: 'notetaker123',
+      });
+
+      expect(response.data.calendarId).toBe('calendar123');
+      expect(response.data.eventId).toBe('event456');
+    });
   });
 
   describe('update', () => {
