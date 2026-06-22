@@ -16,11 +16,11 @@
   "license": "MIT",
   "dependencies": {
     "nylas": "file:../../",
-    "mime-types": "^2.1.35"
+    "mime-types": "^3.0.2"
   },
   "devDependencies": {
-    "serverless": "^3.38.0",
-    "serverless-esbuild": "^1.52.0",
+    "serverless": "^4.38.1",
+    "serverless-esbuild": "^1.57.2",
     "serverless-dotenv-plugin": "^6.0.0",
     "dotenv-cli": "^7.4.2",
     "archiver": "^7.0.1",

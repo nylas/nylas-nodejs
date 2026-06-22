@@ -97,8 +97,7 @@ export interface SendMessageRequest extends CreateDraftRequest {
  * Interface representing a Nylas Draft object.
  */
 export interface Draft
-  extends BaseMessage,
-    Omit<CreateDraftRequest, 'attachments'> {
+  extends BaseMessage, Omit<CreateDraftRequest, 'attachments'> {
   /**
    * The type of object.
    */
