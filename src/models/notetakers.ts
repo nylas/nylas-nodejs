@@ -71,6 +71,14 @@ export interface Notetaker {
    */
   state: NotetakerState;
   /**
+   * The calendar ID associated with the Notetaker bot, if applicable.
+   */
+  calendarId?: string;
+  /**
+   * The event ID associated with the Notetaker bot, if applicable.
+   */
+  eventId?: string;
+  /**
    * Notetaker Meeting Settings
    */
   meetingSettings: NotetakerMeetingSettings;
