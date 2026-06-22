@@ -26,5 +26,6 @@ export * from './scheduler.js';
 export * from './serviceAccount.js';
 export * from './smartCompose.js';
 export * from './threads.js';
+export * from './transactionalSend.js';
 export * from './webhooks.js';
 export * from './workspaces.js';

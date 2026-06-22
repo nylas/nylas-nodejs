@@ -23,6 +23,7 @@ describe('Nylas', () => {
       expect(nylas.folders.constructor.name).toBe('Folders');
       expect(nylas.attachments.constructor.name).toBe('Attachments');
       expect(nylas.lists.constructor.name).toBe('AgentLists');
+      expect(nylas.transactionalSend.constructor.name).toBe('TransactionalSend');
     });
 
     it('should configure the apiClient', () => {
