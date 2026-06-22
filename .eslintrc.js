@@ -20,12 +20,17 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/no-unused-vars': [
       'error',
-      { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      },
     ],
     '@typescript-eslint/no-empty-function': 0,
     '@typescript-eslint/no-explicit-any': 0,
-    'camelcase': ['error', { properties: 'never', ignoreDestructuring: true }],
-    'no-undef': 'error',
+    camelcase: ['error', { properties: 'never', ignoreDestructuring: true }],
+    // TypeScript handles undefined variable checks; core no-undef flags TS globals.
+    'no-undef': 'off',
     'import/extensions': ['error', 'ignorePackages'],
   },
   settings: {

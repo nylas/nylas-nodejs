@@ -77,8 +77,7 @@ interface BaseCreateConnectionRequest {
 /**
  * Interface representing the base Nylas connector creation request.
  */
-export interface GoogleCreateConnectorRequest
-  extends BaseCreateConnectionRequest {
+export interface GoogleCreateConnectorRequest extends BaseCreateConnectionRequest {
   /**
    * The Google OAuth provider credentials and settings
    */
@@ -89,8 +88,7 @@ export interface GoogleCreateConnectorRequest
   scope?: string[];
 }
 
-export interface MicrosoftCreateConnectorRequest
-  extends BaseCreateConnectionRequest {
+export interface MicrosoftCreateConnectorRequest extends BaseCreateConnectionRequest {
   /**
    * The Microsoft OAuth provider credentials and settings
    */
