@@ -7,8 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [8.4.0] - 2026-06-24
+
 ### Added
-- Missing webhook trigger types (`message.deleted`, `message.created.cleaned`, `grant.imap_sync_completed`, Notetaker triggers, Agent Account and transactional deliverability triggers, and legacy tracking triggers)
+- Add `nylas.transactionalSend.send()` for domain-based transactional email send (`POST /v3/domains/{domainName}/messages/send`) ([#747](https://github.com/nylas/nylas-nodejs/pull/747))
+- Add optional `calendarId` and `eventId` fields to the `Notetaker` model ([#748](https://github.com/nylas/nylas-nodejs/pull/748))
+
+### Fixed
+- Add `message.created.truncated` and `message.updated.truncated` to `WebhookTriggers` ([#748](https://github.com/nylas/nylas-nodejs/pull/748))
+- Add missing webhook trigger types (`message.deleted`, `message.created.cleaned`, `grant.imap_sync_completed`, Notetaker triggers, Agent Account and transactional deliverability triggers, and legacy tracking triggers) ([#750](https://github.com/nylas/nylas-nodejs/pull/750))
+
+### Changed
+- Bump dependencies to reasonable latest versions ([#749](https://github.com/nylas/nylas-nodejs/pull/749))
 
 ## [8.3.0] - 2026-06-17
 
