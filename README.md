@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://www.nylas.com/">
-    <img src="/diagrams/nylas-logo.png" alt="Nylas" height="80" />
+    <img width="100%" alt="Nylas" src="https://github.com/user-attachments/assets/137517ae-244d-47a5-8ca7-b12984971fc4" />
   </a>
 
   <h1>Nylas Node.js SDK</h1>
