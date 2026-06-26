@@ -46,7 +46,7 @@ describe('Auth', () => {
         });
       });
 
-      it('should default clientSecret to the API key', async () => {
+      it('should not include clientSecret in body when not provided', async () => {
         const payload: CodeExchangeRequest = {
           clientId: 'clientId',
           redirectUri: 'https://redirect.uri/path',
@@ -59,7 +59,6 @@ describe('Auth', () => {
           path: '/v3/connect/token',
           body: {
             clientId: 'clientId',
-            clientSecret: 'apiKey',
             redirectUri: 'https://redirect.uri/path',
             code: 'code',
             grantType: 'authorization_code',
@@ -115,7 +114,7 @@ describe('Auth', () => {
         });
       });
 
-      it('should default clientSecret to the API key', async () => {
+      it('should not include clientSecret in body when not provided', async () => {
         const payload: TokenExchangeRequest = {
           clientId: 'clientId',
           redirectUri: 'https://redirect.uri/path',
@@ -128,7 +127,6 @@ describe('Auth', () => {
           path: '/v3/connect/token',
           body: {
             clientId: 'clientId',
-            clientSecret: 'apiKey',
             redirectUri: 'https://redirect.uri/path',
             refreshToken: 'refreshToken',
             grantType: 'refresh_token',

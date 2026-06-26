@@ -48,10 +48,6 @@ export class Auth extends Resource {
   public exchangeCodeForToken(
     request: CodeExchangeRequest
   ): Promise<CodeExchangeResponse> {
-    if (!request.clientSecret) {
-      request.clientSecret = this.apiClient.apiKey;
-    }
-
     return this.apiClient.request<CodeExchangeResponse>({
       method: 'POST',
       path: makePathParams('/v3/connect/token', {}),
@@ -70,10 +66,6 @@ export class Auth extends Resource {
   public refreshAccessToken(
     request: TokenExchangeRequest
   ): Promise<CodeExchangeResponse> {
-    if (!request.clientSecret) {
-      request.clientSecret = this.apiClient.apiKey;
-    }
-
     return this.apiClient.request<CodeExchangeResponse>({
       method: 'POST',
       path: makePathParams('/v3/connect/token', {}),
