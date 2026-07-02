@@ -415,6 +415,10 @@ type RsvpStatus = 'yes' | 'no' | 'maybe';
 
 /**
  * Enum representing the visibility of an event.
+ *
+ * 'default' is only valid for Google events, where it defers to the calendar's own sharing
+ * settings. Microsoft and EWS events only support 'public' and 'private'; sending 'default'
+ * for these providers returns a 400 error.
  */
 type Visibility = 'default' | 'public' | 'private';
 
