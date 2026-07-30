@@ -125,6 +125,11 @@ export interface TrackingOptions {
   links?: boolean;
   opens?: boolean;
   threadReplies?: boolean;
+  /**
+   * The custom hostname to use for link and open tracking.
+   * The hostname must be active and owned by the authenticated organization.
+   */
+  domainName?: string;
 }
 
 /**

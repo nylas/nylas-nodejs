@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Add optional `trackingOptions.domainName` support for custom link and open tracking hostnames
+
 ### Changed
 - Clarify that event `default` visibility is Google-only
 

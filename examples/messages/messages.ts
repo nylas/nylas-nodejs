@@ -17,6 +17,8 @@ dotenv.config({ path: path.resolve(__dirname, '../.env') });
 // Check for required environment variables
 const apiKey: string = process.env.NYLAS_API_KEY || '';
 const grantId: string = process.env.NYLAS_GRANT_ID || '';
+const trackingDomain: string | undefined =
+  process.env.NYLAS_TRACKING_DOMAIN || undefined;
 
 if (!apiKey) {
   throw new Error('NYLAS_API_KEY environment variable is not set');
@@ -244,10 +246,17 @@ async function demonstrateMessageSending(): Promise<NylasResponse<Message> | nul
           </body>
         </html>
       `,
-      // Note: Tracking options are configured at the API/provider level, not in the request
+      trackingOptions: {
+        links: true,
+        opens: true,
+        ...(trackingDomain ? { domainName: trackingDomain } : {}),
+      },
     };
 
     console.log('Sending message with tracking...');
+    if (trackingDomain) {
+      console.log(`Using custom tracking hostname: ${trackingDomain}`);
+    }
     const sentMessage = await nylas.messages.send({
       identifier: grantId,
       requestBody,

@@ -161,6 +161,52 @@ describe('APIClient', () => {
 
         expect(options.body).toEqual(expectedBody);
       });
+
+      it('should serialize a custom tracking hostname as domain_name exactly once', () => {
+        const options = client.requestOptions({
+          path: '/test',
+          method: 'POST',
+          body: {
+            trackingOptions: {
+              links: true,
+              opens: true,
+              domainName: 'links.example.com',
+            },
+          },
+        });
+
+        const serializedBody = options.body as string;
+        expect(JSON.parse(serializedBody)).toEqual({
+          tracking_options: {
+            links: true,
+            opens: true,
+            domain_name: 'links.example.com',
+          },
+        });
+        expect(serializedBody.match(/"domain_name"/g)).toHaveLength(1);
+        expect(serializedBody).not.toContain('domainName');
+      });
+
+      it('should leave tracking options unchanged when domainName is omitted', () => {
+        const options = client.requestOptions({
+          path: '/test',
+          method: 'POST',
+          body: {
+            trackingOptions: {
+              links: true,
+              opens: false,
+            },
+          },
+        });
+
+        expect(JSON.parse(options.body as string)).toEqual({
+          tracking_options: {
+            links: true,
+            opens: false,
+          },
+        });
+        expect(options.body as string).not.toContain('domain_name');
+      });
     });
 
     describe('newRequest', () => {

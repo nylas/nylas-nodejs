@@ -21,6 +21,99 @@ The file is structured with:
 ### Basic Messages (`messages.ts`)
 Shows basic message operations including reading, sending, and drafting messages.
 
+### Custom tracking hostnames
+
+Set `trackingOptions.domainName` to an active custom hostname owned by your
+organization. At least one of `links` or `opens` must be enabled. Omit
+`domainName` to keep using the default Nylas tracking hostname.
+
+#### Regular Send
+
+```ts
+await nylas.messages.send({
+  identifier: grantId,
+  requestBody: {
+    to: [{ email: 'recipient@example.com' }],
+    subject: 'Your update',
+    body: '<a href="https://example.com">View update</a>',
+    trackingOptions: {
+      links: true,
+      opens: true,
+      domainName: 'links.example.com',
+    },
+  },
+});
+```
+
+#### Transactional Send
+
+The top-level `domainName` is the verified sender domain used by the route. The
+nested `trackingOptions.domainName` is the tracking hostname used in recipient-
+visible links and open pixels.
+
+```ts
+await nylas.transactionalSend.send({
+  domainName: 'sender.example.com',
+  requestBody: {
+    from: [{ email: 'billing@sender.example.com' }],
+    to: [{ email: 'recipient@example.com' }],
+    subject: 'Your receipt',
+    body: '<a href="https://example.com/receipt">View receipt</a>',
+    trackingOptions: {
+      links: true,
+      opens: true,
+      domainName: 'links.example.com',
+    },
+  },
+});
+```
+
+#### Drafts
+
+```ts
+const draft = await nylas.drafts.create({
+  identifier: grantId,
+  requestBody: {
+    to: [{ email: 'recipient@example.com' }],
+    subject: 'Draft update',
+    body: '<a href="https://example.com">View update</a>',
+    trackingOptions: {
+      links: true,
+      opens: true,
+      domainName: 'links.example.com',
+    },
+  },
+});
+
+await nylas.drafts.update({
+  identifier: grantId,
+  draftId: draft.data.id,
+  requestBody: {
+    subject: 'Updated draft subject',
+    // Omit trackingOptions to preserve the draft's existing tracking settings.
+  },
+});
+```
+
+#### Scheduled Send
+
+```ts
+await nylas.messages.send({
+  identifier: grantId,
+  requestBody: {
+    to: [{ email: 'recipient@example.com' }],
+    subject: 'Scheduled update',
+    body: '<a href="https://example.com">View update</a>',
+    sendAt: Math.floor(Date.now() / 1000) + 3600,
+    trackingOptions: {
+      links: true,
+      opens: true,
+      domainName: 'links.example.com',
+    },
+  },
+});
+```
+
 ### Accessing Rate Limit Headers
 All SDK responses now expose a non-enumerable `rawHeaders` with dashed lowercase keys so you can read rate limit information:
 
@@ -181,4 +274,4 @@ npm run send-attachments status  # Check file availability
 
 **TypeScript import errors:**
 - Ensure you've run `npm install` in the examples directory
-- The utils are properly exported from the attachment-file-manager module 
+- The utils are properly exported from the attachment-file-manager module

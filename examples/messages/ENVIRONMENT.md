@@ -14,6 +14,9 @@ NYLAS_API_URI=https://api.us.nylas.com
 
 # For testing message sending (optional)
 TEST_EMAIL=your-test-email@example.com
+
+# Active custom hostname owned by your organization (optional)
+NYLAS_TRACKING_DOMAIN=links.example.com
 ```
 
 ## Getting Your API Key and Grant ID
@@ -24,6 +27,8 @@ TEST_EMAIL=your-test-email@example.com
 ## Testing Message Sending
 
 If you want to test the message sending functionality, set the `TEST_EMAIL` environment variable to an email address you control. The example will skip message sending if this variable is not set.
+
+Set `NYLAS_TRACKING_DOMAIN` to an active custom hostname registered to your organization to use it for link and open tracking. If it is omitted, tracked messages use the default Nylas tracking hostname.
 
 ## Running the Example
 
@@ -42,4 +47,4 @@ npm run messages
 - **Raw MIME**: Getting raw MIME data for messages
 - **Message Operations**: Listing, finding, updating, and sending messages
 - **Scheduled Messages**: Working with scheduled message functionality
-- **Message Cleaning**: Using the clean messages API 
+- **Message Cleaning**: Using the clean messages API
