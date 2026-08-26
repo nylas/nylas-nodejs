@@ -317,6 +317,8 @@ describe('Webhooks', () => {
       ['MessageTransactionalBounced', 'message.transactional.bounced'],
       ['MessageTransactionalComplaint', 'message.transactional.complaint'],
       ['MessageTransactionalRejected', 'message.transactional.rejected'],
+      ['ContactUpdated', 'contact.updated'],
+      ['ContactDeleted', 'contact.deleted'],
       ['NotetakerCreated', 'notetaker.created'],
       ['NotetakerUpdated', 'notetaker.updated'],
       ['NotetakerDeleted', 'notetaker.deleted'],
@@ -333,6 +335,10 @@ describe('Webhooks', () => {
       expect(WebhookTriggers.MessageUpdatedTruncated).toBe(
         'message.updated.truncated'
       );
+    });
+
+    it('should not expose an unsupported contact.created trigger', () => {
+      expect(Object.values(WebhookTriggers)).not.toContain('contact.created');
     });
   });
 

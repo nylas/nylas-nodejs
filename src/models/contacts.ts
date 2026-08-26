@@ -15,6 +15,11 @@ export interface Contact {
   givenName?: string;
   jobTitle?: string;
   managerName?: string;
+  /**
+   * Nylas-owned metadata associated with this contact. Metadata is not written
+   * to the provider and does not follow a contact if its public ID changes.
+   */
+  metadata?: Record<string, string>;
   middleName?: string;
   nickname?: string;
   notes?: string;
@@ -118,6 +123,12 @@ export interface ListContactQueryParams extends ListQueryParams {
    * When set to true, returns the contacts also within the specified Contact Group subgroups, if the group parameter is set.
    */
   recurse?: boolean;
+  /**
+   * Filters contacts by one indexed metadata entry in `key:value` form.
+   * Use one of `key1` through `key5`. This filter cannot be combined with
+   * provider-side contact filters; pagination parameters are supported.
+   */
+  metadataPair?: Record<string, string>;
 }
 
 /**
@@ -139,6 +150,11 @@ export type CreateContactRequest = {
   imAddresses?: InstantMessagingAddress[];
   jobTitle?: string;
   managerName?: string;
+  /**
+   * Nylas-owned metadata for the contact. On update, omission or `null`
+   * preserves existing metadata, an object replaces it, and `{}` clears it.
+   */
+  metadata?: Record<string, string> | null;
   middleName?: string;
   nickname?: string;
   notes?: string;

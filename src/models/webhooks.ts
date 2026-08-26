@@ -171,7 +171,8 @@ export enum WebhookTriggers {
   FolderUpdated = 'folder.updated',
   FolderDeleted = 'folder.deleted',
 
-  // Contact triggers
+  // Contact triggers. Native iCloud supports both triggers. Yahoo supports
+  // neither trigger, including for contact changes made through the Nylas API.
   ContactUpdated = 'contact.updated',
   ContactDeleted = 'contact.deleted',
 

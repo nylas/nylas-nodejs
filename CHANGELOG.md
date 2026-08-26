@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add optional `trackingOptions.domainName` support for custom link and open tracking hostnames
+- Add Contact metadata request/response types and `metadataPair` filtering, with contact webhook compatibility documentation
 
 ### Changed
 - Clarify that event `default` visibility is Google-only
