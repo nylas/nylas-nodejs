@@ -105,6 +105,22 @@ describe('APIClient', () => {
         );
       });
 
+      it('should serialize a contact metadata filter to the wire format', () => {
+        const options = client.requestOptions({
+          path: '/v3/grants/id123/contacts',
+          method: 'GET',
+          queryParams: {
+            metadataPair: { key1: 'sync_eligible' },
+          },
+        });
+
+        expect(options.url).toEqual(
+          new URL(
+            'https://api.us.nylas.com/v3/grants/id123/contacts?metadata_pair=key1%3Async_eligible'
+          )
+        );
+      });
+
       it('should handle all the different types of query params', () => {
         const options = client.requestOptions({
           path: '/test',
