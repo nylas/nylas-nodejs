@@ -44,6 +44,23 @@ describe('Contacts', () => {
       });
     });
 
+    it('should pass an indexed metadata filter to the API', async () => {
+      await contacts.list({
+        identifier: 'id123',
+        queryParams: {
+          metadataPair: { key1: 'sync_eligible' },
+        },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/contacts',
+        queryParams: {
+          metadataPair: { key1: 'sync_eligible' },
+        },
+      });
+    });
+
     it('should paginate correctly if a nextCursor is present', async () => {
       apiClient.request.mockResolvedValueOnce({
         requestId: 'request123',
@@ -199,6 +216,7 @@ describe('Contacts', () => {
             },
           ],
           givenName: 'Test',
+          metadata: { key1: 'sync_eligible' },
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -220,6 +238,7 @@ describe('Contacts', () => {
             },
           ],
           givenName: 'Test',
+          metadata: { key1: 'sync_eligible' },
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -236,6 +255,7 @@ describe('Contacts', () => {
         contactId: 'contact123',
         requestBody: {
           birthday: '1960-12-31',
+          metadata: {},
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
@@ -248,6 +268,7 @@ describe('Contacts', () => {
         path: '/v3/grants/id123/contacts/contact123',
         body: {
           birthday: '1960-12-31',
+          metadata: {},
         },
         overrides: {
           apiUri: 'https://test.api.nylas.com',
