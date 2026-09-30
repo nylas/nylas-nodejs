@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: sdk-reference
-      url: ${{ steps.deploy.outputs.url }}
+      url: ${{ steps.deploy.outputs.deployment-url }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup Nodejs
@@ -32,12 +32,9 @@ jobs:
               echo "CLOUDFLARE_BRANCH=$BRANCH" >> "$GITHUB_ENV"
           fi
       - name: Publish to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
         id: deploy
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: nylas-nodejs-sdk-reference
-          directory: docs
-          wranglerVersion: "3"
-          branch: ${{ env.CLOUDFLARE_BRANCH }}
+          command: pages deploy docs --project-name=nylas-nodejs-sdk-reference --branch=${{ env.CLOUDFLARE_BRANCH }}
