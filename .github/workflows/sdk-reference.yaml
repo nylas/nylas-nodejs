@@ -17,7 +17,7 @@ jobs:
       - name: Setup Nodejs
         uses: actions/setup-node@v1
         with:
-          node-version: 18.x
+          node-version: 24.x
       - name: Install dependencies and build
         run: npm install
       - name: Build docs
