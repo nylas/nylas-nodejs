@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Add `EventResource` and optional `resources` fields to event response, create, and update models for room/resource booking (CUST-5373)
 - Add optional `trackingOptions.domainName` support for custom link and open tracking hostnames
 - Add Contact metadata request/response types and `metadataPair` filtering, with contact webhook compatibility documentation
 
