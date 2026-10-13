@@ -24,7 +24,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies and build
-        run: npm install
+        run: npm ci
+
+      - name: Check CommonJS and ESM package imports
+        run: npm run test:package
 
       - name: Run lint checks
         run: npm run lint:ci

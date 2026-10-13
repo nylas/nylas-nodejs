@@ -36,6 +36,22 @@ const nylas = new Nylas({
   apiUri: process.env.NYLAS_API_URI || 'https://api.us.nylas.com',
 });
 
+function getEventNotetakerId(settings: unknown): string | undefined {
+  if (
+    !settings ||
+    typeof settings !== 'object' ||
+    Array.isArray(settings) ||
+    !('id' in settings) ||
+    typeof settings.id !== 'string' ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      settings.id
+    )
+  ) {
+    return undefined;
+  }
+  return settings.id;
+}
+
 /**
  * Creates a calendar event with a Notetaker
  * @returns The created event
@@ -86,8 +102,9 @@ async function createEventWithNotetaker(): Promise<NylasResponse<Event>> {
     });
 
     console.log(`Created event with ID: ${event.data.id}`);
-    if (event.data.notetaker) {
-      console.log(`Event Notetaker ID: ${event.data.notetaker.id}`);
+    const notetakerId = getEventNotetakerId(event.data.notetaker);
+    if (notetakerId) {
+      console.log(`Event Notetaker ID: ${notetakerId}`);
     }
 
     return event;
@@ -125,7 +142,8 @@ async function getEventNotetaker(
       },
     });
 
-    if (!event.data.notetaker || !event.data.notetaker.id) {
+    const notetakerId = getEventNotetakerId(event.data.notetaker);
+    if (!notetakerId) {
       console.log(`No Notetaker found for event ${eventId}`);
       return null;
     }
@@ -133,7 +151,7 @@ async function getEventNotetaker(
     // Get the Notetaker details
     const notetaker = await nylas.notetakers.find({
       identifier: grantId,
-      notetakerId: event.data.notetaker.id,
+      notetakerId,
     });
 
     console.log(`Found Notetaker for event ${eventId}:`);
@@ -178,6 +196,14 @@ async function updateEventAndNotetaker(
 
   try {
     // Create the request body with updated event details and Notetaker settings
+    const notetakerSettings: NotetakerSettings = {
+      name: 'Updated Nylas Notetaker',
+      meetingSettings: {
+        videoRecording: false,
+        audioRecording: true,
+        transcription: false,
+      },
+    };
     const requestBody: UpdateEventRequest = {
       title: 'Updated Project Planning Meeting',
       description: 'Revised project planning with new timeline',
@@ -185,16 +211,14 @@ async function updateEventAndNotetaker(
         project_id: 'PROJ-123',
         priority: 'urgent',
       },
-      notetaker: {
-        id: notetakerId,
-        name: 'Updated Nylas Notetaker',
-        meetingSettings: {
-          videoRecording: false,
-          audioRecording: true,
-          transcription: false,
-        },
-      },
+      notetaker: notetakerSettings,
     };
+
+    await nylas.notetakers.update({
+      identifier: grantId,
+      notetakerId,
+      requestBody: notetakerSettings,
+    });
 
     console.log(`Request body: ${JSON.stringify(requestBody, null, 2)}`);
 
@@ -209,10 +233,9 @@ async function updateEventAndNotetaker(
     });
 
     console.log(`Updated event with ID: ${updatedEvent.data.id}`);
-    if (updatedEvent.data.notetaker) {
-      console.log(
-        `Updated Event Notetaker ID: ${updatedEvent.data.notetaker.id}`
-      );
+    const updatedNotetakerId = getEventNotetakerId(updatedEvent.data.notetaker);
+    if (updatedNotetakerId) {
+      console.log(`Updated Event Notetaker ID: ${updatedNotetakerId}`);
     }
 
     return updatedEvent;

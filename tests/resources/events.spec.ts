@@ -103,7 +103,7 @@ describe('Events', () => {
       });
       await eventList.next();
 
-      expect(apiClient.request).toBeCalledTimes(2);
+      expect(apiClient.request).toHaveBeenCalledTimes(2);
       expect(apiClient.request).toHaveBeenLastCalledWith({
         method: 'GET',
         path: '/v3/grants/id123/events',
@@ -149,7 +149,7 @@ describe('Events', () => {
       });
       await eventList.next();
 
-      expect(apiClient.request).toBeCalledTimes(1);
+      expect(apiClient.request).toHaveBeenCalledTimes(1);
     });
 
     //TODO::More iterator tests
@@ -221,7 +221,7 @@ describe('Events', () => {
       });
       await eventList.next();
 
-      expect(apiClient.request).toBeCalledTimes(2);
+      expect(apiClient.request).toHaveBeenCalledTimes(2);
       expect(apiClient.request).toHaveBeenLastCalledWith({
         method: 'GET',
         path: '/v3/grants/id123/events/import',

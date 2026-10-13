@@ -1,6 +1,8 @@
 service: nylas-lambda-attachments
 
-frameworkVersion: '3'
+frameworkVersion: '4'
+
+useDotenv: true
 
 provider:
   name: aws
@@ -15,13 +17,7 @@ provider:
   httpApi:
     cors: true
 
-plugins:
-  - serverless-dotenv-plugin
-  - serverless-esbuild
-
-custom:
-  dotenv:
-    path: .env
+build:
   esbuild:
     bundle: true
     minify: false
@@ -30,7 +26,7 @@ custom:
       - aws-sdk
     target: node20
     platform: node
-    concurrency: 10
+    buildConcurrency: 10
 
 functions:
   sendAttachment:

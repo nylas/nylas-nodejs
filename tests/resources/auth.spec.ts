@@ -200,6 +200,21 @@ describe('Auth', () => {
   });
   describe('URL building', () => {
     describe('urlForAuthentication', () => {
+      it('should let hosted authentication choose the provider when omitted', () => {
+        const url = new URL(
+          auth.urlForOAuth2({
+            clientId: 'clientId',
+            redirectUri: 'https://redirect.uri/path',
+          })
+        );
+
+        expect(url.searchParams.has('provider')).toBe(false);
+        expect(url.searchParams.get('access_type')).toBe('online');
+        expect(url.searchParams.get('redirect_uri')).toBe(
+          'https://redirect.uri/path'
+        );
+      });
+
       it('should build the correct url', () => {
         const url = auth.urlForOAuth2({
           clientId: 'clientId',

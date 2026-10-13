@@ -5,9 +5,7 @@ import { ListQueryParams } from './listQueryParams.js';
  * Enum representing the supported meeting providers.
  */
 export type NotetakerMeetingProvider =
-  | 'Google Meet'
-  | 'Microsoft Teams'
-  | 'Zoom Meeting';
+  'Google Meet' | 'Microsoft Teams' | 'Zoom Meeting';
 
 /**
  * Enum representing the current state of the Notetaker bot.

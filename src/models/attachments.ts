@@ -81,10 +81,7 @@ export type DownloadAttachmentQueryParams = FindAttachmentQueryParams;
  * @see https://developer.nylas.com/docs/v3/email/send-large-attachments/
  */
 export type AttachmentUploadSessionStatusType =
-  | 'uploading'
-  | 'ready'
-  | 'failed'
-  | 'expired';
+  'uploading' | 'ready' | 'failed' | 'expired';
 
 /**
  * Request body for creating a large-attachment upload session.

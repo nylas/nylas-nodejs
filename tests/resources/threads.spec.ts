@@ -19,6 +19,18 @@ describe('Threads', () => {
   });
 
   describe('list', () => {
+    it('should preserve query filters when anyEmail is omitted', async () => {
+      apiClient.request.mockResolvedValue({ data: [] });
+      await threads.list({ identifier: 'id123', queryParams: { limit: 10 } });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/grants/id123/threads',
+        queryParams: { limit: 10 },
+        overrides: undefined,
+      });
+    });
+
     it('should call apiClient.request with the correct params', async () => {
       await threads.list({
         identifier: 'id123',

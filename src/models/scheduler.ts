@@ -284,14 +284,7 @@ export interface Session {
  * The supported languages for email notifications.
  */
 export type EmailLanguage =
-  | 'en'
-  | 'es'
-  | 'fr'
-  | 'de'
-  | 'nl'
-  | 'sv'
-  | 'ja'
-  | 'zh';
+  'en' | 'es' | 'fr' | 'de' | 'nl' | 'sv' | 'ja' | 'zh';
 
 export interface BookingGuest {
   /**

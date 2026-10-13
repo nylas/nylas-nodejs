@@ -48,9 +48,7 @@ export type RuleActionType =
  * Type for where in the processing pipeline a rule evaluation happened.
  */
 export type RuleEvaluationStage =
-  | 'smtp_rcpt'
-  | 'inbox_processing'
-  | 'outbound_send';
+  'smtp_rcpt' | 'inbox_processing' | 'outbound_send';
 
 /**
  * Interface representing a Nylas Agent Account rule condition.

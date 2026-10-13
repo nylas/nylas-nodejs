@@ -20,6 +20,17 @@ describe('Workspaces', () => {
   });
 
   describe('list', () => {
+    it('should list workspaces without requiring options', async () => {
+      await workspaces.list();
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'GET',
+        path: '/v3/workspaces',
+        queryParams: undefined,
+        overrides: undefined,
+      });
+    });
+
     it('should call apiClient.request with a GET to the collection path', async () => {
       await workspaces.list({
         overrides: {

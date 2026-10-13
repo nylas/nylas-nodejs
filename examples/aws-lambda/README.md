@@ -24,11 +24,11 @@ Before getting started, you'll need:
 
 1. **Nylas Account**: [Sign up for free](https://dashboard.nylas.com/register)
 2. **AWS Account**: [Sign up for free](https://aws.amazon.com/free/)
-3. **Node.js**: Version 16 or higher
+3. **Node.js**: Version 20.19 or higher for the local setup tools
 4. **Nylas Application**: Created in your Nylas Dashboard
 5. **Connected Email Account**: At least one email account connected to your Nylas application
 6. **AWS CLI**: [Install AWS CLI](https://aws.amazon.com/cli/) (optional, but recommended)
-7. **Serverless Framework**: Will be installed via npm
+7. **Serverless Framework**: Version 4 will be installed via npm. It loads `.env` and bundles TypeScript using its built-in esbuild support.
 
 ## 🛠️ Quick Start
 

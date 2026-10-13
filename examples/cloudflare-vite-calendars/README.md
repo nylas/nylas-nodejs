@@ -17,7 +17,7 @@ Before getting started, you'll need:
 
 1. **Nylas Account**: [Sign up for free](https://dashboard.nylas.com/register)
 2. **Cloudflare Account**: [Sign up for free](https://dash.cloudflare.com/sign-up)
-3. **Node.js**: Version 18 or higher
+3. **Node.js**: Version 22.12 or higher for the local Vite and Wrangler tools
 4. **Nylas Application**: Created in your Nylas Dashboard with at least one connected calendar
 5. **Calendar Access**: At least one email account connected with calendar permissions
 

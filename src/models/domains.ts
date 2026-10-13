@@ -4,24 +4,14 @@ import { ListQueryParams } from './listQueryParams.js';
  * Type for the DNS verification types supported by the Manage Domains API.
  */
 export type DomainVerificationType =
-  | 'ownership'
-  | 'mx'
-  | 'spf'
-  | 'dkim'
-  | 'feedback'
-  | 'dmarc'
-  | 'arc';
+  'ownership' | 'mx' | 'spf' | 'dkim' | 'feedback' | 'dmarc' | 'arc';
 
 /**
  * Type for the DNS verification types accepted by Manage Domains info and
  * verify request bodies.
  */
 export type DomainVerificationRequestType =
-  | 'ownership'
-  | 'mx'
-  | 'spf'
-  | 'dkim'
-  | 'feedback';
+  'ownership' | 'mx' | 'spf' | 'dkim' | 'feedback';
 
 /**
  * Type for the status of a domain DNS verification attempt.
