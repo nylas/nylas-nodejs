@@ -227,7 +227,7 @@ export default class APIClient {
               headers
             );
           }
-        } catch (e) {
+        } catch {
           throw new Error(
             `Received an error but could not parse response from the server${
               flowId ? ` with flow ID ${flowId}` : ''
@@ -333,7 +333,7 @@ export default class APIClient {
         enumerable: false,
       });
       return payload;
-    } catch (e) {
+    } catch {
       throw new Error(`Could not parse response from the server: ${text}`);
     }
   }

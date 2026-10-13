@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2019",
     "module": "commonjs",
-    "lib": ["es2019", "dom"],
+    "lib": ["es2019", "dom", "dom.iterable"],
     "declaration": false,
     "strict": true,
     "esModuleInterop": true,
@@ -16,6 +16,10 @@
     "**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist",
+    "aws-lambda",
+    "cloudflare-vite-calendars",
+    "edge-environment"
   ]
-} 
+}

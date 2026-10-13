@@ -17,7 +17,7 @@ Before getting started, you'll need:
 
 1. **Nylas Account**: [Sign up for free](https://dashboard.nylas.com/register)
 2. **Cloudflare Account**: [Sign up for free](https://dash.cloudflare.com/sign-up)
-3. **Node.js**: Version 16 or higher
+3. **Node.js**: Version 22.12 or higher for the local Wrangler tools
 4. **Nylas Application**: Created in your Nylas Dashboard
 5. **Connected Email Account**: At least one email account connected to your Nylas application
 
@@ -182,7 +182,7 @@ This worker uses the **Nylas SDK** with optimizations for Cloudflare Workers:
 ### Node.js Compatibility
 
 This worker uses:
-- **`compatibility_date = "2024-09-23"`**: Enables automatic Node.js built-in module support  
+- **`compatibility_date = "2024-09-23"`**: Enables automatic Node.js built-in module support
 - **`nodejs_compat` compatibility flag**: Additional Node.js compatibility features
 
 These settings enable Node.js built-in modules like `crypto`, `path`, `fs`, and `stream` that are required by the Nylas SDK. The Buffer attachment approach ensures optimal performance and compatibility with the Cloudflare Workers edge environment.
@@ -317,4 +317,4 @@ Found an issue or want to improve this example? Please:
 
 ## 📄 License
 
-This example is part of the Nylas Node.js SDK and is licensed under the MIT License. 
+This example is part of the Nylas Node.js SDK and is licensed under the MIT License.

@@ -130,8 +130,7 @@ export interface CreateAgentAccountRequest {
 }
 
 export type CreateGrantRequest =
-  | CreateCustomAuthenticationGrantRequest
-  | CreateAgentAccountRequest;
+  CreateCustomAuthenticationGrantRequest | CreateAgentAccountRequest;
 
 /**
  * Interface representing a request to update a grant.

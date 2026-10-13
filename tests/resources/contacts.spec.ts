@@ -93,7 +93,7 @@ describe('Contacts', () => {
       });
       await contactList.next();
 
-      expect(apiClient.request).toBeCalledTimes(2);
+      expect(apiClient.request).toHaveBeenCalledTimes(2);
       expect(apiClient.request).toHaveBeenLastCalledWith({
         method: 'GET',
         path: '/v3/grants/id123/contacts',
@@ -139,7 +139,7 @@ describe('Contacts', () => {
       });
       await contactList.next();
 
-      expect(apiClient.request).toBeCalledTimes(1);
+      expect(apiClient.request).toHaveBeenCalledTimes(1);
     });
 
     //TODO::More iterator tests

@@ -475,11 +475,7 @@ type Visibility = 'default' | 'public' | 'private';
  * Enum representing the supported conferencing providers.
  */
 type ConferencingProvider =
-  | 'Google Meet'
-  | 'Zoom Meeting'
-  | 'Microsoft Teams'
-  | 'GoToMeeting'
-  | 'WebEx';
+  'Google Meet' | 'Zoom Meeting' | 'Microsoft Teams' | 'GoToMeeting' | 'WebEx';
 
 /**
  * Enum representing the status of an event participant.
@@ -739,7 +735,4 @@ export interface EmailName {
  * Type representing the event type to filter by.
  */
 export type EventType =
-  | 'default'
-  | 'outOfOffice'
-  | 'focusTime'
-  | 'workingLocation';
+  'default' | 'outOfOffice' | 'focusTime' | 'workingLocation';

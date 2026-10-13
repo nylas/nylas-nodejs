@@ -264,7 +264,7 @@ describe('APIClient', () => {
         expect(newRequest.url).toEqual(
           'https://override.api.nylas.com/test?param=value'
         );
-        expect(newRequest.body?.toString()).toBe('{"id":"abc123"}');
+        expect(await newRequest.text()).toBe('{"id":"abc123"}');
       });
 
       it('should preserve service account signing headers from overrides', async () => {
