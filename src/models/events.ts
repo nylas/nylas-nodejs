@@ -20,6 +20,40 @@ export interface NotetakerSettings {
 }
 
 /**
+ * A bookable resource associated with an event, such as a room or equipment.
+ */
+export interface EventResource {
+  /**
+   * The resource's email address.
+   */
+  email: string;
+  /**
+   * The resource's display name.
+   */
+  name?: string;
+  /**
+   * The maximum number of people the resource can accommodate.
+   */
+  capacity?: number;
+  /**
+   * The building where the resource is located.
+   */
+  building?: string;
+  /**
+   * The name of the floor where the resource is located.
+   */
+  floorName?: string;
+  /**
+   * The section of the floor where the resource is located (Google only).
+   */
+  floorSection?: string;
+  /**
+   * The floor number where the resource is located (Microsoft only).
+   */
+  floorNumber?: number;
+}
+
+/**
  * Interface representing a Nylas Event object.
  */
 export interface Event {
@@ -51,6 +85,10 @@ export interface Event {
    * List of participants invited to the event. Participants may also be rooms or resources.
    */
   participants: Participant[];
+  /**
+   * Bookable rooms or equipment associated with the event.
+   */
+  resources?: EventResource[];
   /**
    * Representation of time and duration for events. When object can be in one of four formats (sub-objects):
    * - {@link Date}
@@ -190,6 +228,10 @@ export interface CreateEventRequest {
    */
   participants?: Participant[];
   /**
+   * Bookable rooms or equipment to associate with the event.
+   */
+  resources?: EventResource[];
+  /**
    * An list of RRULE and EXDATE strings.
    * @see <a href="https://datatracker.ietf.org/doc/html/rfc5545#section-3.8.5">RFC-5545</a>
    */
@@ -222,8 +264,15 @@ export interface CreateEventRequest {
 
 /**
  * Interface representing a request to update an event.
+ * Resources replace the existing list; each resource requires an email address.
+ * Omit resources to leave the list unchanged, or pass an empty array to clear it.
  */
-export type UpdateEventRequest = Subset<CreateEventRequest>;
+export type UpdateEventRequest = Omit<
+  Subset<CreateEventRequest>,
+  'resources'
+> & {
+  resources?: EventResource[];
+};
 
 /**
  * Interface representing a request to send RSVP to an event.
