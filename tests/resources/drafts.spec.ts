@@ -435,6 +435,22 @@ describe('Drafts', () => {
   });
 
   describe('update', () => {
+    it('should update draft text without adding attachments', async () => {
+      const requestBody = { subject: 'updated subject', body: 'updated body' };
+      await drafts.update({
+        identifier: 'id123',
+        draftId: 'draft123',
+        requestBody,
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'PUT',
+        path: '/v3/grants/id123/drafts/draft123',
+        body: requestBody,
+        overrides: undefined,
+      });
+    });
+
     it('should call apiClient.request with the correct params', async () => {
       const baseJson = {
         subject: 'updated subject',

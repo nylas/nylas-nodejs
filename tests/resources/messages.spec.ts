@@ -306,6 +306,29 @@ describe('Messages', () => {
   });
 
   describe('send', () => {
+    it.each([undefined, []])(
+      'should send a large body as multipart without attachments (%p)',
+      async (attachments) => {
+        const requestBody = {
+          to: [{ email: 'test@example.com' }],
+          body: 'A'.repeat(3.5 * 1024 * 1024),
+          attachments,
+        };
+        await messages.send({ identifier: 'id123', requestBody });
+
+        const request = apiClient.request.mock.calls[0][0];
+        const formData = (
+          request.form as unknown as MockedFormData
+        )._getAppendedData();
+        expect(request.body).toBeUndefined();
+        expect(Object.keys(formData)).toEqual(['message']);
+        expect(JSON.parse(formData.message)).toEqual({
+          to: requestBody.to,
+          body: requestBody.body,
+        });
+      }
+    );
+
     it('should call apiClient.request with the correct params', async () => {
       const jsonBody = {
         to: [{ name: 'Test', email: 'test@example.com' }],
