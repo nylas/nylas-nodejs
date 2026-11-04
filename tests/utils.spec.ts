@@ -145,6 +145,30 @@ describe('convertCase', () => {
     expect(result).toEqual({ first_name: 'John', lastName: 'Doe' });
   });
 
+  it('preserves excluded metadata keys inside nested objects and arrays', () => {
+    const metadata = {
+      externalRecordId: 'record-fixture',
+      custom_key: 'value',
+    };
+    const request = {
+      operations: [
+        { method: 'create', body: { hideParticipants: true, metadata } },
+      ],
+    };
+    expect(objKeysToSnakeCase(request, ['metadata'])).toEqual({
+      operations: [
+        { method: 'create', body: { hide_participants: true, metadata } },
+      ],
+    });
+    expect(
+      objKeysToCamelCase({ data: [{ data: { read_only: false, metadata } }] }, [
+        'metadata',
+      ])
+    ).toEqual({
+      data: [{ data: { readOnly: false, metadata } }],
+    });
+  });
+
   it('should handle null and undefined values in camelCase conversion', () => {
     const obj = { first_name: 'John', address_data: null, user_age: undefined };
     const result = objKeysToCamelCase(obj);
