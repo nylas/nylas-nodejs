@@ -29,6 +29,9 @@ jobs:
       - name: Check CommonJS and ESM package imports
         run: npm run test:package
 
+      - name: Run packed SDK end-to-end tests
+        run: npm run test:e2e
+
       - name: Check AWS Lambda handler error redaction
         if: matrix.node-version != '18.x'
         working-directory: examples/aws-lambda
