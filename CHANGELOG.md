@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Preserve null array elements and nested JSON arrays during property-name conversion (NYL-464).
 - Keep raw server response bodies out of parse failure messages (NYL-470).
 - Enforce configured timeouts while consuming buffered response bodies (NYL-465).
 - Wrap response body read failures in typed SDK errors with available request context (NYL-460).
