@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Serialize draft anyEmail filters as a single comma-separated query value (NYL-462).
 - Allow attachment metadata without a filename while preserving the filename requirement for outgoing attachments (NYL-458).
 
 ## [8.5.0] - 2026-11-04
