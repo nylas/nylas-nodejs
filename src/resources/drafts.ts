@@ -87,8 +87,17 @@ export class Drafts extends Resource {
   }: ListDraftsParams & Overrides): AsyncListResponse<
     NylasListResponse<Draft>
   > {
+    const modifiedQueryParams = queryParams
+      ? {
+          ...queryParams,
+          ...(Array.isArray(queryParams.anyEmail)
+            ? { anyEmail: queryParams.anyEmail.join(',') }
+            : {}),
+        }
+      : undefined;
+
     return super._list<NylasListResponse<Draft>>({
-      queryParams,
+      queryParams: modifiedQueryParams,
       overrides,
       path: makePathParams('/v3/grants/{identifier}/drafts', { identifier }),
     });
@@ -125,10 +134,21 @@ export class Drafts extends Resource {
       identifier,
     });
 
-    // Use form data if the total payload size (body + attachments) is greater than 3mb
-    const totalPayloadSize = calculateTotalPayloadSize(requestBody);
+    if (
+      requestBody.attachments &&
+      calculateTotalPayloadSize(requestBody) <
+        Messages.MAXIMUM_JSON_ATTACHMENT_SIZE
+    ) {
+      requestBody = {
+        ...requestBody,
+        attachments: await encodeAttachmentContent(requestBody.attachments),
+      };
+    }
 
-    if (totalPayloadSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
+    if (
+      calculateTotalPayloadSize(requestBody) >=
+      Messages.MAXIMUM_JSON_ATTACHMENT_SIZE
+    ) {
       const form = Messages._buildFormRequest(requestBody);
 
       return this.apiClient.request({
@@ -137,15 +157,6 @@ export class Drafts extends Resource {
         form,
         overrides,
       });
-    } else if (requestBody.attachments) {
-      const processedAttachments = await encodeAttachmentContent(
-        requestBody.attachments
-      );
-
-      requestBody = {
-        ...requestBody,
-        attachments: processedAttachments,
-      };
     }
 
     return super._create({
@@ -170,10 +181,21 @@ export class Drafts extends Resource {
       draftId,
     });
 
-    // Use form data if the total payload size (body + attachments) is greater than 3mb
-    const totalPayloadSize = calculateTotalPayloadSize(requestBody);
+    if (
+      requestBody.attachments &&
+      calculateTotalPayloadSize(requestBody) <
+        Messages.MAXIMUM_JSON_ATTACHMENT_SIZE
+    ) {
+      requestBody = {
+        ...requestBody,
+        attachments: await encodeAttachmentContent(requestBody.attachments),
+      };
+    }
 
-    if (totalPayloadSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
+    if (
+      calculateTotalPayloadSize(requestBody) >=
+      Messages.MAXIMUM_JSON_ATTACHMENT_SIZE
+    ) {
       const form = Messages._buildFormRequest(requestBody);
 
       return this.apiClient.request({
@@ -182,15 +204,6 @@ export class Drafts extends Resource {
         form,
         overrides,
       });
-    } else if (requestBody.attachments) {
-      const processedAttachments = await encodeAttachmentContent(
-        requestBody.attachments
-      );
-
-      requestBody = {
-        ...requestBody,
-        attachments: processedAttachments,
-      };
     }
 
     return super._update({

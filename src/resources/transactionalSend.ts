@@ -51,19 +51,22 @@ export class TransactionalSend extends Resource {
       overrides,
     };
 
-    const totalPayloadSize = calculateTotalPayloadSize(requestBody);
-
-    if (totalPayloadSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
-      requestOptions.form = Messages._buildFormRequest(requestBody);
-    } else if (requestBody.attachments) {
-      const processedAttachments = await encodeAttachmentContent(
-        requestBody.attachments
-      );
-
-      requestOptions.body = {
+    if (
+      requestBody.attachments &&
+      calculateTotalPayloadSize(requestBody) <
+        Messages.MAXIMUM_JSON_ATTACHMENT_SIZE
+    ) {
+      requestBody = {
         ...requestBody,
-        attachments: processedAttachments,
+        attachments: await encodeAttachmentContent(requestBody.attachments),
       };
+    }
+
+    if (
+      calculateTotalPayloadSize(requestBody) >=
+      Messages.MAXIMUM_JSON_ATTACHMENT_SIZE
+    ) {
+      requestOptions.form = Messages._buildFormRequest(requestBody);
     } else {
       requestOptions.body = requestBody;
     }

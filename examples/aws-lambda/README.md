@@ -379,6 +379,14 @@ This will:
 - API Gateway timeout should be at least 30 seconds for large attachments
 - Consider increasing Lambda memory (1024 MB) for very large files (>10MB)
 
+## Local error-handling checks
+
+Build the SDK from the repository root with `npm ci`, then run `npm ci` and
+`npm run test:e2e` in this example directory. The checks bundle the handler and
+exercise malformed requests and SDK responses through a local HTTP server using
+synthetic credentials. They do not read `.env`, send external email, or deploy
+resources.
+
 ## 🧹 Cleanup
 
 To remove the deployed Lambda function and API Gateway:

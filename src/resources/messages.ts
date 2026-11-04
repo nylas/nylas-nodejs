@@ -27,6 +27,7 @@ import {
   attachmentStreamToFile,
   calculateTotalPayloadSize,
   encodeAttachmentContent,
+  isAttachmentReference,
   makePathParams,
   objKeysToSnakeCase,
 } from '../utils.js';
@@ -247,24 +248,25 @@ export class Messages extends Resource {
       overrides,
     };
 
-    // Use form data if the total payload size (body + attachments) is greater than 3mb
-    const totalPayloadSize = calculateTotalPayloadSize(requestBody);
+    // Streams without a declared size must be encoded before their size is known.
+    if (
+      requestBody.attachments &&
+      calculateTotalPayloadSize(requestBody) <
+        Messages.MAXIMUM_JSON_ATTACHMENT_SIZE
+    ) {
+      requestBody = {
+        ...requestBody,
+        attachments: await encodeAttachmentContent(requestBody.attachments),
+      };
+    }
 
-    if (totalPayloadSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
+    if (
+      calculateTotalPayloadSize(requestBody) >=
+      Messages.MAXIMUM_JSON_ATTACHMENT_SIZE
+    ) {
       requestOptions.form = Messages._buildFormRequest(requestBody);
     } else {
-      if (requestBody.attachments) {
-        const processedAttachments = await encodeAttachmentContent(
-          requestBody.attachments
-        );
-
-        requestOptions.body = {
-          ...requestBody,
-          attachments: processedAttachments,
-        };
-      } else {
-        requestOptions.body = requestBody;
-      }
+      requestOptions.body = requestBody;
     }
 
     return this.apiClient.request(requestOptions);
@@ -354,10 +356,12 @@ export class Messages extends Resource {
   ): FormData {
     const form = new FormData();
 
-    // Split out the message payload from the attachments
+    // Uploaded attachment references belong in the message JSON; only files
+    // with content are sent as separate multipart fields.
+    const references = requestBody.attachments?.filter(isAttachmentReference);
     const messagePayload = {
       ...requestBody,
-      attachments: undefined,
+      attachments: references?.length ? references : undefined,
     };
     form.append(
       'message',
@@ -367,6 +371,9 @@ export class Messages extends Resource {
     // Add a separate form field for each attachment
     if (requestBody.attachments && requestBody.attachments.length > 0) {
       requestBody.attachments.map((attachment, index) => {
+        if (isAttachmentReference(attachment)) {
+          return;
+        }
         const contentId = attachment.contentId || `file${index}`;
         // Handle different content types for formdata-node
         if (typeof attachment.content === 'string') {
