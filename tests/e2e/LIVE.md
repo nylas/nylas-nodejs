@@ -26,7 +26,11 @@ uniquely named drafts with Buffer, base64, and unknown-size stream attachments
 whose encoded content exceeds 3 MiB, then finds, filters, updates, downloads, and
 deletes them. Download checks run when the provider exposes attachment IDs.
 
-For a Microsoft grant, it also creates an upload session, validates the response,
+It also sends one Buffer, base64, and unknown-size stream attachment message to
+the same mailbox, reads each resulting message, and verifies its downloaded
+attachment bytes. These use the same >3 MiB encoded payloads as the draft cases.
+
+For a Microsoft grant, it additionally creates an upload session, validates the response,
 uploads 1 MiB of synthetic bytes directly to the documented HTTPS storage host
 without an authorization header, completes the session, and sends its reference
 once to the same test mailbox. It reads and downloads the resulting attachment.
@@ -44,4 +48,4 @@ The upload checks follow the current
 [create-session contract](https://developer.nylas.com/docs/reference/api/attachments/create-attachment-upload-session/),
 [completion contract](https://developer.nylas.com/docs/reference/api/attachments/complete-attachment-upload-session/),
 and [large-attachment guide](https://developer.nylas.com/docs/v3/email/send-large-attachments/).
-Unexpected response fields, upload hosts, methods, or headers fail closed.
+Unexpected upload hosts, methods, headers, or required field values fail closed.

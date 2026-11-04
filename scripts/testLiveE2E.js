@@ -432,6 +432,82 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
       draftSubjects.delete(updatedSubject);
     }
 
+    for (const [index, kind] of ['buffer', 'base64', 'stream'].entries()) {
+      const subject = `nylas-node-e2e-${randomUUID()}`;
+      const filename = `sdk-send-e2e-${index}.bin`;
+      const bytes = Buffer.alloc(Math.ceil(2.4 * 1024 * 1024), 0x70 + index);
+      const content =
+        kind === 'buffer'
+          ? bytes
+          : kind === 'base64'
+            ? bytes.toString('base64')
+            : Readable.from([bytes]);
+      messageSubjects.add(subject);
+      const messageId = await step(
+        `message-${kind}-send-once-to-self`,
+        async () => {
+          // Never retry a send POST, even when its outcome is ambiguous.
+          const result = await client.messages.send({
+            identifier: config.grantId,
+            requestBody: createBody(subject, {
+              filename,
+              contentType: mimeType,
+              content,
+            }),
+          });
+          const id = opaqueId(result.data?.id);
+          messages.add(id);
+          return id;
+        }
+      );
+      const sent = await step(`message-${kind}-attachment-visible`, () =>
+        poll(
+          () => client.messages.find({ identifier: config.grantId, messageId }),
+          (result) =>
+            result.data?.subject === subject &&
+            selfRecipient(result.data, config.recipient) &&
+            result.data.attachments?.some(
+              (item) => item.filename === filename && item.id
+            ),
+          12
+        )
+      );
+      await validateDownload(
+        client,
+        config,
+        sent.data,
+        bytes,
+        filename,
+        `message-${kind}`
+      );
+      await step(`message-${kind}-self-filter-visible`, () =>
+        poll(
+          async () => {
+            const result = await client.messages.list({
+              identifier: config.grantId,
+              queryParams: { subject, anyEmail: [config.recipient], limit: 20 },
+            });
+            for (const item of result.data || []) {
+              if (
+                item.subject === subject &&
+                selfRecipient(item, config.recipient)
+              ) {
+                messages.add(opaqueId(item.id));
+              }
+            }
+            return result;
+          },
+          (result) =>
+            result.data?.some(
+              (item) =>
+                item.subject === subject &&
+                selfRecipient(item, config.recipient)
+            ),
+          12
+        )
+      );
+    }
+
     if (grant.provider !== 'microsoft') {
       report('SKIP', 'upload-reference-provider-unavailable');
     } else {
