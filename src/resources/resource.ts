@@ -53,19 +53,7 @@ export class Resource {
     this.apiClient = apiClient;
   }
 
-  private async fetchList<T extends List<T>>({
-    queryParams,
-    path,
-    overrides,
-    getOverrides,
-  }: ListParams<T>): Promise<T> {
-    const res = await this.apiClient.request<T>({
-      method: 'GET',
-      path,
-      queryParams,
-      overrides: getOverrides ? getOverrides() : overrides,
-    });
-
+  private normalizeListResponse<T extends List<T>>(res: T): void {
     // Some list endpoints return a nested envelope after key conversion:
     // { data: { items: T[], nextCursor? } }.
     // This guard remaps that nested shape back to the flat shape the list machinery
@@ -81,6 +69,21 @@ export class Resource {
       (res as { data: unknown[] }).data = nested.items;
       res.nextCursor = nested.nextCursor ?? res.nextCursor;
     }
+  }
+
+  private async fetchList<T extends List<T>>({
+    queryParams,
+    path,
+    overrides,
+    getOverrides,
+  }: ListParams<T>): Promise<T> {
+    const res = await this.apiClient.request<T>({
+      method: 'GET',
+      path,
+      queryParams,
+      overrides: getOverrides ? getOverrides() : overrides,
+    });
+    this.normalizeListResponse(res);
 
     if (queryParams?.limit) {
       let entriesRemaining = queryParams.limit;
@@ -102,6 +105,7 @@ export class Resource {
           },
           overrides: getOverrides ? getOverrides() : overrides,
         });
+        this.normalizeListResponse(nextRes);
 
         res.data = res.data.concat(nextRes.data);
         res.requestId = nextRes.requestId;

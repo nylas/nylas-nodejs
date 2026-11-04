@@ -757,6 +757,22 @@ describe('calculateTotalPayloadSize', () => {
 });
 
 describe('convertCase with nested arrays', () => {
+  it.each([
+    ['camelCase', objKeysToCamelCase, 'user_id', 'userId'],
+    ['snake_case', objKeysToSnakeCase, 'userId', 'user_id'],
+  ] as const)(
+    'should preserve nulls and nested array structure during %s conversion',
+    (_name, convert, inputKey, outputKey) => {
+      const result = convert({
+        items: [null, [{ [inputKey]: 'id-1' }, null, ['value', 7]], []],
+      });
+
+      expect(result).toEqual({
+        items: [null, [{ [outputKey]: 'id-1' }, null, ['value', 7]], []],
+      });
+    }
+  );
+
   it('should recursively convert object items in arrays to camelCase', () => {
     const obj = {
       items: [
