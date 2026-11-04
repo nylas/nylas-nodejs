@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Allow attachment metadata without a filename while preserving the filename requirement for outgoing attachments (NYL-458).
+- Restore CommonJS named exports and the default client class type, and correctly identify ESM declarations under modern TypeScript module resolution (NYL-459).
 
 ## [8.5.0] - 2026-11-04
 
