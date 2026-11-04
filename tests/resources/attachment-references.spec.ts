@@ -1,6 +1,7 @@
 import APIClient from '../../src/apiClient';
 import { AttachmentReference } from '../../src/models/attachments';
 import { SendMessageRequest } from '../../src/models/drafts';
+import { Drafts } from '../../src/resources/drafts';
 import { Messages } from '../../src/resources/messages';
 import { calculateTotalPayloadSize } from '../../src/utils';
 
@@ -87,6 +88,29 @@ describe('uploaded attachment references', () => {
     expect(JSON.parse(form.get('message') as string).attachments).toEqual([
       { id: reference.id, content_id: 'chart1' },
     ]);
+  });
+
+  it('accepts uploaded references when creating and updating drafts', async () => {
+    const drafts = new Drafts(apiClient);
+    await drafts.create({
+      identifier: 'grant',
+      requestBody: {
+        to: [{ email: 'test@example.com' }],
+        attachments: [reference],
+      },
+    });
+    await drafts.update({
+      identifier: 'grant',
+      draftId: 'draft',
+      requestBody: { attachments: [reference] },
+    });
+
+    for (const [options] of request.mock.calls) {
+      const { body } = apiClient.requestOptions(options);
+      expect(JSON.parse(body as string).attachments).toEqual([
+        { id: reference.id, content_id: 'chart1' },
+      ]);
+    }
   });
 
   it.each([
