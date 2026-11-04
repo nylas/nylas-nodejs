@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Support validated completed-upload attachment references in JSON and multipart message sends and draft requests (NYL-469).
+- Select JSON or multipart using the complete encoded attachment payload size (NYL-463).
+- Serialize draft anyEmail filters as a single comma-separated query value (NYL-462).
+- Normalize every nested list page while filling explicit result limits (NYL-461).
 - Preserve null array elements and nested JSON arrays during property-name conversion (NYL-464).
 - Keep raw server response bodies out of parse failure messages (NYL-470).
 - Enforce configured timeouts while consuming buffered response bodies (NYL-465).
