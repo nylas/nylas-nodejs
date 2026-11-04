@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Wrap response body read failures in typed SDK errors with available request context (NYL-460).
 - Allow attachment metadata without a filename while preserving the filename requirement for outgoing attachments (NYL-458).
 - Restore CommonJS named exports and the default client class type, and correctly identify ESM declarations under modern TypeScript module resolution (NYL-459).
 

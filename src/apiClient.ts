@@ -199,7 +199,9 @@ export default class APIClient {
       const requestId = headers[REQUEST_ID_HEADER];
 
       if (response.status > 299) {
-        const text = await response.text();
+        const text = await this.readResponseBody(response, () =>
+          response.text()
+        );
         let error: Error;
         try {
           const parsedError = JSON.parse(text);
@@ -309,12 +311,39 @@ export default class APIClient {
     return new Request(newOptions.url, requestInit);
   }
 
+  private async readResponseBody<T>(
+    response: Response,
+    read: () => Promise<T>
+  ): Promise<T> {
+    try {
+      return await read();
+    } catch {
+      const headers = response?.headers?.entries
+        ? Object.fromEntries(response.headers.entries())
+        : {};
+      const requestId = headers[REQUEST_ID_HEADER];
+      throw new NylasApiError(
+        {
+          requestId,
+          error: {
+            type: 'sdk.response_body_error',
+            message: 'Failed to read response from the server.',
+          },
+        },
+        response.status,
+        requestId,
+        headers[FLOW_ID_HEADER],
+        headers
+      );
+    }
+  }
+
   async requestWithResponse<T>(response: Response): Promise<T> {
     const headers = response?.headers?.entries
       ? Object.fromEntries(response.headers.entries())
       : {};
     const flowId = headers[FLOW_ID_HEADER];
-    const text = await response.text();
+    const text = await this.readResponseBody(response, () => response.text());
 
     try {
       const parsed = JSON.parse(text);
@@ -345,7 +374,9 @@ export default class APIClient {
 
   async requestRaw(options: RequestOptionsParams): Promise<Buffer> {
     const response = await this.sendRequest(options);
-    const arrayBuffer = await response.arrayBuffer();
+    const arrayBuffer = await this.readResponseBody(response, () =>
+      response.arrayBuffer()
+    );
     return Buffer.from(arrayBuffer);
   }
 
