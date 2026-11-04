@@ -20,7 +20,8 @@ async function main(): Promise<void> {
       (value) => !value.trim()
     ) ||
     updateEventId === deleteEventId ||
-    !['https://api.us.nylas.com', 'https://api.eu.nylas.com'].includes(apiUri)
+    (apiUri !== 'https://api.us.nylas.com' &&
+      apiUri !== 'https://api.eu.nylas.com')
   ) {
     throw new Error('Invalid example configuration.');
   }
