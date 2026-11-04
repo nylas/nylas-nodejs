@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+Planned version: **8.5.1**.
+
 ### Fixed
 - Preserve upload-session HTTP header map keys while decoding API responses (NYL-476).
 - Patch vulnerable SDK tooling and example HTTP dependencies while preserving TypeDoc compatibility (NYL-471).
