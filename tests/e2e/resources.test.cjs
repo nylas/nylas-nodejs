@@ -31,7 +31,10 @@ async function withServer(run) {
         attachment_id: UPLOADED_ID,
         method: 'PUT',
         url: `http://${req.headers.host}/upload`,
-        headers: { 'Content-Type': 'application/octet-stream' },
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'x-goog-upload-protocol': 'resumable',
+        },
         expires_at: '2099-01-01T00:00:00Z',
         max_size: 157286400,
         size: 10,
@@ -43,7 +46,22 @@ async function withServer(run) {
       data = { attachment_id: UPLOADED_ID, grant_id: 'grant', status: 'ready' };
     }
 
-    res.writeHead(200, { 'Content-Type': 'application/json' });
+    if (
+      req.method === 'PUT' &&
+      req.url === '/upload' &&
+      (req.headers['content-type'] !== 'application/octet-stream' ||
+        req.headers['x-goog-upload-protocol'] !== 'resumable')
+    ) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(
+        JSON.stringify({ error: 'Required upload headers are missing.' })
+      );
+      return;
+    }
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'X-Fixture-Response': 'upload-session',
+    });
     res.end(JSON.stringify({ request_id: 'fixture-request', data }));
   });
   await new Promise((resolve, reject) => {
@@ -352,6 +370,14 @@ test('public upload-session flow can send its completed ID without SDK or fetch 
       body: bytes,
     });
     assert.equal(uploaded.status, 200);
+    assert.deepEqual(created.data.headers, {
+      'Content-Type': 'application/octet-stream',
+      'x-goog-upload-protocol': 'resumable',
+    });
+    assert.equal(created.headers.contentType, 'application/json');
+    assert.equal(created.headers.xFixtureResponse, 'upload-session');
+    assert.equal(created.rawHeaders['content-type'], 'application/json');
+    assert.equal(created.rawHeaders['x-fixture-response'], 'upload-session');
     const completed = await client.attachments.completeUploadSession({
       identifier: 'grant',
       attachmentId: created.data.attachmentId,
@@ -375,6 +401,11 @@ test('public upload-session flow can send its completed ID without SDK or fetch 
       ]
     );
     assert.deepEqual(requests[1].body, bytes);
+    assert.equal(
+      requests[1].headers['content-type'],
+      'application/octet-stream'
+    );
+    assert.equal(requests[1].headers['x-goog-upload-protocol'], 'resumable');
     assert.equal(requests[1].headers.authorization, undefined);
     assert.deepEqual(JSON.parse(requests[3].body).attachments, [
       { id: UPLOADED_ID },
