@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Select JSON or multipart using the complete encoded attachment payload size (NYL-463).
 - Allow attachment metadata without a filename while preserving the filename requirement for outgoing attachments (NYL-458).
 
 ## [8.5.0] - 2026-11-04
