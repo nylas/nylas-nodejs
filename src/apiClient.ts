@@ -160,7 +160,10 @@ export default class APIClient {
     return defaultHeaders;
   }
 
-  private async sendRequest(options: RequestOptionsParams): Promise<Response> {
+  private async sendRequest<T>(
+    options: RequestOptionsParams,
+    readResponse: (response: Response) => Promise<T>
+  ): Promise<T> {
     const req = await this.newRequest(options);
     const controller: AbortController = new AbortController();
 
@@ -181,13 +184,12 @@ export default class APIClient {
     const timeout = setTimeout(() => {
       controller.abort();
     }, timeoutDuration);
+    let responseHeaders: Record<string, string> = {};
 
     try {
       const response = await fetch(req, {
         signal: controller.signal as AbortSignal,
       });
-      clearTimeout(timeout);
-
       if (typeof response === 'undefined') {
         throw new Error('Failed to fetch response');
       }
@@ -197,6 +199,7 @@ export default class APIClient {
         : {};
       const flowId = headers[FLOW_ID_HEADER];
       const requestId = headers[REQUEST_ID_HEADER];
+      responseHeaders = headers;
 
       if (response.status > 299) {
         const text = await this.readResponseBody(response, () =>
@@ -240,21 +243,24 @@ export default class APIClient {
         throw error;
       }
 
-      return response;
+      return await readResponse(response);
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        // Calculate the timeout in seconds for the error message
-        // If we determined it was milliseconds (≥ 1000), convert to seconds for the error
-        const timeoutInSeconds = options.overrides?.timeout
-          ? options.overrides.timeout >= 1000
-            ? options.overrides.timeout / 1000 // Convert ms to s for error message
-            : options.overrides.timeout // Already in seconds
-          : this.timeout / 1000; // Convert ms to s
-        throw new NylasSdkTimeoutError(req.url, timeoutInSeconds);
+      if (
+        controller.signal.aborted ||
+        (error instanceof Error && error.name === 'AbortError')
+      ) {
+        throw new NylasSdkTimeoutError(
+          req.url,
+          timeoutDuration / 1000,
+          responseHeaders[REQUEST_ID_HEADER],
+          responseHeaders[FLOW_ID_HEADER],
+          responseHeaders
+        );
       }
 
-      clearTimeout(timeout);
       throw error;
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
@@ -381,25 +387,29 @@ export default class APIClient {
   }
 
   async request<T>(options: RequestOptionsParams): Promise<T> {
-    const response = await this.sendRequest(options);
-    return this.requestWithResponse(response);
+    return this.sendRequest(options, (response) =>
+      this.requestWithResponse<T>(response)
+    );
   }
 
   async requestRaw(options: RequestOptionsParams): Promise<Buffer> {
-    const response = await this.sendRequest(options);
-    const arrayBuffer = await this.readResponseBody(response, () =>
-      response.arrayBuffer()
-    );
-    return Buffer.from(arrayBuffer);
+    return this.sendRequest(options, async (response) => {
+      const arrayBuffer = await this.readResponseBody(response, () =>
+        response.arrayBuffer()
+      );
+      return Buffer.from(arrayBuffer);
+    });
   }
 
   async requestStream(
     options: RequestOptionsParams
   ): Promise<ReadableStream<Uint8Array>> {
-    const response = await this.sendRequest(options);
-    if (!response.body) {
-      throw new Error('No response body');
-    }
-    return response.body;
+    return this.sendRequest(options, async (response) => {
+      if (!response.body) {
+        throw new Error('No response body');
+      }
+      // The caller owns consumption and cancellation after the stream is returned.
+      return response.body;
+    });
   }
 }
