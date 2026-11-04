@@ -385,7 +385,7 @@ async function parseFormData(
   // Extract boundary from Content-Type header
   const boundaryMatch = contentType.match(/boundary=([^;]+)/);
   if (!boundaryMatch) {
-    throw new Error(`Invalid multipart content type: ${contentType}`);
+    throw new Error('Invalid multipart content type.');
   }
   const boundary = boundaryMatch[1].trim();
 
@@ -498,8 +498,7 @@ export const handler = async (
         statusCode: 500,
         headers: { 'Content-Type': 'application/json', ...corsHeaders },
         body: JSON.stringify({
-          error:
-            'Missing required environment variables (NYLAS_API_KEY, NYLAS_GRANT_ID)',
+          error: 'Service is not configured.',
         }),
       };
     }
@@ -509,11 +508,7 @@ export const handler = async (
     const httpMethod =
       event.httpMethod || (event as any).requestContext?.http?.method || 'GET';
 
-    console.log('Request received:', {
-      httpMethod,
-      requestPath,
-      hasBody: !!event.body,
-    });
+    console.log('Lambda request received.');
 
     // Serve HTML interface on GET /
     if (httpMethod === 'GET' && requestPath === '/') {
@@ -560,31 +555,14 @@ export const handler = async (
         let formData;
         try {
           formData = await parseFormData(body, contentType);
-          console.log('Parsed form data keys:', Object.keys(formData));
-          console.log('Files count:', formData.files?.length || 0);
-          console.log(
-            'Recipient email:',
-            formData.recipientEmail ? 'present' : 'missing'
-          );
-          console.log('Subject:', formData.subject ? 'present' : 'missing');
-          console.log('Message:', formData.message ? 'present' : 'missing');
-        } catch (parseError) {
-          console.error('Error parsing form data:', parseError);
-          console.error('Content-Type:', contentType);
-          console.error('Body length:', body.length);
-          console.error(
-            'Body preview (first 500 chars):',
-            body.substring(0, 500)
-          );
+          console.log('Multipart request parsed.');
+        } catch {
+          console.error('Unable to parse multipart request.');
           return {
             statusCode: 400,
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
             body: JSON.stringify({
               error: 'Failed to parse form data',
-              details:
-                parseError instanceof Error
-                  ? parseError.message
-                  : String(parseError),
             }),
           };
         }
@@ -607,20 +585,12 @@ export const handler = async (
 
         if (missingFields.length > 0) {
           console.error('Missing required fields:', missingFields);
-          console.error('Form data keys:', Object.keys(formData));
-          console.error('Form data values:', {
-            recipientEmail: formData.recipientEmail ? 'present' : 'missing',
-            subject: formData.subject ? 'present' : 'missing',
-            message: formData.message ? 'present' : 'missing',
-            filesCount: formData.files?.length || 0,
-          });
           return {
             statusCode: 400,
             headers: { 'Content-Type': 'application/json', ...corsHeaders },
             body: JSON.stringify({
               error: 'Missing required fields',
               missingFields: missingFields,
-              receivedFields: Object.keys(formData),
             }),
           };
         }
@@ -648,20 +618,6 @@ export const handler = async (
 
         console.log(
           `Sending email with ${attachments.length} attachment(s), total size: ${totalSize} bytes (${totalSize >= threeMB ? '>= 3MB, will use multipart/form-data' : '< 3MB, will use JSON'})`
-        );
-
-        // Output the attachments json without the content
-        console.log(
-          'Attachments JSON:',
-          JSON.stringify(
-            attachments.map((att) => ({
-              filename: att.filename,
-              contentType: att.contentType,
-              size: att.size,
-            })),
-            null,
-            2
-          )
         );
 
         // Prepare the email request
@@ -695,14 +651,6 @@ export const handler = async (
           },
         });
 
-        console.log('Nylas API response received:', {
-          hasResponse: !!response,
-          hasData: !!response?.data,
-          responseKeys: response ? Object.keys(response) : [],
-          dataKeys: response?.data ? Object.keys(response.data) : [],
-          messageId: response?.data?.id,
-        });
-
         // Extract message ID safely (response.data is the Message object)
         const messageId = response?.data?.id || 'unknown';
 
@@ -715,22 +663,21 @@ export const handler = async (
           totalSize: totalSize,
         };
 
-        console.log('Returning success response:', successResponse);
+        console.log('Email request completed.');
 
         return {
           statusCode: 200,
           headers: { 'Content-Type': 'application/json', ...corsHeaders },
           body: JSON.stringify(successResponse),
         };
-      } catch (error) {
-        console.error('Error sending email:', error);
+      } catch {
+        console.error('Email send failed.');
 
         return {
           statusCode: 500,
           headers: { 'Content-Type': 'application/json', ...corsHeaders },
           body: JSON.stringify({
-            error:
-              error instanceof Error ? error.message : 'Unknown error occurred',
+            error: 'Unable to send email.',
           }),
         };
       }
@@ -742,14 +689,13 @@ export const handler = async (
       headers: corsHeaders,
       body: JSON.stringify({ error: 'Not Found' }),
     };
-  } catch (error) {
-    console.error('Unhandled error in handler:', error);
+  } catch {
+    console.error('Lambda request failed.');
     return {
       statusCode: 500,
       headers: { 'Content-Type': 'application/json', ...corsHeaders },
       body: JSON.stringify({
-        error: error instanceof Error ? error.message : 'Internal server error',
-        details: error instanceof Error ? error.stack : String(error),
+        error: 'Internal server error',
       }),
     };
   }

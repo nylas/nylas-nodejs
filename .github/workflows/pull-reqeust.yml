@@ -29,6 +29,14 @@ jobs:
       - name: Check CommonJS and ESM package imports
         run: npm run test:package
 
+      - name: Check AWS Lambda handler error redaction
+        if: matrix.node-version != '18.x'
+        working-directory: examples/aws-lambda
+        run: |
+          npm ci --ignore-scripts
+          npm run type-check
+          npm run test:e2e
+
       - name: Run lint checks
         run: npm run lint:ci
 
