@@ -136,6 +136,9 @@ export function isAttachmentReference(
     throw new TypeError('Invalid attachment.');
   }
   if ('content' in attachment) {
+    if ('id' in attachment) {
+      throw new TypeError('Invalid attachment reference.');
+    }
     return false;
   }
 
@@ -143,7 +146,7 @@ export function isAttachmentReference(
     !Object.prototype.hasOwnProperty.call(attachment, 'id') ||
     typeof attachment.id !== 'string' ||
     !/^[A-Za-z0-9_-]{1,255}$/.test(attachment.id) ||
-    Object.keys(attachment).some(
+    Reflect.ownKeys(attachment).some(
       (key) => key !== 'id' && key !== 'contentId'
     ) ||
     (attachment.contentId !== undefined &&

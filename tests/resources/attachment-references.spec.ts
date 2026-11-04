@@ -3,6 +3,7 @@ import { AttachmentReference } from '../../src/models/attachments';
 import { SendMessageRequest } from '../../src/models/drafts';
 import { Drafts } from '../../src/resources/drafts';
 import { Messages } from '../../src/resources/messages';
+import { TransactionalSend } from '../../src/resources/transactionalSend';
 import { calculateTotalPayloadSize } from '../../src/utils';
 
 describe('uploaded attachment references', () => {
@@ -112,6 +113,43 @@ describe('uploaded attachment references', () => {
       ]);
     }
   });
+
+  it.each(['send', 'createDraft', 'updateDraft', 'transactional'] as const)(
+    'rejects ambiguous references before %s makes an HTTP request',
+    async (operation) => {
+      for (const attachment of [
+        { id: '../invalid-reference', content: undefined },
+        { id: reference.id, unexpected: undefined },
+        { id: reference.id, content: Buffer.from('content') },
+        Object.defineProperty({ id: reference.id }, 'content', {
+          value: undefined,
+        }),
+      ]) {
+        const requestBody = {
+          to: [{ email: 'test@example.com' }],
+          attachments: [attachment],
+        } as SendMessageRequest;
+        const drafts = new Drafts(apiClient);
+        const result =
+          operation === 'send'
+            ? messages.send({ identifier: 'grant', requestBody })
+            : operation === 'createDraft'
+              ? drafts.create({ identifier: 'grant', requestBody })
+              : operation === 'updateDraft'
+                ? drafts.update({
+                    identifier: 'grant',
+                    draftId: 'draft',
+                    requestBody,
+                  })
+                : new TransactionalSend(apiClient).send({
+                    domainName: 'example.com',
+                    requestBody,
+                  });
+        await expect(result).rejects.toThrow('Invalid attachment reference.');
+        expect(request).not.toHaveBeenCalled();
+      }
+    }
+  );
 
   it.each([
     {},
