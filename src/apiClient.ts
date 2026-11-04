@@ -371,6 +371,17 @@ export default class APIClient {
         },
         ['metadata']
       );
+      // Upload-session headers are an opaque HTTP header map. Preserve their
+      // names while keeping the deprecated top-level response headers camelCase.
+      const dataHeaders = parsed?.data?.headers;
+      if (
+        dataHeaders !== null &&
+        typeof dataHeaders === 'object' &&
+        !Array.isArray(dataHeaders) &&
+        Object.values(dataHeaders).every((value) => typeof value === 'string')
+      ) {
+        payload.data.headers = dataHeaders;
+      }
       // Attach rawHeaders as a non-enumerable property to avoid breaking deep equality
       Object.defineProperty(payload, 'rawHeaders', {
         value: headers,
