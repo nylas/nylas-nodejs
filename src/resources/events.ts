@@ -1,5 +1,8 @@
 import { Overrides } from '../config.js';
 import {
+  BatchEventsQueryParams,
+  BatchEventsRequest,
+  BatchEventsResponse,
   CreateEventQueryParams,
   CreateEventRequest,
   DestroyEventQueryParams,
@@ -50,6 +53,17 @@ export interface CreateEventParams {
   identifier: string;
   requestBody: CreateEventRequest;
   queryParams: CreateEventQueryParams;
+}
+
+/**
+ * @property identifier The identifier of the grant to act upon
+ * @property requestBody The ordered event operations to execute
+ * @property queryParams The query parameters applied to every operation
+ */
+export interface BatchEventsParams {
+  identifier: string;
+  requestBody: BatchEventsRequest;
+  queryParams: BatchEventsQueryParams;
 }
 
 /**
@@ -175,6 +189,29 @@ export class Events extends Resource {
       path: makePathParams('/v3/grants/{identifier}/events', { identifier }),
       queryParams,
       requestBody,
+      overrides,
+    });
+  }
+
+  /**
+   * Create, update, or delete events in a single call (Google and Microsoft).
+   * HTTP 207 responses return normally; inspect each result's status and error.
+   * Operations are not automatically retried or split into smaller batches.
+   * @return The ordered results of the batch operations
+   */
+  public batch({
+    identifier,
+    requestBody,
+    queryParams,
+    overrides,
+  }: BatchEventsParams & Overrides): Promise<BatchEventsResponse> {
+    return this.apiClient.request<BatchEventsResponse>({
+      method: 'POST',
+      path: makePathParams('/v3/grants/{identifier}/events/batch', {
+        identifier,
+      }),
+      queryParams,
+      body: requestBody,
       overrides,
     });
   }
