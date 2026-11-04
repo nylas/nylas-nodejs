@@ -9,7 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Preserve null array elements and nested JSON arrays during property-name conversion (NYL-464).
+- Keep raw server response bodies out of parse failure messages (NYL-470).
+- Enforce configured timeouts while consuming buffered response bodies (NYL-465).
+- Wrap response body read failures in typed SDK errors with available request context (NYL-460).
 - Allow attachment metadata without a filename while preserving the filename requirement for outgoing attachments (NYL-458).
+- Restore CommonJS named exports and the default client class type, and correctly identify ESM declarations under modern TypeScript module resolution (NYL-459).
 
 ## [8.5.0] - 2026-11-04
 
