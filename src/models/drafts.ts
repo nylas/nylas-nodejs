@@ -1,7 +1,10 @@
 import { BaseMessage } from './messages.js';
 import { ListQueryParams } from './listQueryParams.js';
 import { EmailName } from './events.js';
-import { CreateAttachmentRequest } from './attachments.js';
+import {
+  CreateAttachmentRequest,
+  SendAttachmentRequest,
+} from './attachments.js';
 
 export interface CustomHeader {
   /**
@@ -81,7 +84,14 @@ export interface CreateDraftRequest {
 /**
  * Interface representing a request to send a message.
  */
-export interface SendMessageRequest extends CreateDraftRequest {
+export interface SendMessageRequest extends Omit<
+  CreateDraftRequest,
+  'attachments'
+> {
+  /**
+   * Files to attach, including references to completed large-attachment uploads.
+   */
+  attachments?: SendAttachmentRequest[];
   /**
    * An array of message senders.
    */

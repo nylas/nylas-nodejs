@@ -4,7 +4,11 @@ import * as path from 'node:path';
 import * as mime from 'mime-types';
 import { Readable } from 'node:stream';
 import { File as _File, Blob as _Blob } from 'formdata-node';
-import { CreateAttachmentRequest } from './models/attachments.js';
+import {
+  AttachmentReference,
+  CreateAttachmentRequest,
+  SendAttachmentRequest,
+} from './models/attachments.js';
 
 export function createFileRequestBuilder(
   filePath: string
@@ -85,11 +89,20 @@ export function attachmentStreamToFile(
  * @param attachments The attachments to encode.
  * @returns The attachments with their content encoded to base64.
  */
-export async function encodeAttachmentContent(
+export function encodeAttachmentContent(
   attachments: CreateAttachmentRequest[]
-): Promise<CreateAttachmentRequest[]> {
+): Promise<CreateAttachmentRequest[]>;
+export function encodeAttachmentContent(
+  attachments: SendAttachmentRequest[]
+): Promise<SendAttachmentRequest[]>;
+export async function encodeAttachmentContent(
+  attachments: SendAttachmentRequest[]
+): Promise<SendAttachmentRequest[]> {
   return await Promise.all(
     attachments.map(async (attachment) => {
+      if (isAttachmentReference(attachment)) {
+        return { ...attachment };
+      }
       let base64EncodedContent: string;
 
       if (attachment.content instanceof Readable) {
@@ -106,6 +119,40 @@ export async function encodeAttachmentContent(
       return { ...attachment, content: base64EncodedContent };
     })
   );
+}
+
+/**
+ * Validate and identify references before encoding or assembling multipart data.
+ * @ignore Not for public use.
+ */
+export function isAttachmentReference(
+  attachment: SendAttachmentRequest
+): attachment is AttachmentReference {
+  if (
+    !attachment ||
+    typeof attachment !== 'object' ||
+    Array.isArray(attachment)
+  ) {
+    throw new TypeError('Invalid attachment.');
+  }
+  if ('content' in attachment) {
+    return false;
+  }
+
+  if (
+    !Object.prototype.hasOwnProperty.call(attachment, 'id') ||
+    typeof attachment.id !== 'string' ||
+    !/^[A-Za-z0-9_-]{1,255}$/.test(attachment.id) ||
+    Object.keys(attachment).some(
+      (key) => key !== 'id' && key !== 'contentId'
+    ) ||
+    (attachment.contentId !== undefined &&
+      (typeof attachment.contentId !== 'string' ||
+        !/^[A-Za-z0-9_.@-]{1,255}$/.test(attachment.contentId)))
+  ) {
+    throw new TypeError('Invalid attachment reference.');
+  }
+  return true;
 }
 
 /**
