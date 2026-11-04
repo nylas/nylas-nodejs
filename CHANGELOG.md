@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Keep raw server response bodies out of parse failure messages (NYL-470).
 - Wrap response body read failures in typed SDK errors with available request context (NYL-460).
 - Allow attachment metadata without a filename while preserving the filename requirement for outgoing attachments (NYL-458).
 

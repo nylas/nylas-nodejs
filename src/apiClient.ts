@@ -230,10 +230,10 @@ export default class APIClient {
             );
           }
         } catch {
-          throw new Error(
-            `Received an error but could not parse response from the server${
-              flowId ? ` with flow ID ${flowId}` : ''
-            }: ${text}`
+          throw this.responseError(
+            response,
+            'sdk.response_parse_error',
+            'Received an error but could not parse response from the server.'
           );
         }
 
@@ -311,6 +311,27 @@ export default class APIClient {
     return new Request(newOptions.url, requestInit);
   }
 
+  private responseError(
+    response: Response,
+    type: string,
+    message: string
+  ): NylasApiError {
+    const headers = response?.headers?.entries
+      ? Object.fromEntries(response.headers.entries())
+      : {};
+    const requestId = headers[REQUEST_ID_HEADER];
+    return new NylasApiError(
+      {
+        requestId,
+        error: { type, message },
+      },
+      response.status,
+      requestId,
+      headers[FLOW_ID_HEADER],
+      headers
+    );
+  }
+
   private async readResponseBody<T>(
     response: Response,
     read: () => Promise<T>
@@ -318,22 +339,10 @@ export default class APIClient {
     try {
       return await read();
     } catch {
-      const headers = response?.headers?.entries
-        ? Object.fromEntries(response.headers.entries())
-        : {};
-      const requestId = headers[REQUEST_ID_HEADER];
-      throw new NylasApiError(
-        {
-          requestId,
-          error: {
-            type: 'sdk.response_body_error',
-            message: 'Failed to read response from the server.',
-          },
-        },
-        response.status,
-        requestId,
-        headers[FLOW_ID_HEADER],
-        headers
+      throw this.responseError(
+        response,
+        'sdk.response_body_error',
+        'Failed to read response from the server.'
       );
     }
   }
@@ -363,7 +372,11 @@ export default class APIClient {
       });
       return payload;
     } catch {
-      throw new Error(`Could not parse response from the server: ${text}`);
+      throw this.responseError(
+        response,
+        'sdk.response_parse_error',
+        'Could not parse response from the server.'
+      );
     }
   }
 
