@@ -1022,6 +1022,92 @@ describe('APIClient', () => {
       });
     });
 
+    describe('buffered response timeout', () => {
+      beforeEach(() => {
+        jest.useFakeTimers();
+      });
+
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+
+      it.each(['json', 'binary', 'error'])(
+        'should time out a stalled %s body after receiving response headers',
+        async (kind) => {
+          let startReading!: () => void;
+          const readingStarted = new Promise<void>((resolve) => {
+            startReading = resolve;
+          });
+          fetchMock.mockImplementationOnce((_request, init) => {
+            const read = (): Promise<never> =>
+              new Promise((_resolve, reject) => {
+                init?.signal?.addEventListener('abort', () => {
+                  const error = new Error('The operation was aborted');
+                  error.name = 'AbortError';
+                  reject(error);
+                });
+                startReading();
+              });
+            return Promise.resolve({
+              status: kind === 'error' ? 503 : 200,
+              headers: new Map([
+                ['x-request-id', 'timeout-request-id'],
+                ['x-fastly-id', 'timeout-flow-id'],
+              ]),
+              text: read,
+              arrayBuffer: read,
+            } as unknown as Response);
+          });
+
+          const options = {
+            path: '/test',
+            method: 'GET',
+            overrides: { timeout: 0.01 },
+          };
+          const pending =
+            kind === 'binary'
+              ? client.requestRaw(options)
+              : client.request(options);
+          const result = expect(pending).rejects.toMatchObject({
+            timeout: 0.01,
+            requestId: 'timeout-request-id',
+            flowId: 'timeout-flow-id',
+          });
+
+          await readingStarted;
+          expect(jest.getTimerCount()).toBe(1);
+          await jest.advanceTimersByTimeAsync(10);
+          await result;
+          expect(jest.getTimerCount()).toBe(0);
+        }
+      );
+
+      it('should clear the timer when fetch rejects with AbortError', async () => {
+        const error = new Error('The operation was aborted');
+        error.name = 'AbortError';
+        fetchMock.mockRejectedValueOnce(error);
+
+        await expect(
+          client.request({ path: '/test', method: 'GET' })
+        ).rejects.toBeInstanceOf(NylasSdkTimeoutError);
+        expect(jest.getTimerCount()).toBe(0);
+      });
+
+      it('should release the timer when handing a stream to the caller', async () => {
+        const body = {} as ReadableStream<Uint8Array>;
+        fetchMock.mockResolvedValueOnce({
+          status: 200,
+          headers: new Map(),
+          body,
+        } as unknown as Response);
+
+        expect(
+          await client.requestStream({ path: '/test', method: 'GET' })
+        ).toBe(body);
+        expect(jest.getTimerCount()).toBe(0);
+      });
+    });
+
     describe('requestStream', () => {
       it('should return readable stream response', async () => {
         const mockStream = { pipe: jest.fn(), on: jest.fn() };
