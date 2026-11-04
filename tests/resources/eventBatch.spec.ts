@@ -91,6 +91,33 @@ describe('Events batch', () => {
     );
   });
 
+  it.each([
+    undefined,
+    null,
+    123,
+    {},
+    '',
+    ' \t\n',
+    '.',
+    '..',
+    '%2e',
+    '%2E%2e',
+    '.%2e',
+    '%2e.',
+  ])(
+    'rejects an invalid grant identifier before sending HTTP: %p',
+    (identifier) => {
+      expect(() =>
+        events.batch({
+          identifier: identifier as unknown as string,
+          queryParams,
+          requestBody,
+        })
+      ).toThrow(new TypeError('Invalid grant identifier.'));
+      expect(fetchMock).not.toHaveBeenCalled();
+    }
+  );
+
   it('sends all operations and shared query parameters with wire casing and overrides', async () => {
     fetchMock.mockResponseOnce(
       JSON.stringify({ request_id: 'request-fixture', data: [] })

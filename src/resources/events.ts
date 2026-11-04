@@ -205,6 +205,16 @@ export class Events extends Resource {
     queryParams,
     overrides,
   }: BatchEventsParams & Overrides): Promise<BatchEventsResponse> {
+    // URL parsing normalizes dot segments, including encoded dots. Reject them
+    // before they can change the grant-scoped request path.
+    if (
+      typeof identifier !== 'string' ||
+      !identifier.trim() ||
+      /^(?:\.|%2e){1,2}$/i.test(identifier)
+    ) {
+      throw new TypeError('Invalid grant identifier.');
+    }
+
     return this.apiClient.request<BatchEventsResponse>({
       method: 'POST',
       path: makePathParams('/v3/grants/{identifier}/events/batch', {
