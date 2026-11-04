@@ -338,6 +338,31 @@ describe('APIClient', () => {
     });
 
     describe('requestWithResponse', () => {
+      it('should wrap response body read failures with request context', async () => {
+        const response = {
+          status: 200,
+          headers: new Map([
+            ['x-request-id', 'body-request-id'],
+            ['x-fastly-id', 'body-flow-id'],
+          ]),
+          text: jest.fn().mockRejectedValue(new TypeError('terminated')),
+        };
+
+        await expect(
+          client.requestWithResponse(response as unknown as Response)
+        ).rejects.toMatchObject({
+          type: 'sdk.response_body_error',
+          message: 'Failed to read response from the server.',
+          statusCode: 200,
+          requestId: 'body-request-id',
+          flowId: 'body-flow-id',
+          headers: {
+            'x-request-id': 'body-request-id',
+            'x-fastly-id': 'body-flow-id',
+          },
+        });
+      });
+
       it('should return the data if the response is valid', async () => {
         const mockFlowId = 'test-flow-123';
         const mockHeaders = {
@@ -413,6 +438,22 @@ describe('APIClient', () => {
     });
 
     describe('request', () => {
+      it('should wrap errors reading an unsuccessful response body', async () => {
+        fetchMock.mockResolvedValueOnce({
+          status: 503,
+          headers: new Map([['x-request-id', 'body-request-id']]),
+          text: jest.fn().mockRejectedValue(new TypeError('terminated')),
+        } as unknown as Response);
+
+        await expect(
+          client.request({ path: '/test', method: 'GET' })
+        ).rejects.toMatchObject({
+          type: 'sdk.response_body_error',
+          statusCode: 503,
+          requestId: 'body-request-id',
+        });
+      });
+
       it('should return a response if the response is valid', async () => {
         const mockFlowId = 'test-flow-abc';
         const mockHeaders = {
@@ -928,6 +969,30 @@ describe('APIClient', () => {
     });
 
     describe('requestRaw', () => {
+      it('should wrap binary body read failures in a typed API error', async () => {
+        fetchMock.mockResolvedValueOnce({
+          status: 200,
+          headers: new Map([
+            ['x-request-id', 'download-request-id'],
+            ['x-fastly-id', 'download-flow-id'],
+          ]),
+          arrayBuffer: jest.fn().mockRejectedValue(new TypeError('terminated')),
+        } as unknown as Response);
+
+        const error = await client
+          .requestRaw({ path: '/test', method: 'GET' })
+          .catch((caught: unknown) => caught);
+
+        expect(error).toBeInstanceOf(NylasApiError);
+        expect(error).toMatchObject({
+          type: 'sdk.response_body_error',
+          message: 'Failed to read response from the server.',
+          statusCode: 200,
+          requestId: 'download-request-id',
+          flowId: 'download-flow-id',
+        });
+      });
+
       it('should return raw buffer response', async () => {
         const testData = 'raw binary data';
         const textEncoder = new TextEncoder();

@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-- Use patched glob, minimatch, and Undici versions in compatible tooling and serverless example dependencies (NYL-471).
+- Patch vulnerable SDK tooling and example HTTP dependencies while preserving TypeDoc compatibility (NYL-471).
+- Wrap response body read failures in typed SDK errors with available request context (NYL-460).
 - Allow attachment metadata without a filename while preserving the filename requirement for outgoing attachments (NYL-458).
+- Restore CommonJS named exports and the default client class type, and correctly identify ESM declarations under modern TypeScript module resolution (NYL-459).
 
 ## [8.5.0] - 2026-11-04
 
