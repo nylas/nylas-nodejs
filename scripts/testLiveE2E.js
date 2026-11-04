@@ -231,6 +231,99 @@ function validateUploadSession(session, config, bytes, filename) {
   return { url, headers };
 }
 
+function isMessageInTrash(message, trashFolderIds) {
+  return (
+    Array.isArray(message?.folders) &&
+    message.folders.some((folder) => trashFolderIds.has(folder))
+  );
+}
+
+async function cleanupOwnedObject(resource, options) {
+  const {
+    identifier,
+    id,
+    idKey,
+    subjects,
+    recipient,
+    isMessage,
+    trashFolderIds,
+  } = options;
+  const params = { identifier, [idKey]: id };
+  const read = async () => {
+    try {
+      const result = await resource.find(params);
+      check(
+        subjects.has(result.data?.subject) &&
+          selfRecipient(result.data, recipient)
+      );
+      return result.data;
+    } catch (error) {
+      if ([404, 410].includes(statusCode(error))) return undefined;
+      throw error;
+    }
+  };
+  const existing = await read();
+  if (!existing || (isMessage && isMessageInTrash(existing, trashFolderIds)))
+    return;
+  // The documented default is a soft delete. Never request hard_delete or
+  // repeatedly delete a still-visible trashed message to force a 404.
+  try {
+    await resource.destroy(params);
+  } catch (error) {
+    if (![404, 410].includes(statusCode(error))) throw error;
+  }
+  await poll(
+    async () => {
+      const current = await read();
+      return (
+        !current || (isMessage && isMessageInTrash(current, trashFolderIds))
+      );
+    },
+    Boolean,
+    5
+  );
+}
+
+function createCleanupManifest() {
+  const directory = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'nylas-live-e2e-state-')
+  );
+  fs.chmodSync(directory, 0o700);
+  const filename = path.join(directory, 'manifest.json');
+  return {
+    write(state) {
+      const serialized = JSON.stringify(state);
+      check(serialized.length <= 65536);
+      const temporary = path.join(directory, 'manifest.next');
+      fs.writeFileSync(temporary, serialized, { mode: 0o600 });
+      fs.renameSync(temporary, filename);
+    },
+    remove() {
+      fs.rmSync(directory, { recursive: true, force: true });
+    },
+    filename,
+  };
+}
+
+async function findTrashFolderIds(client, config, provider) {
+  // Google system label IDs are stable; other providers expose the common
+  // \Trash folder attribute through the Folders API.
+  if (provider === 'google') return new Set(['TRASH']);
+  const ids = new Set();
+  let pageCount = 0;
+  for await (const page of client.folders.list({
+    identifier: config.grantId,
+    queryParams: { limit: 100 },
+  })) {
+    check(++pageCount <= 3 && Array.isArray(page.data));
+    for (const folder of page.data) {
+      if (folder.attributes?.includes('\\Trash')) ids.add(opaqueId(folder.id));
+    }
+  }
+  check(ids.size > 0);
+  return ids;
+}
+
 async function runProviderChecks(Nylas, config, verifyOnly) {
   const client = new Nylas({
     apiKey: config.apiKey,
@@ -254,6 +347,24 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
   const messages = new Set();
   const draftSubjects = new Set();
   const messageSubjects = new Set();
+  const trashFolderIds = await findTrashFolderIds(
+    client,
+    config,
+    grant.provider
+  );
+  const manifest = createCleanupManifest();
+  const createdAt = Date.now();
+  const syncState = () =>
+    manifest.write({
+      version: 1,
+      createdAt,
+      drafts: Array.from(drafts),
+      messages: Array.from(messages),
+      draftSubjects: Array.from(draftSubjects),
+      messageSubjects: Array.from(messageSubjects),
+    });
+  syncState();
+  let cleanupConfirmed = true;
   const createBody = (subject, attachment) => ({
     to: [{ email: config.recipient }],
     subject,
@@ -268,8 +379,14 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
       });
       check(Array.isArray(result.data) && !result.nextCursor);
       for (const item of result.data) {
-        if (item.subject === subject && selfRecipient(item, config.recipient)) {
+        if (
+          item.subject === subject &&
+          selfRecipient(item, config.recipient) &&
+          (resource !== client.messages ||
+            !isMessageInTrash(item, trashFolderIds))
+        ) {
           ids.add(opaqueId(item.id));
+          syncState();
         }
       }
     }
@@ -280,33 +397,33 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
       ['message', client.messages, messages, messageSubjects, 'messageId'],
     ]) {
       if (!ids.size && !subjects.size) continue;
+      const attempted = new Set();
       // Revisit exact synthetic subjects to catch a late self-delivery or an
       // ambiguous POST outcome. No unrelated message is eligible for deletion.
       for (let round = 0; round < 3; round++) {
         try {
           await discover(resource, subjects, ids);
         } catch (error) {
+          cleanupConfirmed = false;
           report('FAIL', `cleanup-${name}-discovery`, error);
         }
         for (const id of Array.from(ids)) {
+          if (attempted.has(id)) continue;
+          attempted.add(id);
           try {
-            await poll(
-              async () => {
-                try {
-                  await resource.destroy({
-                    identifier: config.grantId,
-                    [idKey]: id,
-                  });
-                } catch (error) {
-                  if (![404, 410].includes(statusCode(error))) throw error;
-                }
-                return true;
-              },
-              Boolean,
-              3
-            );
+            await cleanupOwnedObject(resource, {
+              identifier: config.grantId,
+              id,
+              idKey,
+              subjects,
+              recipient: config.recipient,
+              isMessage: name === 'message',
+              trashFolderIds,
+            });
             ids.delete(id);
+            syncState();
           } catch (error) {
+            cleanupConfirmed = false;
             report('FAIL', `cleanup-${name}`, error);
           }
         }
@@ -326,6 +443,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
         );
         report('PASS', `cleanup-${name}-confirmed`);
       } catch (error) {
+        cleanupConfirmed = false;
         report('FAIL', `cleanup-${name}-confirmed`, error);
       }
     }
@@ -347,6 +465,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
               : Readable.from([bytes]),
       });
       draftSubjects.add(subject);
+      syncState();
       const draftId = await step(`draft-${kind}-create-multipart`, async () => {
         const result = await client.drafts.create({
           identifier: config.grantId,
@@ -354,6 +473,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
         });
         const id = opaqueId(result.data?.id);
         drafts.add(id);
+        syncState();
         return id;
       });
       const findDraft = () =>
@@ -391,6 +511,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
       );
       const updatedSubject = `${subject}-updated`;
       draftSubjects.add(updatedSubject);
+      syncState();
       await step(`draft-${kind}-update-multipart`, async () => {
         const result = await client.drafts.update({
           identifier: config.grantId,
@@ -401,6 +522,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
           },
         });
         drafts.add(opaqueId(result.data?.id));
+        syncState();
       });
       const updated = await step(`draft-${kind}-find-updated`, () =>
         poll(findDraft, (result) => result.data?.subject === updatedSubject)
@@ -430,6 +552,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
       drafts.delete(draftId);
       draftSubjects.delete(subject);
       draftSubjects.delete(updatedSubject);
+      syncState();
     }
 
     for (const [index, kind] of ['buffer', 'base64', 'stream'].entries()) {
@@ -443,6 +566,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
             ? bytes.toString('base64')
             : Readable.from([bytes]);
       messageSubjects.add(subject);
+      syncState();
       const messageId = await step(
         `message-${kind}-send-once-to-self`,
         async () => {
@@ -457,6 +581,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
           });
           const id = opaqueId(result.data?.id);
           messages.add(id);
+          syncState();
           return id;
         }
       );
@@ -493,6 +618,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
                 selfRecipient(item, config.recipient)
               ) {
                 messages.add(opaqueId(item.id));
+                syncState();
               }
             }
             return result;
@@ -556,6 +682,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
         );
       });
       messageSubjects.add(subject);
+      syncState();
       const messageId = await step(
         'upload-reference-send-once-to-self',
         async () => {
@@ -566,6 +693,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
           });
           const id = opaqueId(result.data?.id);
           messages.add(id);
+          syncState();
           return id;
         }
       );
@@ -600,6 +728,7 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
                 selfRecipient(item, config.recipient)
               ) {
                 messages.add(opaqueId(item.id));
+                syncState();
               }
             }
             return result;
@@ -620,6 +749,9 @@ async function runProviderChecks(Nylas, config, verifyOnly) {
     report('SKIP', 'transactional-domain-not-configured');
   } finally {
     await cleanup();
+    syncState();
+    if (cleanupConfirmed) manifest.remove();
+    else report('FAIL', 'cleanup-private-manifest-retained');
   }
 }
 
@@ -653,4 +785,10 @@ if (require.main === module) {
     });
 }
 
-module.exports = { configFromFile, validateUploadSession };
+module.exports = {
+  configFromFile,
+  validateUploadSession,
+  isMessageInTrash,
+  cleanupOwnedObject,
+  createCleanupManifest,
+};

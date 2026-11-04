@@ -38,9 +38,21 @@ Send requests are never retried automatically. A different provider reports this
 case as unavailable. No transactional send is attempted without a configured
 domain.
 
-A `finally` block deletes returned object IDs and revisits exact synthetic
-subjects to catch late self-delivery or uncertain write outcomes. Consistency
-polling and cleanup attempts are bounded. Any failed cleanup fails the run.
+A `finally` block cleans up returned object IDs and revisits exact synthetic
+subjects to catch late self-delivery or uncertain write outcomes. Draft deletion
+must become visible as absence. Message cleanup accepts the API's documented
+soft-delete state: membership in the provider's Trash folder, even when the
+message remains readable and retains a Sent label. It never requests irreversible
+`hard_delete` or changes account settings. See the
+[Delete Message contract](https://developer.nylas.com/docs/reference/api/messages/delete-message/).
+
+Consistency polling is bounded, and failed cleanup fails the run. Before writes,
+the runner creates a private `nylas-live-e2e-state-*` directory in the OS temporary
+directory. Its mode-0600 `manifest.json` tracks only synthetic subjects, creation
+time, and owned object IDs. It contains no credentials, email addresses, grant
+IDs, bodies, or upload URLs. Updates are atomic. The manifest is removed after
+confirmed cleanup and retained after failure for targeted recovery; do not rerun
+the full suite to recover an earlier run, because that would create more objects.
 Upload sessions have no SDK delete endpoint and expire through the API's normal
 retention policy.
 

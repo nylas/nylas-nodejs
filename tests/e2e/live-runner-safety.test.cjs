@@ -8,6 +8,7 @@ const { parseEnv } = require('node:util');
 const {
   configFromFile,
   validateUploadSession,
+  createCleanupManifest,
 } = require('../../scripts/testLiveE2E.js');
 
 const grantId = '11111111-1111-4111-8111-111111111111';
@@ -132,3 +133,27 @@ for (const [name, change] of [
     );
   });
 }
+
+test('cleanup manifest is private and preserves bounded synthetic recovery state', (t) => {
+  const manifest = createCleanupManifest();
+  t.after(() => manifest.remove());
+  const state = {
+    version: 1,
+    createdAt: 1,
+    drafts: [],
+    messages: ['fixture-owned-id'],
+    draftSubjects: [],
+    messageSubjects: ['nylas-node-e2e-fixture'],
+  };
+  manifest.write(state);
+  assert.deepEqual(
+    JSON.parse(fs.readFileSync(manifest.filename, 'utf8')),
+    state
+  );
+  assert.equal(fs.statSync(manifest.filename).mode & 0o777, 0o600);
+  assert.equal(
+    fs.statSync(path.dirname(manifest.filename)).mode & 0o777,
+    0o700
+  );
+  assert.throws(() => manifest.write({ oversized: 'x'.repeat(65537) }));
+});
