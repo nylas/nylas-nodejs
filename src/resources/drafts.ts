@@ -87,8 +87,17 @@ export class Drafts extends Resource {
   }: ListDraftsParams & Overrides): AsyncListResponse<
     NylasListResponse<Draft>
   > {
+    const modifiedQueryParams = queryParams
+      ? {
+          ...queryParams,
+          ...(Array.isArray(queryParams.anyEmail)
+            ? { anyEmail: queryParams.anyEmail.join(',') }
+            : {}),
+        }
+      : undefined;
+
     return super._list<NylasListResponse<Draft>>({
-      queryParams,
+      queryParams: modifiedQueryParams,
       overrides,
       path: makePathParams('/v3/grants/{identifier}/drafts', { identifier }),
     });
