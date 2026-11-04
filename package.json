@@ -31,7 +31,8 @@
     "prepare": "npm run build",
     "build:docs": "typedoc --out docs",
     "version": "npm run export-version && git add src/version.ts",
-    "test:package": "node scripts/testPackage.js"
+    "test:package": "node scripts/testPackage.js",
+    "test:e2e": "node scripts/testE2E.js"
   },
   "keywords": [
     "email",

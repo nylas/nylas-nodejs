@@ -29,6 +29,7 @@ const config = {
       statements: 80,
     },
   },
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/tests/e2e/'],
   clearMocks: true,
   collectCoverage: true,
   coverageReporters: ['text', 'cobertura'],
