@@ -5,6 +5,15 @@ async function testPackage() {
   const esm = await import('nylas');
 
   assert.equal(commonjs, commonjs.default);
+  for (const name of [
+    'NylasApiError',
+    'NylasOAuthError',
+    'NylasSdkTimeoutError',
+    'WhenType',
+  ]) {
+    assert.equal(typeof commonjs[name], typeof esm[name]);
+    assert(commonjs[name], `Package must export ${name}`);
+  }
   for (const Nylas of [commonjs, esm.default]) {
     const nylas = new Nylas({ apiKey: 'test-key' });
     assert.equal(typeof nylas.messages.send, 'function');
