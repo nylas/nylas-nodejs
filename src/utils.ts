@@ -278,25 +278,30 @@ export function makePathParams<Path extends string>(
  * @returns The total estimated payload size in bytes
  */
 export function calculateTotalPayloadSize(requestBody: any): number {
-  let totalSize = 0;
+  let encodedContentSize = 0;
+  const attachments = requestBody.attachments?.map((attachment: any) => {
+    const { content, ...metadata } = attachment;
+    const declaredSize =
+      typeof attachment.size === 'number' &&
+      Number.isFinite(attachment.size) &&
+      attachment.size > 0
+        ? 4 * Math.ceil(attachment.size / 3)
+        : 0;
+    let contentSize = 0;
 
-  // Calculate size of the message body (JSON payload without attachments)
-  const messagePayloadWithoutAttachments = {
-    ...requestBody,
-    attachments: undefined,
-  };
-  const messagePayloadString = JSON.stringify(
-    objKeysToSnakeCase(messagePayloadWithoutAttachments, ['metadata'])
-  );
-  totalSize += Buffer.byteLength(messagePayloadString, 'utf8');
+    if (typeof content === 'string') {
+      contentSize = Buffer.byteLength(JSON.stringify(content), 'utf8') - 2;
+    } else if (Buffer.isBuffer(content)) {
+      contentSize = 4 * Math.ceil(content.length / 3);
+    }
 
-  // Add attachment sizes
-  const attachmentSize =
-    requestBody.attachments?.reduce((total: number, attachment: any) => {
-      return total + (attachment.size || 0);
-    }, 0) || 0;
+    // Streams with a declared size can be estimated without consuming them.
+    // Keep declared sizes conservative when they exceed the available content.
+    encodedContentSize += Math.max(contentSize, declaredSize);
+    return content === undefined ? metadata : { ...metadata, content: '' };
+  });
+  const payload = { ...requestBody, attachments };
+  const serialized = JSON.stringify(objKeysToSnakeCase(payload, ['metadata']));
 
-  totalSize += attachmentSize;
-
-  return totalSize;
+  return Buffer.byteLength(serialized, 'utf8') + encodedContentSize;
 }
