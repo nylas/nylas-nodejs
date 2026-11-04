@@ -39,9 +39,16 @@ describe('message JSON payload sizing', () => {
     'transactional',
   ] as const;
 
-  it.each(operations)(
-    '%s uses multipart for a Buffer that expands beyond the JSON limit without a declared size',
-    async (operation) => {
+  it.each(
+    operations.flatMap((operation) =>
+      (['buffer', 'stream'] as const).map((contentType) => ({
+        operation,
+        contentType,
+      }))
+    )
+  )(
+    '$operation uses multipart for an oversized $contentType without a declared size',
+    async ({ operation, contentType }) => {
       const apiClient = new APIClient({
         apiKey: 'test',
         apiUri: 'https://api.us.nylas.com',
@@ -55,7 +62,10 @@ describe('message JSON payload sizing', () => {
           {
             filename: 'file.bin',
             contentType: 'application/octet-stream',
-            content: Buffer.alloc(2.4 * 1024 * 1024),
+            content:
+              contentType === 'buffer'
+                ? Buffer.alloc(2.4 * 1024 * 1024)
+                : Readable.from([Buffer.alloc(2.4 * 1024 * 1024)]),
           },
         ],
       };
