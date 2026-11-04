@@ -53,6 +53,24 @@ export interface CreateAttachmentRequest extends BaseAttachment {
 }
 
 /**
+ * Reference to an attachment prepared with the large-attachment upload API.
+ * @see https://developer.nylas.com/docs/v3/email/send-large-attachments/
+ */
+export interface AttachmentReference {
+  /**
+   * The attachment ID returned by a completed upload session.
+   */
+  id: string;
+  /**
+   * Content ID to reference from the message body when displaying the file inline.
+   */
+  contentId?: string;
+}
+
+export type SendAttachmentRequest =
+  CreateAttachmentRequest | AttachmentReference;
+
+/**
  * Interface of an attachment object from Nylas.
  */
 export interface Attachment extends BaseAttachment {

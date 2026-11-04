@@ -4,7 +4,11 @@ import * as path from 'node:path';
 import * as mime from 'mime-types';
 import { Readable } from 'node:stream';
 import { File as _File, Blob as _Blob } from 'formdata-node';
-import { CreateAttachmentRequest } from './models/attachments.js';
+import {
+  AttachmentReference,
+  CreateAttachmentRequest,
+  SendAttachmentRequest,
+} from './models/attachments.js';
 
 export function createFileRequestBuilder(
   filePath: string
@@ -85,11 +89,20 @@ export function attachmentStreamToFile(
  * @param attachments The attachments to encode.
  * @returns The attachments with their content encoded to base64.
  */
-export async function encodeAttachmentContent(
+export function encodeAttachmentContent(
   attachments: CreateAttachmentRequest[]
-): Promise<CreateAttachmentRequest[]> {
+): Promise<CreateAttachmentRequest[]>;
+export function encodeAttachmentContent(
+  attachments: SendAttachmentRequest[]
+): Promise<SendAttachmentRequest[]>;
+export async function encodeAttachmentContent(
+  attachments: SendAttachmentRequest[]
+): Promise<SendAttachmentRequest[]> {
   return await Promise.all(
     attachments.map(async (attachment) => {
+      if (isAttachmentReference(attachment)) {
+        return { ...attachment };
+      }
       let base64EncodedContent: string;
 
       if (attachment.content instanceof Readable) {
@@ -106,6 +119,43 @@ export async function encodeAttachmentContent(
       return { ...attachment, content: base64EncodedContent };
     })
   );
+}
+
+/**
+ * Validate and identify references before encoding or assembling multipart data.
+ * @ignore Not for public use.
+ */
+export function isAttachmentReference(
+  attachment: SendAttachmentRequest
+): attachment is AttachmentReference {
+  if (
+    !attachment ||
+    typeof attachment !== 'object' ||
+    Array.isArray(attachment)
+  ) {
+    throw new TypeError('Invalid attachment.');
+  }
+  if ('content' in attachment) {
+    if ('id' in attachment) {
+      throw new TypeError('Invalid attachment reference.');
+    }
+    return false;
+  }
+
+  if (
+    !Object.prototype.hasOwnProperty.call(attachment, 'id') ||
+    typeof attachment.id !== 'string' ||
+    !/^[A-Za-z0-9_-]{1,255}$/.test(attachment.id) ||
+    Reflect.ownKeys(attachment).some(
+      (key) => key !== 'id' && key !== 'contentId'
+    ) ||
+    (attachment.contentId !== undefined &&
+      (typeof attachment.contentId !== 'string' ||
+        !/^[A-Za-z0-9_.@-]{1,255}$/.test(attachment.contentId)))
+  ) {
+    throw new TypeError('Invalid attachment reference.');
+  }
+  return true;
 }
 
 /**
@@ -151,32 +201,27 @@ function applyCasing(casingFunction: CasingFunction, input: string): string {
  * @ignore Not for public use.
  */
 function convertCase(
-  obj: Record<string, unknown>,
+  obj: unknown,
   casingFunction: CasingFunction,
   excludeKeys?: string[]
-): Record<string, unknown> {
+): unknown {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => convertCase(item, casingFunction, excludeKeys));
+  }
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
   const newObj = {} as Record<string, unknown>;
-  for (const key in obj) {
+  for (const [key, value] of Object.entries(obj)) {
     if (excludeKeys?.includes(key)) {
-      newObj[key] = obj[key];
-    } else if (Array.isArray(obj[key])) {
-      newObj[applyCasing(casingFunction, key)] = (obj[key] as any[]).map(
-        (item) => {
-          if (typeof item === 'object') {
-            return convertCase(item, casingFunction, excludeKeys);
-          } else {
-            return item;
-          }
-        }
-      );
-    } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+      newObj[key] = value;
+    } else {
       newObj[applyCasing(casingFunction, key)] = convertCase(
-        obj[key] as Record<string, unknown>,
+        value,
         casingFunction,
         excludeKeys
       );
-    } else {
-      newObj[applyCasing(casingFunction, key)] = obj[key];
     }
   }
   return newObj;
@@ -278,25 +323,30 @@ export function makePathParams<Path extends string>(
  * @returns The total estimated payload size in bytes
  */
 export function calculateTotalPayloadSize(requestBody: any): number {
-  let totalSize = 0;
+  let encodedContentSize = 0;
+  const attachments = requestBody.attachments?.map((attachment: any) => {
+    const { content, ...metadata } = attachment;
+    const declaredSize =
+      typeof attachment.size === 'number' &&
+      Number.isFinite(attachment.size) &&
+      attachment.size > 0
+        ? 4 * Math.ceil(attachment.size / 3)
+        : 0;
+    let contentSize = 0;
 
-  // Calculate size of the message body (JSON payload without attachments)
-  const messagePayloadWithoutAttachments = {
-    ...requestBody,
-    attachments: undefined,
-  };
-  const messagePayloadString = JSON.stringify(
-    objKeysToSnakeCase(messagePayloadWithoutAttachments, ['metadata'])
-  );
-  totalSize += Buffer.byteLength(messagePayloadString, 'utf8');
+    if (typeof content === 'string') {
+      contentSize = Buffer.byteLength(JSON.stringify(content), 'utf8') - 2;
+    } else if (Buffer.isBuffer(content)) {
+      contentSize = 4 * Math.ceil(content.length / 3);
+    }
 
-  // Add attachment sizes
-  const attachmentSize =
-    requestBody.attachments?.reduce((total: number, attachment: any) => {
-      return total + (attachment.size || 0);
-    }, 0) || 0;
+    // Streams with a declared size can be estimated without consuming them.
+    // Keep declared sizes conservative when they exceed the available content.
+    encodedContentSize += Math.max(contentSize, declaredSize);
+    return content === undefined ? metadata : { ...metadata, content: '' };
+  });
+  const payload = { ...requestBody, attachments };
+  const serialized = JSON.stringify(objKeysToSnakeCase(payload, ['metadata']));
 
-  totalSize += attachmentSize;
-
-  return totalSize;
+  return Buffer.byteLength(serialized, 'utf8') + encodedContentSize;
 }

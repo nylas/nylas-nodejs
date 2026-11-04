@@ -338,6 +338,59 @@ describe('APIClient', () => {
     });
 
     describe('requestWithResponse', () => {
+      it('should redact malformed response bodies while retaining request context', async () => {
+        const response = {
+          status: 200,
+          headers: new Map([
+            ['x-request-id', 'parse-request-id'],
+            ['x-fastly-id', 'parse-flow-id'],
+          ]),
+          text: jest
+            .fn()
+            .mockResolvedValue(
+              '{"private_fixture_content":"do-not-expose"} invalid'
+            ),
+        };
+
+        const error = await client
+          .requestWithResponse(response as unknown as Response)
+          .catch((caught: unknown) => caught);
+
+        expect(error).toBeInstanceOf(NylasApiError);
+        expect(error).toMatchObject({
+          type: 'sdk.response_parse_error',
+          message: 'Could not parse response from the server.',
+          requestId: 'parse-request-id',
+          flowId: 'parse-flow-id',
+        });
+        expect((error as Error).message).not.toContain('do-not-expose');
+      });
+
+      it('should wrap response body read failures with request context', async () => {
+        const response = {
+          status: 200,
+          headers: new Map([
+            ['x-request-id', 'body-request-id'],
+            ['x-fastly-id', 'body-flow-id'],
+          ]),
+          text: jest.fn().mockRejectedValue(new TypeError('terminated')),
+        };
+
+        await expect(
+          client.requestWithResponse(response as unknown as Response)
+        ).rejects.toMatchObject({
+          type: 'sdk.response_body_error',
+          message: 'Failed to read response from the server.',
+          statusCode: 200,
+          requestId: 'body-request-id',
+          flowId: 'body-flow-id',
+          headers: {
+            'x-request-id': 'body-request-id',
+            'x-fastly-id': 'body-flow-id',
+          },
+        });
+      });
+
       it('should return the data if the response is valid', async () => {
         const mockFlowId = 'test-flow-123';
         const mockHeaders = {
@@ -413,6 +466,52 @@ describe('APIClient', () => {
     });
 
     describe('request', () => {
+      it('should redact malformed error bodies while retaining request context', async () => {
+        fetchMock.mockResolvedValueOnce({
+          status: 502,
+          headers: new Map([
+            ['x-request-id', 'parse-request-id'],
+            ['x-fastly-id', 'parse-flow-id'],
+          ]),
+          text: jest
+            .fn()
+            .mockResolvedValue(
+              '{"private_fixture_content":"do-not-expose"} invalid'
+            ),
+        } as unknown as Response);
+
+        const error = await client
+          .request({ path: '/test', method: 'GET' })
+          .catch((caught: unknown) => caught);
+
+        expect(error).toBeInstanceOf(NylasApiError);
+        expect(error).toMatchObject({
+          type: 'sdk.response_parse_error',
+          message:
+            'Received an error but could not parse response from the server.',
+          statusCode: 502,
+          requestId: 'parse-request-id',
+          flowId: 'parse-flow-id',
+        });
+        expect((error as Error).message).not.toContain('do-not-expose');
+      });
+
+      it('should wrap errors reading an unsuccessful response body', async () => {
+        fetchMock.mockResolvedValueOnce({
+          status: 503,
+          headers: new Map([['x-request-id', 'body-request-id']]),
+          text: jest.fn().mockRejectedValue(new TypeError('terminated')),
+        } as unknown as Response);
+
+        await expect(
+          client.request({ path: '/test', method: 'GET' })
+        ).rejects.toMatchObject({
+          type: 'sdk.response_body_error',
+          statusCode: 503,
+          requestId: 'body-request-id',
+        });
+      });
+
       it('should return a response if the response is valid', async () => {
         const mockFlowId = 'test-flow-abc';
         const mockHeaders = {
@@ -514,7 +613,7 @@ describe('APIClient', () => {
           })
         ).rejects.toThrow(
           new Error(
-            'Received an error but could not parse response from the server: {"invalid":true}'
+            'Received an error but could not parse response from the server.'
           )
         );
       });
@@ -821,9 +920,7 @@ describe('APIClient', () => {
 
         await expect(
           client.requestWithResponse(invalidJsonResponse as any)
-        ).rejects.toThrow(
-          'Could not parse response from the server: invalid json content'
-        );
+        ).rejects.toThrow('Could not parse response from the server.');
       });
 
       it('should handle response without headers.entries method', async () => {
@@ -928,6 +1025,30 @@ describe('APIClient', () => {
     });
 
     describe('requestRaw', () => {
+      it('should wrap binary body read failures in a typed API error', async () => {
+        fetchMock.mockResolvedValueOnce({
+          status: 200,
+          headers: new Map([
+            ['x-request-id', 'download-request-id'],
+            ['x-fastly-id', 'download-flow-id'],
+          ]),
+          arrayBuffer: jest.fn().mockRejectedValue(new TypeError('terminated')),
+        } as unknown as Response);
+
+        const error = await client
+          .requestRaw({ path: '/test', method: 'GET' })
+          .catch((caught: unknown) => caught);
+
+        expect(error).toBeInstanceOf(NylasApiError);
+        expect(error).toMatchObject({
+          type: 'sdk.response_body_error',
+          message: 'Failed to read response from the server.',
+          statusCode: 200,
+          requestId: 'download-request-id',
+          flowId: 'download-flow-id',
+        });
+      });
+
       it('should return raw buffer response', async () => {
         const testData = 'raw binary data';
         const textEncoder = new TextEncoder();
@@ -954,6 +1075,92 @@ describe('APIClient', () => {
 
         expect(result).toBeInstanceOf(Buffer);
         expect(result.toString()).toBe(testData);
+      });
+    });
+
+    describe('buffered response timeout', () => {
+      beforeEach(() => {
+        jest.useFakeTimers();
+      });
+
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+
+      it.each(['json', 'binary', 'error'])(
+        'should time out a stalled %s body after receiving response headers',
+        async (kind) => {
+          let startReading!: () => void;
+          const readingStarted = new Promise<void>((resolve) => {
+            startReading = resolve;
+          });
+          fetchMock.mockImplementationOnce((_request, init) => {
+            const read = (): Promise<never> =>
+              new Promise((_resolve, reject) => {
+                init?.signal?.addEventListener('abort', () => {
+                  const error = new Error('The operation was aborted');
+                  error.name = 'AbortError';
+                  reject(error);
+                });
+                startReading();
+              });
+            return Promise.resolve({
+              status: kind === 'error' ? 503 : 200,
+              headers: new Map([
+                ['x-request-id', 'timeout-request-id'],
+                ['x-fastly-id', 'timeout-flow-id'],
+              ]),
+              text: read,
+              arrayBuffer: read,
+            } as unknown as Response);
+          });
+
+          const options = {
+            path: '/test',
+            method: 'GET',
+            overrides: { timeout: 0.01 },
+          };
+          const pending =
+            kind === 'binary'
+              ? client.requestRaw(options)
+              : client.request(options);
+          const result = expect(pending).rejects.toMatchObject({
+            timeout: 0.01,
+            requestId: 'timeout-request-id',
+            flowId: 'timeout-flow-id',
+          });
+
+          await readingStarted;
+          expect(jest.getTimerCount()).toBe(1);
+          await jest.advanceTimersByTimeAsync(10);
+          await result;
+          expect(jest.getTimerCount()).toBe(0);
+        }
+      );
+
+      it('should clear the timer when fetch rejects with AbortError', async () => {
+        const error = new Error('The operation was aborted');
+        error.name = 'AbortError';
+        fetchMock.mockRejectedValueOnce(error);
+
+        await expect(
+          client.request({ path: '/test', method: 'GET' })
+        ).rejects.toBeInstanceOf(NylasSdkTimeoutError);
+        expect(jest.getTimerCount()).toBe(0);
+      });
+
+      it('should release the timer when handing a stream to the caller', async () => {
+        const body = {} as ReadableStream<Uint8Array>;
+        fetchMock.mockResolvedValueOnce({
+          status: 200,
+          headers: new Map(),
+          body,
+        } as unknown as Response);
+
+        expect(
+          await client.requestStream({ path: '/test', method: 'GET' })
+        ).toBe(body);
+        expect(jest.getTimerCount()).toBe(0);
       });
     });
 
