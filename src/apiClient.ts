@@ -160,7 +160,10 @@ export default class APIClient {
     return defaultHeaders;
   }
 
-  private async sendRequest(options: RequestOptionsParams): Promise<Response> {
+  private async sendRequest<T>(
+    options: RequestOptionsParams,
+    readResponse: (response: Response) => Promise<T>
+  ): Promise<T> {
     const req = await this.newRequest(options);
     const controller: AbortController = new AbortController();
 
@@ -181,13 +184,12 @@ export default class APIClient {
     const timeout = setTimeout(() => {
       controller.abort();
     }, timeoutDuration);
+    let responseHeaders: Record<string, string> = {};
 
     try {
       const response = await fetch(req, {
         signal: controller.signal as AbortSignal,
       });
-      clearTimeout(timeout);
-
       if (typeof response === 'undefined') {
         throw new Error('Failed to fetch response');
       }
@@ -197,9 +199,12 @@ export default class APIClient {
         : {};
       const flowId = headers[FLOW_ID_HEADER];
       const requestId = headers[REQUEST_ID_HEADER];
+      responseHeaders = headers;
 
       if (response.status > 299) {
-        const text = await response.text();
+        const text = await this.readResponseBody(response, () =>
+          response.text()
+        );
         let error: Error;
         try {
           const parsedError = JSON.parse(text);
@@ -228,31 +233,34 @@ export default class APIClient {
             );
           }
         } catch {
-          throw new Error(
-            `Received an error but could not parse response from the server${
-              flowId ? ` with flow ID ${flowId}` : ''
-            }: ${text}`
+          throw this.responseError(
+            response,
+            'sdk.response_parse_error',
+            'Received an error but could not parse response from the server.'
           );
         }
 
         throw error;
       }
 
-      return response;
+      return await readResponse(response);
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        // Calculate the timeout in seconds for the error message
-        // If we determined it was milliseconds (≥ 1000), convert to seconds for the error
-        const timeoutInSeconds = options.overrides?.timeout
-          ? options.overrides.timeout >= 1000
-            ? options.overrides.timeout / 1000 // Convert ms to s for error message
-            : options.overrides.timeout // Already in seconds
-          : this.timeout / 1000; // Convert ms to s
-        throw new NylasSdkTimeoutError(req.url, timeoutInSeconds);
+      if (
+        controller.signal.aborted ||
+        (error instanceof Error && error.name === 'AbortError')
+      ) {
+        throw new NylasSdkTimeoutError(
+          req.url,
+          timeoutDuration / 1000,
+          responseHeaders[REQUEST_ID_HEADER],
+          responseHeaders[FLOW_ID_HEADER],
+          responseHeaders
+        );
       }
 
-      clearTimeout(timeout);
       throw error;
+    } finally {
+      clearTimeout(timeout);
     }
   }
 
@@ -309,12 +317,48 @@ export default class APIClient {
     return new Request(newOptions.url, requestInit);
   }
 
+  private responseError(
+    response: Response,
+    type: string,
+    message: string
+  ): NylasApiError {
+    const headers = response?.headers?.entries
+      ? Object.fromEntries(response.headers.entries())
+      : {};
+    const requestId = headers[REQUEST_ID_HEADER];
+    return new NylasApiError(
+      {
+        requestId,
+        error: { type, message },
+      },
+      response.status,
+      requestId,
+      headers[FLOW_ID_HEADER],
+      headers
+    );
+  }
+
+  private async readResponseBody<T>(
+    response: Response,
+    read: () => Promise<T>
+  ): Promise<T> {
+    try {
+      return await read();
+    } catch {
+      throw this.responseError(
+        response,
+        'sdk.response_body_error',
+        'Failed to read response from the server.'
+      );
+    }
+  }
+
   async requestWithResponse<T>(response: Response): Promise<T> {
     const headers = response?.headers?.entries
       ? Object.fromEntries(response.headers.entries())
       : {};
     const flowId = headers[FLOW_ID_HEADER];
-    const text = await response.text();
+    const text = await this.readResponseBody(response, () => response.text());
 
     try {
       const parsed = JSON.parse(text);
@@ -334,28 +378,38 @@ export default class APIClient {
       });
       return payload;
     } catch {
-      throw new Error(`Could not parse response from the server: ${text}`);
+      throw this.responseError(
+        response,
+        'sdk.response_parse_error',
+        'Could not parse response from the server.'
+      );
     }
   }
 
   async request<T>(options: RequestOptionsParams): Promise<T> {
-    const response = await this.sendRequest(options);
-    return this.requestWithResponse(response);
+    return this.sendRequest(options, (response) =>
+      this.requestWithResponse<T>(response)
+    );
   }
 
   async requestRaw(options: RequestOptionsParams): Promise<Buffer> {
-    const response = await this.sendRequest(options);
-    const arrayBuffer = await response.arrayBuffer();
-    return Buffer.from(arrayBuffer);
+    return this.sendRequest(options, async (response) => {
+      const arrayBuffer = await this.readResponseBody(response, () =>
+        response.arrayBuffer()
+      );
+      return Buffer.from(arrayBuffer);
+    });
   }
 
   async requestStream(
     options: RequestOptionsParams
   ): Promise<ReadableStream<Uint8Array>> {
-    const response = await this.sendRequest(options);
-    if (!response.body) {
-      throw new Error('No response body');
-    }
-    return response.body;
+    return this.sendRequest(options, async (response) => {
+      if (!response.body) {
+        throw new Error('No response body');
+      }
+      // The caller owns consumption and cancellation after the stream is returned.
+      return response.body;
+    });
   }
 }
