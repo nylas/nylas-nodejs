@@ -88,6 +88,52 @@ describe('Rules', () => {
       expect(result.nextCursor).toBe('outer-cursor');
     });
 
+    it('should normalize every nested page when filling an explicit limit', async () => {
+      apiClient.request
+        .mockResolvedValueOnce({
+          requestId: 'req-1',
+          data: { items: [{ id: 'rule-1' }], nextCursor: 'cursor-2' },
+        })
+        .mockResolvedValueOnce({
+          requestId: 'req-2',
+          data: { items: [{ id: 'rule-2' }], nextCursor: 'cursor-3' },
+        })
+        .mockResolvedValueOnce({
+          requestId: 'req-3',
+          data: { items: [{ id: 'rule-3' }], nextCursor: 'cursor-4' },
+        });
+
+      const result = await rules.list({ queryParams: { limit: 3 } });
+
+      expect(result.data).toEqual([
+        { id: 'rule-1' },
+        { id: 'rule-2' },
+        { id: 'rule-3' },
+      ]);
+      expect(result.requestId).toBe('req-3');
+      expect(result.nextCursor).toBe('cursor-4');
+      expect(apiClient.request).toHaveBeenNthCalledWith(3, {
+        method: 'GET',
+        path: '/v3/rules',
+        queryParams: { limit: 1, pageToken: 'cursor-3' },
+        overrides: undefined,
+      });
+    });
+
+    it('should stop on an exhausted nested page before reaching the limit', async () => {
+      apiClient.request
+        .mockResolvedValueOnce({
+          data: { items: [{ id: 'rule-1' }], nextCursor: 'cursor-2' },
+        })
+        .mockResolvedValueOnce({ data: { items: [] } });
+
+      const result = await rules.list({ queryParams: { limit: 3 } });
+
+      expect(result.data).toEqual([{ id: 'rule-1' }]);
+      expect(result.nextCursor).toBeUndefined();
+      expect(apiClient.request).toHaveBeenCalledTimes(2);
+    });
+
     // Back-compat: the normalization is a no-op when an endpoint returns the normal
     // flat list envelope, so a flat response must still pass through untouched.
     it('should leave a flat list envelope untouched (back-compat)', async () => {

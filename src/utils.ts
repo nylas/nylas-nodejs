@@ -151,32 +151,27 @@ function applyCasing(casingFunction: CasingFunction, input: string): string {
  * @ignore Not for public use.
  */
 function convertCase(
-  obj: Record<string, unknown>,
+  obj: unknown,
   casingFunction: CasingFunction,
   excludeKeys?: string[]
-): Record<string, unknown> {
+): unknown {
+  if (Array.isArray(obj)) {
+    return obj.map((item) => convertCase(item, casingFunction, excludeKeys));
+  }
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
   const newObj = {} as Record<string, unknown>;
-  for (const key in obj) {
+  for (const [key, value] of Object.entries(obj)) {
     if (excludeKeys?.includes(key)) {
-      newObj[key] = obj[key];
-    } else if (Array.isArray(obj[key])) {
-      newObj[applyCasing(casingFunction, key)] = (obj[key] as any[]).map(
-        (item) => {
-          if (typeof item === 'object') {
-            return convertCase(item, casingFunction, excludeKeys);
-          } else {
-            return item;
-          }
-        }
-      );
-    } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+      newObj[key] = value;
+    } else {
       newObj[applyCasing(casingFunction, key)] = convertCase(
-        obj[key] as Record<string, unknown>,
+        value,
         casingFunction,
         excludeKeys
       );
-    } else {
-      newObj[applyCasing(casingFunction, key)] = obj[key];
     }
   }
   return newObj;
