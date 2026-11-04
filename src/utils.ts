@@ -163,7 +163,7 @@ function convertCase(
       newObj[applyCasing(casingFunction, key)] = (obj[key] as any[]).map(
         (item) => {
           if (typeof item === 'object') {
-            return convertCase(item, casingFunction);
+            return convertCase(item, casingFunction, excludeKeys);
           } else {
             return item;
           }
@@ -172,7 +172,8 @@ function convertCase(
     } else if (typeof obj[key] === 'object' && obj[key] !== null) {
       newObj[applyCasing(casingFunction, key)] = convertCase(
         obj[key] as Record<string, unknown>,
-        casingFunction
+        casingFunction,
+        excludeKeys
       );
     } else {
       newObj[applyCasing(casingFunction, key)] = obj[key];

@@ -275,6 +275,48 @@ export type UpdateEventRequest = Omit<
 };
 
 /**
+ * An event operation in a batch. Results are returned in the order provided.
+ */
+export type BatchEventOperation =
+  | { method: 'create'; body: CreateEventRequest }
+  | { method: 'update'; eventId: string; body: UpdateEventRequest }
+  | { method: 'delete'; eventId: string };
+
+/**
+ * Request to create, update, or delete events in a single call.
+ * Batch size and operation validity are checked by the API.
+ */
+export interface BatchEventsRequest {
+  operations: BatchEventOperation[];
+}
+
+/**
+ * The result of the operation at the same index in the request.
+ */
+export interface BatchEventResult {
+  /** The HTTP status of this operation. */
+  status: number;
+  /** The Event from a successful create or update; absent for a delete. */
+  data?: Event;
+  /** Error details for a failed operation. */
+  error?: NylasApiErrorResponseData;
+  /** Seconds to wait before retrying a throttled operation; may be zero. */
+  retryAfter?: number;
+  /**
+   * The provider created the event before a later step failed.
+   * Never retry this operation: doing so would create a duplicate.
+   */
+  providerEventCreated?: boolean;
+}
+
+/**
+ * A batch response, including failed operations returned with HTTP 207.
+ */
+export interface BatchEventsResponse extends NylasBaseResponse {
+  data: BatchEventResult[];
+}
+
+/**
  * Interface representing a request to send RSVP to an event.
  */
 export type SendRsvpRequest = {
@@ -425,6 +467,17 @@ export type UpdateEventQueryParams = CreateEventQueryParams;
  * Interface representing of the query parameters for destroying events.
  */
 export type DestroyEventQueryParams = CreateEventQueryParams;
+
+/**
+ * Query parameters applied to every operation in an Events batch.
+ * Participant notifications default to true; Microsoft rejects false.
+ */
+export interface BatchEventsQueryParams extends CreateEventQueryParams {
+  /** The email address of the grant to use. */
+  grantEmail?: string;
+  /** Comma-separated fields to include in each returned Event. */
+  select?: string;
+}
 
 /**
  * Interface representing of the query parameters for sending RSVP to an event.

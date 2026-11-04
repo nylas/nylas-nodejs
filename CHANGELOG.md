@@ -5,15 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [8.5.0] - 2026-11-04
 
 ### Added
-- Add `EventResource` and optional `resources` fields to event response, create, and update models for room/resource booking (CUST-5373)
-- Add optional `trackingOptions.domainName` support for custom link and open tracking hostnames
-- Add Contact metadata request/response types and `metadataPair` filtering, with contact webhook compatibility documentation
+- Added Events batch endpoint (Google and Microsoft), with typed operations and per-operation results returned for HTTP 207 responses (TT-5544) ([#770](https://github.com/nylas/nylas-nodejs/pull/770)).
+- Add `EventResource` and optional `resources` fields to event response, create, and update models for room/resource booking (CUST-5373) ([#766](https://github.com/nylas/nylas-nodejs/pull/766)).
+- Add optional `trackingOptions.domainName` support for custom link and open tracking hostnames ([#758](https://github.com/nylas/nylas-nodejs/pull/758)).
+- Add Contact metadata request/response types and `metadataPair` filtering, with contact webhook compatibility documentation (NYL-22) ([#759](https://github.com/nylas/nylas-nodejs/pull/759)).
 
 ### Changed
-- Clarify that event `default` visibility is Google-only
+- Clarify that event `default` visibility is Google-only (TDT-2791) ([#754](https://github.com/nylas/nylas-nodejs/pull/754)).
+- Refresh SDK and example dependencies ([#768](https://github.com/nylas/nylas-nodejs/pull/768)).
+
+### Fixed
+- Stop sending the API key as `client_secret` in OAuth token exchange request bodies ([#753](https://github.com/nylas/nylas-nodejs/pull/753)).
+- Preserve custom metadata keys in nested request and response objects, including batch events ([#770](https://github.com/nylas/nylas-nodejs/pull/770)).
+- Reject invalid Events batch grant identifiers before sending HTTP requests ([#770](https://github.com/nylas/nylas-nodejs/pull/770)).
+- Restore SDK reference documentation deployment using Cloudflare Wrangler (TW-7440) ([#763](https://github.com/nylas/nylas-nodejs/pull/763)).
 
 ## [8.4.0] - 2026-06-24
 
