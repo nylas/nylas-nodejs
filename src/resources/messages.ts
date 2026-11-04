@@ -247,24 +247,25 @@ export class Messages extends Resource {
       overrides,
     };
 
-    // Use form data if the total payload size (body + attachments) is greater than 3mb
-    const totalPayloadSize = calculateTotalPayloadSize(requestBody);
+    // Streams without a declared size must be encoded before their size is known.
+    if (
+      requestBody.attachments &&
+      calculateTotalPayloadSize(requestBody) <
+        Messages.MAXIMUM_JSON_ATTACHMENT_SIZE
+    ) {
+      requestBody = {
+        ...requestBody,
+        attachments: await encodeAttachmentContent(requestBody.attachments),
+      };
+    }
 
-    if (totalPayloadSize >= Messages.MAXIMUM_JSON_ATTACHMENT_SIZE) {
+    if (
+      calculateTotalPayloadSize(requestBody) >=
+      Messages.MAXIMUM_JSON_ATTACHMENT_SIZE
+    ) {
       requestOptions.form = Messages._buildFormRequest(requestBody);
     } else {
-      if (requestBody.attachments) {
-        const processedAttachments = await encodeAttachmentContent(
-          requestBody.attachments
-        );
-
-        requestOptions.body = {
-          ...requestBody,
-          attachments: processedAttachments,
-        };
-      } else {
-        requestOptions.body = requestBody;
-      }
+      requestOptions.body = requestBody;
     }
 
     return this.apiClient.request(requestOptions);
