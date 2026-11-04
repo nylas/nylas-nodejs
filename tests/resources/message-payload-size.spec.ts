@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream';
 import APIClient from '../../src/apiClient';
-import { SendMessageRequest } from '../../src/models/drafts';
+import { CreateDraftRequest } from '../../src/models/drafts';
 import { Messages } from '../../src/resources/messages';
 import { Drafts } from '../../src/resources/drafts';
 import { TransactionalSend } from '../../src/resources/transactionalSend';
@@ -56,7 +56,7 @@ describe('message JSON payload sizing', () => {
         headers: {},
       });
       const request = jest.spyOn(apiClient, 'request').mockResolvedValue({});
-      const requestBody: SendMessageRequest = {
+      const requestBody: CreateDraftRequest = {
         to: [{ email: 'test@example.com' }],
         attachments: [
           {

@@ -16,6 +16,7 @@ declare namespace Nylas {
   export import AgentListType = models.AgentListType;
   export import ApplicationDetails = models.ApplicationDetails;
   export import Attachment = models.Attachment;
+  export import AttachmentReference = models.AttachmentReference;
   export import AttachmentUploadSession = models.AttachmentUploadSession;
   export import AttachmentUploadSessionComplete = models.AttachmentUploadSessionComplete;
   export import AttachmentUploadSessionStatusType = models.AttachmentUploadSessionStatusType;
@@ -239,6 +240,7 @@ declare namespace Nylas {
   export import SchedulerAvailabilityResponse = models.SchedulerAvailabilityResponse;
   export import SchedulerAvailabilityTimeSlot = models.SchedulerAvailabilityTimeSlot;
   export import SchedulerSettings = models.SchedulerSettings;
+  export import SendAttachmentRequest = models.SendAttachmentRequest;
   export import SendMessageQueryParams = models.SendMessageQueryParams;
   export import SendMessageRequest = models.SendMessageRequest;
   export import SendRsvpQueryParams = models.SendRsvpQueryParams;
