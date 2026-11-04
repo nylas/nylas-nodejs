@@ -9,7 +9,8 @@
     "remove": "dotenv -e .env -- serverless remove",
     "logs": "dotenv -e .env -- serverless logs -f sendAttachment -t",
     "build:manual": "ts-node build-manual.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test:e2e": "node --test tests/handler.e2e.cjs"
   },
   "keywords": [
     "aws",

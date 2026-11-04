@@ -32,6 +32,14 @@ jobs:
       - name: Run packed SDK end-to-end tests
         run: npm run test:e2e
 
+      - name: Check AWS Lambda handler error redaction
+        if: matrix.node-version != '18.x'
+        working-directory: examples/aws-lambda
+        run: |
+          npm ci --ignore-scripts
+          npm run type-check
+          npm run test:e2e
+
       - name: Run lint checks
         run: npm run lint:ci
 

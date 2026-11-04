@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- Redact request bodies, provider errors, and stack traces from AWS Lambda example errors and logs (NYL-473).
 - Support validated completed-upload attachment references in JSON and multipart message sends and draft requests (NYL-469).
 - Select JSON or multipart using the complete encoded attachment payload size (NYL-463).
 - Serialize draft anyEmail filters as a single comma-separated query value (NYL-462).
