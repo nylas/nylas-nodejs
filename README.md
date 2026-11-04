@@ -129,66 +129,6 @@ Runnable examples live in [`examples/`](examples/) — including [agent accounts
 
 For full sample apps and product quickstarts, browse [**nylas-samples** on GitHub](https://github.com/orgs/nylas-samples/repositories?q=node) — every official SDK has Email, Calendar, Contacts, Scheduler, and Webhooks quickstarts.
 
-### Batch event operations
-
-For Google and Microsoft calendars, `events.batch()` creates, updates, and deletes
-events in one request. All operations share the query parameters. HTTP 207 returns
-normally, even when every operation failed; each result corresponds to the operation
-at the same index. The SDK does not split batches or retry failed operations.
-
-```ts
-import type { BatchEventOperation } from 'nylas';
-
-const queryParams = { calendarId: 'primary' };
-const operations: BatchEventOperation[] = [
-  {
-    method: 'create',
-    body: {
-      title: 'Standup',
-      when: { startTime: 1798794000, endTime: 1798795800 },
-    },
-  },
-  { method: 'update', eventId: 'EVENT_ID_1', body: { title: 'Renamed' } },
-  { method: 'delete', eventId: 'EVENT_ID_2' },
-];
-const result = await nylas.events.batch({
-  identifier: grantId,
-  queryParams,
-  requestBody: { operations },
-});
-
-const retryOperations: BatchEventOperation[] = [];
-let retryDelay = 0;
-for (const [index, item] of result.data.entries()) {
-  console.log(index, item.status, item.data?.id);
-
-  // A later step can fail after the provider created the event. Never retry it.
-  if (item.providerEventCreated) continue;
-
-  if (item.status === 429 || item.status === 503) {
-    retryOperations.push(operations[index]);
-    // Honor retryAfter, including zero. Choose an application backoff if absent.
-    retryDelay = Math.max(retryDelay, item.retryAfter ?? 1);
-  }
-}
-
-// Optional caller-controlled retry: one attempt, only for the selected failures.
-if (retryOperations.length > 0) {
-  await new Promise((resolve) => setTimeout(resolve, retryDelay * 1000));
-  const retried = await nylas.events.batch({
-    identifier: grantId,
-    queryParams,
-    requestBody: { operations: retryOperations },
-  });
-  for (const [index, item] of retried.data.entries()) {
-    console.log('Retry result', index, item.status);
-  }
-}
-```
-
-Participant notifications use the server default (`true`) when omitted. Microsoft
-rejects `notifyParticipants: false`. Invalid requests raise the usual `NylasApiError`.
-
 ## 🤖 AI agents
 
 [nylas/skills](https://github.com/nylas/skills) drops Nylas into Claude Code, Cursor, Codex, and other agents that support the skills format:
