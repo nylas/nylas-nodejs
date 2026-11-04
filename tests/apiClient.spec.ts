@@ -338,6 +338,67 @@ describe('APIClient', () => {
     });
 
     describe('requestWithResponse', () => {
+      it('should preserve opaque data header maps without changing response header compatibility', async () => {
+        const uploadHeaders = {
+          'Content-Type': 'application/octet-stream',
+          'x-goog-upload-protocol': 'resumable',
+        };
+        const response = mockResponse(
+          JSON.stringify({
+            request_id: 'upload-request',
+            data: {
+              attachment_id: 'upload-id',
+              content_type: 'application/octet-stream',
+              headers: uploadHeaders,
+              metadata: { Keep_Exact: 'value' },
+            },
+          })
+        );
+        response.headers.set('content-type', 'application/json');
+        response.headers.set('x-fixture-response', 'upload-session');
+
+        const result: any = await client.requestWithResponse(response);
+
+        expect(result.requestId).toBe('upload-request');
+        expect(result.data.attachmentId).toBe('upload-id');
+        expect(result.data.contentType).toBe('application/octet-stream');
+        expect(result.data.headers).toEqual(uploadHeaders);
+        expect(result.data.metadata).toEqual({ Keep_Exact: 'value' });
+        expect(result.headers.contentType).toBe('application/json');
+        expect(result.headers.xFixtureResponse).toBe('upload-session');
+        expect(result.rawHeaders['content-type']).toBe('application/json');
+        expect(result.rawHeaders['x-fixture-response']).toBe('upload-session');
+        expect(Object.keys(result)).not.toContain('rawHeaders');
+      });
+
+      it('should continue converting structured header array fields', async () => {
+        const response = mockResponse(
+          JSON.stringify({
+            data: {
+              headers: [{ header_name: 'Subject', header_value: 'Example' }],
+            },
+          })
+        );
+
+        const result: any = await client.requestWithResponse(response);
+
+        expect(result.data.headers).toEqual([
+          { headerName: 'Subject', headerValue: 'Example' },
+        ]);
+      });
+
+      it('should continue converting header objects that are not string maps', async () => {
+        const response = mockResponse(
+          JSON.stringify({
+            data: { headers: { custom_field: { inner_value: 1 } } },
+          })
+        );
+
+        const result: any = await client.requestWithResponse(response);
+
+        expect(result.data.headers).toEqual({ customField: { innerValue: 1 } });
+      });
+
       it('should redact malformed response bodies while retaining request context', async () => {
         const response = {
           status: 200,
