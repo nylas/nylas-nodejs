@@ -26,3 +26,8 @@ if (!fs.existsSync(esmFolderPath)) {
   fs.mkdirSync(esmFolderPath, { recursive: true });
 }
 fs.writeFileSync(esmPackageJsonPath, esmContent);
+
+// Mark ESM declarations as modules independently of the CommonJS declarations.
+const esmTypesFolderPath = path.join(__dirname, '..', 'lib', 'types', 'esm');
+fs.mkdirSync(esmTypesFolderPath, { recursive: true });
+fs.writeFileSync(path.join(esmTypesFolderPath, 'package.json'), esmContent);
