@@ -298,6 +298,43 @@ test('invalid uploaded references fail before any HTTP request', async () => {
   });
 });
 
+test('ambiguous uploaded references fail before JSON or multipart HTTP requests across resource methods', async (t) => {
+  for (const operation of [
+    'message send',
+    'draft create',
+    'draft update',
+    'transactional send',
+  ]) {
+    for (const largeBody of [false, true]) {
+      await t.test(
+        `${operation}: ${largeBody ? 'large' : 'small'} payload rejects ambiguous references`,
+        async () => {
+          await withServer(async (client, requests) => {
+            for (const reference of [
+              { id: '../invalid-reference', content: undefined },
+              { id: UPLOADED_ID, unexpected: undefined },
+              { id: UPLOADED_ID, content: Buffer.from('content') },
+              Object.defineProperty({ id: UPLOADED_ID }, 'content', {
+                value: undefined,
+              }),
+            ]) {
+              await assert.rejects(
+                invoke(client, operation, {
+                  to: [{ email: 'test@example.test' }],
+                  body: largeBody ? 'x'.repeat(JSON_LIMIT) : 'Small body',
+                  attachments: [reference],
+                }),
+                /Invalid attachment reference\./
+              );
+              assert.equal(requests.length, 0);
+            }
+          });
+        }
+      );
+    }
+  }
+});
+
 test('public upload-session flow can send its completed ID without SDK or fetch mocks', async () => {
   await withServer(async (client, requests) => {
     const bytes = Buffer.from('file bytes');
