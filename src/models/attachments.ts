@@ -3,9 +3,10 @@
  */
 interface BaseAttachment {
   /**
-   * Attachment's name.
+   * Attachment's name. Some MIME parts, such as delivery status notifications,
+   * do not have a filename.
    */
-  filename: string;
+  filename?: string;
 
   /**
    * Attachment's content type.
@@ -37,6 +38,11 @@ interface BaseAttachment {
  * Interface of a create attachment request.
  */
 export interface CreateAttachmentRequest extends BaseAttachment {
+  /**
+   * Name of the attachment to send.
+   */
+  filename: string;
+
   /**
    * Content of the attachment.
    * It can either be a readable stream, a base64 encoded string, or a buffer.
