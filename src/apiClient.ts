@@ -209,6 +209,13 @@ export default class APIClient {
         try {
           const parsedError = JSON.parse(text);
           const camelCaseError = objKeysToCamelCase(parsedError);
+          // Prefer the header, but fall back to the request_id in the body so
+          // it is never dropped when the header is absent (e.g. provider errors).
+          const errorRequestId =
+            requestId ??
+            (typeof camelCaseError?.requestId === 'string'
+              ? camelCaseError.requestId
+              : undefined);
 
           // Check if the request is an authentication request
           const isAuthRequest =
@@ -219,7 +226,7 @@ export default class APIClient {
             error = new NylasOAuthError(
               camelCaseError,
               response.status,
-              requestId,
+              errorRequestId,
               flowId,
               headers
             );
@@ -227,7 +234,7 @@ export default class APIClient {
             error = new NylasApiError(
               camelCaseError,
               response.status,
-              requestId,
+              errorRequestId,
               flowId,
               headers
             );
