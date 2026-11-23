@@ -45,11 +45,12 @@ async function inviteNotetaker(): Promise<NylasResponse<Notetaker>> {
 
     const requestBody: CreateNotetakerRequest = {
       meetingLink,
-      name: 'Nylas Notetaker',
-      meetingSettings: {
-        videoRecording: true,
-        audioRecording: true,
+      notetakerSettings: {
+        name: 'Nylas Notetaker',
+        recordingType: 'audio_video',
         transcription: true,
+        summary: true,
+        actionItems: true,
       },
     };
 
@@ -58,7 +59,7 @@ async function inviteNotetaker(): Promise<NylasResponse<Notetaker>> {
     const notetaker = await nylas.notetakers.create({ requestBody });
 
     console.log(`Invited Notetaker with ID: ${notetaker.data.id}`);
-    console.log(`Name: ${notetaker.data.name}`);
+    console.log(`Name: ${notetaker.data.notetakerSettings?.name}`);
     console.log(`State: ${notetaker.data.state}`);
     return notetaker;
   } catch (error) {

@@ -1,6 +1,16 @@
 import APIClient from '../../src/apiClient';
 import { Notetakers } from '../../src/resources/notetakers';
+import {
+  CreateNotetakerRequest,
+  Notetaker,
+  UpdateNotetakerRequest,
+} from '../../src/models/notetakers';
+import { objKeysToCamelCase, objKeysToSnakeCase } from '../../src/utils';
 jest.mock('../../src/apiClient');
+
+// Mirrors how APIClient serializes JSON request bodies.
+const toWireFormat = (body: object): Record<string, unknown> =>
+  objKeysToSnakeCase(body as Record<string, unknown>, ['metadata']);
 
 describe('Notetakers', () => {
   let apiClient: jest.Mocked<APIClient>;
@@ -275,6 +285,107 @@ describe('Notetakers', () => {
       });
     });
 
+    it('should create a notetaker with notetakerSettings', async () => {
+      const requestBody: CreateNotetakerRequest = {
+        meetingLink: 'https://meet.google.com/abc-defg-hij',
+        notetakerSettings: {
+          name: 'Nylas Notetaker',
+          recordingType: 'audio',
+          transcription: true,
+          transcriptionSettings: {
+            expectedLanguages: ['en', 'es'],
+            fallbackLanguage: 'en',
+            keywords: ['Nylas'],
+            useSpeakerNamesAsKeywords: true,
+          },
+          summary: true,
+          summarySettings: { customInstructions: 'Use bullet points.' },
+          actionItems: true,
+          actionItemsSettings: { customInstructions: 'Top 5 only.' },
+          leaveAfterSilenceSeconds: 600,
+          leaveDetectionDelaySeconds: 30,
+          messages: {
+            onJoin: [{ type: 'text', content: 'Hello', sendAfterMs: 1000 }],
+            onParticipantJoin: [
+              { type: 'text', content: 'Welcome', debounceMs: 5000 },
+            ],
+          },
+          videoOutput: { mediaType: 'image/png', data: 'aGVsbG8=' },
+          retentionTime: 604800,
+        },
+      };
+
+      await notetakers.create({
+        identifier: 'id123',
+        requestBody,
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/grants/id123/notetakers',
+        body: requestBody,
+      });
+      expect(toWireFormat(requestBody)).toEqual({
+        meeting_link: 'https://meet.google.com/abc-defg-hij',
+        notetaker_settings: {
+          name: 'Nylas Notetaker',
+          recording_type: 'audio',
+          transcription: true,
+          transcription_settings: {
+            expected_languages: ['en', 'es'],
+            fallback_language: 'en',
+            keywords: ['Nylas'],
+            use_speaker_names_as_keywords: true,
+          },
+          summary: true,
+          summary_settings: { custom_instructions: 'Use bullet points.' },
+          action_items: true,
+          action_items_settings: { custom_instructions: 'Top 5 only.' },
+          leave_after_silence_seconds: 600,
+          leave_detection_delay_seconds: 30,
+          messages: {
+            on_join: [{ type: 'text', content: 'Hello', send_after_ms: 1000 }],
+            on_participant_join: [
+              { type: 'text', content: 'Welcome', debounce_ms: 5000 },
+            ],
+          },
+          video_output: { media_type: 'image/png', data: 'aGVsbG8=' },
+          retention_time: 604800,
+        },
+      });
+    });
+
+    it('should create a notetaker from a configuration', async () => {
+      const requestBody: CreateNotetakerRequest = {
+        meetingLink: 'https://meet.google.com/abc-defg-hij',
+        configId: 'config123',
+      };
+
+      await notetakers.create({ requestBody });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'POST',
+        path: '/v3/notetakers',
+        body: requestBody,
+      });
+      expect(toWireFormat(requestBody)).toEqual({
+        meeting_link: 'https://meet.google.com/abc-defg-hij',
+        config_id: 'config123',
+      });
+    });
+
+    it('should keep a null transcriptionSettings when serializing', () => {
+      const requestBody: CreateNotetakerRequest = {
+        meetingLink: 'https://meet.google.com/abc-defg-hij',
+        notetakerSettings: { transcriptionSettings: null },
+      };
+
+      expect(toWireFormat(requestBody)).toEqual({
+        meeting_link: 'https://meet.google.com/abc-defg-hij',
+        notetaker_settings: { transcription_settings: null },
+      });
+    });
+
     it('should create a notetaker without identifier', async () => {
       const requestBody = {
         meetingLink: 'https://meet.google.com/abc-def-ghi',
@@ -326,6 +437,47 @@ describe('Notetakers', () => {
         method: 'POST',
         path: '/v3/grants/id123/notetakers',
         body: requestBody,
+      });
+    });
+  });
+
+  describe('response', () => {
+    it('should camelCase notetaker_settings in a notetaker response', () => {
+      const notetaker = objKeysToCamelCase({
+        id: 'notetaker123',
+        join_time: 1234567890,
+        meeting_link: 'https://meet.google.com/abc-defg-hij',
+        meeting_provider: 'Google Meet',
+        state: 'scheduled',
+        notetaker_settings: {
+          name: 'Nylas Notetaker',
+          recording_type: 'audio',
+          transcription: true,
+          action_items: true,
+          messages: { on_join: null, on_participant_join: null },
+          video_output: {
+            media_type: 'image/png',
+            size: 1024,
+            preview_url: 'https://example.com/preview.png',
+            preview_url_expires_at: 1234567890,
+          },
+        },
+      }) as Notetaker;
+
+      expect(notetaker.name).toBeUndefined();
+      expect(notetaker.meetingSettings).toBeUndefined();
+      expect(notetaker.notetakerSettings).toEqual({
+        name: 'Nylas Notetaker',
+        recordingType: 'audio',
+        transcription: true,
+        actionItems: true,
+        messages: { onJoin: null, onParticipantJoin: null },
+        videoOutput: {
+          mediaType: 'image/png',
+          size: 1024,
+          previewUrl: 'https://example.com/preview.png',
+          previewUrlExpiresAt: 1234567890,
+        },
       });
     });
   });
@@ -432,6 +584,30 @@ describe('Notetakers', () => {
         method: 'PATCH',
         path: '/v3/grants/id123/notetakers/notetaker123',
         body: requestBody,
+      });
+    });
+
+    it('should update a notetaker with notetakerSettings', async () => {
+      const requestBody: UpdateNotetakerRequest = {
+        notetakerSettings: {
+          recordingType: 'audio_video',
+          summary: false,
+        },
+      };
+
+      await notetakers.update({
+        identifier: 'id123',
+        notetakerId: 'notetaker123',
+        requestBody,
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith({
+        method: 'PATCH',
+        path: '/v3/grants/id123/notetakers/notetaker123',
+        body: requestBody,
+      });
+      expect(toWireFormat(requestBody)).toEqual({
+        notetaker_settings: { recording_type: 'audio_video', summary: false },
       });
     });
 
