@@ -374,6 +374,32 @@ describe('Notetakers', () => {
       });
     });
 
+    it('should type video output uploads separately from stored metadata', () => {
+      const disable: CreateNotetakerRequest = {
+        meetingLink: 'https://meet.google.com/abc-defg-hij',
+        notetakerSettings: { videoOutput: {} },
+      };
+      const missingMediaType: CreateNotetakerRequest = {
+        meetingLink: 'https://meet.google.com/abc-defg-hij',
+        // @ts-expect-error data requires mediaType
+        notetakerSettings: { videoOutput: { data: 'aGVsbG8=' } },
+      };
+      const responseMetadata: CreateNotetakerRequest = {
+        meetingLink: 'https://meet.google.com/abc-defg-hij',
+        notetakerSettings: {
+          // @ts-expect-error stored image metadata is read-only
+          videoOutput: { mediaType: 'image/png', size: 1024 },
+        },
+      };
+
+      expect(toWireFormat(disable)).toEqual({
+        meeting_link: 'https://meet.google.com/abc-defg-hij',
+        notetaker_settings: { video_output: {} },
+      });
+      expect(missingMediaType).toBeDefined();
+      expect(responseMetadata).toBeDefined();
+    });
+
     it('should keep a null transcriptionSettings when serializing', () => {
       const requestBody: CreateNotetakerRequest = {
         meetingLink: 'https://meet.google.com/abc-defg-hij',

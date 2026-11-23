@@ -160,13 +160,13 @@ async function getEventNotetaker(
     console.log(`- Meeting Provider: ${notetaker.data.meetingProvider}`);
     console.log(`- Meeting Settings:`);
     console.log(
-      `  - Video Recording: ${notetaker.data.meetingSettings?.videoRecording}`
+      `  - Video Recording: ${notetaker.data.meetingSettings.videoRecording}`
     );
     console.log(
-      `  - Audio Recording: ${notetaker.data.meetingSettings?.audioRecording}`
+      `  - Audio Recording: ${notetaker.data.meetingSettings.audioRecording}`
     );
     console.log(
-      `  - Transcription: ${notetaker.data.meetingSettings?.transcription}`
+      `  - Transcription: ${notetaker.data.meetingSettings.transcription}`
     );
 
     return notetaker;

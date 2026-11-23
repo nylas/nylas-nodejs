@@ -59,7 +59,9 @@ async function inviteNotetaker(): Promise<NylasResponse<Notetaker>> {
     const notetaker = await nylas.notetakers.create({ requestBody });
 
     console.log(`Invited Notetaker with ID: ${notetaker.data.id}`);
-    console.log(`Name: ${notetaker.data.notetakerSettings?.name}`);
+    console.log(
+      `Name: ${notetaker.data.notetakerSettings?.name ?? notetaker.data.name}`
+    );
     console.log(`State: ${notetaker.data.state}`);
     return notetaker;
   } catch (error) {

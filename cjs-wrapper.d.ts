@@ -182,6 +182,7 @@ declare namespace Nylas {
   export import MicrosoftCreateConnectorSettings = models.MicrosoftCreateConnectorSettings;
   export import Notetaker = models.Notetaker;
   export import NotetakerConfigSettings = models.NotetakerConfigSettings;
+  export import NotetakerConfigSettingsResponse = models.NotetakerConfigSettingsResponse;
   export import NotetakerCustomInstructionsSettings = models.NotetakerCustomInstructionsSettings;
   export import NotetakerLeaveResponse = models.NotetakerLeaveResponse;
   export import NotetakerMedia = models.NotetakerMedia;
@@ -197,6 +198,8 @@ declare namespace Nylas {
   export import NotetakerTranscript = models.NotetakerTranscript;
   export import NotetakerTranscriptionSettings = models.NotetakerTranscriptionSettings;
   export import NotetakerVideoOutput = models.NotetakerVideoOutput;
+  export import NotetakerVideoOutputMediaType = models.NotetakerVideoOutputMediaType;
+  export import NotetakerVideoOutputUpload = models.NotetakerVideoOutputUpload;
   export import NylasApiError = models.NylasApiError;
   export import NylasApiErrorResponse = models.NylasApiErrorResponse;
   export import NylasApiErrorResponseData = models.NylasApiErrorResponseData;

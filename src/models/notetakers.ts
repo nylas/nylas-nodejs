@@ -115,31 +115,49 @@ export interface NotetakerMessages {
 }
 
 /**
- * A static image the Notetaker bot shows as its camera feed.
- * To upload an image, send `mediaType` and `data` together.
- * Send an empty object to disable video output.
+ * The image formats Notetaker accepts for video output.
+ */
+export type NotetakerVideoOutputMediaType =
+  'image/png' | 'image/jpeg' | 'image/webp';
+
+/**
+ * A static image for the Notetaker bot to show as its camera feed.
+ * Send `mediaType` and base64 `data` together to upload an image,
+ * or an empty object to disable video output.
+ */
+export type NotetakerVideoOutputUpload =
+  | {
+      /**
+       * The image MIME type. Must match the actual file content.
+       */
+      mediaType: NotetakerVideoOutputMediaType;
+      /**
+       * The base64-encoded image bytes.
+       */
+      data: string;
+    }
+  | Record<string, never>;
+
+/**
+ * The stored video output image returned in Notetaker responses.
  */
 export interface NotetakerVideoOutput {
   /**
-   * The image MIME type. Required together with `data` when uploading an image.
+   * The image MIME type.
    */
-  mediaType?: 'image/png' | 'image/jpeg' | 'image/webp';
+  mediaType?: NotetakerVideoOutputMediaType;
   /**
-   * The base64-encoded image bytes. Write-only.
+   * The size of the stored image, in bytes.
    */
-  data?: string;
+  size?: number;
   /**
-   * The size of the stored image, in bytes. Read-only.
+   * A signed URL for previewing the stored image. Valid for 1 hour.
    */
-  readonly size?: number;
+  previewUrl?: string;
   /**
-   * A signed URL for previewing the stored image. Read-only.
+   * When `previewUrl` expires, in Unix timestamp format.
    */
-  readonly previewUrl?: string;
-  /**
-   * When `previewUrl` expires, in Unix timestamp format. Read-only.
-   */
-  readonly previewUrlExpiresAt?: number;
+  previewUrlExpiresAt?: number;
 }
 
 /**
@@ -200,12 +218,25 @@ export interface NotetakerConfigSettings {
   /**
    * A static image the Notetaker bot shows as its camera feed.
    */
-  videoOutput?: NotetakerVideoOutput;
+  videoOutput?: NotetakerVideoOutputUpload;
   /**
    * How long Notetaker media is kept before Nylas deletes it, in seconds.
    * Must be between 300 and 2592000.
    */
   retentionTime?: number;
+}
+
+/**
+ * Notetaker settings as returned in Notetaker responses.
+ */
+export interface NotetakerConfigSettingsResponse extends Omit<
+  NotetakerConfigSettings,
+  'videoOutput'
+> {
+  /**
+   * The stored video output image, if one is set.
+   */
+  videoOutput?: NotetakerVideoOutput;
 }
 
 /**
@@ -268,9 +299,10 @@ export interface Notetaker {
   id: string;
   /**
    * The display name for the Notetaker bot.
-   * Returned only for Notetakers created with the deprecated `name` and `meetingSettings` fields.
+   * The API omits this field for Notetakers created with `notetakerSettings`;
+   * read `notetakerSettings.name` for those.
    */
-  name?: string;
+  name: string;
   /**
    * When Notetaker joined the meeting, in Unix timestamp format.
    */
@@ -297,14 +329,15 @@ export interface Notetaker {
   eventId?: string;
   /**
    * Notetaker Meeting Settings.
-   * Returned only for Notetakers created with the deprecated `name` and `meetingSettings` fields.
+   * The API omits this field for Notetakers created with `notetakerSettings`;
+   * read `notetakerSettings` for those.
    */
-  meetingSettings?: NotetakerMeetingSettings;
+  meetingSettings: NotetakerMeetingSettings;
   /**
    * The Notetaker's settings.
    * Returned for Notetakers created or updated with `notetakerSettings`.
    */
-  notetakerSettings?: NotetakerConfigSettings;
+  notetakerSettings?: NotetakerConfigSettingsResponse;
 }
 
 /**
