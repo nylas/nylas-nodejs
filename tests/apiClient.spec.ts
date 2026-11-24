@@ -767,6 +767,46 @@ describe('APIClient', () => {
         }
       });
 
+      it('should set requestId from the response body on provider_error when the header is absent', async () => {
+        const payload = {
+          request_id: 'body-provider-req-id',
+          error: {
+            type: 'api.provider_error',
+            message: 'object was not found on the provider',
+            provider_error: { error: { code: 404 } },
+          },
+        };
+        fetchMock.mockImplementation(() =>
+          Promise.resolve(mockResponse(JSON.stringify(payload), 404))
+        );
+
+        await expect(
+          client.request({
+            path: '/grants/grant-id/messages/send',
+            method: 'POST',
+          })
+        ).rejects.toMatchObject({
+          constructor: NylasApiError,
+          type: 'api.provider_error',
+          statusCode: 404,
+          requestId: 'body-provider-req-id',
+        });
+      });
+
+      it('should prefer the x-request-id header over the body request_id', async () => {
+        const payload = {
+          request_id: 'body-req-id',
+          error: { type: 'api.provider_error', message: 'provider error' },
+        };
+        const mockResp = mockResponse(JSON.stringify(payload), 404);
+        mockResp.headers.set('x-request-id', 'header-req-id');
+        fetchMock.mockImplementation(() => Promise.resolve(mockResp));
+
+        await expect(
+          client.request({ path: '/events', method: 'POST' })
+        ).rejects.toMatchObject({ requestId: 'header-req-id' });
+      });
+
       it('should respect override timeout when provided in seconds (value < 1000)', async () => {
         const overrideTimeout = 2; // 2 second timeout
 

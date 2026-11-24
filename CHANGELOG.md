@@ -13,6 +13,7 @@ Planned version: **9.0.0**, because of the breaking TypeScript changes below.
 - Type `notetakerSettings` on Notetaker create and update requests, `configId` on Notetaker create requests, and `notetakerSettings` on Notetaker responses, matching the current Notetaker API.
 - Type the summary, action item, transcription, silence and message fields on `NotetakerMeetingSettings`.
 - Type `notetakerSettings`, `configId`, `autocreate` and `deduplicationPolicy` on calendar Notetaker settings, `notetakerSettings` and `deduplicationPolicy` on event Notetaker settings, and nested AND groups in calendar `rules.eventSelection`.
+- `certificateExpiresAt` and `thumbprint` on `Credential`, plus `CredentialType.CONNECTORCERTIFICATE` and `CredentialType.ADMINCONSENTCERTIFICATE`, for Dashboard-generated certificate credentials (NYL-515).
 
 ### Changed
 - Mark the Notetaker request `name` and `meetingSettings` fields as deprecated in favor of `notetakerSettings`.
@@ -22,6 +23,7 @@ Planned version: **9.0.0**, because of the breaking TypeScript changes below.
 
 ### Fixed
 - Type calendar Notetaker `rules.eventSelection` values as the API expects them (`own_events`, `participant_only`). The SDK sent `ownEvents` and `participantOnly` unchanged, and the API rejected them.
+- Populate `requestId` on API errors from the response body `request_id` when the `x-request-id` header is absent, e.g. on `api.provider_error` responses (CUST-5800).
 - Preserve upload-session HTTP header map keys while decoding API responses (NYL-476).
 - Patch vulnerable SDK tooling and example HTTP dependencies while preserving TypeDoc compatibility (NYL-471).
 - Redact request bodies, provider errors, and stack traces from AWS Lambda example errors and logs (NYL-473).

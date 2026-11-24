@@ -1,6 +1,7 @@
 import APIClient from '../../src/apiClient';
 import { CredentialType } from '../../src/models/credentials';
 import { Credentials } from '../../src/resources/credentials';
+import { objKeysToCamelCase } from '../../src/utils';
 jest.mock('../../src/apiClient');
 
 describe('Credentials', () => {
@@ -59,6 +60,49 @@ describe('Credentials', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should return certificate fields for certificate credentials', async () => {
+      // Shape of the API response after APIClient camelCases it.
+      const apiResponse = objKeysToCamelCase({
+        request_id: 'req-1',
+        data: {
+          id: 'cert-cred-id',
+          name: 'Dashboard cert',
+          credential_type: 'connectorcertificate',
+          certificate_expires_at: 1798761600,
+          thumbprint: 'A1B2C3D4E5F6',
+          created_at: 1763900000,
+          updated_at: 1763900000,
+        },
+      });
+      apiClient.request.mockResolvedValueOnce(apiResponse);
+
+      const { data } = await credentials.find({
+        provider: 'microsoft',
+        credentialsId: 'cert-cred-id',
+      });
+
+      expect(data.credentialType).toBe(CredentialType.CONNECTORCERTIFICATE);
+      expect(data.certificateExpiresAt).toBe(1798761600);
+      expect(data.thumbprint).toBe('A1B2C3D4E5F6');
+    });
+
+    it('should leave certificate fields undefined for other credential types', async () => {
+      apiClient.request.mockResolvedValueOnce(
+        objKeysToCamelCase({
+          request_id: 'req-2',
+          data: { id: 'sa-id', name: 'SA', credential_type: 'serviceaccount' },
+        })
+      );
+
+      const { data } = await credentials.find({
+        provider: 'google',
+        credentialsId: 'sa-id',
+      });
+
+      expect(data.certificateExpiresAt).toBeUndefined();
+      expect(data.thumbprint).toBeUndefined();
     });
 
     it('should URL encode provider and credentialsId in find', async () => {

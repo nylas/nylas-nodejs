@@ -51,7 +51,7 @@ export class NylasApiError
   ) {
     super(apiError.error.message);
     this.type = apiError.error.type;
-    this.requestId = requestId;
+    this.requestId = requestId ?? apiError.requestId;
     this.flowId = flowId;
     this.headers = headers;
     this.providerError = apiError.error.providerError;
