@@ -236,6 +236,10 @@ export interface NotetakerConfigSettings {
 
 /**
  * Notetaker settings as returned in Notetaker responses.
+ *
+ * To send fetched settings back in an update, drop `videoOutput` first. The API
+ * rejects its stored image fields on writes:
+ * `const { videoOutput, ...settings } = notetaker.notetakerSettings ?? {};`
  */
 export interface NotetakerConfigSettingsResponse extends Omit<
   NotetakerConfigSettings,
@@ -307,8 +311,10 @@ export interface Notetaker {
   id: string;
   /**
    * The display name for the Notetaker bot.
-   * The API omits this field for Notetakers created with `notetakerSettings`;
-   * read `notetakerSettings.name` for those.
+   * The API omits this field for Notetakers that use Notetaker settings: those
+   * created with `notetakerSettings` or `configId`, and those created with
+   * neither while a Notetaker configuration applies to the grant or
+   * application. Read `notetakerSettings.name` for those.
    */
   name: string;
   /**
@@ -337,13 +343,13 @@ export interface Notetaker {
   eventId?: string;
   /**
    * Notetaker Meeting Settings.
-   * The API omits this field for Notetakers created with `notetakerSettings`;
-   * read `notetakerSettings` for those.
+   * The API omits this field for Notetakers that use Notetaker settings (see
+   * `name`). Read `notetakerSettings` for those.
    */
   meetingSettings: NotetakerMeetingSettings;
   /**
    * The Notetaker's settings.
-   * Returned for Notetakers created or updated with `notetakerSettings`.
+   * Returned for Notetakers that use Notetaker settings (see `name`).
    */
   notetakerSettings?: NotetakerConfigSettingsResponse;
 }
