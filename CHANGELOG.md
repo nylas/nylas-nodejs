@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Planned version: **8.5.1**.
 
+### Added
+- `certificateExpiresAt` and `thumbprint` on `Credential`, plus `CredentialType.CONNECTORCERTIFICATE` and `CredentialType.ADMINCONSENTCERTIFICATE`, for Dashboard-generated certificate credentials (NYL-515).
+
 ### Fixed
 - Preserve upload-session HTTP header map keys while decoding API responses (NYL-476).
 - Patch vulnerable SDK tooling and example HTTP dependencies while preserving TypeDoc compatibility (NYL-471).
