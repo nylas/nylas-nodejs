@@ -108,24 +108,29 @@ export interface CalendarNotetaker {
 
 /**
  * Calendar Notetaker settings as returned in Calendar responses.
- * `notetakerSettings` and `deduplicationPolicy` are resolved values: they
- * include settings inherited from workspace and application configurations,
- * not only what this calendar stores. Responses can carry values the API
+ * Calendar reads return resolved `notetakerSettings` that include settings
+ * inherited from workspace and application configurations. Create and update
+ * responses return the settings you sent. Responses can carry values the API
  * rejects on writes, so this type can't be passed straight into a create or
  * update request. Build the request from the fields you want to set.
- * Responses don't include `configId` or `autocreate`.
  */
 export interface CalendarNotetakerResponse extends Omit<
   CalendarNotetaker,
-  'notetakerSettings' | 'configId' | 'autocreate' | 'deduplicationPolicy'
+  'notetakerSettings' | 'autocreate' | 'deduplicationPolicy'
 > {
   /**
-   * Resolved settings for the Notetakers that join this calendar's events.
+   * Settings for the Notetakers that join this calendar's events. In calendar
+   * reads these are resolved and include inherited values.
    */
   notetakerSettings?: NotetakerConfigSettingsResponse;
   /**
-   * Resolved policy for whether Notetakers created from this calendar take
-   * part in deduplication.
+   * Only in create and update responses, which return the settings you sent.
+   * Calendar reads don't include it.
+   */
+  autocreate?: boolean;
+  /**
+   * This calendar's own deduplication policy. "inherit" means a parent
+   * configuration decides, so it doesn't say whether deduplication is active.
    */
   deduplicationPolicy?: NotetakerDeduplicationPolicy;
 }

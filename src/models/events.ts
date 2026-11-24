@@ -39,11 +39,11 @@ export interface NotetakerSettings {
 
 /**
  * Event Notetaker settings as returned in Event responses.
- * `notetakerSettings` and `deduplicationPolicy` are resolved values: they
- * include settings inherited from calendar, workspace and application
- * configurations, not only what this event stores. Responses can carry values
- * the API rejects on writes, so this type can't be passed straight into a
- * create or update request. Build the request from the fields you want to set.
+ * `notetakerSettings` are resolved values that include inherited settings,
+ * such as those from the calendar, workspace or application configuration.
+ * Responses can carry values the API rejects on writes, so this type can't be
+ * passed straight into a create or update request. Build the request from the
+ * fields you want to set.
  */
 export interface EventNotetakerResponse extends Omit<
   NotetakerSettings,
@@ -58,8 +58,8 @@ export interface EventNotetakerResponse extends Omit<
    */
   notetakerSettings?: NotetakerConfigSettingsResponse;
   /**
-   * Resolved policy for whether this event's Notetaker takes part in
-   * deduplication.
+   * This event's own deduplication policy. "inherit" means a parent
+   * configuration decides, so it doesn't say whether deduplication is active.
    */
   deduplicationPolicy?: NotetakerDeduplicationPolicy;
 }
