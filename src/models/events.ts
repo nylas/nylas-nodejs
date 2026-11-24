@@ -44,6 +44,8 @@ export interface NotetakerSettings {
  * Responses can carry values the API rejects on writes, so this type can't be
  * passed straight into a create or update request. Build the request from the
  * fields you want to set.
+ * Many event reads return only `id`, `name` and `meetingSettings`. Read
+ * `notetakerSettings` when present and fall back to those fields.
  */
 export interface EventNotetakerResponse extends Omit<
   NotetakerSettings,
@@ -58,8 +60,11 @@ export interface EventNotetakerResponse extends Omit<
    */
   notetakerSettings?: NotetakerConfigSettingsResponse;
   /**
-   * This event's own deduplication policy. "inherit" means a parent
-   * configuration decides, so it doesn't say whether deduplication is active.
+   * The deduplication policy of the configuration this event uses. With
+   * inline `notetakerSettings` it is the event's own value, and "inherit"
+   * means a parent configuration decides. For an event that uses a
+   * configuration, reads return that configuration's policy, which can be
+   * "active" or "inactive".
    */
   deduplicationPolicy?: NotetakerDeduplicationPolicy;
 }

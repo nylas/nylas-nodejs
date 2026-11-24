@@ -129,8 +129,11 @@ export interface CalendarNotetakerResponse extends Omit<
    */
   autocreate?: boolean;
   /**
-   * This calendar's own deduplication policy. "inherit" means a parent
-   * configuration decides, so it doesn't say whether deduplication is active.
+   * The deduplication policy of the configuration this calendar uses. With
+   * inline `notetakerSettings` it is the calendar's own value, and "inherit"
+   * means a parent configuration decides. For a calendar that uses `configId`
+   * or `autocreate`, reads return that configuration's policy, which can be
+   * "active" or "inactive".
    */
   deduplicationPolicy?: NotetakerDeduplicationPolicy;
 }

@@ -187,8 +187,10 @@ export interface NotetakerConfigSettings {
   /**
    * Optional settings that tune how Notetaker transcribes audio.
    * On create, send `null` or `{}` to clear inherited settings.
-   * On update, `null` removes this Notetaker's override and restores the
-   * inherited settings, and `{}` clears them.
+   * In `notetakers.update()`, `null` removes this Notetaker's override and
+   * restores the inherited settings, and `{}` clears them.
+   * In calendar and event Notetaker settings, `null` clears them like `{}`.
+   * Leave the field out to inherit.
    */
   transcriptionSettings?: NotetakerTranscriptionSettings | null;
   /**
@@ -236,8 +238,8 @@ export interface NotetakerConfigSettings {
 
 /**
  * A deduplication policy as returned in calendar and event responses.
- * Requests accept only "inherit" and "disable"; responses can also carry the
- * resolved "active" or "inactive" policy.
+ * Requests accept only "inherit" and "disable"; responses can also carry
+ * "active" or "inactive" from a workspace or application configuration.
  */
 export type NotetakerDeduplicationPolicy =
   'inherit' | 'disable' | 'active' | 'inactive';
