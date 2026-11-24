@@ -1,5 +1,6 @@
 import Nylas, {
   Attachment,
+  CreateNotetakerRequest,
   NylasApiError,
   NylasOAuthError,
   NylasSdkTimeoutError,
@@ -28,7 +29,19 @@ const apiError: NylasApiError = new NylasApiError({
 void client;
 void classicClient;
 void classicDefaultClient;
+const notetakerRequest: CreateNotetakerRequest = {
+  meetingLink: 'https://meet.google.com/abc-defg-hij',
+  notetakerSettings: {
+    name: 'Nylas Notetaker',
+    recordingType: 'audio',
+    transcription: true,
+    summary: true,
+    actionItems: true,
+  },
+};
+
 void attachment;
+void notetakerRequest;
 void apiError;
 void NylasOAuthError;
 void NylasSdkTimeoutError;

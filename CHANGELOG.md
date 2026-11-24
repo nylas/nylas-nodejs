@@ -7,12 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Planned version: **8.5.1**.
+Planned version: **9.0.0**, because of the breaking TypeScript changes below.
 
 ### Added
+- Type `notetakerSettings` on Notetaker create and update requests, `configId` on Notetaker create requests, and `notetakerSettings` on Notetaker responses, matching the current Notetaker API.
+- Type the summary, action item, transcription, silence and message fields on `NotetakerMeetingSettings`.
+- Type `notetakerSettings`, `configId`, `autocreate` and `deduplicationPolicy` on calendar Notetaker settings, `notetakerSettings` and `deduplicationPolicy` on event Notetaker settings, and nested AND groups in calendar `rules.eventSelection`.
 - `certificateExpiresAt` and `thumbprint` on `Credential`, plus `CredentialType.CONNECTORCERTIFICATE` and `CredentialType.ADMINCONSENTCERTIFICATE`, for Dashboard-generated certificate credentials (NYL-515).
 
+### Changed
+- Mark the Notetaker request `name` and `meetingSettings` fields as deprecated in favor of `notetakerSettings`.
+- **Breaking TypeScript change:** make `Notetaker.name` and `Notetaker.meetingSettings` optional. The API omits them when it returns `notetakerSettings`, as it does for most Notetakers created with `notetakerSettings` or `configId` and for Notetakers that inherit a workspace or application configuration. Code that reads them under `strict` now needs a check or a fallback. Read `notetakerSettings` when present and fall back to the old fields, such as `notetaker.notetakerSettings?.name ?? notetaker.name ?? 'Nylas Notetaker'`.
+- **Breaking TypeScript change:** calendar Notetaker `rules.eventSelection` items can now be nested groups, so code that treats the array as `string[]` needs to handle `string[]` items too.
+- **Breaking TypeScript change:** `Calendar.notetaker` and `Event.notetaker` are now typed as `CalendarNotetakerResponse` and `EventNotetakerResponse`. A fetched `notetaker` object carries resolved settings, including inherited ones, and can carry values the API rejects on writes, such as stored image metadata or an `active` deduplication policy. Passing it straight into a create or update request no longer compiles. Build the request from the fields you want to set.
+
 ### Fixed
+- Type calendar Notetaker `rules.eventSelection` values as the API expects them (`own_events`, `participant_only`). The SDK sent `ownEvents` and `participantOnly` unchanged, and the API rejected them.
 - Populate `requestId` on API errors from the response body `request_id` when the `x-request-id` header is absent, e.g. on `api.provider_error` responses (CUST-5800).
 - Preserve upload-session HTTP header map keys while decoding API responses (NYL-476).
 - Patch vulnerable SDK tooling and example HTTP dependencies while preserving TypeDoc compatibility (NYL-471).

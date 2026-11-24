@@ -4,6 +4,13 @@ import {
   AvailabilityMethod,
   SpecificTimeAvailability,
 } from '../../src/models/availability';
+import {
+  CalendarNotetaker,
+  CalendarNotetakerResponse,
+  UpdateCalenderRequest,
+} from '../../src/models/calendars';
+import { NotetakerConfigSettings } from '../../src/models/notetakers';
+import { objKeysToCamelCase, objKeysToSnakeCase } from '../../src/utils';
 jest.mock('../../src/apiClient');
 
 describe('Calendars', () => {
@@ -254,6 +261,129 @@ describe('Calendars', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should send notetakerSettings with nested event selection rules', async () => {
+      const requestBody: UpdateCalenderRequest = {
+        notetaker: {
+          notetakerSettings: {
+            name: 'Calendar Notetaker',
+            recordingType: 'audio',
+            transcription: true,
+            summary: true,
+            actionItems: true,
+          },
+          deduplicationPolicy: 'disable',
+          rules: {
+            eventSelection: ['internal', ['own_events', 'external']],
+            participantFilter: { participantsGte: 2 },
+          },
+        },
+      };
+
+      await calendars.update({
+        identifier: 'id123',
+        calendarId: 'calendar123',
+        requestBody,
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PUT',
+          path: '/v3/grants/id123/calendars/calendar123',
+          body: requestBody,
+        })
+      );
+      expect(
+        objKeysToSnakeCase(requestBody as Record<string, unknown>, ['metadata'])
+      ).toEqual({
+        notetaker: {
+          notetaker_settings: {
+            name: 'Calendar Notetaker',
+            recording_type: 'audio',
+            transcription: true,
+            summary: true,
+            action_items: true,
+          },
+          deduplication_policy: 'disable',
+          rules: {
+            event_selection: ['internal', ['own_events', 'external']],
+            participant_filter: { participants_gte: 2 },
+          },
+        },
+      });
+    });
+
+    it('should accept configId and autocreate modes', () => {
+      const fromConfig: CalendarNotetaker = { configId: 'config-123' };
+      const autocreate: CalendarNotetaker = { autocreate: true };
+      expect(fromConfig.configId).toBe('config-123');
+      expect(autocreate.autocreate).toBe(true);
+    });
+
+    it('should only accept event selection values the API accepts', () => {
+      const rules: CalendarNotetaker['rules'] = {
+        // @ts-expect-error The API takes own_events; values are not case-converted.
+        eventSelection: ['ownEvents'],
+      };
+      expect(rules).toBeDefined();
+    });
+
+    it('should reject video output on calendar sync settings', () => {
+      const notetaker: CalendarNotetaker = {
+        notetakerSettings: {
+          // @ts-expect-error Calendar sync does not support videoOutput.
+          videoOutput: { mediaType: 'image/png', data: 'aGVsbG8=' },
+        },
+      };
+      expect(notetaker).toBeDefined();
+
+      const shared: NotetakerConfigSettings = {
+        videoOutput: { mediaType: 'image/png', data: 'aGVsbG8=' },
+      };
+      const fromShared: CalendarNotetaker = {
+        // @ts-expect-error Reused settings with videoOutput are rejected too.
+        notetakerSettings: shared,
+      };
+      expect(fromShared).toBeDefined();
+    });
+
+    it('should camelCase notetakerSettings in calendar responses', () => {
+      const notetaker = objKeysToCamelCase({
+        notetaker_settings: {
+          name: 'Calendar Notetaker',
+          recording_type: 'audio_video',
+          video_output: { media_type: 'image/png', size: 1024 },
+        },
+        deduplication_policy: 'active',
+        rules: { event_selection: ['participant_only'] },
+      }) as CalendarNotetakerResponse;
+
+      expect(notetaker.notetakerSettings?.recordingType).toBe('audio_video');
+      expect(notetaker.notetakerSettings?.videoOutput?.size).toBe(1024);
+      expect(notetaker.deduplicationPolicy).toBe('active');
+      expect(notetaker.rules?.eventSelection).toEqual(['participant_only']);
+    });
+
+    it('should not accept a fetched calendar notetaker as an update', () => {
+      const fetched: CalendarNotetakerResponse = {
+        notetakerSettings: { name: 'Calendar Notetaker', summary: true },
+        deduplicationPolicy: 'active',
+        rules: { eventSelection: ['all'] },
+      };
+      const copied: UpdateCalenderRequest = {
+        // @ts-expect-error Fetched settings can carry values the API rejects on writes.
+        notetaker: fetched,
+      };
+      const update: UpdateCalenderRequest = {
+        notetaker: {
+          notetakerSettings: { name: 'Calendar Notetaker', summary: true },
+          rules: { eventSelection: ['all'] },
+          deduplicationPolicy: 'disable',
+        },
+      };
+      expect(copied).toBeDefined();
+      expect(update.notetaker?.notetakerSettings?.summary).toBe(true);
     });
   });
 

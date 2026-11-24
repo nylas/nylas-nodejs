@@ -2,10 +2,16 @@ import { Subset } from '../utils.js';
 import { NylasApiErrorResponseData } from './error.js';
 import { ListQueryParams } from './listQueryParams.js';
 import { NylasBaseResponse } from './response.js';
-import { NotetakerMeetingSettings } from './notetakers.js';
+import {
+  NotetakerConfigSettingsResponse,
+  NotetakerDeduplicationPolicy,
+  NotetakerSyncSettings,
+  NotetakerMeetingSettings,
+} from './notetakers.js';
 
 /**
- * Interface representing Notetaker settings
+ * Interface representing Notetaker settings for an event.
+ * Use either `notetakerSettings` or the older `name` and `meetingSettings`, not both.
  */
 export interface NotetakerSettings {
   /**
@@ -17,6 +23,50 @@ export interface NotetakerSettings {
    * Notetaker Meeting Settings
    */
   meetingSettings?: NotetakerMeetingSettings;
+  /**
+   * Settings for the Notetaker that joins this event.
+   * Nylas saves them as an event configuration.
+   */
+  notetakerSettings?: NotetakerSyncSettings;
+  /**
+   * Whether this event's Notetaker takes part in deduplication.
+   * "inherit": Use the policy from your configurations.
+   * "disable": Exempt this event's Notetaker from deduplication.
+   * Only valid with `notetakerSettings`.
+   */
+  deduplicationPolicy?: 'inherit' | 'disable';
+}
+
+/**
+ * Event Notetaker settings as returned in Event responses.
+ * `notetakerSettings` are resolved values that include inherited settings,
+ * such as those from the calendar, workspace or application configuration.
+ * Responses can carry values the API rejects on writes, so this type can't be
+ * passed straight into a create or update request. Build the request from the
+ * fields you want to set.
+ * Many event reads return only `id`, `name` and `meetingSettings`. Read
+ * `notetakerSettings` when present and fall back to those fields.
+ */
+export interface EventNotetakerResponse extends Omit<
+  NotetakerSettings,
+  'notetakerSettings' | 'deduplicationPolicy'
+> {
+  /**
+   * The Notetaker bot ID.
+   */
+  id?: string;
+  /**
+   * Resolved settings for the Notetaker that joins this event.
+   */
+  notetakerSettings?: NotetakerConfigSettingsResponse;
+  /**
+   * The deduplication policy of the configuration this event uses. With
+   * inline `notetakerSettings` it is the event's own value, and "inherit"
+   * means a parent configuration decides. For an event that uses a
+   * configuration, reads return that configuration's policy, which can be
+   * "active" or "inactive".
+   */
+  deduplicationPolicy?: NotetakerDeduplicationPolicy;
 }
 
 /**
@@ -178,7 +228,7 @@ export interface Event {
   /**
    * Notetaker meeting bot settings
    */
-  notetaker?: NotetakerSettings;
+  notetaker?: EventNotetakerResponse;
 }
 
 /**

@@ -22,6 +22,256 @@ export type NotetakerState =
   | 'media_deleted';
 
 /**
+ * What Notetaker records.
+ * `audio_video` produces an MP4 recording of the meeting's video and audio.
+ * `audio` produces an MP3 audio-only recording.
+ */
+export type NotetakerRecordingType = 'audio_video' | 'audio';
+
+/**
+ * Optional settings that tune how Notetaker transcribes audio.
+ * `transcription` must be true for these settings to take effect.
+ */
+export interface NotetakerTranscriptionSettings {
+  /**
+   * Language codes the audio is expected to contain.
+   * When provided, it must contain at least one supported code.
+   */
+  expectedLanguages?: string[];
+  /**
+   * Language to use if Notetaker does not detect one of the expected languages.
+   */
+  fallbackLanguage?: string;
+  /**
+   * Domain-specific terms that bias transcription toward recognizing them,
+   * such as names, acronyms, and product names.
+   */
+  keywords?: string[];
+  /**
+   * When true, Notetaker adds known speaker names to the keyword set.
+   */
+  useSpeakerNamesAsKeywords?: boolean;
+}
+
+/**
+ * Custom instructions for the AI model that generates a summary or action items.
+ */
+export interface NotetakerCustomInstructionsSettings {
+  /**
+   * A custom prompt for the AI model.
+   */
+  customInstructions?: string;
+}
+
+/**
+ * A message the Notetaker bot posts to the meeting chat shortly after joining.
+ */
+export interface NotetakerOnJoinMessage {
+  /**
+   * The message format. Currently only `text` is supported.
+   */
+  type: 'text';
+  /**
+   * The message text. HTML tags are stripped before the message is sent.
+   */
+  content: string;
+  /**
+   * Delay in milliseconds between the bot joining and the message being posted.
+   */
+  sendAfterMs: number;
+}
+
+/**
+ * A message the Notetaker bot posts to the meeting chat when a new participant joins.
+ */
+export interface NotetakerOnParticipantJoinMessage {
+  /**
+   * The message format. Currently only `text` is supported.
+   */
+  type: 'text';
+  /**
+   * The message text. HTML tags are stripped before the message is sent.
+   */
+  content: string;
+  /**
+   * Trailing debounce window in milliseconds.
+   * A burst of joins inside the window produces a single message.
+   */
+  debounceMs: number;
+}
+
+/**
+ * Custom announcements the Notetaker bot posts to the meeting chat.
+ */
+export interface NotetakerMessages {
+  /**
+   * Messages the bot sends shortly after it joins the meeting. Up to 10.
+   */
+  onJoin?: NotetakerOnJoinMessage[] | null;
+  /**
+   * Messages the bot sends when a new participant joins the meeting. Up to 10.
+   */
+  onParticipantJoin?: NotetakerOnParticipantJoinMessage[] | null;
+}
+
+/**
+ * The image formats Notetaker accepts for video output.
+ */
+export type NotetakerVideoOutputMediaType =
+  'image/png' | 'image/jpeg' | 'image/webp';
+
+/**
+ * A static image for the Notetaker bot to show as its camera feed.
+ * Send `mediaType` and base64 `data` together to upload an image,
+ * or an empty object to disable video output.
+ */
+export type NotetakerVideoOutputUpload =
+  | {
+      /**
+       * The image MIME type. Must match the actual file content.
+       */
+      mediaType: NotetakerVideoOutputMediaType;
+      /**
+       * The base64-encoded image bytes.
+       */
+      data: string;
+      /** Read-only; not accepted on writes. */
+      size?: never;
+      /** Read-only; not accepted on writes. */
+      previewUrl?: never;
+      /** Read-only; not accepted on writes. */
+      previewUrlExpiresAt?: never;
+    }
+  | Record<string, never>;
+
+/**
+ * The stored video output image returned in Notetaker responses.
+ */
+export interface NotetakerVideoOutput {
+  /**
+   * The image MIME type.
+   */
+  mediaType?: NotetakerVideoOutputMediaType;
+  /**
+   * The size of the stored image, in bytes.
+   */
+  size?: number;
+  /**
+   * A signed URL for previewing the stored image. Valid for 1 hour.
+   */
+  previewUrl?: string;
+  /**
+   * When `previewUrl` expires, in Unix timestamp format.
+   */
+  previewUrlExpiresAt?: number;
+}
+
+/**
+ * Interface representing Notetaker settings.
+ * Cannot be used together with the deprecated `name` and `meetingSettings` fields.
+ */
+export interface NotetakerConfigSettings {
+  /**
+   * The display name shown when the Notetaker joins a meeting.
+   */
+  name?: string;
+  /**
+   * What Notetaker records.
+   * When no level of the configuration hierarchy sets it, Notetaker records audio and video.
+   */
+  recordingType?: NotetakerRecordingType;
+  /**
+   * When true, Notetaker transcribes the meeting's audio.
+   */
+  transcription?: boolean;
+  /**
+   * Optional settings that tune how Notetaker transcribes audio.
+   * On create, send `null` or `{}` to clear inherited settings.
+   * In `notetakers.update()`, `null` removes this Notetaker's override and
+   * restores the inherited settings, and `{}` clears them.
+   * In calendar and event Notetaker settings, `null` clears them like `{}`.
+   * Leave the field out to inherit.
+   */
+  transcriptionSettings?: NotetakerTranscriptionSettings | null;
+  /**
+   * When true, Notetaker generates a summary of the meeting.
+   * Requires `transcription` to also be true.
+   */
+  summary?: boolean;
+  /**
+   * Settings for the summary.
+   */
+  summarySettings?: NotetakerCustomInstructionsSettings;
+  /**
+   * When true, Notetaker generates a list of action items.
+   * Requires `transcription` to also be true.
+   */
+  actionItems?: boolean;
+  /**
+   * Settings for the action items.
+   */
+  actionItemsSettings?: NotetakerCustomInstructionsSettings;
+  /**
+   * Seconds of continuous silence after which Notetaker leaves the meeting.
+   * Must be between 10 and 3600.
+   */
+  leaveAfterSilenceSeconds?: number;
+  /**
+   * Seconds Notetaker waits after joining before it can leave automatically.
+   * Must be between 0 and 3600.
+   */
+  leaveDetectionDelaySeconds?: number;
+  /**
+   * Custom announcements the Notetaker bot posts to the meeting chat.
+   */
+  messages?: NotetakerMessages;
+  /**
+   * A static image the Notetaker bot shows as its camera feed.
+   */
+  videoOutput?: NotetakerVideoOutputUpload;
+  /**
+   * How long Notetaker media is kept before Nylas deletes it, in seconds.
+   * Must be between 300 and 2592000.
+   */
+  retentionTime?: number;
+}
+
+/**
+ * A deduplication policy as returned in calendar and event responses.
+ * Requests accept only "inherit" and "disable"; responses can also carry
+ * "active" or "inactive" from a workspace or application configuration.
+ */
+export type NotetakerDeduplicationPolicy =
+  'inherit' | 'disable' | 'active' | 'inactive';
+
+/**
+ * Notetaker settings for calendar and event sync.
+ * Calendar and event sync do not support `videoOutput`.
+ */
+export type NotetakerSyncSettings = Omit<
+  NotetakerConfigSettings,
+  'videoOutput'
+> & {
+  videoOutput?: never;
+};
+
+/**
+ * Notetaker settings as returned in Notetaker responses.
+ * Responses can include stored metadata that the API rejects on writes, so
+ * send only the fields you want to change in an update instead of the
+ * fetched settings.
+ */
+export interface NotetakerConfigSettingsResponse extends Omit<
+  NotetakerConfigSettings,
+  'videoOutput'
+> {
+  /**
+   * The stored video output image, if one is set.
+   */
+  videoOutput?: NotetakerVideoOutput;
+}
+
+/**
  * Interface representing Notetaker Meeting Settings
  */
 export interface NotetakerMeetingSettings {
@@ -38,6 +288,37 @@ export interface NotetakerMeetingSettings {
    * If transcription is true, audioRecording must also be true.
    */
   transcription: boolean;
+  /**
+   * Optional settings that tune how Notetaker transcribes audio.
+   */
+  transcriptionSettings?: NotetakerTranscriptionSettings | null;
+  /**
+   * When true, Notetaker generates a summary of the meeting.
+   * If summary is true, transcription must also be true.
+   */
+  summary?: boolean;
+  /**
+   * Settings for the summary.
+   */
+  summarySettings?: NotetakerCustomInstructionsSettings;
+  /**
+   * When true, Notetaker generates a list of action items.
+   * If actionItems is true, transcription must also be true.
+   */
+  actionItems?: boolean;
+  /**
+   * Settings for the action items.
+   */
+  actionItemsSettings?: NotetakerCustomInstructionsSettings;
+  /**
+   * Seconds of silence after which Notetaker leaves the meeting.
+   * Must be between 10 and 3600.
+   */
+  leaveAfterSilenceSeconds?: number;
+  /**
+   * Custom announcements the Notetaker bot posts to the meeting chat.
+   */
+  messages?: NotetakerMessages;
 }
 
 /**
@@ -50,8 +331,12 @@ export interface Notetaker {
   id: string;
   /**
    * The display name for the Notetaker bot.
+   * The API omits this field when it returns `notetakerSettings`, as it does
+   * for most Notetakers created with `notetakerSettings` or `configId` and for
+   * Notetakers that inherit a workspace or application configuration. Read
+   * `notetakerSettings.name` when present and fall back to this field.
    */
-  name: string;
+  name?: string;
   /**
    * When Notetaker joined the meeting, in Unix timestamp format.
    */
@@ -77,9 +362,16 @@ export interface Notetaker {
    */
   eventId?: string;
   /**
-   * Notetaker Meeting Settings
+   * Notetaker Meeting Settings.
+   * The API omits this field when it returns `notetakerSettings` (see `name`).
+   * Read `notetakerSettings` when present and fall back to this field.
    */
-  meetingSettings: NotetakerMeetingSettings;
+  meetingSettings?: NotetakerMeetingSettings;
+  /**
+   * The Notetaker's settings.
+   * When present, use these instead of `name` and `meetingSettings`.
+   */
+  notetakerSettings?: NotetakerConfigSettingsResponse;
 }
 
 /**
@@ -181,13 +473,28 @@ export interface CreateNotetakerRequest {
   joinTime?: number;
 
   /**
+   * The ID of an existing configuration to use for this Notetaker.
+   * Cannot be used together with `notetakerSettings` or the deprecated
+   * `name` and `meetingSettings` fields.
+   */
+  configId?: string;
+
+  /**
+   * Notetaker settings.
+   * Cannot be used together with `configId` or the deprecated `name` and `meetingSettings` fields.
+   */
+  notetakerSettings?: NotetakerConfigSettings;
+
+  /**
    * The display name for the Notetaker bot.
    * Default: Nylas Notetaker
+   * @deprecated Use `notetakerSettings.name` instead.
    */
   name?: string;
 
   /**
    * Notetaker Meeting Settings
+   * @deprecated Use `notetakerSettings` instead.
    */
   meetingSettings?: Partial<NotetakerMeetingSettings>;
 }
@@ -204,13 +511,23 @@ export interface UpdateNotetakerRequest {
   joinTime?: number;
 
   /**
+   * Notetaker settings to change. Omitted fields keep their current values.
+   * `transcriptionSettings`, `messages`, and `videoOutput` are replaced whole,
+   * so send the complete object you want to end up with.
+   * Cannot be used together with the deprecated `name` and `meetingSettings` fields.
+   */
+  notetakerSettings?: NotetakerConfigSettings;
+
+  /**
    * The display name for the Notetaker bot.
    * Default: Nylas Notetaker
+   * @deprecated Use `notetakerSettings.name` instead.
    */
   name?: string;
 
   /**
    * Notetaker Meeting Settings
+   * @deprecated Use `notetakerSettings` instead.
    */
   meetingSettings?: Partial<NotetakerMeetingSettings>;
 }

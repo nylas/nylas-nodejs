@@ -1,5 +1,11 @@
 import APIClient from '../../src/apiClient';
 import { Events } from '../../src/resources/events';
+import {
+  CreateEventRequest,
+  EventNotetakerResponse,
+  UpdateEventRequest,
+} from '../../src/models/events';
+import { objKeysToCamelCase, objKeysToSnakeCase } from '../../src/utils';
 jest.mock('../../src/apiClient');
 
 describe('Events', () => {
@@ -382,6 +388,72 @@ describe('Events', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should send notetakerSettings on an event', async () => {
+      const requestBody: CreateEventRequest = {
+        when: { time: 123, timezone: 'America/Toronto' },
+        notetaker: {
+          notetakerSettings: {
+            name: 'Finance Meeting Notetaker',
+            recordingType: 'audio_video',
+            summary: true,
+            leaveAfterSilenceSeconds: 360,
+          },
+          deduplicationPolicy: 'disable',
+        },
+      };
+
+      await events.create({
+        identifier: 'id123',
+        requestBody,
+        queryParams: { calendarId: 'calendar123' },
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'POST',
+          path: '/v3/grants/id123/events',
+          body: requestBody,
+        })
+      );
+      expect(
+        objKeysToSnakeCase(requestBody as unknown as Record<string, unknown>, [
+          'metadata',
+        ])
+      ).toEqual({
+        when: { time: 123, timezone: 'America/Toronto' },
+        notetaker: {
+          notetaker_settings: {
+            name: 'Finance Meeting Notetaker',
+            recording_type: 'audio_video',
+            summary: true,
+            leave_after_silence_seconds: 360,
+          },
+          deduplication_policy: 'disable',
+        },
+      });
+    });
+
+    it('should camelCase notetakerSettings in event responses', () => {
+      const notetaker = objKeysToCamelCase({
+        id: 'notetaker-123',
+        notetaker_settings: {
+          name: 'Finance Meeting Notetaker',
+          summary: true,
+        },
+        deduplication_policy: 'inactive',
+      }) as EventNotetakerResponse;
+
+      expect(notetaker.id).toBe('notetaker-123');
+      expect(notetaker.notetakerSettings?.summary).toBe(true);
+      expect(notetaker.deduplicationPolicy).toBe('inactive');
+
+      const copied: UpdateEventRequest = {
+        // @ts-expect-error Fetched settings can carry values the API rejects on writes.
+        notetaker,
+      };
+      expect(copied).toBeDefined();
     });
   });
 
