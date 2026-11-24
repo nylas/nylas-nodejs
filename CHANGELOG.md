@@ -13,6 +13,7 @@ Planned version: **8.5.1**.
 - `certificateExpiresAt` and `thumbprint` on `Credential`, plus `CredentialType.CONNECTORCERTIFICATE` and `CredentialType.ADMINCONSENTCERTIFICATE`, for Dashboard-generated certificate credentials (NYL-515).
 
 ### Fixed
+- Populate `requestId` on API errors from the response body `request_id` when the `x-request-id` header is absent, e.g. on `api.provider_error` responses (CUST-5800).
 - Preserve upload-session HTTP header map keys while decoding API responses (NYL-476).
 - Patch vulnerable SDK tooling and example HTTP dependencies while preserving TypeDoc compatibility (NYL-471).
 - Redact request bodies, provider errors, and stack traces from AWS Lambda example errors and logs (NYL-473).
