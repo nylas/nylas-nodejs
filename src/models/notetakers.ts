@@ -236,10 +236,9 @@ export interface NotetakerConfigSettings {
 
 /**
  * Notetaker settings as returned in Notetaker responses.
- *
- * To send fetched settings back in an update, drop `videoOutput` first. The API
- * rejects its stored image fields on writes:
- * `const { videoOutput, ...settings } = notetaker.notetakerSettings ?? {};`
+ * Responses can include stored metadata that the API rejects on writes, so
+ * send only the fields you want to change in an update instead of the
+ * fetched settings.
  */
 export interface NotetakerConfigSettingsResponse extends Omit<
   NotetakerConfigSettings,
@@ -312,9 +311,9 @@ export interface Notetaker {
   /**
    * The display name for the Notetaker bot.
    * The API omits this field for Notetakers that use Notetaker settings: those
-   * created with `notetakerSettings` or `configId`, and those created with
-   * neither while a Notetaker configuration applies to the grant or
-   * application. Read `notetakerSettings.name` for those.
+   * created with `notetakerSettings` or `configId`, and those that inherit a
+   * Notetaker configuration, such as a workspace or application configuration.
+   * Read `notetakerSettings.name` for those.
    */
   name?: string;
   /**
@@ -492,6 +491,8 @@ export interface UpdateNotetakerRequest {
 
   /**
    * Notetaker settings to change. Omitted fields keep their current values.
+   * `transcriptionSettings`, `messages`, and `videoOutput` are replaced whole,
+   * so send the complete object you want to end up with.
    * Cannot be used together with the deprecated `name` and `meetingSettings` fields.
    */
   notetakerSettings?: NotetakerConfigSettings;

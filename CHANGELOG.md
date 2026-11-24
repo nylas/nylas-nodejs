@@ -12,12 +12,14 @@ Planned version: **8.6.0**.
 ### Added
 - Type `notetakerSettings` on Notetaker create and update requests, `configId` on Notetaker create requests, and `notetakerSettings` on Notetaker responses, matching the current Notetaker API.
 - Type the summary, action item, transcription, silence and message fields on `NotetakerMeetingSettings`.
+- Type `notetakerSettings`, `configId`, `autocreate` and `deduplicationPolicy` on calendar Notetaker settings, `notetakerSettings` on event Notetaker settings, and nested AND groups in calendar `rules.eventSelection`.
 
 ### Changed
 - Mark the Notetaker request `name` and `meetingSettings` fields as deprecated in favor of `notetakerSettings`.
-- Make `Notetaker.name` and `Notetaker.meetingSettings` optional. The API omits them for Notetakers that use Notetaker settings, including Notetakers created with `configId` or under a grant or application configuration. Code that reads them under `strict` now needs a check or a fallback, such as `notetaker.notetakerSettings?.name ?? notetaker.name`.
+- **Breaking TypeScript change:** make `Notetaker.name` and `Notetaker.meetingSettings` optional. The API omits them for Notetakers that use Notetaker settings: Notetakers created with `notetakerSettings` or `configId`, and Notetakers that inherit a Notetaker configuration, such as a workspace or application configuration. Code that reads them under `strict` now needs a check or a fallback, such as `notetaker.notetakerSettings?.name ?? notetaker.name ?? 'Nylas Notetaker'`. Read settings from `notetakerSettings` instead of `meetingSettings`.
 
 ### Fixed
+- Type calendar Notetaker `rules.eventSelection` values as the API expects them (`own_events`, `participant_only`). The SDK sent `ownEvents` and `participantOnly` unchanged, and the API rejected them.
 - Preserve upload-session HTTP header map keys while decoding API responses (NYL-476).
 - Patch vulnerable SDK tooling and example HTTP dependencies while preserving TypeDoc compatibility (NYL-471).
 - Redact request bodies, provider errors, and stack traces from AWS Lambda example errors and logs (NYL-473).

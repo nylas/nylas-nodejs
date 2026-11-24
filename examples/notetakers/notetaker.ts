@@ -97,7 +97,7 @@ async function listNotetakers(): Promise<NylasListResponse<Notetaker>> {
     );
     for (const notetaker of notetakers.data) {
       console.log(
-        `- ${notetaker.name} (ID: ${notetaker.id}, State: ${notetaker.state})`
+        `- ${notetaker.notetakerSettings?.name ?? notetaker.name} (ID: ${notetaker.id}, State: ${notetaker.state})`
       );
     }
 

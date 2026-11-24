@@ -1,5 +1,8 @@
 import { ListQueryParams } from './listQueryParams.js';
-import { NotetakerMeetingSettings } from './notetakers.js';
+import {
+  NotetakerConfigSettings,
+  NotetakerMeetingSettings,
+} from './notetakers.js';
 
 /**
  * Interface for Calendar Notetaker participant filter
@@ -16,19 +19,29 @@ export interface CalendarNotetakerParticipantFilter {
 }
 
 /**
+ * A criterion for which events a calendar's Notetaker joins.
+ * "all": Events with meeting links.
+ * "internal": Events where the host's domain matches all participants' domains.
+ * "external": Events where the host's domain differs from any participant's domain.
+ * "own_events": Events where the user's grant is the host.
+ * "participant_only": Events where the user's grant is a participant but not the host.
+ */
+export type CalendarNotetakerEventSelection =
+  'all' | 'internal' | 'external' | 'own_events' | 'participant_only';
+
+/**
  * Interface for Calendar Notetaker rules
  */
 export interface CalendarNotetakerRules {
   /**
-   * Types of events to include for notetaking. This is a union of events that should have a Notetaker sent to them.
-   * "internal": Events where the host domain matches all participants' domain names
-   * "external": Events where the host domain differs from any participant's domain name
-   * "own_events": Events where the host is the same as the user's grant
-   * "participant_only": Events where the user's grant is a participant but not the host
-   * "all": When all options are included, all events with meeting links will have Notetakers
+   * Types of events to include for notetaking.
+   * Each item is a single criterion or a group of criteria.
+   * Top-level items are OR'd together, and criteria inside a group are AND'd.
+   * For example, `['internal', ['own_events', 'external']]` matches internal events,
+   * or events the user hosts that have at least one external participant.
    */
   eventSelection?: Array<
-    'internal' | 'external' | 'all' | 'ownEvents' | 'participantOnly'
+    CalendarNotetakerEventSelection | CalendarNotetakerEventSelection[]
   >;
   /**
    * Filters to apply based on the number of participants. This is an intersection with the event_selection.
@@ -38,18 +51,46 @@ export interface CalendarNotetakerRules {
 }
 
 /**
- * Interface for Calendar Notetaker settings
+ * Interface for Calendar Notetaker settings.
+ * Use one of `notetakerSettings`, `configId`, `autocreate`, or the deprecated
+ * `name` and `meetingSettings`. Combining them returns a validation error.
+ * `rules` can be combined with `notetakerSettings` or the deprecated fields.
  */
 export interface CalendarNotetaker {
   /**
    * The display name for the Notetaker bot.
    * @default "Nylas Notetaker"
+   * @deprecated Use `notetakerSettings.name` instead.
    */
   name?: string;
   /**
    * Notetaker Meeting Settings
+   * @deprecated Use `notetakerSettings` instead.
    */
   meetingSettings?: NotetakerMeetingSettings;
+  /**
+   * Settings for the Notetakers that join this calendar's events.
+   * Nylas saves them as a calendar configuration.
+   * Requests replace the whole `notetaker` object, so include these settings
+   * when you update `rules`.
+   */
+  notetakerSettings?: NotetakerConfigSettings;
+  /**
+   * The ID of an application or workspace Notetaker configuration to apply to this calendar.
+   */
+  configId?: string;
+  /**
+   * When true, Nylas creates Notetakers for matching events using the settings
+   * inherited from your configurations. Must be true when set.
+   */
+  autocreate?: boolean;
+  /**
+   * Whether Notetakers created from this calendar take part in deduplication.
+   * "inherit": Use the policy from your configurations.
+   * "disable": Opt this calendar out of deduplication.
+   * Only valid with `notetakerSettings`.
+   */
+  deduplicationPolicy?: 'inherit' | 'disable';
   /**
    * Rules for when the Notetaker should join a meeting.
    */

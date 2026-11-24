@@ -47,6 +47,7 @@ declare namespace Nylas {
   export import BuildServiceAccountHeadersParams = models.BuildServiceAccountHeadersParams;
   export import Calendar = models.Calendar;
   export import CalendarNotetaker = models.CalendarNotetaker;
+  export import CalendarNotetakerEventSelection = models.CalendarNotetakerEventSelection;
   export import CalendarNotetakerParticipantFilter = models.CalendarNotetakerParticipantFilter;
   export import CalendarNotetakerRules = models.CalendarNotetakerRules;
   export import CleanMessagesRequest = models.CleanMessagesRequest;

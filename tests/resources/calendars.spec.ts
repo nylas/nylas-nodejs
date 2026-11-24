@@ -4,6 +4,11 @@ import {
   AvailabilityMethod,
   SpecificTimeAvailability,
 } from '../../src/models/availability';
+import {
+  CalendarNotetaker,
+  UpdateCalenderRequest,
+} from '../../src/models/calendars';
+import { objKeysToCamelCase, objKeysToSnakeCase } from '../../src/utils';
 jest.mock('../../src/apiClient');
 
 describe('Calendars', () => {
@@ -254,6 +259,88 @@ describe('Calendars', () => {
           headers: { override: 'bar' },
         },
       });
+    });
+
+    it('should send notetakerSettings with nested event selection rules', async () => {
+      const requestBody: UpdateCalenderRequest = {
+        notetaker: {
+          notetakerSettings: {
+            name: 'Calendar Notetaker',
+            recordingType: 'audio',
+            transcription: true,
+            summary: true,
+            actionItems: true,
+          },
+          deduplicationPolicy: 'disable',
+          rules: {
+            eventSelection: ['internal', ['own_events', 'external']],
+            participantFilter: { participantsGte: 2 },
+          },
+        },
+      };
+
+      await calendars.update({
+        identifier: 'id123',
+        calendarId: 'calendar123',
+        requestBody,
+      });
+
+      expect(apiClient.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          method: 'PUT',
+          path: '/v3/grants/id123/calendars/calendar123',
+          body: requestBody,
+        })
+      );
+      expect(
+        objKeysToSnakeCase(requestBody as Record<string, unknown>, ['metadata'])
+      ).toEqual({
+        notetaker: {
+          notetaker_settings: {
+            name: 'Calendar Notetaker',
+            recording_type: 'audio',
+            transcription: true,
+            summary: true,
+            action_items: true,
+          },
+          deduplication_policy: 'disable',
+          rules: {
+            event_selection: ['internal', ['own_events', 'external']],
+            participant_filter: { participants_gte: 2 },
+          },
+        },
+      });
+    });
+
+    it('should accept configId and autocreate modes', () => {
+      const fromConfig: CalendarNotetaker = { configId: 'config-123' };
+      const autocreate: CalendarNotetaker = {
+        autocreate: true,
+        rules: { eventSelection: ['all'] },
+      };
+      expect(fromConfig.configId).toBe('config-123');
+      expect(autocreate.autocreate).toBe(true);
+    });
+
+    it('should only accept event selection values the API accepts', () => {
+      const rules: CalendarNotetaker['rules'] = {
+        // @ts-expect-error The API takes own_events; values are not case-converted.
+        eventSelection: ['ownEvents'],
+      };
+      expect(rules).toBeDefined();
+    });
+
+    it('should camelCase notetakerSettings in calendar responses', () => {
+      const notetaker = objKeysToCamelCase({
+        notetaker_settings: {
+          name: 'Calendar Notetaker',
+          recording_type: 'audio_video',
+        },
+        rules: { event_selection: ['participant_only'] },
+      }) as CalendarNotetaker;
+
+      expect(notetaker.notetakerSettings?.recordingType).toBe('audio_video');
+      expect(notetaker.rules?.eventSelection).toEqual(['participant_only']);
     });
   });
 

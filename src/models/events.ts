@@ -2,10 +2,14 @@ import { Subset } from '../utils.js';
 import { NylasApiErrorResponseData } from './error.js';
 import { ListQueryParams } from './listQueryParams.js';
 import { NylasBaseResponse } from './response.js';
-import { NotetakerMeetingSettings } from './notetakers.js';
+import {
+  NotetakerConfigSettings,
+  NotetakerMeetingSettings,
+} from './notetakers.js';
 
 /**
- * Interface representing Notetaker settings
+ * Interface representing Notetaker settings for an event.
+ * Use either `notetakerSettings` or the older `name` and `meetingSettings`, not both.
  */
 export interface NotetakerSettings {
   /**
@@ -17,6 +21,11 @@ export interface NotetakerSettings {
    * Notetaker Meeting Settings
    */
   meetingSettings?: NotetakerMeetingSettings;
+  /**
+   * Settings for the Notetaker that joins this event.
+   * Nylas saves them as an event configuration.
+   */
+  notetakerSettings?: NotetakerConfigSettings;
 }
 
 /**
