@@ -1,6 +1,10 @@
 import APIClient from '../../src/apiClient';
 import { Events } from '../../src/resources/events';
-import { CreateEventRequest, NotetakerSettings } from '../../src/models/events';
+import {
+  CreateEventRequest,
+  EventNotetakerResponse,
+  UpdateEventRequest,
+} from '../../src/models/events';
 import { objKeysToCamelCase, objKeysToSnakeCase } from '../../src/utils';
 jest.mock('../../src/apiClient');
 
@@ -433,13 +437,23 @@ describe('Events', () => {
 
     it('should camelCase notetakerSettings in event responses', () => {
       const notetaker = objKeysToCamelCase({
+        id: 'notetaker-123',
         notetaker_settings: {
           name: 'Finance Meeting Notetaker',
           summary: true,
         },
-      }) as NotetakerSettings;
+        deduplication_policy: 'inactive',
+      }) as EventNotetakerResponse;
 
+      expect(notetaker.id).toBe('notetaker-123');
       expect(notetaker.notetakerSettings?.summary).toBe(true);
+      expect(notetaker.deduplicationPolicy).toBe('inactive');
+
+      const copied: UpdateEventRequest = {
+        // @ts-expect-error Fetched settings can carry values the API rejects on writes.
+        notetaker,
+      };
+      expect(copied).toBeDefined();
     });
   });
 

@@ -1,5 +1,7 @@
 import { ListQueryParams } from './listQueryParams.js';
 import {
+  NotetakerConfigSettingsResponse,
+  NotetakerDeduplicationPolicy,
   NotetakerSyncSettings,
   NotetakerMeetingSettings,
 } from './notetakers.js';
@@ -102,6 +104,30 @@ export interface CalendarNotetaker {
    * Rules for when the Notetaker should join a meeting.
    */
   rules?: CalendarNotetakerRules;
+}
+
+/**
+ * Calendar Notetaker settings as returned in Calendar responses.
+ * Responses can carry resolved values the API rejects on writes, so this type
+ * can't be passed straight into a create or update request. Build the request
+ * from the fields you want to set.
+ */
+export interface CalendarNotetakerResponse extends Omit<
+  CalendarNotetaker,
+  'notetakerSettings' | 'autocreate' | 'deduplicationPolicy'
+> {
+  /**
+   * Settings for the Notetakers that join this calendar's events.
+   */
+  notetakerSettings?: NotetakerConfigSettingsResponse;
+  /**
+   * Whether Nylas creates Notetakers for matching events using inherited settings.
+   */
+  autocreate?: boolean;
+  /**
+   * Whether Notetakers created from this calendar take part in deduplication.
+   */
+  deduplicationPolicy?: NotetakerDeduplicationPolicy;
 }
 
 /**
@@ -233,5 +259,5 @@ export interface Calendar {
   /**
    * Notetaker meeting bot settings
    */
-  notetaker?: CalendarNotetaker;
+  notetaker?: CalendarNotetakerResponse;
 }

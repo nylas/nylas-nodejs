@@ -6,6 +6,7 @@ import {
 } from '../../src/models/availability';
 import {
   CalendarNotetaker,
+  CalendarNotetakerResponse,
   UpdateCalenderRequest,
 } from '../../src/models/calendars';
 import { NotetakerConfigSettings } from '../../src/models/notetakers';
@@ -352,12 +353,38 @@ describe('Calendars', () => {
         notetaker_settings: {
           name: 'Calendar Notetaker',
           recording_type: 'audio_video',
+          video_output: { media_type: 'image/png', size: 1024 },
         },
+        deduplication_policy: 'active',
         rules: { event_selection: ['participant_only'] },
-      }) as CalendarNotetaker;
+      }) as CalendarNotetakerResponse;
 
       expect(notetaker.notetakerSettings?.recordingType).toBe('audio_video');
+      expect(notetaker.notetakerSettings?.videoOutput?.size).toBe(1024);
+      expect(notetaker.deduplicationPolicy).toBe('active');
       expect(notetaker.rules?.eventSelection).toEqual(['participant_only']);
+    });
+
+    it('should not accept a fetched calendar notetaker as an update', () => {
+      const fetched: CalendarNotetakerResponse = {
+        notetakerSettings: { name: 'Calendar Notetaker', summary: true },
+        deduplicationPolicy: 'active',
+        rules: { eventSelection: ['all'] },
+      };
+      const copied: UpdateCalenderRequest = {
+        // @ts-expect-error Fetched settings can carry values the API rejects on writes.
+        notetaker: fetched,
+      };
+      const { videoOutput, ...settings } = fetched.notetakerSettings ?? {};
+      const rebuilt: UpdateCalenderRequest = {
+        notetaker: {
+          notetakerSettings: settings,
+          rules: fetched.rules,
+        },
+      };
+      expect(copied).toBeDefined();
+      expect(videoOutput).toBeUndefined();
+      expect(rebuilt.notetaker?.notetakerSettings?.summary).toBe(true);
     });
   });
 

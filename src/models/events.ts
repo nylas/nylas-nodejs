@@ -3,6 +3,8 @@ import { NylasApiErrorResponseData } from './error.js';
 import { ListQueryParams } from './listQueryParams.js';
 import { NylasBaseResponse } from './response.js';
 import {
+  NotetakerConfigSettingsResponse,
+  NotetakerDeduplicationPolicy,
   NotetakerSyncSettings,
   NotetakerMeetingSettings,
 } from './notetakers.js';
@@ -33,6 +35,30 @@ export interface NotetakerSettings {
    * Only valid with `notetakerSettings`.
    */
   deduplicationPolicy?: 'inherit' | 'disable';
+}
+
+/**
+ * Event Notetaker settings as returned in Event responses.
+ * Responses can carry resolved values the API rejects on writes, so this type
+ * can't be passed straight into a create or update request. Build the request
+ * from the fields you want to set.
+ */
+export interface EventNotetakerResponse extends Omit<
+  NotetakerSettings,
+  'notetakerSettings' | 'deduplicationPolicy'
+> {
+  /**
+   * The Notetaker bot ID.
+   */
+  id?: string;
+  /**
+   * Settings for the Notetaker that joins this event.
+   */
+  notetakerSettings?: NotetakerConfigSettingsResponse;
+  /**
+   * Whether this event's Notetaker takes part in deduplication.
+   */
+  deduplicationPolicy?: NotetakerDeduplicationPolicy;
 }
 
 /**
@@ -194,7 +220,7 @@ export interface Event {
   /**
    * Notetaker meeting bot settings
    */
-  notetaker?: NotetakerSettings;
+  notetaker?: EventNotetakerResponse;
 }
 
 /**

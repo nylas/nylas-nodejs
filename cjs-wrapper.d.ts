@@ -49,6 +49,7 @@ declare namespace Nylas {
   export import CalendarNotetaker = models.CalendarNotetaker;
   export import CalendarNotetakerEventSelection = models.CalendarNotetakerEventSelection;
   export import CalendarNotetakerParticipantFilter = models.CalendarNotetakerParticipantFilter;
+  export import CalendarNotetakerResponse = models.CalendarNotetakerResponse;
   export import CalendarNotetakerRules = models.CalendarNotetakerRules;
   export import CleanMessagesRequest = models.CleanMessagesRequest;
   export import CleanMessagesResponse = models.CleanMessagesResponse;
@@ -121,6 +122,7 @@ declare namespace Nylas {
   export import EmailTemplate = models.EmailTemplate;
   export import Event = models.Event;
   export import EventBooking = models.EventBooking;
+  export import EventNotetakerResponse = models.EventNotetakerResponse;
   export import EventResource = models.EventResource;
   export import EventType = models.EventType;
   export import FindAttachmentQueryParams = models.FindAttachmentQueryParams;
@@ -185,6 +187,7 @@ declare namespace Nylas {
   export import NotetakerConfigSettings = models.NotetakerConfigSettings;
   export import NotetakerConfigSettingsResponse = models.NotetakerConfigSettingsResponse;
   export import NotetakerCustomInstructionsSettings = models.NotetakerCustomInstructionsSettings;
+  export import NotetakerDeduplicationPolicy = models.NotetakerDeduplicationPolicy;
   export import NotetakerLeaveResponse = models.NotetakerLeaveResponse;
   export import NotetakerMedia = models.NotetakerMedia;
   export import NotetakerMeetingProvider = models.NotetakerMeetingProvider;

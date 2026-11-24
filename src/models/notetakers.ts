@@ -235,6 +235,14 @@ export interface NotetakerConfigSettings {
 }
 
 /**
+ * A deduplication policy as returned in calendar and event responses.
+ * Requests accept only "inherit" and "disable"; responses can also carry the
+ * resolved "active" or "inactive" policy.
+ */
+export type NotetakerDeduplicationPolicy =
+  'inherit' | 'disable' | 'active' | 'inactive';
+
+/**
  * Notetaker settings for calendar and event sync.
  * Calendar and event sync do not support `videoOutput`.
  */

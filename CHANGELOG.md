@@ -18,6 +18,7 @@ Planned version: **8.6.0**.
 - Mark the Notetaker request `name` and `meetingSettings` fields as deprecated in favor of `notetakerSettings`.
 - **Breaking TypeScript change:** make `Notetaker.name` and `Notetaker.meetingSettings` optional. The API omits them for Notetakers that use Notetaker settings: Notetakers created with `notetakerSettings` or `configId`, and Notetakers that inherit a Notetaker configuration, such as a workspace or application configuration. Code that reads them under `strict` now needs a check or a fallback, such as `notetaker.notetakerSettings?.name ?? notetaker.name ?? 'Nylas Notetaker'`. Read settings from `notetakerSettings` instead of `meetingSettings`.
 - **Breaking TypeScript change:** calendar Notetaker `rules.eventSelection` items can now be nested groups, so code that treats the array as `string[]` needs to handle `string[]` items too.
+- **Breaking TypeScript change:** `Calendar.notetaker` and `Event.notetaker` are now typed as `CalendarNotetakerResponse` and `EventNotetakerResponse`. A fetched `notetaker` object can carry values the API rejects on writes, such as stored image metadata or a resolved `active` deduplication policy, so passing it straight into a create or update request no longer compiles. Build the request from the fields you want to set.
 
 ### Fixed
 - Type calendar Notetaker `rules.eventSelection` values as the API expects them (`own_events`, `participant_only`). The SDK sent `ownEvents` and `participantOnly` unchanged, and the API rejected them.
