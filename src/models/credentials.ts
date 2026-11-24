@@ -26,6 +26,16 @@ export interface Credential {
    * Timestamp of when the credential was updated
    */
   updatedAt?: number;
+  /**
+   * The certificate expiration date as a Unix timestamp.
+   * Returned only when `credentialType` is `connectorcertificate` or `adminconsentcertificate`.
+   */
+  certificateExpiresAt?: number;
+  /**
+   * The certificate thumbprint.
+   * Returned only when `credentialType` is `connectorcertificate` or `adminconsentcertificate`.
+   */
+  thumbprint?: string;
 }
 
 /**
@@ -143,6 +153,16 @@ export enum CredentialType {
   ADMINCONSENT = 'adminconsent',
   SERVICEACCOUNT = 'serviceaccount',
   CONNECTOR = 'connector',
+  /**
+   * Certificate-based connector credential. Created from the Nylas Dashboard only;
+   * returned by list/find but cannot be created through the API.
+   */
+  CONNECTORCERTIFICATE = 'connectorcertificate',
+  /**
+   * Certificate-based admin consent credential. Created from the Nylas Dashboard only;
+   * returned by list/find but cannot be created through the API.
+   */
+  ADMINCONSENTCERTIFICATE = 'adminconsentcertificate',
 }
 
 /**
