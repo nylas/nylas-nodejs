@@ -235,6 +235,15 @@ export interface NotetakerConfigSettings {
 }
 
 /**
+ * Notetaker settings for calendar and event sync.
+ * Calendar and event sync do not support `videoOutput`.
+ */
+export type NotetakerSyncSettings = Omit<
+  NotetakerConfigSettings,
+  'videoOutput'
+>;
+
+/**
  * Notetaker settings as returned in Notetaker responses.
  * Responses can include stored metadata that the API rejects on writes, so
  * send only the fields you want to change in an update instead of the

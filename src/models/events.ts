@@ -3,7 +3,7 @@ import { NylasApiErrorResponseData } from './error.js';
 import { ListQueryParams } from './listQueryParams.js';
 import { NylasBaseResponse } from './response.js';
 import {
-  NotetakerConfigSettings,
+  NotetakerSyncSettings,
   NotetakerMeetingSettings,
 } from './notetakers.js';
 
@@ -25,7 +25,14 @@ export interface NotetakerSettings {
    * Settings for the Notetaker that joins this event.
    * Nylas saves them as an event configuration.
    */
-  notetakerSettings?: NotetakerConfigSettings;
+  notetakerSettings?: NotetakerSyncSettings;
+  /**
+   * Whether this event's Notetaker takes part in deduplication.
+   * "inherit": Use the policy from your configurations.
+   * "disable": Exempt this event's Notetaker from deduplication.
+   * Only valid with `notetakerSettings`.
+   */
+  deduplicationPolicy?: 'inherit' | 'disable';
 }
 
 /**

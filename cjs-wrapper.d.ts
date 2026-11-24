@@ -196,6 +196,7 @@ declare namespace Nylas {
   export import NotetakerRecordingType = models.NotetakerRecordingType;
   export import NotetakerSettings = models.NotetakerSettings;
   export import NotetakerState = models.NotetakerState;
+  export import NotetakerSyncSettings = models.NotetakerSyncSettings;
   export import NotetakerTranscript = models.NotetakerTranscript;
   export import NotetakerTranscriptionSettings = models.NotetakerTranscriptionSettings;
   export import NotetakerVideoOutput = models.NotetakerVideoOutput;

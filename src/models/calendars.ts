@@ -1,6 +1,6 @@
 import { ListQueryParams } from './listQueryParams.js';
 import {
-  NotetakerConfigSettings,
+  NotetakerSyncSettings,
   NotetakerMeetingSettings,
 } from './notetakers.js';
 
@@ -37,6 +37,7 @@ export interface CalendarNotetakerRules {
    * Types of events to include for notetaking.
    * Each item is a single criterion or a group of criteria.
    * Top-level items are OR'd together, and criteria inside a group are AND'd.
+   * Each group needs at least one criterion.
    * For example, `['internal', ['own_events', 'external']]` matches internal events,
    * or events the user hosts that have at least one external participant.
    */
@@ -71,19 +72,20 @@ export interface CalendarNotetaker {
   /**
    * Settings for the Notetakers that join this calendar's events.
    * Nylas saves them as a calendar configuration.
-   * Requests replace the whole `notetaker` object, so include these settings
-   * when you update `rules`.
+   * Requests replace the whole `notetaker` object. Include these settings when
+   * you update `rules`: a `notetaker` object with only `rules` replaces the
+   * calendar's settings with legacy defaults.
    */
-  notetakerSettings?: NotetakerConfigSettings;
+  notetakerSettings?: NotetakerSyncSettings;
   /**
    * The ID of an application or workspace Notetaker configuration to apply to this calendar.
    */
   configId?: string;
   /**
    * When true, Nylas creates Notetakers for matching events using the settings
-   * inherited from your configurations. Must be true when set.
+   * inherited from your configurations. Cannot be combined with `rules`.
    */
-  autocreate?: boolean;
+  autocreate?: true;
   /**
    * Whether Notetakers created from this calendar take part in deduplication.
    * "inherit": Use the policy from your configurations.

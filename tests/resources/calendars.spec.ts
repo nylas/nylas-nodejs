@@ -314,10 +314,7 @@ describe('Calendars', () => {
 
     it('should accept configId and autocreate modes', () => {
       const fromConfig: CalendarNotetaker = { configId: 'config-123' };
-      const autocreate: CalendarNotetaker = {
-        autocreate: true,
-        rules: { eventSelection: ['all'] },
-      };
+      const autocreate: CalendarNotetaker = { autocreate: true };
       expect(fromConfig.configId).toBe('config-123');
       expect(autocreate.autocreate).toBe(true);
     });
@@ -328,6 +325,16 @@ describe('Calendars', () => {
         eventSelection: ['ownEvents'],
       };
       expect(rules).toBeDefined();
+    });
+
+    it('should reject video output on calendar sync settings', () => {
+      const notetaker: CalendarNotetaker = {
+        notetakerSettings: {
+          // @ts-expect-error Calendar sync does not support videoOutput.
+          videoOutput: { mediaType: 'image/png', data: 'aGVsbG8=' },
+        },
+      };
+      expect(notetaker).toBeDefined();
     });
 
     it('should camelCase notetakerSettings in calendar responses', () => {

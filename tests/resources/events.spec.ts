@@ -396,6 +396,7 @@ describe('Events', () => {
             summary: true,
             leaveAfterSilenceSeconds: 360,
           },
+          deduplicationPolicy: 'disable',
         },
       };
 
@@ -425,6 +426,7 @@ describe('Events', () => {
             summary: true,
             leave_after_silence_seconds: 360,
           },
+          deduplication_policy: 'disable',
         },
       });
     });
