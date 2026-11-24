@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Planned version: **8.6.0**.
+Planned version: **9.0.0**, because of the breaking TypeScript changes below.
 
 ### Added
 - Type `notetakerSettings` on Notetaker create and update requests, `configId` on Notetaker create requests, and `notetakerSettings` on Notetaker responses, matching the current Notetaker API.
