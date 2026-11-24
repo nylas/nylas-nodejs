@@ -316,7 +316,7 @@ export interface Notetaker {
    * neither while a Notetaker configuration applies to the grant or
    * application. Read `notetakerSettings.name` for those.
    */
-  name: string;
+  name?: string;
   /**
    * When Notetaker joined the meeting, in Unix timestamp format.
    */
@@ -346,7 +346,7 @@ export interface Notetaker {
    * The API omits this field for Notetakers that use Notetaker settings (see
    * `name`). Read `notetakerSettings` for those.
    */
-  meetingSettings: NotetakerMeetingSettings;
+  meetingSettings?: NotetakerMeetingSettings;
   /**
    * The Notetaker's settings.
    * Returned for Notetakers that use Notetaker settings (see `name`).

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-Planned version: **8.5.1**.
+Planned version: **8.6.0**.
 
 ### Added
 - Type `notetakerSettings` on Notetaker create and update requests, `configId` on Notetaker create requests, and `notetakerSettings` on Notetaker responses, matching the current Notetaker API.
@@ -15,6 +15,7 @@ Planned version: **8.5.1**.
 
 ### Changed
 - Mark the Notetaker request `name` and `meetingSettings` fields as deprecated in favor of `notetakerSettings`.
+- Make `Notetaker.name` and `Notetaker.meetingSettings` optional. The API omits them for Notetakers that use Notetaker settings, including Notetakers created with `configId` or under a grant or application configuration. Code that reads them under `strict` now needs a check or a fallback, such as `notetaker.notetakerSettings?.name ?? notetaker.name`.
 
 ### Fixed
 - Preserve upload-session HTTP header map keys while decoding API responses (NYL-476).
