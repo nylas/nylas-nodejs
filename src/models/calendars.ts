@@ -56,6 +56,10 @@ export interface CalendarNotetakerRules {
  * Use one of `notetakerSettings`, `configId`, `autocreate`, or the deprecated
  * `name` and `meetingSettings`. Combining them returns a validation error.
  * `rules` can be combined with `notetakerSettings` or the deprecated fields.
+ *
+ * Build update requests from the fields you want to set. A fetched calendar's
+ * `notetaker` object can carry resolved values, such as stored image metadata,
+ * that the API rejects on writes.
  */
 export interface CalendarNotetaker {
   /**
@@ -90,7 +94,8 @@ export interface CalendarNotetaker {
    * Whether Notetakers created from this calendar take part in deduplication.
    * "inherit": Use the policy from your configurations.
    * "disable": Opt this calendar out of deduplication.
-   * Only valid with `notetakerSettings`.
+   * Only valid with `notetakerSettings`. Updates that omit it reset it to
+   * "inherit", so send it again to keep an opt-out.
    */
   deduplicationPolicy?: 'inherit' | 'disable';
   /**

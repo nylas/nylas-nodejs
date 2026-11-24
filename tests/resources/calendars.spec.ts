@@ -8,6 +8,7 @@ import {
   CalendarNotetaker,
   UpdateCalenderRequest,
 } from '../../src/models/calendars';
+import { NotetakerConfigSettings } from '../../src/models/notetakers';
 import { objKeysToCamelCase, objKeysToSnakeCase } from '../../src/utils';
 jest.mock('../../src/apiClient');
 
@@ -335,6 +336,15 @@ describe('Calendars', () => {
         },
       };
       expect(notetaker).toBeDefined();
+
+      const shared: NotetakerConfigSettings = {
+        videoOutput: { mediaType: 'image/png', data: 'aGVsbG8=' },
+      };
+      const fromShared: CalendarNotetaker = {
+        // @ts-expect-error Reused settings with videoOutput are rejected too.
+        notetakerSettings: shared,
+      };
+      expect(fromShared).toBeDefined();
     });
 
     it('should camelCase notetakerSettings in calendar responses', () => {

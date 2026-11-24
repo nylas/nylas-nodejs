@@ -241,7 +241,9 @@ export interface NotetakerConfigSettings {
 export type NotetakerSyncSettings = Omit<
   NotetakerConfigSettings,
   'videoOutput'
->;
+> & {
+  videoOutput?: never;
+};
 
 /**
  * Notetaker settings as returned in Notetaker responses.
