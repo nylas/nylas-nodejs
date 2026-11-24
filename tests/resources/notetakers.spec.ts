@@ -392,6 +392,21 @@ describe('Notetakers', () => {
         },
       };
 
+      const stored = {
+        mediaType: 'image/png' as const,
+        size: 1024,
+        previewUrl: 'https://example.com/preview.png',
+        previewUrlExpiresAt: 1234567890,
+      };
+      const spreadStored: CreateNotetakerRequest = {
+        meetingLink: 'https://meet.google.com/abc-defg-hij',
+        notetakerSettings: {
+          // @ts-expect-error stored image metadata cannot ride along with an upload
+          videoOutput: { ...stored, data: 'aGVsbG8=' },
+        },
+      };
+
+      expect(spreadStored).toBeDefined();
       expect(toWireFormat(disable)).toEqual({
         meeting_link: 'https://meet.google.com/abc-defg-hij',
         notetaker_settings: { video_output: {} },

@@ -135,6 +135,12 @@ export type NotetakerVideoOutputUpload =
        * The base64-encoded image bytes.
        */
       data: string;
+      /** Read-only; not accepted on writes. */
+      size?: never;
+      /** Read-only; not accepted on writes. */
+      previewUrl?: never;
+      /** Read-only; not accepted on writes. */
+      previewUrlExpiresAt?: never;
     }
   | Record<string, never>;
 
@@ -180,7 +186,9 @@ export interface NotetakerConfigSettings {
   transcription?: boolean;
   /**
    * Optional settings that tune how Notetaker transcribes audio.
-   * Send `null` or `{}` to clear inherited settings.
+   * On create, send `null` or `{}` to clear inherited settings.
+   * On update, `null` removes this Notetaker's override and restores the
+   * inherited settings, and `{}` clears them.
    */
   transcriptionSettings?: NotetakerTranscriptionSettings | null;
   /**
@@ -440,7 +448,8 @@ export interface CreateNotetakerRequest {
 
   /**
    * The ID of an existing configuration to use for this Notetaker.
-   * Cannot be used together with `notetakerSettings`.
+   * Cannot be used together with `notetakerSettings` or the deprecated
+   * `name` and `meetingSettings` fields.
    */
   configId?: string;
 
