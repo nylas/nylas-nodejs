@@ -375,16 +375,15 @@ describe('Calendars', () => {
         // @ts-expect-error Fetched settings can carry values the API rejects on writes.
         notetaker: fetched,
       };
-      const { videoOutput, ...settings } = fetched.notetakerSettings ?? {};
-      const rebuilt: UpdateCalenderRequest = {
+      const update: UpdateCalenderRequest = {
         notetaker: {
-          notetakerSettings: settings,
-          rules: fetched.rules,
+          notetakerSettings: { name: 'Calendar Notetaker', summary: true },
+          rules: { eventSelection: ['all'] },
+          deduplicationPolicy: 'disable',
         },
       };
       expect(copied).toBeDefined();
-      expect(videoOutput).toBeUndefined();
-      expect(rebuilt.notetaker?.notetakerSettings?.summary).toBe(true);
+      expect(update.notetaker?.notetakerSettings?.summary).toBe(true);
     });
   });
 

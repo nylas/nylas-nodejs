@@ -329,10 +329,10 @@ export interface Notetaker {
   id: string;
   /**
    * The display name for the Notetaker bot.
-   * The API omits this field for Notetakers that use Notetaker settings: those
-   * created with `notetakerSettings` or `configId`, and those that inherit a
-   * Notetaker configuration, such as a workspace or application configuration.
-   * Read `notetakerSettings.name` for those.
+   * The API omits this field when it returns `notetakerSettings`, as it does
+   * for most Notetakers created with `notetakerSettings` or `configId` and for
+   * Notetakers that inherit a workspace or application configuration. Read
+   * `notetakerSettings.name` when present and fall back to this field.
    */
   name?: string;
   /**
@@ -361,13 +361,13 @@ export interface Notetaker {
   eventId?: string;
   /**
    * Notetaker Meeting Settings.
-   * The API omits this field for Notetakers that use Notetaker settings (see
-   * `name`). Read `notetakerSettings` for those.
+   * The API omits this field when it returns `notetakerSettings` (see `name`).
+   * Read `notetakerSettings` when present and fall back to this field.
    */
   meetingSettings?: NotetakerMeetingSettings;
   /**
    * The Notetaker's settings.
-   * Returned for Notetakers that use Notetaker settings (see `name`).
+   * When present, use these instead of `name` and `meetingSettings`.
    */
   notetakerSettings?: NotetakerConfigSettingsResponse;
 }

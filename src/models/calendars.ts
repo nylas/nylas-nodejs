@@ -108,24 +108,24 @@ export interface CalendarNotetaker {
 
 /**
  * Calendar Notetaker settings as returned in Calendar responses.
- * Responses can carry resolved values the API rejects on writes, so this type
- * can't be passed straight into a create or update request. Build the request
- * from the fields you want to set.
+ * `notetakerSettings` and `deduplicationPolicy` are resolved values: they
+ * include settings inherited from workspace and application configurations,
+ * not only what this calendar stores. Responses can carry values the API
+ * rejects on writes, so this type can't be passed straight into a create or
+ * update request. Build the request from the fields you want to set.
+ * Responses don't include `configId` or `autocreate`.
  */
 export interface CalendarNotetakerResponse extends Omit<
   CalendarNotetaker,
-  'notetakerSettings' | 'autocreate' | 'deduplicationPolicy'
+  'notetakerSettings' | 'configId' | 'autocreate' | 'deduplicationPolicy'
 > {
   /**
-   * Settings for the Notetakers that join this calendar's events.
+   * Resolved settings for the Notetakers that join this calendar's events.
    */
   notetakerSettings?: NotetakerConfigSettingsResponse;
   /**
-   * Whether Nylas creates Notetakers for matching events using inherited settings.
-   */
-  autocreate?: boolean;
-  /**
-   * Whether Notetakers created from this calendar take part in deduplication.
+   * Resolved policy for whether Notetakers created from this calendar take
+   * part in deduplication.
    */
   deduplicationPolicy?: NotetakerDeduplicationPolicy;
 }
